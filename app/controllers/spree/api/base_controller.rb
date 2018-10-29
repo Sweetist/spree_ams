@@ -68,8 +68,8 @@ module Spree
           elsif order_token.blank? && (requires_authentication? || api_key.present?)
             render "spree/api/errors/invalid_api_key", :status => 401 and return
           else
-            # An anonymous user
-            @current_api_user = Spree.user_class.new
+            # anonymous users are not authorized
+            render "spree/api/errors/must_specify_api_key", :status => 401 and return
           end
         end
       end
@@ -131,6 +131,10 @@ module Spree
         product_scope.friendly.find(id.to_s)
       rescue ActiveRecord::RecordNotFound
         product_scope.find(id)
+      end
+
+      def find_account(id)
+        @current_api_user.company.customer_accounts.find_by_id(id)
       end
 
       def product_scope
