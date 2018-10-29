@@ -2,11 +2,14 @@
   "resources": [
     {
       "name": "Products",
+      "explanation": null,
       "examples": [
         {
           "description": "index",
           "link": "products/index.json",
-          "groups": "all"
+          "groups": "all",
+          "route": "http://test.host/api/ams/products",
+          "method": "get"
         }
       ]
     }

@@ -14,7 +14,7 @@ Apitome.setup do |config|
   config.doc_path = 'docs/api'
 
   # The title of the documentation -- If your project has a name, you'll want to put it here.
-  config.title = 'Spree AMS Documentation'
+  config.title = 'Sweet AMS Documentation'
 
   # The main layout view for all documentation pages. By default this is pretty basic, but you may want to use your own
   # application layout.

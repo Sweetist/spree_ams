@@ -1,7 +1,8 @@
 {
   "resource": "Products",
+  "resource_explanation": null,
   "http_method": "GET",
-  "route": "api/ams/products",
+  "route": "http://test.host/api/ams/products",
   "description": "index",
   "explanation": null,
   "parameters": [
@@ -13,12 +14,12 @@
   "requests": [
     {
       "request_method": "GET",
-      "request_path": "api/ams/products",
+      "request_path": "http://test.host/api/ams/products",
       "request_body": null,
       "request_headers": {
         "Accept": "application/json",
         "Content-Type": "application/json",
-        "Host": "example.org",
+        "Host": "test.host",
         "Cookie": ""
       },
       "request_query_parameters": {
@@ -26,7 +27,7 @@
       "request_content_type": "application/json",
       "response_status": 200,
       "response_status_text": "OK",
-      "response_body": "{\"product_properties\":[],\"images\":[],\"variants\":[{\"id\":1,\"name\":\"Product #1 - 9075\",\"sku\":\"SKU-1\",\"price\":\"19.99\",\"weight\":\"0.0\",\"height\":null,\"width\":null,\"depth\":null,\"is_master\":true,\"cost_price\":\"17.0\",\"slug\":\"product-1-9075\",\"description\":\"Perspiciatis autem repellendus consequatur modi temporibus fuga. Quas nesciunt omnis rerum quia earum. Aut sapiente est totam voluptatem est consequatur ipsum. Harum quibusdam beatae neque quia.\\nIpsam earum velit omnis optio. Omnis rerum cupiditate molestiae ipsa et quo. Voluptate illo et molestias distinctio officiis nihil commodi delectus.\\nEt ut perferendis alias quas illum dolor ut voluptates. Voluptatum rerum rerum non eveniet est. Officiis ipsam expedita repudiandae omnis et. Rerum modi doloribus voluptates dolore id quo reprehenderit tenetur. Delectus praesentium voluptatem necessitatibus eligendi in quia sed corporis.\\nSit aut ut aut voluptatem itaque. Minus non aspernatur qui ut deleniti et dolores. Quis officia aut rerum provident ut hic exercitationem accusantium. Natus eveniet corporis omnis qui quas aperiam. Explicabo harum voluptas adipisci aliquid quis.\\nSaepe est ratione molestiae vitae ipsam pariatur modi et. Illo sed ut sequi sit sint animi. Numquam et eius perferendis suscipit sit adipisci qui culpa. Excepturi quibusdam explicabo aspernatur amet velit iusto at.\",\"track_inventory\":true,\"display_price\":\"$19.99\",\"options_text\":\"\",\"can_supply\":true,\"image_ids\":[]}],\"products\":[{\"id\":1,\"name\":\"Product #1 - 9075\",\"description\":\"Perspiciatis autem repellendus consequatur modi temporibus fuga. Quas nesciunt omnis rerum quia earum. Aut sapiente est totam voluptatem est consequatur ipsum. Harum quibusdam beatae neque quia.\\nIpsam earum velit omnis optio. Omnis rerum cupiditate molestiae ipsa et quo. Voluptate illo et molestias distinctio officiis nihil commodi delectus.\\nEt ut perferendis alias quas illum dolor ut voluptates. Voluptatum rerum rerum non eveniet est. Officiis ipsam expedita repudiandae omnis et. Rerum modi doloribus voluptates dolore id quo reprehenderit tenetur. Delectus praesentium voluptatem necessitatibus eligendi in quia sed corporis.\\nSit aut ut aut voluptatem itaque. Minus non aspernatur qui ut deleniti et dolores. Quis officia aut rerum provident ut hic exercitationem accusantium. Natus eveniet corporis omnis qui quas aperiam. Explicabo harum voluptas adipisci aliquid quis.\\nSaepe est ratione molestiae vitae ipsam pariatur modi et. Illo sed ut sequi sit sint animi. Numquam et eius perferendis suscipit sit adipisci qui culpa. Excepturi quibusdam explicabo aspernatur amet velit iusto at.\",\"price\":\"19.99\",\"display_price\":\"$19.99\",\"slug\":\"product-1-9075\",\"product_property_ids\":[],\"image_ids\":[],\"variants_including_master_ids\":[1]}]}",
+      "response_body": "{\n  \"product_properties\": [\n\n  ],\n  \"images\": [\n\n  ],\n  \"variants\": [\n    {\n      \"id\": 1,\n      \"name\": \"Product #1 - 1002\",\n      \"sku\": \"SKU-1\",\n      \"price\": \"19.99\",\n      \"weight\": \"0\",\n      \"height\": null,\n      \"width\": null,\n      \"depth\": null,\n      \"is_master\": true,\n      \"cost_price\": \"17\",\n      \"slug\": \"product-1-1002\",\n      \"description\": \"Labore molestias enim facere non voluptatem quam. Libero quidem sint voluptas et qui dolores. Rem dolores veniam voluptas sed consequatur. Repellat occaecati sed dignissimos sint similique officiis. Ut rerum est perspiciatis totam ea ut placeat nulla.\\nCupiditate non iure consequatur velit quisquam pariatur. Mollitia qui dolores quasi repellat voluptas error. Adipisci perferendis earum rerum ab.\\nSint ducimus accusamus minus nulla reiciendis. Explicabo reiciendis sed dolor vel iusto quo minus rerum. Autem voluptatibus recusandae et et est consequatur nobis. Earum rerum facere enim odit consequatur in. Voluptas quibusdam ut inventore explicabo quis.\",\n      \"track_inventory\": true,\n      \"display_price\": \"$19.99\",\n      \"options_text\": \"\",\n      \"can_supply\": true,\n      \"image_ids\": [\n\n      ]\n    }\n  ],\n  \"products\": [\n    {\n      \"id\": 1,\n      \"name\": \"Product #1 - 1002\",\n      \"description\": \"Labore molestias enim facere non voluptatem quam. Libero quidem sint voluptas et qui dolores. Rem dolores veniam voluptas sed consequatur. Repellat occaecati sed dignissimos sint similique officiis. Ut rerum est perspiciatis totam ea ut placeat nulla.\\nCupiditate non iure consequatur velit quisquam pariatur. Mollitia qui dolores quasi repellat voluptas error. Adipisci perferendis earum rerum ab.\\nSint ducimus accusamus minus nulla reiciendis. Explicabo reiciendis sed dolor vel iusto quo minus rerum. Autem voluptatibus recusandae et et est consequatur nobis. Earum rerum facere enim odit consequatur in. Voluptas quibusdam ut inventore explicabo quis.\",\n      \"price\": \"19.99\",\n      \"display_price\": \"$19.99\",\n      \"slug\": \"product-1-1002\",\n      \"product_property_ids\": [\n\n      ],\n      \"image_ids\": [\n\n      ],\n      \"variants_including_master_ids\": [\n        1\n      ]\n    }\n  ],\n  \"meta\": {\n    \"total_pages\": 1\n  }\n}",
       "response_headers": {
         "X-Frame-Options": "SAMEORIGIN",
         "X-XSS-Protection": "1; mode=block",
@@ -36,14 +37,15 @@
         "Access-Control-Allow-Headers": "Origin, Content-Type, Accept, Authorization, Token, X-Spree-Token, X-Spree-Order-Token, X-Spree-Order-Id",
         "Access-Control-Max-Age": "1728000",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 13 Jan 2015 20:51:51 GMT",
+        "Date": "Mon, 29 Oct 2018 08:48:37 GMT",
         "Surrogate-Control": "max-age=900",
         "Cache-Control": "max-age=900, public",
-        "ETag": "\"2dbb959531dd975a22260c2a51ec2248\"",
-        "Set-Cookie": "guest_token=BAhJIhstbW9EUnF4R2tQZ1FQUEs0TnBsZXBRBjoGRUY%3D--25c172b2e3b393e8a4ef858122d0e83c42e5397b; path=/; expires=Sat, 13 Jan 2035 20:51:51 -0000",
-        "X-Request-Id": "4fe11909-e3a8-464a-9f19-123507f9a86a",
-        "X-Runtime": "0.222581",
-        "Content-Length": "2750"
+        "Vary": "Accept-Encoding, Origin",
+        "ETag": "W/\"c237d2ef7b3decd88d95a05e4475dc7c\"",
+        "Set-Cookie": "guest_token=IlFNdWVyOTlqQ1dacGl0dXQ3c3NrZGci--825f7b017a0e9065d5fb364cb0b47b37d5020ecb; path=/; expires=Fri, 29 Oct 2038 08:48:37 -0000",
+        "X-Request-Id": "5e439e0e-f399-48f8-9181-4da7e4329cf1",
+        "X-Runtime": "0.683005",
+        "Content-Length": "1889"
       },
       "response_content_type": "application/json; charset=utf-8",
       "curl": null

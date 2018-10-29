@@ -14,13 +14,13 @@ end
 ENV['RAILS_ENV'] = 'test'
 
 require File.expand_path('../dummy/config/environment.rb',  __FILE__)
+require 'spree_ams'
 
 require 'rspec/rails'
 require 'database_cleaner'
 require 'ffaker'
-
+require 'factory_girl'
 # Require Pry
-require 'pry'
 
 # For Generating Docs
 require 'rspec_api_documentation'
@@ -29,11 +29,16 @@ require 'rspec_api_documentation'
 # in spec/support/ and its subdirectories.
 Dir[File.join(File.dirname(__FILE__), 'support/**/*.rb')].each { |f| require f }
 
+
 # Requires factories defined in spree_core
 require 'spree/testing_support/factories'
 require 'spree/testing_support/controller_requests'
 require 'spree/testing_support/authorization_helpers'
 require 'spree/testing_support/url_helpers'
+
+Dir["#{File.dirname(__FILE__)}/dummy/spec/factories/**"].each do |f|
+  require f
+end
 
 RSpec.configure do |config|
   config.include FactoryGirl::Syntax::Methods
@@ -57,7 +62,7 @@ RSpec.configure do |config|
   config.color = true
 
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
-  config.fixture_path = "#{::Rails.root}/spec/fixtures"
+  # config.fixture_path = "#{::Rails.root}/spec/fixtures"
 
   # Capybara javascript drivers require transactional fixtures set to false, and we use DatabaseCleaner
   # to cleanup after each test instead.  Without transactional fixtures set to false the records created

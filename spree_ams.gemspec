@@ -20,6 +20,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'spree_api'
   s.add_dependency 'active_model_serializers', '~> 0.8.2'
   s.add_dependency 'apitome'
+  s.add_dependency 'rspec_api_documentation'
 
   s.add_development_dependency 'capybara', '~> 2.1'
   s.add_development_dependency 'coffee-rails'
@@ -28,10 +29,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'ffaker'
   s.add_development_dependency 'rspec-rails'
   s.add_development_dependency 'sass-rails'
-  s.add_development_dependency 'selenium-webdriver'
   s.add_development_dependency 'simplecov'
-  s.add_development_dependency 'sqlite3'
 
-  s.add_development_dependency 'pry'
-  s.add_development_dependency 'rspec_api_documentation'
+  s.add_development_dependency 'pry-rails'
 end
