@@ -1,3 +1,12 @@
+Sweet AMS as external testing
+============================
+
+Create/update dummy application
+```ruby
+rake test_app
+```
+
+
 Spree AMS
 ========
 
