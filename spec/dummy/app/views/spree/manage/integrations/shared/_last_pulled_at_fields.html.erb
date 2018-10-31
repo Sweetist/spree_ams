@@ -1,0 +1,19 @@
+<% Spree::Integrations::ItemSharedAttributes::INTEGRATIONS_SHARED_PULL_TYPES.each do |type| %>
+  <% if item.send("can_poll_#{type}s?") %>
+    <%= f.input "#{type}_poll_frequency", as: :select,
+      collection: item.polling_frequencies_for_form,
+      label: "#{I18n.t(type, scope: :integrations)} #{I18n.t('integrations.polling_frequency.label')}",
+      label_method: :last, value_method: :first,
+      include_blank: false %>
+  <% end %>
+  <% next unless item.send("show_#{type}_last_pulled_at") %>
+  <div class="form-group">
+    <%= f.label "#{type}_last_pulled_at", "#{type}_last_pulled_at".titleize,
+        class: 'col-sm-3 control-label' %>
+    <div class="col-sm-9">
+      <input type="text" name="integration_item[<%= type %>_last_pulled_at]"
+        value='<%= display_vendor_date_format(item.send("#{type}_last_pulled_at"), item.company.date_format) unless item.send("#{type}_last_pulled_at").blank? %>'
+        class='string form-control date-picker' data-date-format='<%= item.company.date_format %>' id='<%= "#{type}_last_pulled_at" %>' tabindex="1">
+    </div>
+  </div>
+<% end %>

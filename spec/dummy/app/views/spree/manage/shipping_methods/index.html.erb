@@ -1,0 +1,72 @@
+<%= content_for :head_title do %>
+  Shipping Methods
+<% end %>
+
+<%= content_for :page_title do %>
+  Shipping Methods
+<% end %>
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+		<li>
+      <span>Shipping Methods</span>
+    </li>
+  </ul>
+	<div class="page-toolbar">
+    <% if current_spree_user.can_write?('shipping_methods', 'settings') %>
+		  <%= link_to new_manage_shipping_method_path, class: "btn green pull-right" do%>
+        <i class="fa fa-plus"></i>&nbsp;New Shipping Method
+      <% end %>
+    <% end %>
+  </div>
+<% end %>
+
+  <table class="table table-striped table-hover" data-paging='false'>
+    <thead>
+      <tr>
+        <!-- <th width="10px" class='no-sort'></th> -->
+        <th>
+          Name
+        </th>
+        <th>
+          Zones
+        </th>
+        <th>
+          Calculator
+        </th>
+        <th>
+          Rate
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <% @shipping_methods.each do |method| %>
+        <tr id="shipping_method_<%= method.id %>">
+          <!-- <td width="10px" class="delete"> -->
+            <%#= link_to raw("<i class='fa fa-times'></i>"), manage_shipping_method_path(format: 'js', id: method.id),
+                data: {:confirm => "Are you sure you want to delete this shipping method?"},
+                :method => :delete, remote: true %>
+          <!-- </td> -->
+          <% calc_type = method.calculator.type.demodulize.underscore %>
+          <td><%= link_to method.name, manage_shipping_method_path(method.id) %></td>
+          <td><%= link_to "#{method.zones.map{|zone| zone.name}.join(', ')}", manage_shipping_method_path(method.id) %></td>
+          <td><%= link_to "#{method.calculator.display_description}", manage_shipping_method_path(method.id) %></td>
+          <td>
+            <%= link_to manage_shipping_method_path(method.id) do %>
+              <% if %w{flat_rate per_item}.include?(calc_type) %>
+                <%= display_sweet_price(method.calculator.preferences[:amount], method.calculator.preferences[:currency]) %>
+              <% elsif 'flat_percent_item_total' == calc_type %>
+                <%= method.calculator.preferences[:flat_percent] %> %
+              <% else %>
+                Variable
+              <% end %>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>

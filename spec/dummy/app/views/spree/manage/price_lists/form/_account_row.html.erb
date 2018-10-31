@@ -1,0 +1,22 @@
+<tr class='account-row' data-account-id='<%= account.id %>' data-idx='<%= idx %>'>
+  <% url = manage_customer_account_path(account.customer, account) %>
+  <% if customer_type == 'individual' %>
+    <td class='remove-'>
+      <!-- Add delete button -->
+      <%= link_to 'void:javascript();',
+        class: 'btn btn-xs red delete-row-btn remove-account' do %>
+        <i class='fa fa-times'></i>
+      <% end %>
+
+      <input type='hidden' class='destroy' name='price_list[price_list_accounts_attributes][<%= idx %>][_destroy]' value='false'>
+    </td>
+  <% end %>
+  <td>
+    <%= link_to account.fully_qualified_name, url %>
+  </td>
+  <td>
+    <%= link_to account.customer_type.try(:name).to_s, url %>
+    <input type='hidden' name='price_list[price_list_accounts_attributes][<%= idx %>][account_id]' value='<%= account.id %>'>
+    <input type='hidden' name='price_list[price_list_accounts_attributes][<%= idx %>][id]' value='<%= price_list_account.try(:id) %>'>
+  </td>
+</tr>

@@ -1,0 +1,44 @@
+<div class="variant-title">
+  <div class="caption">
+    <span class="caption-subject font-blue-madison bold uppercase pull-left" id='variant-full-context'>
+      <%#= "#{@variant.full_display_name}" %>
+    </span>
+  </div>
+</div>
+<%= form_for [:manage, @variant], url: manage_product_variant_path(@product, @variant),
+  html: {class: 'product_form prevent-double-submission',
+  data: {submitted: current_spree_user.cannot_write?('catalog', 'products')}} do |f| %>
+  <div class="portlet-body form">
+    <div class="form-body">
+      <%= render partial: 'spree/manage/variants/form', locals: {f: f} %>
+    </div>
+    <!-- TODO transfer attributes from products to variants  -->
+    <%#= render partial: 'spree/manage/products/chart_accounts_form', locals: {f: f} %>
+    <div class="form-actions">
+      <div class="links pull-right">
+        <%= link_to edit_manage_product_variant_path(@product, @variant), class: 'btn btn-default', 'data-dismiss'=>"modal", 'aria-hidden'=>"true" do %>
+        <i class='fa fa-times'></i> Cancel
+        <% end %>
+        <% if current_spree_user.can_write?('catalog', 'products') %>
+          <button class="btn btn-primary" id='update-variant-btn'>
+            <i class='fa fa-check'></i> Update
+          </button>
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<script type='text/javascript'>
+  $(document).ready(function(){
+    sumPartCost();
+    if(<%= current_spree_user.cannot_write?('catalog', 'products') %>){
+      disableFormInputs($('.product_form'));
+    }
+  });
+  $(document).on('change', 'tr.part-row .count', function(){
+    updatePartTotalCost($(this).closest('tr'));
+    updatePartTotalWeight($(this).closest('tr'));
+    sumPartCost();
+  });
+</script>

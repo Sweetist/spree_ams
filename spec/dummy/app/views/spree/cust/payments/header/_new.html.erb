@@ -1,0 +1,13 @@
+<%= content_for :page_bar do %>
+  <ul class="breadcrumb">
+    <li>
+      <%= link_to "Home", root_path %>
+    </li>
+    <li>
+      <%= link_to "Orders", orders_path %>
+    </li>
+    <li>
+      <span>Order #<%= @order.display_number %></span>
+    </li>
+  </ul>
+<% end %>

@@ -1,0 +1,23 @@
+<tr class="totals" id='subtotals-row'>
+  <td></td>
+  <td colspan="<%= colspan_left - 1 %>">
+    <!-- Reload edit page when hitting 'Enter' -->
+    <input type="submit" name="commit" value="<%= Spree.t(:update) %>" style='display:none;'>
+    <% if order_can_add_products? %>
+      <%= submit_tag "Add Item", class: "btn btn-primary" %>
+    <% end %>
+  </td>
+  <td><strong>Subtotal:</strong></td>
+  <% if @order.shipped? || @order.received? %>
+    <td><%= @order.line_items.sum(:ordered_qty) %></td>
+    <% if @order.vendor.try(:receive_orders) %>
+      <td><%= @order.line_items.sum(:shipped_qty) %></td>
+    <% end %>
+  <% end %>
+  <td><%= @order.line_items.sum(:quantity) %></td>
+  <% if @order.vendor.try(:include_total_weight) %>
+    <td><%= @order.display_total_weight_in(@order.vendor.weight_units) %></td>
+  <% end %>
+  <td><span class='subtotal-price'><%= display_sweet_price(@order.item_total, @order.currency) %></span></td>
+
+</tr>

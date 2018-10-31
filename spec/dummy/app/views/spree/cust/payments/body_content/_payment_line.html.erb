@@ -1,0 +1,22 @@
+<tr id="<%= dom_id(payment) %>" data-hook="payments_row" class="payment-row" data-payment-id="<%= payment.id %>">
+  <!-- <td><%#= link_to payment.display_number, '#payment', class: 'payment-link', data:{toggle: 'modal', target:'#payment-show-modal'} %></td> -->
+  <td><%= sweet_full_date_time(payment.created_at, zone) %></td>
+  <td class="amount text-center"><%= payment.display_amount %></td>
+  <td class="text-center"><%= payment.payment_method.name %></td>
+  <% if payment.source_type == 'Spree::CreditCard' %>
+    <td class="text-center"><label class='btn btn-xs circle payment_status <%= "#{payment.state}" %>'>
+      <%= "#{Spree.t(payment.state, scope: :payment_states, default: [:missing, '']).to_s.titleize}" %></label>
+    </td>
+    <% p_source = payment.source %>
+    <td class="text-center"><%= "#{p_source.cc_type.capitalize} ending in #{p_source.try(:last_digits)}" %></td>
+    <td class="text-center"><%= "#{0 if p_source.month < 10}#{p_source.month}/#{p_source.year}" %></td>
+  <% else %>
+    <td class="text-center"><label class='btn btn-xs circle payment_status <%= "#{payment.state}" %>'>
+      <%= "#{Spree.t(payment.state, scope: :payment_states, default: [:missing, '']).to_s.titleize}" %></label>
+    </td>
+    <% if card_payments %>
+      <td class="text-center"></td>
+      <td class="text-center"></td>
+    <% end %>
+  <% end %>
+</tr>

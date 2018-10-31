@@ -1,0 +1,12 @@
+<% if flash[:success] %>
+  $('#alert').html("<div class='alert alert-success alert-auto-dissapear'><%= flash[:success] %></div>");
+  setTimeout(function() {
+    $(".alert-auto-dissapear").fadeOut(1500);
+  },2000);
+<% end %>
+
+<% if flash[:error] %>
+  $('#alert').html("<div class='alert alert-success alert-auto-dissapear'><%= flash[:error] %></div>");
+<% end %>
+
+$('#payments-table').replaceWith("<%= j(render(partial: 'spree/shared/orders/payments/payments_table.html.erb', locals:{payments: @order.payments, url_prefix: '/manage'})) %>")

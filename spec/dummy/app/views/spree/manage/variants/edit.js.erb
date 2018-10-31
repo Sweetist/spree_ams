@@ -1,0 +1,33 @@
+$('.portlet', '#variant-modal').html("<%= j render(partial: 'spree/manage/variants/page_content/edit_body.html.erb') %>");
+$('#variant-full-context', '#variant-modal').text('<%= @variant.full_display_name %>');
+$('.variant-title', '#variant-modal').first().append("<div class='actions'><button type='button' class='close modal-close' data-dismiss='modal' aria-hidden='true'></button></div>");
+$('.tab-content', '#variant-modal').first().prepend("<%= j render(partial: 'spree/shared/errors.html.erb') %>");
+$('.make-switch', '#variant-modal').bootstrapSwitch();
+$('.select2','#variant-modal').select2({width: '100%'});
+$('.select2-multiple', '#variant-modal').select2({width: '100%'});
+$('form.product_form', '#variant-modal').attr('data-remote', true);
+$(document).ready(function(){
+  $.fn.modal.Constructor.prototype.enforceFocus = function() {};
+  initLoadAssemblyForm();
+  initAssembly();
+  toggleCostPrice();
+  sumPartCost();
+  initPreventDoubleSubmission();
+  $('.option-val-select').change(function(){
+    if (this.value === 'new'){
+      openOptionTypeModal($(this).find(':selected').data('option-type-id'), $(this).data('variant-id'));
+    }
+  });
+  $('#variant_costing_method').change(toggleCostPrice);
+  $('#variant_preferred_vendor_account_id').change(function(){
+    if($(this).val() === ''){
+      $('#add-to-vendor-list-msg').addClass('hidden');
+      return;
+    }
+    if($('#variant_vendor_account_ids').val().indexOf($(this).val()) === -1){
+      $('#add-to-vendor-list-msg').removeClass('hidden');
+    }else{
+      $('#add-to-vendor-list-msg').addClass('hidden');
+    }
+  });
+});

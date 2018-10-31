@@ -1,0 +1,25 @@
+<div class="content" id="alert">
+  <% if flash[:notice] %>
+    <div class="alert alert-info alert-auto-dissapear">
+      <%= flash[:notice] %>
+    </div>
+  <% end %>
+  <% if flash[:warning] %>
+    <div class="alert alert-warning alert-dismissable">
+      <button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
+      <%= flash[:warning] %>
+    </div>
+  <% end %>
+  <% if flash[:success] %>
+    <div class="alert alert-success alert-auto-dissapear">
+      <%= flash[:success] %>
+    </div>
+  <% end %>
+  <% if flash[:error] %>
+    <div class="alert alert-danger alert-dismissable">
+      <button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
+      <%= flash[:error] %>
+    </div>
+  <% end %>
+<%= render partial: 'spree/shared/errors' %>
+</div>

@@ -1,0 +1,29 @@
+<% colspan = 5 %>
+<% colspan += 1 if current_company.try(:po_include_unit_weight) %>
+
+<% vendor_account = @order.try(:account) %>
+<% if vendor_account %>
+  <% var_ids = vendor_account.purchasable_variants.ids %>
+  <% purchased = [] %>
+  <% unpurchased = [] %>
+  <%
+    indent = ""
+    5.times {indent += "&nbsp;"}
+    @variants.each do |v|
+      if var_ids.include?(v.id)
+        purchased << [v.full_context, v.id]
+      else
+
+        unpurchased << ["#{indent}#{v.full_context}".html_safe, v.id]
+      end
+    end
+  %>
+  <% grouped_options = [['', purchased], ['All products for purchase (not specific to selected vendor)', unpurchased]] %>
+
+<% else %>
+  <% grouped_options = [['', @variants.map{|v| [v.full_context, v.id]}]] %>
+<% end %>
+
+<td colspan="<%= colspan %>" class='form-group' id='variant-select-cell'>
+  <%= select_tag 'variant[line_item_variant_id]', grouped_options_for_select(grouped_options), {include_blank: true, class: 'form-control select2 new-item-required', id: 'new-line-item-select'} %>
+</td>

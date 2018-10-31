@@ -1,0 +1,40 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="row">
+      <%= simple_form_for integration, url: path, method: method, wrapper: :horizontal_form do |f| %>
+        <div class="portlet light">
+          <div class="portlet-title">
+            <div class="caption">
+              <span class="caption-subject font-blue-madison bold uppercase">
+                <%=image_tag(item.fetch(:image, ''), width: '32')%>
+                <%= item.fetch(:name, '') %>
+              </span>
+            </div>
+          </div>
+          <div class="portlet-body form">
+            <div class="form-body">
+              <% Spree::ShippingEasyIntegration::Item::SHIPPING_EASY_SWITCHER_FIELDS.each do |field|%>
+                <%= f.input "shipping_easy_#{field}".to_sym, as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']], label: "#{field.titleize}", label_method: :last, value_method: :first, wrapper: :horizontal_radio_and_checkboxes %>
+              <% end %>
+              <%= f.input :shipping_easy_round, as: :select, collection: [[Spree.t('round_method.round'), 'round'],[Spree.t('round_method.floor'), 'floor'],[Spree.t('round_method.ceil'), 'ceil']], label: 'Fractional Line Quantity', include_blank: false %>
+              <%= f.input :integration_key, as: :hidden, input_html: { value: item.fetch(:integration_key, '') } %>
+            <% Spree::ShippingEasyIntegration::Item::SHIPPING_EASY_FORM_FIELDS.each do |field|%>
+                <%= f.input "shipping_easy_#{field}".to_sym, as: :string, label: "Shipping Easy #{field.titleize}" %>
+            <% end %>
+            <%= render partial: "spree/manage/integrations/shared/form", locals: { item: @integration, f: f } %>
+            <div class='form-actions'>
+              <div class='pull-right'>
+                <%= link_to manage_integration_path(integration.id), class: 'btn btn-default' do %>
+                  <i class='fa fa-times'></i> Cancel
+                <% end %>
+                <button class='btn btn-primary'>
+                  <i class='fa fa-check'></i> Save
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

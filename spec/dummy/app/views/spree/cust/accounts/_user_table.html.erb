@@ -1,0 +1,31 @@
+<div class="portlet-body">
+  <%= link_to new_account_user_path(@account), class: "btn btn-primary pull-right margin-bottom-10" do %>
+    <i class="fa fa-plus"></i>&nbsp;Add User
+  <% end %>
+  <div class='table'>
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th><i class="fa"></i>First Name</th>
+          <th><i class="fa"></i>Last Name</th>
+          <th><i class="fa"></i>Position</th>
+          <th><i class="fa"></i>Email</th>
+          <th><i class="fa"></i>Phone</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% users.each do |u| %>
+          <% unless u.has_spree_role?("admin") %>
+            <tr>
+              <td><%= u.firstname %></td>
+              <td><%= u.lastname %></td>
+              <td><%= u.position %></td>
+              <td><%= u.email %></td>
+              <td><%= u.phone %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      <% end %>
+    </table>
+  </div>
+</div>

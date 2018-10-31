@@ -1,0 +1,50 @@
+<%= content_for :head_title do %>
+  Edit Integration
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Integrations", manage_integrations_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <span><%= @item.fetch(:name, '') %></span>
+    </li>
+  </ul>
+<% end %>
+
+<div class="content">
+  <%= render partial: "form_#{@item.fetch(:integration_key)}", locals: { item: @item, integration: @integration, path: manage_integration_path(@integration.id), method: :put } %>
+  <%= render partial: 'synchronization_log', locals: {integration: @integration} %>
+</div>
+
+<script type='text/javascript'>
+  var toggleShippingMethods = function(){
+    if ($('#integration_item_limit_shipping_method_by').val() === ''){
+      $('#shipping_methods_container').hide();
+    }else{
+      $('#shipping_methods_container').show();
+    }
+  }
+
+  var togglePaymentMethods = function(){
+    if ($('#integration_item_limit_payment_method_by').val() === ''){
+      $('#payment_methods_container').hide();
+    }else{
+      $('#payment_methods_container').show();
+    }
+  }
+
+  $('#integration_item_limit_shipping_method_by').change(toggleShippingMethods);
+  $('#integration_item_limit_payment_method_by').change(togglePaymentMethods);
+
+  $(document).ready(function(){
+    toggleShippingMethods();
+    togglePaymentMethods();
+  });
+</script>

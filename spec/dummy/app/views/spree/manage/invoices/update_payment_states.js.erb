@@ -1,0 +1,9 @@
+<% @invoices.each do |invoice| %>
+  <% pm_status = invoice.payment_status(true) %>
+  var statusText = '<%= Spree.t(pm_status, scope: :payment_statuses, default: [:missing, '']).to_s.titleize %>';
+  var $pmLabel = $('label.payment_status.updating[data-invoice-id="<%= invoice.id %>"]');
+
+  if ($pmLabel.text() !== statusText){
+    $pmLabel.replaceWith("<label class='btn btn-xs circle payment_status <%= pm_status %>' data-invoice-id='<%= invoice.id %>'><%= Spree.t(pm_status, scope: :payment_statuses, default: [:missing, '']).to_s.titleize %></label>").hide().fadeIn(1000);
+  }
+<% end %>

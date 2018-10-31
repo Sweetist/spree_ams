@@ -1,0 +1,4 @@
+$('#create-bill-address-modal').modal('hide');
+
+$('#address_modal').modal('show');
+$('#address_modal').html("<%= j render("/spree/cust/orders/addresses/new_bill_address_modal")%>")

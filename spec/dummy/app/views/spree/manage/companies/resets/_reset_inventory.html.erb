@@ -1,0 +1,33 @@
+<%= form_for :company, url: reset_inventory_manage_account_path, method: :post, remote: true, html: {class: 'form prevent-double-submission', id: 'reset-inventory-form'} do |f| %>
+  <div class='portlet box red'>
+    <div class="portlet-title">
+      <div class="caption">
+        <i class='fa fa-exclamation-triangle'></i>
+        <span class='caption-subject'>Danger Zone - Reset Inventory</span>
+      </div>
+    </div>
+    <div class='portlet-body'>
+      <div class='form-body'>
+        <div class='row'>
+          <div class='col-xs-12'>
+            <p class='help-block-italic'>
+              <strong>WARNING:</strong> It is highly recommended that you ship any orders with delivery dates in the past that have already been accounted for in your stock counts.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class='form-actions'>
+        <div class='pull-right'>
+          <%= link_to '#confirm-inventory-reset-modal', class: 'btn red',
+            data: {toggle: 'modal', target:'#confirm-inventory-reset-modal'} do %>
+            <i class='fa fa-exclamation-triangle'></i> Reset Inventory
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+  <%= render partial: 'spree/manage/companies/confirm_with_email_modal',
+    locals: { modal_id: 'confirm-inventory-reset-modal',
+              title: 'Confirm Reset',
+              warning_message: Spree.t("data_reset.reset_inventory.warning_message")} %>
+<% end %>

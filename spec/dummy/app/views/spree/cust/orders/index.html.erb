@@ -1,0 +1,149 @@
+<%= content_for :head_title do %>
+  Orders
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="breadcrumb">
+    <li>
+      <%= link_to "Home", root_path %>
+    </li>
+    <li>
+      <%= link_to "Orders", orders_path %>
+    </li>
+  </ul>
+<% end %>
+
+<%= search_form_for @search, url: orders_path, class: "form", id: "invoice_search_form" do |f| %>
+  <%= render partial: 'advanced_search', locals: {f: f} %>
+<% end %>
+
+<div class="content">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="table-scrollable">
+          <table class="table table-hover" id="sample_1">
+            <thead>
+              <tr>
+                <th>
+                  <%= sort_link @search, :invoice_date, "Invoice Date" %>
+                </th>
+                <th>
+                  <%= sort_link @search, :delivery_date, "#{@customer.vendor_order_date_text} Date" %>
+                </th>
+                <th>
+                  <%= sort_link @search, :vendor_name, "Vendor" %>
+                </th>
+                <th>
+                  <%= sort_link @search, :account_default_display_name, "Account" %>
+                </th>
+                <th>
+                  <%= sort_link @search, :number, "Order #" %>
+                </th>
+                <th>
+                  <%= sort_link @search, :item_count, "Total Items" %>
+                </th>
+                <th>
+                  <%= sort_link @search, :total, "Total" %>
+                </th>
+                <th>
+                  Status
+                  <%#= sort_link(@search, :state, "Status") %>
+                </th>
+                <% if any_vendor_view_order_payments? %>
+                  <th>
+                    Payment Status
+                  </th>
+                <% end %>
+                <th></th><!-- placeholder for pdf invoice -->
+              </tr>
+
+            </thead>
+            <tbody>
+              <% @orders.each do |order| %>
+                <tr class="<%= 'alert-danger' if order.state == 'review' %>">
+                  <td>
+                    <%= link_to edit_order_path(order), class: "orders-list-order-link cel" do %>
+                      <%= display_vendor_date_format(order.invoice_date, @vendor.date_format) rescue '' %>
+                    <% end %>
+                  </td>
+                  <td>
+                    <%= link_to edit_order_path(order), class: "orders-list-order-link cel" do %>
+                      <%= display_vendor_date_format(order.delivery_date, @vendor.date_format) rescue '' %>
+                    <% end %>
+                  </td>
+                  <td>
+                    <%= link_to edit_order_path(order), class: "orders-list-order-link cel" do %>
+                      <%= order.vendor.name %>
+                    <% end %>
+                  </td>
+                  <td>
+                    <%= link_to edit_order_path(order), class: "orders-list-order-link cel" do %>
+                      <%= order.account.default_display_name %>
+                    <% end %>
+                  </td>
+                  <td>
+                    <%= link_to edit_order_path(order), class: "orders-list-order-link cel" do %>
+                        <%
+                          if order.viewable_comments?(current_spree_user)
+                        %>
+                            <%=
+                              "#{order.display_number}
+                                <i style='margin-left: 10px' class='fa fa-sticky-note-o' aria-hidden='true'></i>
+                              ".html_safe
+                            %>
+                        <% else %>
+                          <%= order.display_number %>
+                        <% end %>
+                    <% end %>
+                  </td>
+                  <td>
+                    <%= link_to edit_order_path(order), class: "orders-list-order-link cel" do %>
+                      <%= order.item_count %>
+                    <% end %>
+                  </td>
+                  <td>
+                    <%= link_to edit_order_path(order), class: "orders-list-order-link cel" do %>
+                      <%= display_sweet_price(order.total, order.currency) %>
+                    <% end %>
+                  </td>
+                  <td>
+                    <%= link_to edit_order_path(order), class: "orders-list-order-link cel" do %>
+                      <%= order.state == 'complete' ? 'Submitted' : order.state.capitalize %>
+                    <% end %>
+                  </td>
+                  <% if any_vendor_view_order_payments? %>
+                    <td>
+                      <% if order.vendor.cust_can_view?('order', 'payment_state') %>
+                        <% status = order.payment_status %>
+                        <%= link_to edit_order_path(order) do %>
+                          <span class="btn btn-xs circle payment_status <%= status %>">
+                            <%= Spree.t(status, scope: :payment_statuses, default: [:missing, '']).to_s.titleize %>
+                          </span>
+                        <% end %>
+                      <% else %>
+                        --
+                      <% end %>
+                    </td>
+                  <% end %>
+                  <td>
+                    <% if order.invoice_id %>
+                      <%= link_to invoice_path(order.invoice_id, format: :pdf), target: '_blank' do %>
+                        <i class='fa fa-file-pdf-o'></i>
+                      <% end %>
+                    <% end %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <%= paginate @orders %>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+  $('#search-form').submit(function(){
+    $('#show-incomplete-input').val($('#show-incomplete-select').val())
+  })
+</script>

@@ -1,0 +1,245 @@
+<% @discount_price = avv ? avv.price : variant.price %>
+<script type="text/javascript" src="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+
+<div class="row">
+  <div class="col-sm-6 margin-bottom-10">
+    <%= render partial: 'spree/cust/variants/page_content/image' %>
+    <br>
+  </div>
+  <div class='col-sm-6'>
+    <h3><%= "#{@variant.full_display_name}" %></h3>
+    <% if @variant.description_string.present? %>
+      <hr>
+      <%= raw(@variant.description_string.html_safe) %>
+    <% end %>
+    <hr>
+    <div class='row'>
+      <div class="price-availability-block col-xs-12">
+        <div class="price">
+          <% if avv && avv.try(:recalculating).to_i < Spree::AccountViewableVariant::RecalculatingStatus['complete'] %>
+            Price is updating...
+            <%= link_to "Update Now", update_customized_pricing_path(avv_id: avv.id),
+              class: "btn btn-xs btn-success", id: "update-price-#{avv.id}" %>
+          <% else %>
+            <h1>
+              <strong style="font-weight:400;"><span style="font-size:28px;"><%= currency_symbol(@product.currency) %></span><%= number_with_precision(@discount_price, precision: 2) %></strong>
+              <% if current_vendor.show_suggested_price && @discount_price.to_d < variant.price  %>
+              <em>
+                <span class="suggested-price" style="font-size:16px;">SRP.
+                  <span class="price">
+                    <%= display_sweet_price(variant.price, variant.currency) %>
+                  </span>
+                </span>
+              </em>
+              <% end %>
+            </h1>
+          <% end %>
+
+          <% line_items = @current_order.line_items.where(variant_id: variant.id) %>
+          <% multi_line = line_items.count > 1 %>
+          <% sum_stock_items = current_vendor_view_settings.try(:catalog_stock_level_sum) %>
+          <% stock_location = @current_order.try(:default_stock_location) %>
+          <% stock_message = variant.display_stock_level(sum_stock_items, stock_location) %>
+        </div>
+        <div class="availability">
+          <% if stock_message.present? %>
+            Availability: <strong><%= stock_message %></strong>
+          <% end %>
+        </div>
+
+
+      </div>
+    </div>
+    <hr>
+    <div class='row margin-top-20'>
+      <div class='col-xs-12'>
+        <%= render partial: 'spree/cust/variants/page_content/cart_fields',
+        locals: {
+          variant: @variant,
+          order: @current_order,
+          avv: @avv,
+          line_items: line_items,
+          stock_message: stock_message,
+          multi_line: multi_line } %>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+<hr>
+<div class='row'>
+  <% variant.ordered_option_values.each do |ov| %>
+    <div class="col-md-6">
+      <div class="row static-info">
+        <div class="col-xs-5 name"><%= ov.option_type.try(:presentation) %>:</div>
+        <div class="col-xs-7 value"><%= ov.presentation %></div>
+      </div>
+    </div>
+  <% end %>
+</div>
+<div class='row'>
+  <div class="col-md-6">
+    <% if variant.display_name.present? && variant.display_name != variant.full_display_name %>
+      <div class="row static-info">
+        <div class="col-xs-5 name"><%= Spree.t(:display_name, scope: :cust) %>:</div>
+        <div class="col-xs-7 value"><%= variant.display_name %></div>
+      </div>
+    <% end %>
+    <% if current_vendor_view_settings.try(:variant_sku) %>
+      <div class="row static-info">
+        <div class="col-xs-5 name">SKU:</div>
+        <div class="col-xs-7 value"><%= variant.sku %></div>
+      </div>
+    <% end %>
+    <% if variant.minimum_order_quantity.present? && !variant.minimum_order_quantity.zero? %>
+      <div class="row static-info">
+        <div class="col-xs-5 name">Minimum order quantity:</div>
+        <div class="col-xs-7 value"><%= variant.display_minimum_order_quantity %></div>
+      </div>
+    <% end %>
+    <% if current_vendor_view_settings.try(:variant_lead_time) %>
+      <div class="row static-info">
+        <div class="col-xs-5 name">Lead Time (Days):</div>
+        <div class="col-xs-7 value"><%= variant.lead_time %></div>
+      </div>
+    <% end %>
+  </div>
+  <div class="col-md-6">
+    <% if current_vendor_view_settings.try(:variant_pack_size) %>
+      <div class="row static-info">
+        <div class="col-xs-5">Pack/Size:</div>
+        <div class="col-xs-7 bold"><%= variant.pack_size %></div>
+      </div>
+    <% end %>
+    <% unless variant.weight == 0 %>
+      <div class="row static-info">
+        <div class="col-xs-5 name">Weight:</div>
+        <div class="col-xs-7 bold"><%= "#{variant.weight} #{variant.weight_units}" %></div>
+      </div>
+    <% end %>
+    <% if variant.dimensions.present? %>
+      <div class="row static-info">
+        <div class="col-xs-5 name">Dimensions:</div>
+        <div class="col-xs-7 bold"><%= "#{variant.dimensions.join(' x ')} #{variant.dimension_units}" %></div>
+      </div>
+    <% end %>
+    <% unless variant.pack_size_qty.blank? %>
+      <div class="row static-info">
+        <div class="col-xs-5 name">Unit Count:</div>
+        <div class="col-xs-7 bold"><%= "#{variant.pack_size_qty}" %></div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<% if variant.should_show_parts? && variant.parts_variants.presence %>
+  <div class='row margin-top-20'>
+    <div class='col-md-12'>
+      <div class="form-group important-clarifier product-assembly-parts-container">
+        <h4 class='form-section'>Components</h3>
+        <%= render partial: 'spree/cust/variants/page_content/parts', locals: {variant: variant } %>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<% if current_vendor_view_settings.try(:product_similar_products) && variant.all_taxons.present? %>
+<hr class='similar-section'>
+  <div class="row similar-section">
+    <div class="col-md-6">
+      <h3><b style="font-size:16px">Customers also shopped for</b></h3>
+    </div>
+    <div class="col-md-6">
+      <span class="carousel-restart pull-right" style='display: none'>| <a>Start over</a></span>
+      <span class="carousel-page pull-right"></span>
+    </div>
+  </div>
+  <div class="row similar-section">
+    <div class='slick-container'>
+      <div class='multiple-items'>
+        <div id='similar_products' style='text-align: center'>
+          <%= image_tag 'frontend/loading.gif' %>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<script type='text/javascript'>
+  var assignHiddenQty = function($el){
+    $('#item-quantity[data-line-item-id="' + $el.data('line-item-id') + '"]').val($el.val());
+  }
+  $(document).ready(function(){
+    <% if current_vendor_view_settings.try(:product_similar_products) && variant.all_taxons.present? %>
+      var account_id = '<%= @current_vendor_account.id %>';
+      var vendor_id = '<%= @vendor.id %>';
+      var variant_id = '<%= variant.id %>';
+      var product_id = '<%= @product.id %>';
+      $.ajax({
+        url: '/shop/' + vendor_id + '/products/' + product_id + '/variants/' + variant_id + '/similar_products',
+        type: 'GET',
+        dataType: 'script',
+        data: {
+          account_id: account_id
+        }
+      });
+    <% end %>
+
+    $("#add-line-note").off('click').click(function(){
+      $("#line-note-text").show();
+      $("#add-line-note").hide();
+    });
+
+    $('#enter-other-qty').click(function(e){
+      e.preventDefault();
+      $('.product-qty').each(function(){
+        var qty = $('select.product-qty[data-line-item-id="' + $(this).data('line-item-id') + '"]').val()
+        $(this).toggleClass('hidden');
+        $(this).toggleClass('active');
+        $('input.product-qty[data-line-item-id="' + $(this).data('line-item-id') + '"]').val(qty);
+      })
+      $(this).hide();
+    });
+
+    $('.product-qty').change(function(){
+      assignHiddenQty($(this));
+    });
+  });
+  $(document).ajaxComplete(function() {
+    $('.multiple-items').on('init reInit afterChange', function (event, slick, currentSlide, nextSlide) {
+      //currentSlide is undefined on init -- set it to 0 in this case (currentSlide is 0 based)
+      var i = (currentSlide ? currentSlide : 0) + 1;
+      if (slick.slideCount < 1) {
+        $('.similar-section').remove();
+      }
+      if ((slick.slideCount / 4) <= 1) {
+        $('.carousel-page').css('display', 'none');
+      }
+      if (i > 1) {
+        $('.carousel-page').text('Page ' + parseInt(i/4 + 1) + ' of ' + slick.slideCount / 4 + ' ');
+        $('.carousel-restart').css('display', 'inline');
+      } else {
+        $('.carousel-page').text('Page ' + parseInt(i/4 + 1) + ' of ' + slick.slideCount / 4);
+        $('.carousel-restart').css('display', 'none');
+      }
+      if (slick.slideCount < 4) {
+        $('.slick-container').css('margin-left', '5px');
+        $('.slick-track').css('margin-left', 0);
+      }
+    });
+
+    $('.multiple-items').slick({
+      infinite: true,
+      slidesToShow: 4,
+      slidesToScroll: 4,
+      prevArrow: '<button class="btn btn-primary slickprev"><i class="fa fa-angle-left" aria-hidden="true"></i></button>',
+      nextArrow: '<button class="btn btn-primary slicknext"><i class="fa fa-angle-right" aria-hidden="true"></i></button>',
+      infinite: false
+    });
+
+    $('.carousel-restart').click(function(){
+      $('.multiple-items').slick('slickGoTo', 1);
+    });
+  });
+</script>

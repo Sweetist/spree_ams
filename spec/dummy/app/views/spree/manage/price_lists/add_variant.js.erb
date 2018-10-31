@@ -1,0 +1,15 @@
+if($('.variant-row[data-variant-id="<%= @variant.id %>"]', '#variants_by_individual').length){
+  var $variantRow = $('.variant-row[data-variant-id="<%= @variant.id %>"]', '#variants_by_individual');
+  $variantRow.remove();
+  $('#variants_by_individual').append($variantRow);
+
+  $variantRow.show();
+  $variantRow.find('input.destroy').val('false');
+  var $tr = $(this).closest('tr');
+  var idx = $tr.data('idx');
+  $('input[name="price_list[price_list_variants_attributes][' + idx + '][_destroy]"]', '#variants_by_individual').val('true');
+  $tr.hide();
+}else{
+  $('#variants_by_individual').append("<%= j render(partial: 'spree/manage/price_lists/form/variant_row', locals: {variant: @variant, idx: @idx, price_list_variant: @price_list_variant, currency: current_company.currency, category: 'individual'}) %>");
+}
+$('#add-variant-btn').removeProp('disabled');

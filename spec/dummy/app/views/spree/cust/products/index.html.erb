@@ -1,0 +1,147 @@
+<%= content_for :head_title do %>
+  <%= @vendor.name %> Product Catalog
+<% end %>
+
+<%= content_for :search_for_products do %>
+  <%= render partial: 'spree/cust/products/search_bar' %>
+<% end %>
+<% has_many_vendors = current_spree_user.vendor_accounts.where(vendor_id: @vendor.try(:id)).count > 1 %>
+<% display_categories = current_vendor_view_settings.try(:catalog_categories) %>
+<%= content_for :page_bar do %>
+  <ul class="breadcrumb">
+    <li>
+      <%= link_to "Home", root_path %>
+    </li>
+    <li>
+      <span> <%= @vendor.name %> Product Catalog</span>
+    </li>
+  </ul>
+  <% unless display_categories %>
+    <div class='margin-bottom-10'>
+      <% if has_many_vendors %>
+        <%= render partial: 'my_accounts_select' %>
+      <% end %>
+    </div>
+  <% end %>
+<% end %>
+
+<%= content_for :cust_banner do %>
+  <% if @pages_header.present? && request.host != ENV['DEFAULT_URL_HOST'] %>
+    <%= render partial: 'banner_with_static' %>
+  <% else %>
+    <%= render partial: 'banner' %>
+  <% end %>
+<% end %>
+
+<%= content_for :pre_header_left do %>
+  <% if current_vendor_view_settings.try(:catalog_account_name_and_number) %>
+    <h4 class='margin-top-10'>
+      <b><%= @current_vendor_account.try(:display_name_and_number) %></b>
+    </h4>
+  <% end %>
+<% end %>
+
+<div class="content">
+  <div class="row">
+    <% if display_categories %>
+      <div class="sidebar col-md-3 col-sm-5">
+        <% if has_many_vendors %>
+          <%= render partial: 'my_accounts_select' %>
+        <% end %>
+        <%= render partial: 'filter_by_categories' %>
+      </div>
+    <% end %>
+    <div class="<%= display_categories ? 'col-md-9 col-sm-7' : 'col-xs-12' %>">
+      <div class="row product-list">
+        <% if @current_vendor_account.account_viewable_variants.count < @vendor.variants_including_master.count %>
+          <div class="alert alert-warning alert-dismissable">
+          <button type='button' class='close' data-dismiss='alert' aria-hidden='true'></button>
+          Your customized catalog is still updating. Some of the products may not be available yet.</div>
+        <% end %>
+        <% if @current_vendor_account.account_viewable_variants.visible.any? %>
+          <div class="table-scrollable margin-bottom-10">
+            <% if @current_order %>
+              <%= form_for @current_order, url: order_add_to_cart_path(@current_order),
+                method: 'post', html: {id: 'add-to-order-form', class: 'prevent-double-submission'},
+                remote: (@vendor.cva.try(:catalog_after_add_to_cart) == 'products') do |f| %>
+                <%= render partial: 'products_table', locals: {f: f} %>
+              <% end %>
+            <% else %>
+              <%= render partial: 'products_table' %>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="alert alert-warning alert-dismissable">
+          <button type='button' class='close' data-dismiss='alert' aria-hidden='true'></button>
+          <%= @vendor.name %> has not shared any products with this account.  Please contact <%= @vendor.name %> and request that their catalog be made visible to your account.</div>
+        <% end %>
+      </div>
+      <div class='pull-right'>
+        <%= paginate @account_viewable_variants %>
+      </div>
+    </div>
+  </div>
+</div>
+<%= content_for :static_footer do %>
+  <% if @pages_footer.present? && request.host != ENV['DEFAULT_URL_HOST'] %>
+    <%= render partial: 'static_content_footer' %>
+  <% end %>
+<% end %>
+<%= render partial: 'spree/cust/orders/modals/variant_container' %>
+
+<script type='text/javascript'>
+  var initAddToCartModal = function(){
+    $('.add-to-cart-modal-btn').click(function(e){
+
+      $('.modal-content', '#add-to-cart-modal').html("<%= j render(partial: 'spree/shared/loading_text.html.erb', locals: {text: 'Loading Product'}) %>");
+      e.preventDefault();
+
+      var variantId = $(this).data('variant-id');
+      var orderId = $(this).data('order-id');
+
+      $.ajax({
+        url: '/orders/' + orderId +'/variant.js',
+        type: 'GET',
+        dataType: 'script',
+        data: {
+          variant_id: variantId
+        }
+      });
+    });
+  }
+
+  $(document).ready(function(){
+    initAddToCartModal();
+    $('#add-to-cart-modal').on('show.bs.modal', function (e) {
+      var button = e.relatedTarget;
+      if ($(button).hasClass('multiple')) {
+        alert("<%= Spree.t('cust.multi_line_warning') %>");
+        e.stopPropegation();
+      }
+    });
+  });
+
+  function updateSidebarSelections(){
+    checkedInputs = $('.main').find('.sidebar input:checked');
+    var labels = "";
+    for(var i = 0; i < checkedInputs.length; i++){
+      labels = labels + " " + $(checkedInputs[i]).data('taxon-id');
+    }
+    //using string instead of array so as to handle #150468195
+    $('.form').find('#hidden-search-text').val(labels.trim());
+  }
+  $('form').submit(function(){
+    $('.table-scrollable').append("<section class='loader'></section>");
+  });
+  $('#cust_search_btn').click(function(){
+    updateSidebarSelections();
+  });
+  $('#search-btn').click(function(){
+    updateSidebarSelections();
+    $('.form').submit();
+  });
+  $('a.link-to-checkbox').click(function(e){
+    e.preventDefault();
+    $(this).parents('.panel-heading').find('input.cb-sidebar').click();
+  });
+</script>

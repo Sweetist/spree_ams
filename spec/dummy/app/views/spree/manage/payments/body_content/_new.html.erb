@@ -1,0 +1,76 @@
+<% if @payment_methods.any? %>
+  <div class='row'>
+    <%= form_for @payment, url: manage_order_payments_path(@order), method: :post, html: {class: 'prevent-double-submission form', id: 'payment-form'} do |f| %>
+
+      <div class='col-md-12'>
+        <div class='form-body'>
+          <%= render partial: 'form', locals: { f: f } %>
+          <div id='use-for-mark-paid-container' class="<%= 'mark-paid-visible' if @mark_paid_visible %>">
+            <%= check_box_tag :mark_paid %>
+            <%= label_tag :mark_paid, raw("#{Spree.t('use_for_mark_paid.extended_label')}") %>
+            <i class='fa fa-info-circle tooltips'
+            data-original-title='<%= Spree.t('use_for_mark_paid.extended_helper') %>'
+            data-container='body'></i>
+          </div>
+        </div>
+
+        <div class="form-actions" data-hook="buttons">
+          <div class='pull-right'>
+            <%= link_to edit_manage_order_path(@order), class: "btn btn-default", data: {dismiss: 'modal'} do %>
+              <i class='fa fa-times'></i> <%= Spree.t(:Cancel) %>
+            <% end %>
+            <% if States[@order.state] < States['complete'] %>
+              <button class='btn btn-primary pay-and-approve' id='apply-payment-btn'>
+                <i class='fa fa-check'></i>&nbsp;<%= Spree.t(:pay_and_approve) %>
+              </button>
+            <% else %>
+              <button class='btn btn-primary' id='apply-payment-btn'>
+                <i class='fa fa-check'></i>&nbsp;Apply Payment
+            </button>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+    <% end %>
+  </div>
+
+<% else %>
+  <div class="alert alert-info">
+    <%= Spree.t(:cannot_create_payment_without_payment_methods) %>
+    <%= link_to Spree.t(:please_define_payment_methods), spree.manage_payment_methods_url %>
+  </div>
+<% end %>
+
+<script type='text/javascript'>
+$('.pay-and-approve').click(function(e){
+  var deliveryDate = new Date($('#order-delivery-date').val());
+  var today = new Date();
+  var commit = e.currentTarget.value
+  if (deliveryDate < today){
+    e.preventDefault();
+    if (confirm('The date selected is in the past, are you sure you want to proceed?')){
+      $('#single-order-form').append("<input type='hidden' name='commit' value='" + commit + "'>");
+      $('#single-order-form').submit();
+    }
+  }
+  var recalculateShipping = <%= @order.recalculate_shipping %>
+  var recalculate = $('#recalculate_shipping_update').attr('style') === '';
+  if (recalculateShipping || recalculate){
+    e.preventDefault();
+    if (confirm('Shipping has not been updated. Are you sure you want to approve this order?')){
+      $('#single-order-form').append("<input type='hidden' name='commit' value='" + commit + "'>");
+      $('#single-order-form').submit();
+    }
+  }
+  var orderRuleErrors = <%= @order.errors_from_order_rules.any? %>
+  <% current_errors = @order.errors_from_order_rules %>
+  if (orderRuleErrors){
+    e.preventDefault();
+      if (confirm("<%= raw(current_errors.join('. ')) %>" + ". Are you sure you want to proceed?")){
+        $('#single-order-form').append("<input type='hidden' name='commit' value='" + commit + "'>");
+        $('#single-order-form').submit();
+    }
+  }
+});
+</script>

@@ -1,0 +1,23 @@
+<h3>Refunds</h3>
+<table class="table table-condensed table-bordered" id='refunds' data-order-id='<%= @order.number %>'>
+  <thead>
+    <tr data-hook="refunds_header">
+      <th><%= "#{Spree.t('date')}/#{Spree.t('time')}" %></th>
+      <th><%= Spree.t(:amount) %></th>
+      <th><%= Spree.t(:payment_method) %></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% zone = @order.try(:vendor).try(:time_zone) %>
+    <% refunds.each do |refund| %>
+      <% payment = refund.linked_payment %>
+      <% pm_name = payment_method_name(payment) %>
+      <% pm_name = "#{pm_name} (...#{payment.source.try(:last_digits)})" if payment.source_type == 'Spree::CreditCard' %>
+      <tr id="<%= dom_id(refund) %>" data-hook="refunds_row" class="<%= cycle('odd', 'even', name: 'refund_table_cycle')%>">
+        <td><%= sweet_full_date_time(refund.created_at, zone) %></td>
+        <td class="amount"><%= refund.display_amount %></td>
+        <td><%= pm_name %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

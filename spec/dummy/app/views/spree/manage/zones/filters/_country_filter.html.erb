@@ -1,0 +1,9 @@
+<div class='row'>
+  <div class='col-md-12' id='zone-country-filter'>
+    <div class="form-group">
+      <%= label_tag :country_filter_id, Spree.t(:country), class: 'control-label' %><br>
+      <%= collection_select :zone, :filter_id, Spree::Country.all.order('name ASC'), :id, :name, {include_blank: true},
+      {name: '', selected: filter_id, id: "zone_country_filter_id", class: 'select2 form-control'} %>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,59 @@
+<%= content_for :head_title do %>
+  My Profile
+<% end %>
+
+<%= content_for :page_bar do %>
+<ul class="breadcrumb">
+  <li>
+    <%= link_to "Home", root_path %>
+  </li>
+  <li>
+    <%= link_to "My Company", edit_my_company_path %>
+  </li>
+  <li>
+    <span>Add User</span>
+  </li>
+</ul>
+<% end %>
+
+<div class="portlet light">
+  <div class="portlet-title">
+      <div class="caption">
+        <span class="caption-subject font-blue-madison bold uppercase">
+          Add User to <%= @company.name %>
+        </span>
+      </div>
+  </div>
+  <div class="portlet-body form">
+    <div class="contact-form">
+      <%= form_for @user, url: my_company_users_path(@company, @user), html: {class: 'form'} do |f| %>
+        <div class='form-body'>
+          <%= render partial: "form", locals: {f: f} %>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <%= f.label :password, class: "control-label" %><br>
+                <%= f.password_field :password, class: "form-control" %>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <%= f.label :password_confirmation ,class: "control-label"%> <br />
+                <%= f.password_field :password_confirmation, class: "form-control" %> <br />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-actions">
+          <div class='pull-right'>
+          <%= link_to my_company_users_path, class: 'btn btn-default' do %>
+            <i class='fa fa-times'></i> <%= Spree.t(:Cancel) %>
+          <% end %>
+          <button class='btn btn-primary'><i class='fa fa-check'></i> <%= Spree.t(:save) %></button>
+        </div>
+        </div>
+      <% end %>
+      <div class="clear"></div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,9 @@
+<% if @permission_group %>
+  $("#permission_group_<%= @permission_group.id %>").remove();
+<% else %>
+  $('#alert').append("<div class='alert alert-danger alert-dismissable'><button type='button' class='close' data-dismiss='alert' aria-hidden='true'></button> This permission group cannot be removed</div>")
+<% end %>
+
+<% if flash[:error] %>
+  $('#alert').append("<div class='alert alert-danger alert-dismissable'><button type='button' class='close' data-dismiss='alert' aria-hidden='true'></button><%= flash[:error] %> </div>")
+<% end %>

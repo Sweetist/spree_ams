@@ -1,0 +1,128 @@
+<%= content_for :head_title do %>
+  Standing Orders
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Orders", manage_orders_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <span>Standing Orders<span>
+    </li >
+  </ul>
+  <div class="page-toolbar">
+    <% if (@standing_order_limit) && (@orders.total_count >= @standing_order_limit ) %>
+      <button class="btn green-jungle disabled pull-right tooltips" data-container="body" data-placement="left" data-original-title="Exceeded maximum number of standing orders for this plan">
+        <i class="fa fa-plus"></i>&nbsp;New Standing Order
+      </button>
+    <% else %>
+      <%= link_to new_manage_standing_order_path, class: "btn green-jungle pull-right" do %>
+        <i class="fa fa-plus"></i>&nbsp;New Standing Order
+      <% end %>
+    <% end %>
+  </div>
+<% end %>
+
+<%= search_form_for [:manage, @search], class: "form" do |f| %>
+  <%= render partial: 'advanced_search', locals: {f: f} %>
+<% end %>
+
+<% if (@standing_order_limit) && (@vendor.sales_standing_orders.count  >= @standing_order_limit) %>
+  <div class ="alert alert-warning alert-dismissable">
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
+    You're limited to <%= @standing_order_limit %> standing orders!
+    <%= link_to new_manage_message_path(subject: 'Upgrade Plan'), class: "alert-link" do%>
+      Upgrade
+    <% end %>
+    &nbsp;to add more standing orders.
+  </div>
+<% end %>
+
+<div class="content">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="">
+        <table class="table table-striped table-hover basic-table-no-buttons" data-paging="false">
+          <thead>
+            <tr>
+              <th>
+                <%= sort_link @search, :name, "Name" %>
+              </th>
+              <th>
+                <%= sort_link @search, :spree_customer_name, "Customer" %>
+              </th>
+              <th>
+                <%= sort_link @search, :frequency_id, "Frequency" %>
+              </th>
+              <th>
+                Actions
+              </th>
+              <th>
+                Next Date
+              </th>
+              <th>
+                Total
+              </th>
+              <th class='actions'>
+                <!-- space for actions -->
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @orders.each do |order| %>
+              <% next_at = order.standing_order_schedules.where("visible = true and deliver_at > ?", Date.current.in_time_zone(order.vendor.time_zone)).order(:deliver_at).first %>
+              <tr>
+                <td>
+                  <%= link_to edit_manage_standing_order_path(order), class: "orders-list-order-link cel" do %>
+                    <%= order.name %>
+                  <% end %>
+                </td>
+                <td>
+                  <%= link_to edit_manage_standing_order_path(order), class: "orders-list-order-link cel" do %>
+                    <%= order.account.fully_qualified_name %>
+                  <% end %>
+                </td>
+                <td>
+                  <%= link_to edit_manage_standing_order_path(order), class: "orders-list-order-link cel" do %>
+                    <%= order.frequency_string %>
+                  <% end %>
+                </td>
+                <td>
+                  <%= link_to edit_manage_standing_order_path(order), class: "orders-list-order-link cel" do %>
+                    <%= order.timing_string %>
+                  <% end %>
+                </td>
+                <td>
+                  <%= link_to edit_manage_standing_order_path(order), class: "orders-list-order-link cel" do %>
+                    <%= sweet_date(next_at.try(:deliver_at), order.vendor.time_zone) %>
+                  <% end %>
+                </td>
+                <td>
+                  <%= link_to edit_manage_standing_order_path(order), class: "orders-list-order-link cel" do %>
+                    <%= display_sweet_price(order.calculated_total.to_f, order.currency) %>
+                  <% end %>
+                </td>
+                <td>
+                  <%= link_to manage_standing_order_clone_path(order), method: :post,
+                      data: {'original-title' => Spree.t(:clone)},
+                      class: "btn btn-sm pull-right green tooltips" do %>
+                    <i class="fa fa-clone"></i>
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<%= paginate @orders %>

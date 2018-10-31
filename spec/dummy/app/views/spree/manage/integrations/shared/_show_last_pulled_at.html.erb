@@ -1,0 +1,21 @@
+<% Spree::Integrations::ItemSharedAttributes::INTEGRATIONS_SHARED_PULL_TYPES.each do |type| %>
+  <% if item.send("can_poll_#{type}s?") %>
+    <div class='row'>
+      <div class='col-sm-3 name'>
+        <%= "#{I18n.t(type, scope: :integrations)} #{I18n.t('integrations.polling_frequency.label')}" %>
+      </div>
+      <div class="col-md-9 value">
+        <%= item.display_polling_frequency(item.try("#{type}_poll_frequency")) %>
+      </div>
+    </div>
+    <br>
+  <% end %>
+  <% next unless item.send("show_#{type}_last_pulled_at") %>
+  <div class="row">
+    <div class="col-md-3 name"><%= "#{type}_last_pulled_at".titleize %>:</div>
+    <div class="col-md-9 value">
+      <%= sweet_full_date_time(item.send("#{type}_last_pulled_at"), item.company.time_zone) rescue '' %>
+    </div>
+  </div>
+  <br>
+<% end %>

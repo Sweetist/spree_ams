@@ -1,0 +1,13 @@
+<div class="row static-info">
+  <div class="col-md-5 name">
+    <%= form.label :credit_to_apply, Spree.t(:used_credit) %>:
+    <div id="account_available_credit">
+      <%= render partial: 'account_credit', locals: { account: @account,
+                                            currency: @vendor.currency } %>
+    </div>
+  </div>
+  <%= form.hidden_field :credit_to_apply, step: '0.01', class: 'form-control price-field' %>
+  <div class="col-md-7" id="credit-to-apply">
+    <%= display_sweet_price(@account_payment.credit_to_apply, @account_payment.vendor.currency) %>
+  </div>
+</div>

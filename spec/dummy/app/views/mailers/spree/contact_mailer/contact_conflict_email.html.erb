@@ -1,0 +1,13 @@
+<p>
+  There was an issue when <%= @vendor.name %> tried to invite the following contact to their B2B portal.
+</p>
+
+First name: <%= @contact.try(:first_name) %><br>
+Last name: <%= @contact.try(:last_name) %><br>
+Email: <%= @contact.try(:email) %><br>
+
+<br>
+<div>Vendor: <%= @vendor.name %></div>
+<div>Customer: <%= @customer.try(:name) %></div>
+
+<p>Please link the contact's user account to the vendor.</p>

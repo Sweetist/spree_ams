@@ -1,0 +1,60 @@
+<div class="col-md-12">
+  <div class="text-center margin-bottom-10">
+    <h3>Purchase Orders</h3>
+  </div>
+  <div class="table">
+    <table class="table table-hover" id="short-table-no-buttons">
+      <thead>
+        <tr>
+          <th>
+            Purchase Order Date
+          </th>
+          <th>
+            Order #
+          </th>
+          <th>
+            Total Items
+          </th>
+          <th>
+            Total
+          </th>
+          <th>
+            Status
+          </th>
+        </tr>
+      </thead>
+      <tbody id='all-orders'>
+        <% @all_orders.each do |order| %>
+          <tr class="<%= 'alert-danger' if order.state == 'review' %>">
+            <td>
+              <%= link_to edit_manage_purchase_order_path(order), class: "orders-list-order-link cel" do %>
+                <%= display_vendor_date_format(order.invoice_date, @company.date_format) %>
+              <% end %>
+            </td>
+            <td>
+              <%= link_to edit_manage_purchase_order_path(order), class: "orders-list-order-link cel" do %>
+                <%= order.po_display_number %>
+              <% end %>
+            </td>
+            <td>
+              <%= link_to edit_manage_purchase_order_path(order), class: "orders-list-order-link cel" do %>
+                <%= order.item_count %>
+              <% end %>
+            </td>
+            <td>
+              <%= link_to edit_manage_purchase_order_path(order), class: "orders-list-order-link cel" do %>
+                <%= display_sweet_price(order.total, order.currency) %>
+              <% end %>
+            </td>
+            <td>
+              <%= link_to edit_manage_purchase_order_path(order), class: "orders-list-order-link cel" do %>
+                <%= order.state == 'complete' ? 'Submitted' : order.state.capitalize %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
+<%= paginate @all_orders %>

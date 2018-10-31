@@ -1,0 +1,42 @@
+<tr id="<%= dom_id(payment) %>" data-hook="payments_row" class="payment-row" data-payment-id="<%= payment.id %>">
+  <td><%= link_to payment.display_number, '#payment', class: 'payment-link', data:{toggle: 'modal', target:'#payment-show-modal'} %></td>
+  <td><%= link_to sweet_full_date_time(payment.created_at, zone), '#payment', class: 'payment-link', data:{toggle: 'modal', target:'#payment-show-modal'} %></td>
+  <td class="amount text-center"><%= link_to payment.display_amount, '#payment', class: 'payment-link', data:{toggle: 'modal', target:'#payment-show-modal'} %></td>
+  <td class="text-center">
+    <% pm_name = payment_method_name(payment) %>
+    <% pm_name = "#{pm_name} (...#{payment.source.try(:last_digits)})" if payment.source_type == 'Spree::CreditCard' %>
+    <%= link_to pm_name, '#payment', class: 'payment-link', data:{toggle: 'modal', target:'#payment-show-modal'} %>
+  </td>
+  <td class="text-center"><%= link_to payment.display_transaction_id.to_s, '#payment', class: 'payment-link', data:{toggle: 'modal', target:'#payment-show-modal'} %></td>
+  <td class="text-center">
+    <%= link_to '#payment', class: 'payment-link', data:{toggle: 'modal', target:'#payment-show-modal'} do %>
+      <label class="btn btn-xs circle payment_status <%= payment.state %>" data-payment-method="<%= payment.payment_method_id %>">
+        <%= Spree.t(payment.state, scope: :payment_states, default: payment.state.capitalize).to_s.titleize %>
+      </label>
+    <% end %>
+  </td>
+  <% if url_prefix =='/manage' &&
+        current_spree_user.can_write?('payments', 'order') &&
+        payments.any?{ |payment| !%w[void failed].include?(payment.state) } %>
+    <td class="actions actions-2 center">
+      <% payment.actions.sort.reverse.each do |action| %>
+        <% action_btn_color = "#{action}_btn_color" %>
+        <% if action == 'credit' %>
+          <%= link_to '#refund', class: 'btn btn-default btn-sm pull-right tooltips refund-link',
+            data: {'original-title' => 'Refund', toggle: 'modal', target:'#refund-modal'} do %>
+            <i class='fa fa-minus'></i>
+          <% end %>
+        <% else %>
+          <%= link_to fire_manage_order_payment_path(@order, payment, e: action),
+            class: "btn btn-sm #{Spree.t(:btn_color, scope: [:payment_actions, action])} pull-right tooltips disable-after-click", data: {'original-title' => Spree.t(action)}, method: :post do %>
+            <i class="<%= Spree.t(:btn_icon, scope: [:payment_actions, action]) %>"></i>
+          <% end %>
+          <%#= link_to_with_icon(action, Spree.t(action), fire_admin_order_payment_path(@order, payment, e: action), method: :put, no_text: true, data: { action: action }, class: "btn btn-default btn-sm") if can?(action.to_sym, payment) %>
+        <% end %>
+      <% end %>
+      <% unless ['void', 'failed', 'completed'].include?(payment.state) %>
+        <%= button_tag raw("<i class='fa fa-pencil'></i>"), class: 'btn btn-primary btn-sm edit-button pull-right tooltips', data: {'original-title' => 'Edit'} %>
+      <% end %>
+    </td>
+  <% end %>
+</tr>

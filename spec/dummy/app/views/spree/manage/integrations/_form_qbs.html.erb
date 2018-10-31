@@ -1,0 +1,49 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="row">
+      <%= simple_form_for integration, url: path, method: method, wrapper: :horizontal_form do |f| %>
+        <div class="portlet light">
+          <div class="portlet-title">
+            <div class="caption">
+              <span class="caption-subject font-blue-madison bold uppercase">
+                <%=image_tag(item.fetch(:image, ''), width: '32')%>
+                <%= item.fetch(:name, '') %>
+              </span>
+            </div>
+          </div>
+          <div class="portlet-body form">
+            <div class="form-body">
+              <%= f.input :integration_key, as: :hidden, input_html: { value: item.fetch(:integration_key, '') } %>
+              <%= f.input :qbs_password, disabled: true, as: :string, label: 'Password' %>
+              <%= f.input :qbs_match_with_name, as: :radio_buttons, collection: [[true, 'Product Name in Sweet'], [false, 'Product SKU in Sweet']], label: 'Match Quickbooks Item Name to', label_method: :last, value_method: :first, wrapper: :horizontal_radio_and_checkboxes %>
+              <%= f.input :qbs_send_as_invoice, as: :radio_buttons, collection: [[true, 'Invoice'], [false, 'SalesOrder']], label: 'Send Order as', label_method: :last, value_method: :first, wrapper: :horizontal_radio_and_checkboxes %>
+              <%= f.input :qbs_send_order_changes_as_memo, as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']], label: 'Send Order changes as Credit Memo', label_method: :last, value_method: :first, wrapper: :horizontal_radio_and_checkboxes %>
+              <%= f.input :qbs_create_related_objects, as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']], label: 'Create Customers & Products', label_method: :last, value_method: :first, wrapper: :horizontal_radio_and_checkboxes %>
+              <%= f.input :qbs_sweet_is_master, as: :radio_buttons, collection: [[true, 'Quickbooks'], [false, 'Sweet']], label: 'Overwrite conflicts in', label_method: :last, value_method: :first, wrapper: :horizontal_radio_and_checkboxes %>
+              <%= f.input :qbs_use_multi_site_inventory, as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']], label: 'Use Multi-site Inventory', label_method: :last, value_method: :first, wrapper: :horizontal_radio_and_checkboxes %>
+              <%= render partial: "spree/manage/integrations/shared/form", locals: { item: @integration, f: f } %>
+              <div class='form-actions'>
+                <% if integration.created_at %>
+                  <%= link_to manage_integration_execute_path(integration.id, name: "download_qwc"), class: "btn btn-info", data: { turbolinks: false } do %>
+                    <i class='fa fa-download'></i> Download QWC
+                  <% end %>
+                <% end %>
+                <%= link_to manage_integration_execute_path(integration.id, name: "reset_password"), class: "btn btn-danger", data: {confirm: "Are you sure?"} do %>
+                  <i class='fa fa-undo'></i> Reset Password
+                <% end %>
+                <div class='pull-right'>
+                  <%= link_to manage_integration_path(integration.id), class: 'btn btn-default' do %>
+                    <i class='fa fa-times'></i> Cancel
+                  <% end %>
+                  <button class='btn btn-primary'>
+                    <i class='fa fa-check'></i> Save
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

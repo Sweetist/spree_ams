@@ -1,0 +1,15 @@
+<%
+  indent = ""
+  5.times {indent += "&nbsp;"}
+  categories = current_company.taxons.includes(:parent, :children)
+                              .where.not(parent_id: nil)
+                              .select(:id, :parent_id, :lft, :rgt, :name)
+                              .map do |category|
+    ["#{indent}#{category.pretty_name}".html_safe, "#{category.id}"]
+  end
+%>
+<% grouped_options = [['', [['Individual Products', 'individual'], ['All Products', 'all']]], ['Category', categories]] %>
+
+<%= select_tag 'price_list[select_variants_by]',
+  grouped_options_for_select(grouped_options, selected: @price_list.try(:select_variants_by).to_s),
+  {class: 'form-control select2 new-item-required', id: 'select-variants-by'} %>

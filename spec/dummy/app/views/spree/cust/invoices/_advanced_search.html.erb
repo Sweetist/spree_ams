@@ -1,0 +1,95 @@
+<div class="portlet box" id="search">
+  <div class="portlet-title">
+    <div class="col-xs-12 col-sm-6 col-lg-4">
+      <%= f.text_field :number_or_vendor_name_cont, class: 'form-control', placeholder: 'Enter search term' %>
+      <div class="visible-xs-block" style="min-height:10px;">
+      </div>
+    </div>
+    <div class="col-xs-8 col-sm-4" id="basic-search-buttons">
+      <button type="submit" class="btn btn-primary"><i class="fa fa-search" aria-hidden="true"></i> Search</button>
+      <%= link_to invoices_path, class: "btn default" do %>
+        <i class='fa fa-times'></i> Reset
+      <% end %>
+    </div>
+    <div class="tools">
+      <a href="javascript:;" id='toggle-advanced-search'>Advanced <i class="fa fa-angle-down"></i></a>
+    </div>
+  </div>
+  <div class="portlet-body form hidden" id='advanced-search-form'>
+    <div class="form-body">
+      <div class='row'>
+        <div class='col-md-4'>
+          <div class='form-group' data-open="<%= params[:q] && !params[:q].fetch(:number_cont, nil).blank? %>">
+            <%= f.label :number_cont, 'Invoice Number', class: 'control-label' %>
+            <%= f.text_field :number_cont, class: 'form-control' %>
+          </div>
+          <div class='form-group' data-open="<%= params[:q] && (!params[:q].fetch(:end_date_gteq, nil).blank? || !params[:q].fetch(:end_date_lteq, nil).blank?) %>">
+            <label>Invoice Date</label>
+            <%= render partial: 'spree/shared/forms/fields/date_range', locals: {f: f, date_key: :end_date, company: current_customer} %>
+          </div>
+          <div class='form-group' data-open="<%= params[:q] && (!params[:q].fetch(:due_date_gteq, nil).blank? || !params[:q].fetch(:due_date_lteq, nil).blank?) %>">
+            <label>Due Date</label>
+            <%= render partial: 'spree/shared/forms/fields/date_range', locals: {f: f, date_key: :due_date, company: current_customer} %>
+          </div>
+        </div>
+        <div class='col-md-4'>
+          <div class='form-group' data-open="<%= params[:q] && (!params[:q].fetch(:total_gteq, nil).blank? || !params[:q].fetch(:total_lteq, nil).blank?) %>">
+            <label>Total (<%= currency_symbol(@vendor.currency) %>)</label>
+            <div class="input-group">
+              <%= f.text_field :total_gteq, class: 'form-control' %>
+              <span class="input-group-addon"> to </span>
+              <%= f.text_field :total_lteq, class: 'form-control' %>
+            </div>
+          </div>
+          <div class='form-group' data-open="<%= params[:q] && (!params[:q].fetch(:item_count_gteq, nil).blank? || !params[:q].fetch(:item_count_lteq, nil).blank?) %>">
+            <label>Item Count</label>
+            <div class="input-group">
+              <%= f.text_field :item_count_gteq, class: 'form-control' %>
+              <span class="input-group-addon"> to </span>
+              <%= f.text_field :item_count_lteq, class: 'form-control' %>
+            </div>
+          </div>
+          <div class='form-group' data-open="<%= params[:q] && !params[:q].fetch(:account_id_or_account_parent_id_eq, nil).blank? %>">
+            <%= f.label :account_id_or_account_parent_id_eq, 'Account', class: 'control-label' %>
+            <% if request.host == ENV['DEFAULT_URL_HOST'] %>
+              <%= f.collection_select :account_id_or_account_parent_id_eq, current_spree_user.vendor_accounts.includes(:vendor).order('name ASC'), :id, :vendor_account_name, {include_blank: true }, {class: 'select2 form-control'} %>
+            <% else %>
+              <%= f.collection_select :account_id_or_account_parent_id_eq, current_spree_user.vendor_accounts.where(vendor_id: @vendor.try(:id)).includes(:vendor).order('name ASC'), :id, :vendor_account_name, {include_blank: true }, {class: 'select2 form-control'} %>
+            <% end %>
+          </div>
+        </div>
+        <% if any_vendor_view_invoice_payments? %>
+          <div class='col-md-4'>
+            <div class='form-group' data-open="<%= params[:q] && params[:q].fetch(:payment_state_matches_any, []).present? %>">
+              <label>Payment Status</label>
+              <div class='checkbox-group'>
+                <% Spree::Invoice::PaymentStates.each do |state| %>
+                <% next if state == 'pending' %>
+                  <div>
+                    <label class="inline-check-100">
+                    <input type="checkbox" name="q[payment_state_matches_any][]" id="q_payment_state_matches_any_"
+                      value='<%= state %>' class="noUniform" <%= 'checked' if params.fetch(:q, {}).fetch(:payment_state_matches_any, []).include?(state) %>>
+                    <%= state.humanize.titleize %></label>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+    <div class="form-actions">
+      <div class="row">
+        <div class="col-md-12">
+          <div class='btn-set pull-right'>
+            <button type="submit" class="btn btn-primary"><i class="fa fa-search" aria-hidden="true"></i> Search</button>
+            <%= link_to invoices_path, class: "btn default" do %>
+              <i class='fa fa-times'></i> Reset
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

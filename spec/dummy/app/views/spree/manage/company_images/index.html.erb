@@ -1,0 +1,85 @@
+<%= content_for :head_title do %>
+  <%= @account.name %>
+<% end %>
+
+<%= content_for :page_title do %>
+<%= @account.name %>
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", root_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Account", edit_manage_account_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      Images
+    </li>
+  </ul>
+
+  <div class="page-toolbar">
+    <div class="btn-group pull-right">
+      <%= link_to "Back to Account",  edit_manage_account_path, class: "btn green" %>
+    </div>
+  </div>
+
+<% end %>
+
+<div class="content">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="table-scrollable">
+
+
+        <% unless @account.images.any? %>
+          <div class="alert alert-warning alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
+            <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::Image)) %>.
+          </div>
+        <% else %>
+          <table class="index sortable table table-striped table-hover table-checkable" data-hook="images_table" data-sortable-link="<%= update_positions_manage_account_account_images_url %>">
+            <thead>
+              <tr data-hook="images_header">
+                <th colspan="2">
+                  <%= Spree.t(:thumbnail) %>
+                </th>
+                <th>
+                  <%= Spree.t(:alt_text) %>
+                </th>
+                <th class="actions"></th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <% (@account.images).each do |image| %>
+                <tr id="<%= spree_dom_id image %>" data-hook="images_row">
+                  <td class="move-handle text-center">
+                      <i class="fa fa-arrows-alt handle ui-sortable-handle"></i>
+                  </td>
+                  <td class="image">
+                    <%= link_to image_tag(image.attachment.url(:mini)), image.attachment.url(:product) %>
+                  </td>
+                  <td><%= image.alt %></td>
+                 <td class="actions">
+                    <%#= link_to_with_icon 'edit', Spree.t(:edit), edit_manage_account_account_image_url(image), :data => {:action => 'edit'} %>
+                    <%= link_to 'delete', manage_account_account_image_path(image),
+                                  method: :delete,
+                                                data: { confirm: 'Are you sure?' } %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        <% end %>
+
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<%= link_to "Add New Image", new_manage_account_account_image_path, class: "btn btn-primary" %>

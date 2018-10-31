@@ -1,0 +1,198 @@
+<h3>Type & Accounts</h3>
+<div class='row'>
+  <div class="col-md-6">
+    <div class="form-group">
+      <%= f.label :product_type, class: "control-label" do %>
+        <%= Spree.t(:product_type) %> <span class='required'>*</span>
+      <% end %>
+      <% if @vendor.subscription_includes?('inventory') %>
+        <%= f.select :product_type, PRODUCT_TYPES.map{|k,v|[v,k]}, {include_blank: true}, class: 'form-control' %>
+      <% elsif INVENTORY_TYPES.has_key?(@product.product_type) %>
+        <%= f.select :product_type, INVENTORY_TYPES.map{|k,v|[v,k]}, {}, disabled: true, class: 'form-control' %>
+      <% else %>
+        <%= f.select :product_type, NON_INVENTORY_TYPES.map{|k,v|[v,k]}, {}, class: 'form-control' %>
+      <% end %>
+    </div>
+    <div class="form-group">
+      <%= f.label :sync_to_sales_channels, class: 'control-label' %>
+      <%= f.collection_select :sync_to_sales_channel_ids, @vendor.integration_items.with_integration_type(:sales_channel), :id, :integration_key, {include_blank: true}, {selected: @product.sync_to_sales_channels, multiple: true, name: 'product[sync_to_sales_channel_ids][]', class: 'form-control select2 select2-multiple select2-hidden-accessible'} %>
+    </div>
+  </div>
+  <div class='col-md-6'>
+    <div class="form-group" id='product-income-account-container'>
+      <%= f.label :income_account_id, 'Income Account', class: "control-label" %>
+      <%= f.grouped_collection_select(:income_account_id, Spree::ChartAccountCategory.all.map{|c| c.filter_vendor_id = spree_current_user.company_id; c}, :vendors_chart_accounts, :name, :id, :fully_qualified_name, {include_blank: true}, { class: 'form-control chart-account-select', data: {account: 'Income Account'} }) %>
+      <span class='help-block-italic hidden' id='product_income_account_id_warning'>You have selected a Non Income Account. This is not recommended.</span>
+    </div>
+    <div class="form-group" id='product-cogs-account-container'>
+      <%= f.label :cogs_account_id, 'Cost of Goods Sold Account', class: "control-label" %>
+      <%= f.grouped_collection_select(:cogs_account_id, Spree::ChartAccountCategory.all.map{|c| c.filter_vendor_id = spree_current_user.company_id; c}, :vendors_chart_accounts, :name, :id, :fully_qualified_name, {include_blank: true}, { class: 'form-control chart-account-select', data: {account: 'Cost of Goods Sold Account'} }) %>
+      <span class='help-block-italic hidden' id='product_cogs_account_id_warning'>You have selected a Non Cost of Goods Sold Account. This is not recommended.</span>
+    </div>
+    <div class="form-group" id='product-expense-account-container'>
+      <%= f.label :expense_account_id, 'Expense Account', class: "control-label" %>
+      <%= f.grouped_collection_select(:expense_account_id, Spree::ChartAccountCategory.all.map{|c| c.filter_vendor_id = spree_current_user.company_id; c}, :vendors_chart_accounts, :name, :id, :fully_qualified_name, {include_blank: true}, { class: 'form-control chart-account-select', data: {account: 'Expense Account'} }) %>
+      <span class='help-block-italic hidden' id='product_expense_account_id_warning'>You have selected a Non Expense Account. This is not recommended.</span>
+    </div>
+    <div class="form-group" id='product-asset-account-container'>
+      <%= f.label :asset_account_id, 'Asset Account', class: "control-label" %>
+      <%= f.grouped_collection_select(:asset_account_id, Spree::ChartAccountCategory.all.map{|c| c.filter_vendor_id = spree_current_user.company_id; c}, :vendors_chart_accounts, :name, :id, :fully_qualified_name, {include_blank: true}, { class: 'form-control chart-account-select', data: {account: 'Asset Account'} }) %>
+      <span class='help-block-italic hidden' id='product_asset_account_id_warning'>You have selected a Non Asset Account. This is not recommended.</span>
+    </div>
+  </div>
+</div>
+
+<script type='text/javascript'>
+  var filterChartAccounts = function(){
+    var prod_type = $('#product_product_type').val();
+    var for_sale = $('#product_for_sale').bootstrapSwitch('state');
+    var for_purchase = $('#product_for_purchase').bootstrapSwitch('state');
+    switch(prod_type){
+      case 'inventory_assembly':
+      case 'inventory_item':
+        $('#product-asset-account-container').show();
+        $('#product-income-account-container').show();
+        $('#product-cogs-account-container').show();
+        $('#product-expense-account-container').hide();
+        $('#product_expense_account_id').val('');
+        if(for_purchase){
+          $('#purchase-from').show();
+        }else{
+          $('#purchase-from').hide();
+        }
+        break;
+      case 'service':
+      case 'non_inventory_item':
+      case 'other_charge':
+        if(for_sale){
+          $('#product-income-account-container').show();
+        }else{
+          $('#product-income-account-container').hide();
+          $('#product_income_account_id').val('');
+        }
+        if(for_purchase){
+          $('#purchase-from').show();
+          $('#product-expense-account-container').show();
+        }else{
+          $('#purchase-from').hide();
+          $('#product-expense-account-container').hide();
+          $('#product_expense_account_id').val('');
+        }
+        $('#product-asset-account-container').hide();
+        $('#product-cogs-account-container').hide();
+        $('#product_asset_account_id').val('');
+        $('#product_cogs_account_id').val('');
+        break;
+      case 'bundle':
+      default:
+        $('#product-asset-account-container').hide();
+        $('#product-income-account-container').hide();
+        $('#product-cogs-account-container').hide();
+        $('#product-expense-account-container').hide();
+        $('#product_income_account_id').val('');
+        $('#product_expense_account_id').val('');
+        $('#product_cogs_account_id').val('');
+        $('#product_asset_account_id').val('');
+        break;
+    }
+
+    // can be purchased?
+    switch (prod_type) {
+      case 'bundle':
+      case '':
+        $('#product_for_purchase').bootstrapSwitch('state', false);
+        $('#product-for-purchase-container').hide();
+        break;
+      default:
+        $('#product-for-purchase-container').show();
+        break;
+    }
+    // can be part?
+    switch (prod_type) {
+      case 'bundle':
+      case '':
+        $('#product_can_be_part').bootstrapSwitch('state', false);
+        $('#product-can-be-part-container').hide();
+        break;
+      default:
+        $('#product-can-be-part-container').show();
+        break;
+    }
+    // assembly parts
+    switch (prod_type) {
+      case 'inventory_assembly':
+      case 'bundle':
+        $('.product-assembly-parts-container').removeClass('hidden');
+        $("#variant_costing_method option[value='sum']").removeAttr('disabled');
+        break;
+      default:
+        $('.product-assembly-parts-container').addClass('hidden');
+        // $('#add-fields').show();
+        $('#sub-parts-table-body').html("<tr><td colspan='100%'>No components selected</td></tr>");
+
+        if($('#variant_costing_method').val() === 'sum'){
+          $('#variant_costing_method').val('fixed');
+          $('#variant_costing_method').trigger('change');
+        }
+        $("#variant_costing_method option[value='sum']").prop('disabled', 'disabled');
+        break;
+    }
+  }
+
+  var toggleLotTracking = function (){
+    var prod_type = $('#product_product_type').val();
+    if($('.track-lot-container').length){
+      switch (prod_type) {
+        case 'inventory_item':
+        case 'inventory_assembly':
+          // $('.track-inventory').bootstrapSwitch('state', true);
+          // $('.track-inventory-container').show(); //Not showing this as an option
+          // $('.track-inventory-container').hide();
+          // $('.track-lot-container').show();
+          $('.track-lot-container').show();
+          break;
+        default:
+          // $('.track-inventory').bootstrapSwitch('state', false);
+          // $('.track-inventory-container').hide();
+          $('.track-lot-container').hide();
+          // $('.lot-tracking-column').hide();
+          break;
+      }
+    }
+  }
+
+  var chartAccountWarning = function(select){
+    var selected = $("option:selected", select);
+    optGroupLabel = selected.parent().attr('label');
+
+    if($(select).val() != '' && optGroupLabel != $(select).data('account')){
+      $(select).closest('.form-group').addClass('has-warning');
+      $('#' + $(select).attr('id') + '_warning').removeClass('hidden');
+    }else{
+      $(select).closest('.form-group').removeClass('has-warning');
+      $('#' + $(select).attr('id') + '_warning').addClass('hidden');
+    }
+  }
+
+  $(document).ready(function(){
+    filterChartAccounts();
+    toggleLotTracking();
+    $('#product_product_type').change(function(){
+      filterChartAccounts();
+      toggleLotTracking();
+    });
+    $('#product_for_sale').on('switchChange.bootstrapSwitch', function (event, state) {
+      filterChartAccounts();
+    });
+    $('#product_for_purchase').on('switchChange.bootstrapSwitch', function (event, state) {
+      filterChartAccounts();
+    });
+    $('.chart-account-select').change(function(){
+      chartAccountWarning(this)
+    });
+    $('.chart-account-select').each(function(){
+      chartAccountWarning(this);
+    });
+
+  });
+</script>

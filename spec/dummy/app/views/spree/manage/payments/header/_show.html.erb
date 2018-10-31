@@ -1,0 +1,23 @@
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Orders", manage_orders_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Order ##{@order.display_number}", edit_manage_order_path(@order) %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Payments", manage_order_payments_path(@order) %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <span><%= @payment.display_number %></span>
+    </li>
+  </ul>
+<% end %>

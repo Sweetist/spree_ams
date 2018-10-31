@@ -1,0 +1,91 @@
+<table class="row header mailer">
+  <tr>
+    <td class="center" align="center">
+      <center>
+
+        <table class="container">
+          <tr>
+            <td class="wrapper last">
+
+              <table class="twelve columns">
+                <tr>
+                  <td class="seven sub-columns" style="vertical-align:middle;">
+                    <% if @order %>
+                      <% company = (@mail_type == 'purchase_order') ? @order.customer : @order.vendor %>
+                    <% elsif @invoice %>
+                      <% company = @invoice.vendor %>
+                    <% elsif @import %>
+                      <% company = @import.company %>
+                    <% elsif @vendor %>
+                      <% company = @vendor %>
+                    <% end %>
+                    <% if company.try(:logo) %>
+                      <a href='<%= root_url(host: company.domain, protocol: 'https') %>'>
+                        <%= image_tag(company.logo.attachment.url) %>
+                      </a>
+                    <% end %>
+                  </td>
+                  <td class="five sub-columns last header-right" style="text-align:left; vertical-align:middle;">
+                    <span class="template-label">
+                      <% if @order && @mail_type == 'order' %>
+                        <% if @order.class.to_s == "Spree::Order" %>
+                          <%# Order or Vendor Mailer %>
+                          <%= "Order Number: #{@order.display_number}"%>
+                          <% if @order.po_number.present? %>
+                            <br>
+                            <%= "PO Number: #{@order.po_display_number}" %>
+                          <% end %>
+                          <br>
+                          <% unless @order.completed_at.blank? %>
+                            <%= "Order Date: #{display_vendor_date_format(@order.completed_at.in_time_zone(@order.customer.time_zone), @order.vendor.date_format)}" %>
+                            <br>
+                            <%= "Order Time: #{@order.completed_at.in_time_zone(@order.customer.time_zone).strftime('%l:%M%p %Z')}" %>
+                          <% end %>
+                        <% elsif @order.class.to_s.include? "StandingOrder" %>
+                          <%# Standing Order Mailer %>
+                          <%= "Order Name: #{@order.name}" %>
+                          <br>
+                          <%= "Date: #{display_vendor_date_format(Time.current.in_time_zone(@order.vendor.time_zone), @order.vendor.date_format)}" %>
+                          <br>
+                          <%= "Time: #{Time.current.in_time_zone(@order.vendor.time_zone).strftime('%l:%M%p %Z')}" %>
+                        <% end %>
+                      <% elsif @order && @mail_type == 'purchase_order' %>
+                        <%= "Purchase Order: #{@order.display_number}"%>
+                        <br>
+                        <% unless @order.completed_at.blank? %>
+                          <%= "Order Date: #{display_vendor_date_format(@order.completed_at.in_time_zone(@order.customer.time_zone), @order.vendor.date_format)}" %>
+                          <br>
+                          <%= "Order Time: #{@order.completed_at.in_time_zone(@order.customer.time_zone).strftime('%l:%M%p %Z')}" %>
+                        <% end %>
+                      <% elsif @invoice && @mail_type == 'invoice' %>
+                        <%# Invoice Mailer %>
+                        <%= "Invoice Number: #{@invoice.number}" %>
+                        <br>
+                        <%= "Date: #{display_vendor_date_format(Time.current.in_time_zone(@invoice.vendor.time_zone), @invoice.vendor.date_format)}" %>
+                        <br>
+                        <%= "Time: #{Time.current.in_time_zone(@invoice.vendor.time_zone).strftime('%l:%M%p %Z')}" %>
+                      <% elsif @vendor || @mail_type == "contact"%>
+                        <%# Vendor Mailer %>
+                        <%= "Date: #{display_vendor_date_format(Time.current.in_time_zone(@vendor.time_zone), @vendor.date_format)}" %>
+                        <br>
+                        <%= "Time: #{Time.current.in_time_zone(@vendor.time_zone).strftime('%l:%M%p %Z')}" %>
+                      <% elsif @import %>
+                        <%# Import Mailer %>
+                        <%= "Date: #{display_vendor_date_format(Time.current.in_time_zone(@import.company.time_zone), @import.company.date_format)}" %>
+                        <br>
+                        <%= "Time: #{Time.current.in_time_zone(@import.company.time_zone).strftime('%l:%M%p %Z')}" %>
+                      <% end %>
+                    </span>
+                  </td>
+                  <td class="expander"></td>
+                </tr>
+              </table>
+
+            </td>
+          </tr>
+        </table>
+
+      </center>
+    </td>
+  </tr>
+</table>

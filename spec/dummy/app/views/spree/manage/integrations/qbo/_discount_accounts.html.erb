@@ -1,0 +1,13 @@
+<div class="form-group select optional integration_item_qbo_discount_account_id">
+  <label class="select optional col-sm-3 control-label" for="integration_item_qbo_discount_account_id">
+    Discount Account
+  </label>
+  <div class="col-sm-9">
+    <select class="select optional form-control" name="integration_item[qbo_discount_account_id]" id="integration_item_qbo_discount_account_id">
+      <% @discount_accounts.each do |account| %>
+        <option "<%= 'selected' if account.id == @integration.try(:qbo_discount_account_id).to_i %>"
+          value='<%= account.id %>'><%= account.name %></option>
+      <% end %>
+    </select>
+  </div>
+</div>

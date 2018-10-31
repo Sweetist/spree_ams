@@ -1,0 +1,55 @@
+<div class="portlet box blue-hoki" id="search">
+  <div class="portlet-title">
+    <div class="col-xs-12 col-sm-6 col-lg-4">
+      <%= f.text_field :standing_order_name_or_standing_order_account_fully_qualified_name_cont, class: 'form-control', placeholder: 'Enter search term' %>
+      <div class="visible-xs-block" style="min-height:10px;">
+      </div>
+    </div>
+    <div class="col-xs-8 col-sm-4" id="basic-search-buttons">
+      <button type="submit" class="btn green"><i class="fa fa-search" aria-hidden="true"></i> Search</button>
+      <%= link_to manage_standing_order_schedules_path, class: "btn default" do %>
+        <i class='fa fa-times'></i> Reset
+      <% end %>
+    </div>
+    <div class="tools">
+      <a href="javascript:;" id='toggle-advanced-search'>Advanced <i class="fa fa-angle-down"></i></a>
+    </div>
+  </div>
+  <div class="portlet-body form hidden" id='advanced-search-form'>
+    <div class="form-body">
+      <div class='row'>
+        <div class='col-md-4'>
+          <div class='form-group' data-open="<%= params[:q] && !params[:q].fetch(:standing_order_name_cont, nil).blank? %>">
+            <%= f.label :standing_order_name_cont, 'Name', class: 'control-label' %>
+            <%= f.text_field :standing_order_name_cont, class: 'form-control' %>
+          </div>
+        </div>
+        <div class='col-md-4'>
+          <div class='form-group' data-open="<%= params[:q] && !params[:q].fetch(:standing_order_account_id_or_standing_order_account_parent_id_eq, nil).blank? %>">
+            <%= f.label :standing_order_account_id_or_standing_order_account_parent_id_eq, 'Account' %>
+            <%= f.collection_select(:standing_order_account_id_or_standing_order_account_parent_id_eq, @vendor.customer_accounts.order('fully_qualified_name ASC'), :id, :fully_qualified_name, {include_blank: true},{class: 'form-control select2 select2-allow-clear'}) %>
+          </div>
+        </div>
+        <div class='col-md-4'>
+          <div class='form-group' data-open="<%= params[:q] && (!params[:q].fetch(:deliver_at_gteq, nil).blank? || !params[:q].fetch(:deliver_at_lteq, nil).blank?) %>">
+            <label><%= "#{@vendor.order_date_text.to_s.capitalize} Date".strip %></label>
+            <%= render partial: 'spree/shared/forms/fields/date_range', locals: {f: f, date_key: :deliver_at, company: @vendor} %>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="form-actions">
+      <div class="row">
+        <div class="col-md-12">
+          <div class='btn-set pull-right'>
+            <button type="submit" class="btn green"><i class="fa fa-search" aria-hidden="true"></i> Search</button>
+            <%= link_to manage_standing_order_schedules_path, class: "btn default" do %>
+              <i class='fa fa-times'></i> Reset
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

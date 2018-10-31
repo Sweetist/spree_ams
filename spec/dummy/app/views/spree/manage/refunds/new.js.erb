@@ -1,0 +1,8 @@
+$('#refund-form-container','#refund-modal').html("<%= j(render(partial: 'spree/manage/refunds/body_content/new.html.erb')) %>");
+$('#refund-form').attr('data-remote', true);
+$('#refund-form-container','#refund-modal').prepend("<%= j(render(partial: 'spree/shared/errors')) %>");
+$('#refund_refund_reason_id').select2({width: '100%'});
+<% if flash[:error] %>
+  $('#refund-errors').html("<div class='alert alert-danger'><%= flash[:error] %></div>");
+<% end %>
+enableFormButtons();

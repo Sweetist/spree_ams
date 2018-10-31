@@ -1,0 +1,7 @@
+$("#assembly_lot_div").replaceWith("<%= escape_javascript(render(partial: 'assembly_lot_div')) %>");
+
+<% if !@saved %>
+  alert("<%= safe_join(@lot.errors.full_messages, ', ')%>");
+<% else %>
+  alert("Lot <%=@lot.number%> has been created");
+<% end %>

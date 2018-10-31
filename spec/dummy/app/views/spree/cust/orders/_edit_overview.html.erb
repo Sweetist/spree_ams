@@ -1,0 +1,134 @@
+<% show_backordered_notice = current_vendor.try(:cva).try(:order_backordered_notice) && States[@order.state].between?(States['cart'], States['approved']) %>
+<% show_lead_time_warning = current_vendor.try(:cva).try(:variant_lead_time) && States[@order.state].between?(States['cart'], States['approved']) %>
+
+<% if @order.invoice %>
+  <div class="btn-group">
+    <h4>
+      <%= link_to invoice_path(@order.invoice_id, format: :pdf), target: "_blank" do %>
+        Invoice #<%= @order.invoice.number %> <i class="fa fa-file-pdf-o"></i>
+      <% end %>
+    </h4>
+  </div>
+<% end %>
+<% if @order.errors_from_order_rules.any? && @order.line_items.any?%>
+  <div class="alert alert-warning alert-dismissable">
+    <button type='button' class='close' data-dismiss='alert' aria-hidden='true'></button>
+    <%= raw(@order.errors_from_order_rules.join(',')) %>.  Please add additional products or contact <%= @order.vendor.name %> to submit this order.</div>
+<% end %>
+<% unless @order.valid_address? %>
+  <div class='alert alert-danger alert-dismissable'>
+    <button type='button' class='close' data-dismiss='alert' aria-hidden='true'></button>
+    The address on this order is invalid. Please edit your shipping and billing addresses.
+  </div>
+<% end %>
+
+<% url = @order.shipped? ? receiving_url(@order) : order_url(@order) %>
+<%= form_for @order, html: {id: "single-order-form", class: "prevent-double-submission"}, url: url do |order_form|%>
+
+  <%= render partial: 'spree/cust/orders/all_details', locals: {f: order_form} %>
+
+  <div class="table-scrollable">
+    <table class="table table-hover table-checkable" id="sample_1">
+      <thead>
+
+        <tr class='primary-header-row'>
+          <th>
+            <% if @order.shipped? && !@order.received? %>
+              <input type="checkbox" id="receive-all">
+            <% end %>
+          </th>
+          <th>
+            <% if @order.line_items.first.try(:item_name) %>
+              <%= sort_link @search, :item_name, 'Name' %>
+            <% else %>
+              <%= sort_link @search, :variant_product_name, "Name" %>
+            <% end %>
+          </th>
+          <% if current_vendor_view_settings.variant_sku %>
+            <th>
+              <%= sort_link @search, :variant_sku, "Sku" %>
+            </th>
+          <% end %>
+          <% if current_vendor_view_settings.line_item_lot_number %>
+            <th>
+              <%= sort_link @search, :lot_number, 'Lot Number' %>
+            </th>
+          <% end %>
+          <% if current_vendor_view_settings.variant_pack_size %>
+            <th>
+              <%= sort_link @search, :pack_size, "Pack/Size" %>
+            </th>
+          <% end %>
+          <% if @order.vendor.try(:include_unit_weight) %>
+            <th>Weight</th>
+          <% end %>
+          <th>
+            <%= sort_link @search, :discount_price, "Price" %>
+          </th>
+          <th>
+            <% if @order.shipped? || @order.received? %>
+              <%= sort_link @search, :ordered_qty, "Ordered" %>
+            <% else %>
+              <%= sort_link @search, :quantity, "Quantity" %>
+            <% end %>
+          </th>
+          <% if @order.shipped? || @order.received? %>
+            <th>
+              <%= sort_link @search, :shipped_qty, "Shipped" %>
+            </th>
+            <% if @order.vendor.try(:receive_orders) %>
+              <th>
+                <%= sort_link @search, :quantity, "Received" %>
+              </th>
+            <% end %>
+          <% end %>
+          <% if @order.vendor.try(:include_total_weight) %>
+            <th>Tot Wt</th>
+          <% end %>
+          <th>
+            <%= sort_link @search, :amount, "Total" %>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <%= render partial: 'line_item', collection: @line_items, locals: {
+          order_form: order_form,
+          show_backordered_notice: show_backordered_notice,
+          show_lead_time_warning: show_lead_time_warning } %>
+        <% colspan_left = 6 %>
+        <% colspan_left -= 1 unless current_vendor.include_unit_weight %>
+        <% colspan_left -= 1 unless current_vendor_view_settings.variant_sku %>
+        <% colspan_left -= 1 unless current_vendor_view_settings.line_item_lot_number %>
+        <% colspan_left -= 1 unless current_vendor_view_settings.variant_pack_size %>
+        <%= render partial: 'subtotal_row', locals: {colspan_left: colspan_left} %>
+      </tbody>
+      <tbody id='all-adjustments' style='border-top: none;'>
+        <%= render partial: 'adjustments', locals: {colspan_left: colspan_left} %>
+      </tbody>
+      <tbody>
+        <%= render partial: 'total_row', locals: {colspan_left: colspan_left} %>
+      </tbody>
+    </table>
+
+  </div>
+
+  <div id="payment-method-box">
+    <%#= render partial: 'payment_method', locals: { order_form: order_form} %>
+  </div>
+
+  <% unless order_is_void? %>
+    <%= render partial: 'order_buttons' %>
+  <% end %>
+
+<% end %>
+
+<div class="clear"></div>
+<input type="hidden" value='<%= "#{@order.account.try(:can_select_delivery?) && @order.any_variant_past_cutoff?}" %>' id="any_variant_past_cutoff">
+
+
+<script type='text/javascript'>
+  $(document).ready(function(){
+    var columnCount = $('.primary-header-row').children('th').length;
+    $(".inner-table-container").attr('colspan', columnCount - 2);
+  });
+</script>

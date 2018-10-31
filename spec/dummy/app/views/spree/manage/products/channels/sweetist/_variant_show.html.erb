@@ -1,0 +1,31 @@
+<tr>
+  <td>
+    <div class='col-md-12 margin-bottom-10 uppercase'>
+      <i>Sweetist Attributes</i>
+    </div>
+    <div class="col-md-6">
+      <div class="row static-info">
+        <div class="col-xs-5 name">Lead Time (hrs):</div>
+        <div class="col-xs-7 value"><%= variant.sweetist_lead_time_hours %></div>
+      </div>
+      <div class="row static-info">
+        <div class="col-xs-5 name">Max Order Qty:</div>
+        <div class="col-xs-7 value"><%= variant.sweetist_max_order_qty %></div>
+      </div>
+      <div class="row static-info">
+        <div class="col-xs-5 name">Fragile:</div>
+        <div class="col-xs-7 value"><%= variant.sweetist_fragile ? Spree.t(:say_yes) : Spree.t(:say_no) %></div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="row static-info">
+        <div class="col-xs-5 name">Number of Servings:</div>
+        <div class="col-xs-7 value"><%= variant.sweetist_num_servings %></div>
+      </div>
+      <div class="row static-info">
+        <div class="col-xs-5 name">Dietary Info:</div>
+        <div class="col-xs-7 value"><%= variant.sweetist_dietary_info %></div>
+      </div>
+    </div>
+  </td>
+</tr>

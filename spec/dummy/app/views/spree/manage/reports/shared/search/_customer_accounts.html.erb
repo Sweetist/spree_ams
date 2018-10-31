@@ -1,0 +1,6 @@
+<div class="form-group">
+  <label>Customer Accounts</label>
+  <%= select_tag("account_ids",
+    options_for_select(@vendor.customer_accounts.order(:fully_qualified_name).pluck(:fully_qualified_name, :id), params[:account_ids]),
+    {style: 'width:100%', class: 'select2-tags input-large form-control', multiple: true }) %>
+</div>

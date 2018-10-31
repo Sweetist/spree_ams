@@ -1,0 +1,24 @@
+<div class="form-group string optional" id='shopify_customer_id'>
+  <% opts_for_customer = f.object.vendor.parent_customer_accounts.pluck(:fully_qualified_name, :id) %>
+  <% opts_for_customer.unshift([I18n.t('integrations.shopify.sync_orders_to_default'), '']) %>
+  <%= f.label "#{f.object.integration_key}_shopify_customer_id",
+    I18n.t('integrations.shopify.sync_orders_to'),
+    class: 'string optional col-sm-3 control-label' %>
+  <div class="col-sm-9">
+    <%= f.select "#{f.object.integration_key}_shopify_customer_id", opts_for_customer,
+      {include_blank: true, placeholder: I18n.t('integrations.shopify.sync_orders_to_default') }, {class: 'form-control select2 select2-allow-clear'} %>
+  </div>
+</div>
+
+<script type='text/javascript'>
+  var toggleShopifyFields = function(){
+    var channels = $('#integration_item_sales_channel').val();
+    if ( Array.isArray(channels) && channels.indexOf('shopify') >= 0 ){
+      $('#shopify_customer_id').show();
+    }else{
+      $('#shopify_customer_id').hide();
+    }
+  }
+  $(document).ready(toggleShopifyFields);
+  $('#integration_item_sales_channel').change(toggleShopifyFields);
+</script>

@@ -1,0 +1,187 @@
+<%= content_for :head_title do %>
+  Contacts
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <span>Contacts</span>
+    </li>
+  </ul>
+  <div class="page-toolbar">
+    <%= link_to new_manage_account_contact_path, class: "btn green pull-right" do%>
+      <i class="fa fa-plus"></i>&nbsp;New Contact
+    <% end %>
+  </div>
+<% end %>
+
+<div class="portlet-body">
+
+  <%= search_form_for [:manage, @search], url: manage_account_contacts_path, class: "form" do |f| %>
+    <%= render partial: 'advanced_search', locals: { f: f } %>
+  <% end %>
+
+  <div class="row">
+    <div id="source-dt-buttons">
+      <div class="btn-group margin-left-20">
+        <div class="btn btn-default">
+          <input type="checkbox" class="group-checkable">
+        </div>
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"> Actions
+          <i class="fa fa-angle-down"></i>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+          <li>
+            <%= submit_tag "Invite Selected Contacts", form: "contact-list-form" %>
+          </li>
+          <li>
+            <%= submit_tag Spree.t(:export_contacts), form: "contact-list-form" %>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <%= form_for @vendor, html: {id: "contact-list-form"}, url: actions_router_manage_account_contacts_path, method: :patch do |f| %>
+    <input type="hidden" id='all-contacts-input' name='all_contacts' value="false">
+    <div class='hidden'>
+      <p>
+        You have selected all <strong><%=@contacts.count%></strong> contacts on this page. <a id='select-all-contacts'>Click Here</a> to select all contacts.
+      </p>
+    </div>
+    <div class='hidden'>
+      <p>
+        All contacts are selected. <a id='unselect-all-contacts'>Clear selection</a>
+      </p>
+    </div>
+
+    <table class="table table-hover table-sortable basic-table-no-buttons" data-paging='false'>
+      <thead>
+        <tr class="remove-sort-link">
+          <th class="table-checkbox sorting_disabled dt-no-settings-visible" width="2%"></th>
+          <th>
+            <%= sort_link @search, :first_name, Spree.t(:first_name), {}, {:title => 'contact_first_name'} %>
+          </th>
+          <th><%= sort_link @search, :last_name, Spree.t(:last_name), {}, {:title => 'contact_last_name'} %></th>
+
+          <th class='dt-invisible'><%= sort_link @search, :position, Spree.t(:position), {}, {:title => 'contact_position'} %></th>
+
+          <th><%= sort_link @search, :email, Spree.t(:email), {}, {:title => 'contact_email'} %></th>
+          <th><%= sort_link @search, :phone, Spree.t(:phone), {}, {:title => 'contact_phone'} %></th>
+          <th><%= Spree.t(:account_s)%></th>
+          <th class='dt-invisible'><%= sort_link @search, :invited_at, Spree.t(:invited_at) %></th>
+          <th><%= sort_link @search, :user_last_sign_in_at, Spree.t(:last_log_in) %></th>
+          <th class='dt-no-settings-visible'></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @contacts.each_with_index do |contact, index| %>
+          <%= f.fields_for :contacts, contact do |ff|%>
+            <% url = manage_account_contact_path(contact) %>
+            <tr id='contact_<%= contact.id %>'>
+              <td>
+                <input name="company[contacts_attributes][<%= index %>][action]" type="hidden" value="0">
+
+                <input class="checkboxes noUniform" type="checkbox" value="1" name="company[contacts_attributes][<%= index %>][action]" id="company_contacts_attributes_<%= index %>_action">
+
+                <input name="company[contacts_attributes][<%= index %>][id]" type="hidden"
+                value="<%= contact.id %>" id="company_contacts_attributes_<%= index %>_id">
+              </td>
+              <td class='firstname'><%= link_to contact.first_name.to_s, url %></td>
+              <td class='lastname'><%= link_to contact.last_name.to_s, url %></td>
+              <td class='position'><%= link_to contact.position.to_s, url %></td>
+              <td class='email'><%= link_to contact.email.to_s, url %></td>
+              <td class='phone'><%= link_to contact.phone.to_s, url %></td>
+              <td class='contact_accounts'>
+                <% contact.accounts.each do |a| %>
+                  <%= link_to a.try(:fully_qualified_name).to_s, manage_customer_account_path(a.customer, a) %><br>
+                <% end %>
+              </td>
+              <td class='invited_at'><%= sweet_full_date_time(contact.invited_at) %></td>
+              <td class='last_sign_in_at'><%= sweet_full_date_time(contact.try(:user).try(:last_sign_in_at)) %></td>
+
+
+              <td align="right">
+                <% if contact.can_resend_invite? %>
+                  <%= link_to "Resend Invite", invite_email_manage_account_contact_path(contact), class: "btn btn-primary btn-sm", style: 'display:inline-block' %>
+                <% elsif contact.can_invite? %>
+                    <%= link_to raw("Invite"), invite_email_manage_account_contact_path(contact), class: "btn btn-primary btn-sm", style: 'display:inline-block' %>
+                <% elsif contact.can_mark_invited? %>
+                  <%= link_to "Mark Invited", mark_invited_manage_account_contact_path(contact), class: "btn btn-primary btn-sm mark-invited", style: 'display:inline-block', method: :patch, remote: true %>
+                <% end %>
+                <%= link_to raw("<i class='fa fa-pencil'></i>"), edit_manage_account_contact_path(contact), class: "btn btn-primary btn-sm", style: 'width:32px;display:inline-block' %>
+                <%= link_to manage_account_contact_path(contact), method: :delete, data: { confirm: 'Are you sure?' }, :class=>'btn btn-sm btn-danger btn-action', style:'width:32px;display:inline-block' do %>
+                  <i class="fa fa-trash"></i>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
+</div>
+
+<%= paginate @contacts %>
+
+
+<script type='text/javascript'>
+  /*
+  $('.basic-table-no-buttons')
+    .on( 'init.dt', function () {
+      $("#source-dt-buttons").appendTo("#dt-buttons");
+    } )
+  */
+
+  $('.group-checkable').click(function(event) {
+    if(this.checked === true){
+      $('#select-all-contacts').parent().parent().removeClass('hidden');
+      $('.checkboxes:checkbox').each(function() {
+        this.checked = true;
+      });
+    }else{
+      $('#all-contacts-input').val('false');
+      if(!$('#select-all-contacts').parent().parent().hasClass('hidden')){
+        $('#select-all-contacts').parent().parent().addClass('hidden');
+      }
+      if(!$('#unselect-all-contacts').parent().parent().hasClass('hidden')){
+        $('#unselect-all-contacts').parent().parent().addClass('hidden');
+      }
+      $('.checkboxes:checkbox').each(function() {
+        this.checked = false;
+      });
+    }
+  });
+
+  $('#select-all-contacts').click(function(){
+    $('#all-contacts-input').val('true');
+    $(this).parent().parent().addClass('hidden');
+    $('#unselect-all-contacts').parent().parent().removeClass('hidden');
+  });
+
+  $('#unselect-all-contacts').click(function(){
+    $(this).parent().parent().addClass('hidden');
+    $('#all-contacts-input').val('false');
+    $('.group-checkable:checkbox')[0].checked = false;
+
+    $('.checkboxes:checkbox').each(function() {
+      this.checked = false;
+    });
+  });
+
+  $('.checkboxes').click(function(){
+    $('.group-checkable:checkbox')[0].checked = false;
+    if(!$('#select-all-contacts').parent().parent().hasClass('hidden')){
+      $('#select-all-contacts').parent().parent().addClass('hidden');
+    }
+    if(!$('#unselect-all-contacts').parent().parent().hasClass('hidden')){
+      $('#unselect-all-contacts').parent().parent().addClass('hidden');
+    }
+    $('#all-contacts-input').val('false');
+  });
+
+</script>

@@ -1,0 +1,20 @@
+<%= form_for @address, url: manage_customer_account_address_path(id: @address.id, account_id: @account.id, customer_id: @account.customer_id, addr_type: params["addr_type"]), method: :patch, remote: true do |f| %>
+  <div class="modal-dialog">
+    <div id="address_form" class="modal-content">
+      <div class="modal-header">
+        <div class='alert-address-modal'></div>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+        <span class="caption-subject font-blue-madison bold uppercase">Edit Address</span>
+      </div>
+      <div id="address_form" class="modal-body">
+        <%= render partial: "/spree/shared/forms/address_form", locals: {f: f} %>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">
+          <i class='fa fa-times'></i> Cancel
+        </button>
+        <%= f.submit "#{@submit_button_text}", class: "btn btn-primary" %>
+      </div>
+    </div>
+  </div>
+<% end %>

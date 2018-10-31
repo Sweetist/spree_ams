@@ -1,0 +1,14 @@
+---
+subject: 'Your order from {{my_company.name}} has been canceled'                   # REQUIRED
+from: ''   # optional
+cc: ''     # optional
+bcc: ''     # optional
+---
+<p>
+  Dear {{order.customer.name}},
+</p>
+
+<p>
+  Your order has been canceled. If you have any questions about this order, just reply to this email. Please hold on to the information below for your records.<br>
+  Click <a href="{{order.url}}">here</a> to view additional order details.
+</p>

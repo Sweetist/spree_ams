@@ -1,0 +1,2 @@
+<!-- insert_after  'erb[loud]:contains("form_for [:admin, @country, @state]")' -->
+<%= link_to 'Cities', admin_country_state_cities_path(@country, @state), class: 'btn btn-primary' %>

@@ -1,0 +1,10 @@
+<div class="modal fade product_modal" id="add-to-cart-modal" role="dialog">
+  <div class="modal-dialog modal-md">
+    <div class="modal-content">
+      <%= render partial: 'spree/shared/loading_text', locals: {text: 'Loading Product'} %>
+      <div id='loading-message' style='margin: 100px 0 100px 0; text-align: center;'>
+        Loading Product <%= image_tag 'frontend/loading.gif' %>
+      </div>
+    </div>
+  </div>
+</div>

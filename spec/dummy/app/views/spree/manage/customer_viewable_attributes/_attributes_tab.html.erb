@@ -1,0 +1,43 @@
+<div class='portlet-body'>
+  <div class='col-md-12 alert alert-info'>
+    Customize what your customers see. Choose which attributes you want to show and which ones you want to hide.
+  </div>
+  <%= form_for [:manage, @cva], html: {class: 'form'} do |f| %>
+    <div class='form-body'>
+      <% is_admin_user = current_spree_user.has_spree_role?('admin') %>
+      <% @cva.editable_attr_keys.each do |key| %>
+        <% class_name = "Spree::#{key.classify}".constantize %>
+        <% next if class_name.try(:view_editable_attributes).blank? %>
+        <h4 class='form-section'><%= key.titleize %></h4>
+        <div id='<%= key %>_container'>
+          <div class='row'>
+            <% class_name.view_editable_attributes.each do |attribute| %>
+              <% next if class_name.restricted_view_editable_attributes.include?(attribute) && !is_admin_user %>
+              <div class='col-sm-6'>
+                <div class='form-group'>
+                  <%= f.check_box "#{key}_#{attribute}", class: 'make-switch', data: {size: 'mini'}  %>
+                  <%= f.label "#{key}_#{attribute}", Spree.t(attribute, default: attribute.to_s.humanize.titleize) %><br>
+                  <span class='help-block-italic'><%= Spree.t("#{attribute}_description", scope: [:customer_view_settings, key], default: '') %></span>
+                </div>
+              </div>
+            <% end %>
+            <% if @cva.additional_content_for(key) %>
+              <%= render partial: "spree/manage/customer_viewable_attributes/#{key}/additional_form_content", locals: {f: f} %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <div class='form-actions'>
+      <div class="links pull-right">
+        <%= link_to edit_manage_customer_viewable_attribute_path, class: 'btn btn-default' do %>
+          <i class='fa fa-times'></i> Cancel
+        <% end %>
+        <button class="btn btn-primary" name='save'>
+          <i class='fa fa-check'></i> Update
+        </button>
+      </div>
+    </div>
+  <% end %>
+</div>

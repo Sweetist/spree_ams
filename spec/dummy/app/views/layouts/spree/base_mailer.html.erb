@@ -1,0 +1,858 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width"/>
+  <style>
+/**********************************************
+* Ink v1.0.5 - Copyright 2013 ZURB Inc        *
+**********************************************/
+
+/* Client-specific Styles & Reset */
+
+#outlook a {
+  padding:0;
+}
+
+body.mailer{
+  width:100% !important;
+  min-width: 100%;
+  -webkit-text-size-adjust:100%;
+  -ms-text-size-adjust:100%;
+  margin:0;
+  padding:0;
+}
+
+.mailer .ExternalClass {
+  width:100%;
+}
+
+.mailer .ExternalClass,
+.mailer .ExternalClass p,
+.mailer .ExternalClass span,
+.mailer .ExternalClass font,
+.mailer .ExternalClass td,
+.mailer .ExternalClass div {
+  line-height: 100%;
+}
+
+.mailer #backgroundTable {
+  margin:0;
+  padding:0;
+  width:100% !important;
+  line-height: 100% !important;
+}
+
+.mailer img {
+  outline:none;
+  text-decoration:none;
+  -ms-interpolation-mode: bicubic;
+  width: auto;
+  max-width: 100%;
+  float: left;
+  clear: both;
+  display: block;
+}
+
+.mailer center {
+  width: 100%;
+  min-width: 580px;
+}
+
+.mailer a img {
+  border: none;
+}
+
+.mailer table {
+  border-spacing: 0;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.mailer td {
+  word-break: break-word;
+  -webkit-hyphens: auto;
+  -moz-hyphens: auto;
+  hyphens: auto;
+  border-collapse: collapse !important;
+}
+
+.mailer table, tr, td {
+  padding: 0;
+  vertical-align: top;
+  text-align: left;
+}
+
+.mailer hr {
+  color: #d9d9d9;
+  background-color: #d9d9d9;
+  height: 1px;
+  border: none;
+}
+
+/* Responsive Grid */
+
+table.body.mailer {
+  height: 100%;
+  width: 100%;
+}
+
+table.container {
+  width: 580px;
+  margin: 0 auto;
+  text-align: inherit;
+}
+
+table.row {
+  padding: 0px;
+  width: 100%;
+  position: relative;
+}
+
+.mailer table.container table.row {
+  display: block;
+}
+
+.mailer td.wrapper {
+  padding: 10px 20px 0px 0px;
+  position: relative;
+}
+
+.mailer table.columns,
+.mailer table.column {
+  margin: 0 auto;
+}
+
+.mailer table.columns td,
+.mailer table.column td {
+  padding: 0px 0px 10px;
+}
+
+.mailer table.columns td.sub-columns,
+.mailer table.column td.sub-columns,
+.mailer table.columns td.sub-column,
+.mailer table.column td.sub-column {
+  padding-right: 10px;
+}
+
+.mailer td.sub-column, .mailer td.sub-columns {
+  min-width: 0px;
+}
+
+.mailer table.row td.last,
+.mailer table.container td.last {
+  padding-right: 0px;
+}
+
+.mailer table.one { width: 30px; }
+.mailer table.two { width: 80px; }
+.mailer table.three { width: 130px; }
+.mailer table.four { width: 180px; }
+.mailer table.five { width: 230px; }
+.mailer table.six { width: 280px; }
+.mailer table.seven { width: 330px; }
+.mailer table.eight { width: 380px; }
+.mailer table.nine { width: 430px; }
+.mailer table.ten { width: 480px; }
+.mailer table.eleven { width: 530px; }
+.mailer table.twelve { width: 580px; }
+
+.mailer table.one center { min-width: 30px; }
+.mailer table.two center { min-width: 80px; }
+.mailer table.three center { min-width: 130px; }
+.mailer table.four center { min-width: 180px; }
+.mailer table.five center { min-width: 230px; }
+.mailer table.six center { min-width: 280px; }
+.mailer table.seven center { min-width: 330px; }
+.mailer table.eight center { min-width: 380px; }
+.mailer table.nine center { min-width: 430px; }
+.mailer table.ten center { min-width: 480px; }
+.mailer table.eleven center { min-width: 530px; }
+.mailer table.twelve center { min-width: 580px; }
+
+.mailer table.one .panel center { min-width: 10px; }
+.mailer table.two .panel center { min-width: 60px; }
+.mailer table.three .panel center { min-width: 110px; }
+.mailer table.four .panel center { min-width: 160px; }
+.mailer table.five .panel center { min-width: 210px; }
+.mailer table.six .panel center { min-width: 260px; }
+.mailer table.seven .panel center { min-width: 310px; }
+.mailer table.eight .panel center { min-width: 360px; }
+.mailer table.nine .panel center { min-width: 410px; }
+.mailer table.ten .panel center { min-width: 460px; }
+.mailer table.eleven .panel center { min-width: 510px; }
+.mailer table.twelve .panel center { min-width: 560px; }
+
+.body.mailer .columns td.one,
+.body.mailer .column td.one { width: 8.333333%; }
+.body.mailer .columns td.two,
+.body.mailer .column td.two { width: 16.666666%; }
+.body.mailer .columns td.three,
+.body.mailer .column td.three { width: 25%; }
+.body.mailer .columns td.four,
+.body.mailer .column td.four { width: 33.333333%; }
+.body.mailer .columns td.five,
+.body.mailer .column td.five { width: 41.666666%; }
+.body.mailer .columns td.six,
+.body.mailer .column td.six { width: 50%; }
+.body.mailer .columns td.seven,
+.body.mailer .column td.seven { width: 58.333333%; }
+.body.mailer .columns td.eight,
+.body.mailer .column td.eight { width: 66.666666%; }
+.body.mailer .columns td.nine,
+.body.mailer .column td.nine { width: 75%; }
+.body.mailer .columns td.ten,
+.body.mailer .column td.ten { width: 83.333333%; }
+.body.mailer .columns td.eleven,
+.body.mailer .column td.eleven { width: 91.666666%; }
+.body.mailer .columns td.twelve,
+.body.mailer .column td.twelve { width: 100%; }
+
+.mailer td.offset-by-one { padding-left: 50px; }
+.mailer td.offset-by-two { padding-left: 100px; }
+.mailer td.offset-by-three { padding-left: 150px; }
+.mailer td.offset-by-four { padding-left: 200px; }
+.mailer td.offset-by-five { padding-left: 250px; }
+.mailer td.offset-by-six { padding-left: 300px; }
+.mailer td.offset-by-seven { padding-left: 350px; }
+.mailer td.offset-by-eight { padding-left: 400px; }
+.mailer td.offset-by-nine { padding-left: 450px; }
+.mailer td.offset-by-ten { padding-left: 500px; }
+.mailer td.offset-by-eleven { padding-left: 550px; }
+
+.mailer td.expander {
+  visibility: hidden;
+  width: 0px;
+  padding: 0 !important;
+}
+
+.mailer table.columns .text-pad,
+.mailer table.column .text-pad {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.mailer table.columns .left-text-pad,
+.mailer table.columns .text-pad-left,
+.mailer table.column .left-text-pad,
+.mailer table.column .text-pad-left {
+  padding-left: 10px;
+}
+
+.mailer table.columns .right-text-pad,
+.mailer table.columns .text-pad-right,
+.mailer table.column .right-text-pad,
+.mailer table.column .text-pad-right {
+  padding-right: 10px;
+}
+
+/* Custom CSS for Sweetist */
+/* Header CSS */
+.mailer .template-label{
+  font-size: 12px;
+  line-height: 14px;
+}
+
+/* Order confirm email CSS */
+.mailer th.order-table{
+  text-align: center;
+}
+.mailer th.order-table.item-name{
+  text-align: left;
+  width: 60%;
+}
+.mailer th.order-table.price{
+  width: 15%;
+}
+.mailer th.order-table.qty{
+  width: 10%;
+}
+.mailer th.order-table.subtotal{
+  width: 15%;
+}
+.mailer td.left{
+  text-align: left;
+}
+.mailer td.right{
+  text-align: right;
+}
+.mailer table.row.footer p{
+  margin: 0;
+}
+
+/* All line items email table CSS */
+.mailer table.all-lines th.order-table.item-name{
+  text-align: left;
+  width: 40%;
+}
+.mailer th.order-table.price{
+  width: 12%;
+}
+.mailer th.order-table.qty{
+  width: 11%;
+}
+.mailer th.order-table.subtotal{
+  width: 15%;
+}
+.mailer td.left{
+  text-align: left;
+}
+
+
+/* Order confirm email CSS */
+.mailer .footer-note{
+  font-size: 11px;
+  line-height: 14px;
+  text-align: center;
+}
+.mailer .item-sp-instr {
+  font-style: italic;
+  color: orange;
+}
+.mailer .image-size {
+  max-width: 175px;
+}
+
+/* Bakery confirm email CSS */
+.mailer .confirm-msg{
+  color: red;
+  font-weight: 500;
+}
+
+.mailer .bakery_mailer_summary tr td:first-child {
+  width: 30%;
+}
+
+/* End Custon CSS */
+
+
+/* Block Grid */
+
+.mailer .block-grid {
+  width: 100%;
+  max-width: 580px;
+}
+
+.mailer .block-grid td {
+  display: inline-block;
+  padding:10px;
+}
+
+.mailer .two-up td {
+  width:270px;
+}
+
+.mailer .three-up td {
+  width:173px;
+}
+
+.mailer .four-up td {
+  width:125px;
+}
+
+.mailer .five-up td {
+  width:96px;
+}
+
+.mailer .six-up td {
+  width:76px;
+}
+
+.mailer .seven-up td {
+  width:62px;
+}
+
+.mailer .eight-up td {
+  width:52px;
+}
+
+/* Alignment & Visibility Classes */
+
+.mailer table.center, .mailer td.center {
+  text-align: center;
+}
+
+.mailer h1.center,
+.mailer h2.center,
+.mailer h3.center,
+.mailer h4.center,
+.mailer h5.center,
+.mailer h6.center {
+  text-align: center;
+}
+
+.mailer span.center {
+  display: block;
+  width: 100%;
+  text-align: center;
+}
+
+.mailer img.center {
+  margin: 0 auto;
+  float: none;
+}
+
+.mailer .show-for-small,
+.mailer .hide-for-desktop {
+  display: none;
+}
+
+/* Typography */
+
+.mailer body, table.body.mailer, .mailer h1, .mailer h2, .mailer h3, .mailer h4, .mailer h5, .mailer h6, .mailer p, .mailer td {
+  color: #222222;
+  font-family: "Helvetica", "Arial", sans-serif;
+  font-weight: normal;
+  padding:0;.mailer
+  margin: 0;
+  text-align: left;
+  line-height: 1.3;
+}
+
+.mailer h1, .mailer h2, .mailer h3, .mailer h4, .mailer h5, .mailer h6 {
+  word-break: normal;
+}
+
+.mailer h1 {font-size: 40px;}
+.mailer h2 {font-size: 36px;}
+.mailer h3 {font-size: 32px;}
+.mailer h4 {font-size: 28px;}
+.mailer h5 {font-size: 24px;}
+.mailer h6 {font-size: 20px;}
+.mailer body, table.body.mailer, .mailer p, .mailer td {font-size: 14px;line-height:19px;}
+
+.mailer p.lead, .mailer p.lede, .mailer p.leed {
+  font-size: 18px;
+  line-height:21px;
+}
+
+.mailer p {
+  margin-bottom: 10px;
+}
+
+.mailer small {
+  font-size: 10px;
+}
+
+.mailer a {
+  color: #2ba6cb;
+  text-decoration: none;
+}
+
+.mailer a:hover {
+  color: #2795b6 !important;
+}
+
+.mailer a:active {
+  color: #2795b6 !important;
+}
+
+.mailer a:visited {
+  color: #2ba6cb !important;
+}
+
+.mailer h1 a,
+.mailer h2 a,
+.mailer h3 a,
+.mailer h4 a,
+.mailer h5 a,
+.mailer h6 a {
+  color: #2ba6cb;
+}
+
+.mailer h1 a:active,
+.mailer h2 a:active,
+.mailer h3 a:active,
+.mailer h4 a:active,
+.mailer h5 a:active,
+.mailer h6 a:active {
+  color: #2ba6cb !important;
+}
+
+.mailer h1 a:visited,
+.mailer h2 a:visited,
+.mailer h3 a:visited,
+.mailer h4 a:visited,
+.mailer h5 a:visited,
+.mailer h6 a:visited {
+  color: #2ba6cb !important;
+}
+
+/* Panels */
+
+.mailer .panel {
+  background: #f2f2f2;
+  border: 1px solid #d9d9d9;
+  padding: 10px !important;
+}
+
+.mailer .sub-grid table {
+  width: 100%;
+}
+
+.mailer .sub-grid td.sub-columns {
+  padding-bottom: 0;
+}
+
+/* Buttons */
+
+.mailer table.button,
+.mailer table.tiny-button,
+.mailer table.small-button,
+.mailer table.medium-button,
+.mailer table.large-button {
+  width: 100%;
+  overflow: hidden;
+}
+
+.mailer table.button td,
+.mailer table.tiny-button td,
+.mailer table.small-button td,
+.mailer table.medium-button td,
+.mailer table.large-button td {
+  display: block;
+  width: auto !important;
+  text-align: center;
+  background: #2ba6cb;
+  border: 1px solid #2284a1;
+  color: #ffffff;
+  padding: 8px 0;
+}
+
+.mailer table.tiny-button td {
+  padding: 5px 0 4px;
+}
+
+.mailer table.small-button td {
+  padding: 8px 0 7px;
+}
+
+.mailer table.medium-button td {
+  padding: 12px 0 10px;
+}
+
+.mailer table.large-button td {
+  padding: 21px 0 18px;
+}
+
+.mailer table.button td a,
+.mailer table.tiny-button td a,
+.mailer table.small-button td a,
+.mailer table.medium-button td a,
+.mailer table.large-button td a {
+  font-weight: bold;
+  text-decoration: none;
+  font-family: Helvetica, Arial, sans-serif;
+  color: #ffffff;
+  font-size: 16px;
+}
+
+.mailer table.tiny-button td a {
+  font-size: 12px;
+  font-weight: normal;
+}
+
+.mailer table.small-button td a {
+  font-size: 16px;
+}
+
+.mailer table.medium-button td a {
+  font-size: 20px;
+}
+
+.mailer table.large-button td a {
+  font-size: 24px;
+}
+
+.mailer table.button:hover td,
+.mailer table.button:visited td,
+.mailer table.button:active td {
+  background: #2795b6 !important;
+}
+
+.mailer table.button:hover td a,
+.mailer table.button:visited td a,
+.mailer table.button:active td a {
+  color: #fff !important;
+}
+
+.mailer table.button:hover td,
+.mailer table.tiny-button:hover td,
+.mailer table.small-button:hover td,
+.mailer table.medium-button:hover td,
+.mailer table.large-button:hover td {
+  background: #2795b6 !important;
+}
+
+.mailer table.button:hover td a,
+.mailer table.button:active td a,
+.mailer table.button td a:visited,
+.mailer table.tiny-button:hover td a,
+.mailer table.tiny-button:active td a,
+.mailer table.tiny-button td a:visited,
+.mailer table.small-button:hover td a,
+.mailer table.small-button:active td a,
+.mailer table.small-button td a:visited,
+.mailer table.medium-button:hover td a,
+.mailer table.medium-button:active td a,
+.mailer table.medium-button td a:visited,
+.mailer table.large-button:hover td a,
+.mailer table.large-button:active td a,
+.mailer table.large-button td a:visited {
+  color: #ffffff !important;
+}
+
+.mailer table.secondary td {
+  background: #e9e9e9;
+  border-color: #d0d0d0;
+  color: #555;
+}
+
+.mailer table.secondary td a {
+  color: #555;
+}
+
+.mailer table.secondary:hover td {
+  background: #d0d0d0 !important;
+  color: #555;
+}
+
+.mailer table.secondary:hover td a,
+.mailer table.secondary td a:visited,
+.mailer table.secondary:active td a {
+  color: #555 !important;
+}
+
+.mailer table.success td {
+  background: #5da423;
+  border-color: #457a1a;
+}
+
+.mailer table.success:hover td {
+  background: #457a1a !important;
+}
+
+.mailer table.alert td {
+  background: #c60f13;
+  border-color: #970b0e;
+}
+
+.mailer table.alert:hover td {
+  background: #970b0e !important;
+}
+
+.mailer table.radius td {
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+}
+
+.mailer table.round td {
+  -webkit-border-radius: 500px;
+  -moz-border-radius: 500px;
+  border-radius: 500px;
+}
+
+/* Outlook First */
+
+.mailer body.outlook p {
+  display: inline !important;
+}
+
+/*  Media Queries */
+
+@media only screen and (max-width: 600px) {
+
+  .mailer table[class="body"] img {
+    width: auto !important;
+    height: auto !important;
+  }
+
+  .mailer table[class="body"] center {
+    min-width: 0 !important;
+  }
+
+  .mailer table[class="body"] .container {
+    width: 95% !important;
+  }
+
+  .mailer table[class="body"] .row {
+    width: 100% !important;
+    display: block !important;
+  }
+
+  .mailer table[class="body"] .wrapper {
+    display: block !important;
+    padding-right: 0 !important;
+  }
+
+  .mailer table[class="body"] .columns,
+  .mailer table[class="body"] .column {
+    table-layout: fixed !important;
+    float: none !important;
+    width: 100% !important;
+    padding-right: 0px !important;
+    padding-left: 0px !important;
+    display: block !important;
+  }
+
+  .mailer table[class="body"] .wrapper.first .columns,
+  .mailer table[class="body"] .wrapper.first .column {
+    display: table !important;
+  }
+
+  .mailer table[class="body"] table.columns td {
+    /*width: 100%;*/
+  }
+  .mailer table[class="body"] table.column td {
+    width: 100% !important;
+  }
+
+  .mailer table[class="body"] .columns td.one,
+  .mailer table[class="body"] .column td.one { width: 8.333333% !important; }
+  .mailer table[class="body"] .columns td.two,
+  .mailer table[class="body"] .column td.two { width: 16.666666% !important; }
+  .mailer table[class="body"] .columns td.three,
+  .mailer table[class="body"] .column td.three { width: 25% !important; }
+  .mailer table[class="body"] .columns td.four,
+  .mailer table[class="body"] .column td.four { width: 33.333333% !important; }
+  .mailer table[class="body"] .columns td.five,
+  .mailer table[class="body"] .column td.five { width: 41.666666% !important; }
+  .mailer table[class="body"] .columns td.six,
+  .mailer table[class="body"] .column td.six { width: 50% !important; }
+  .mailer table[class="body"] .columns td.seven,
+  .mailer table[class="body"] .column td.seven { width: 58.333333% !important; }
+  .mailer table[class="body"] .columns td.eight,
+  .mailer table[class="body"] .column td.eight { width: 66.666666% !important; }
+  .mailer table[class="body"] .columns td.nine,
+  .mailer table[class="body"] .column td.nine { width: 75% !important; }
+  .mailer table[class="body"] .columns td.ten,
+  .mailer table[class="body"] .column td.ten { width: 83.333333% !important; }
+  .mailer table[class="body"] .columns td.eleven,
+  .mailer table[class="body"] .column td.eleven { width: 91.666666% !important; }
+  .mailer table[class="body"] .columns td.twelve,
+  .mailer table[class="body"] .column td.twelve { width: 100% !important; }
+
+  .mailer table[class="body"] td.offset-by-one,
+  .mailer table[class="body"] td.offset-by-two,
+  .mailer table[class="body"] td.offset-by-three,
+  .mailer table[class="body"] td.offset-by-four,
+  .mailer table[class="body"] td.offset-by-five,
+  .mailer table[class="body"] td.offset-by-six,
+  .mailer table[class="body"] td.offset-by-seven,
+  .mailer table[class="body"] td.offset-by-eight,
+  .mailer table[class="body"] td.offset-by-nine,
+  .mailer table[class="body"] td.offset-by-ten,
+  .mailer table[class="body"] td.offset-by-eleven {
+    padding-left: 0 !important;
+  }
+
+  .mailer table[class="body"] table.columns td.expander {
+    width: 1px !important;
+  }
+
+  .mailer table[class="body"] .right-text-pad,
+  .mailer table[class="body"] .text-pad-right {
+    padding-left: 10px !important;
+  }
+
+  .mailer table[class="body"] .left-text-pad,
+  .mailer table[class="body"] .text-pad-left {
+    padding-right: 10px !important;
+  }
+
+  .mailer table[class="body"] .hide-for-small,
+  .mailer table[class="body"] .show-for-desktop {
+    display: none !important;
+  }
+
+  .mailer table[class="body"] .show-for-small,
+  .mailer table[class="body"] .hide-for-desktop {
+    display: inherit !important;
+  }
+}
+
+  </style>
+  <style>
+
+    .mailer .template-label {
+      font-weight: normal;
+      font-size: 12px;
+    }
+
+    .mailer .callout .wrapper {
+      padding-bottom: 20px;
+    }
+
+    .mailer .callout .panel {
+      background: #ECF8FF;
+      border-color: #b9e5ff;
+    }
+
+    .mailer .header {
+      background: #fff;
+    }
+
+    .mailer .footer .wrapper {
+      background: #ebebeb;
+    }
+
+    .mailer .footer h5 {
+      padding-bottom: 10px;
+    }
+
+    .mailer table.columns .text-pad {
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+
+    .mailer table.columns .left-text-pad {
+      padding-left: 10px;
+    }
+
+    .mailer table.columns .right-text-pad {
+      padding-right: 10px;
+    }
+
+    @media only screen and (max-width: 600px) {
+
+      .mailer table[class="body"] .right-text-pad {
+        padding-left: 10px !important;
+      }
+
+      .mailer table[class="body"] .left-text-pad {
+        padding-right: 10px !important;
+      }
+    }
+
+    /* Invoice Summary */
+    .mailer .table-label{
+      width: 120px;
+    }
+    .mailer .table-label::first-letter{
+      padding-left: 10px;
+    }
+    .mailer .top-bottom-border{
+      border-top: 1px solid #ccc;
+      border-bottom: 1px solid #ccc;
+      margin: 10px 0;
+    }
+    .mailer .top-bottom-border tbody tr:first-child td{
+      padding-top: 10px;
+    }
+    .mailer h8{
+      display: block;
+      font-size: 14px;
+      font-weight: bold;
+    }
+    .mailer .margin-top-20{
+      margin-top: 20px;
+    }
+    .mailer .margin-bottom-20{
+      margin-bottom: 20px;
+    }
+
+  </style>
+</head>
+  <%= render partial: 'spree/shared/base_mailer' %>
+</html>

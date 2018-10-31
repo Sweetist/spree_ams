@@ -1,0 +1,180 @@
+<% if @user.errors.any? %>
+  <div id="error_explanation">
+    <h2><%= pluralize(@user.errors.count, "error") %> prohibited this account from being saved:</h2>
+
+    <ul>
+    <% @user.errors.full_messages.each do |msg| %>
+      <li><%= msg %></li>
+    <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<% if @current_user %>
+  <%= content_for :head_title do %>
+    My Profile
+  <% end %>
+<% else %>
+   <%= content_for :head_title do %>
+    User Profile
+  <% end %>
+<% end %>
+<%= content_for :page_bar do %>
+<ul class="breadcrumb">
+  <li>
+    <%= link_to "Home", my_company_users_path %>
+  </li>
+  <li>
+    <%= link_to 'Users', my_company_users_path %>
+  </li>
+  <li>
+    <% if @current_user %>
+      <%= link_to "My Profile", edit_my_company_user_path(current_spree_user) %>
+    <% else %>
+      <%= link_to "User Profile", edit_my_company_user_path(@user) %>
+    <% end %>
+  </li>
+</ul>
+<% end %>
+
+<div class="content">
+<div class="row">
+  <div class="col-md-12">
+      <!-- BEGIN PROFILE SIDEBAR -->
+      <div class="profile-sidebar">
+          <!-- PORTLET MAIN -->
+          <div class="portlet light profile-sidebar-portlet ">
+            <% if @current_user %>
+              <%= link_to my_profile_user_images_path do %>
+                <!-- SIDEBAR USERPIC -->
+                <div class="profile-userpic">
+                  <% if @user.images.any? %>
+                    <% image = @user.images.find_by(position:1) %>
+                    <%= image_tag image.attachment.url(:product), :class => "img-responsive", alt: image.alt %>
+                  <% else %>
+                    <%= image_tag "spree/manage/img/multi-user.png", :class => "img-responsive", alt: "user image" %>
+                  <% end %>
+                  <div class="img-block-overlay">
+                    <div class="btn btn-primary btn-xs">
+                      <i class='fa fa-pencil'></i> Edit Image
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+            <% end %>
+              <!-- END SIDEBAR USERPIC -->
+              <!-- END SIDEBAR USER TITLE -->
+              <!-- SIDEBAR USER TITLE -->
+              <div class="profile-usertitle">
+                  <div class="profile-usertitle-name">
+                    <%= @user.name %>
+                  </div>
+                  <!--
+                  <div class="profile-usertitle-job"> Developer </div>
+                  -->
+              </div>
+          </div>
+          <!-- END PORTLET MAIN -->
+       </div>
+        <!-- END BEGIN PROFILE SIDEBAR -->
+        <!-- BEGIN PROFILE CONTENT -->
+        <div class="profile-content">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="portlet light ">
+                <div class="portlet-title tabbable-line">
+                  <div class="caption caption-md">
+                    <i class="icon-globe theme-font hide"></i>
+                    <span class="caption-subject font-blue-madison bold uppercase">
+                      <%= @current_user ? 'My Profile' : 'User Profile' %>
+                    </span>
+                  </div>
+                  <div class="btn-group pull-left hidden-md hidden-lg" style="width:100%">
+                    <button type="button" class="btn green dropdown-toggle dropdown-btn-text" data-toggle="dropdown" style="width:100%">
+                      <label>Information</label>&nbsp;
+                      <i class="fa fa-angle-down"></i>
+                    </button>
+                    <ul class="dropdown-menu pull-left" style="width:100%" role="menu">
+                      <li class= "tab-link <%= 'active' unless params[:accounts] %>">
+                        <a href="#general_info" data-toggle="tab">Information</a>
+                      </li>
+                      <% if @current_user %>
+                      <li class= "tab-link">
+                         <a href="#change_password" data-toggle="tab">Change Password</a>
+                      </li>
+                      <% end %>
+                      <li class= "tab-link <%= 'active' if params[:accounts] %>">
+                        <a href="#account_access" data-toggle="tab">Account Access</a>
+                     </li>
+                    </ul>
+                  </div>
+                  <ul class="nav nav-tabs hidden-xs hidden-sm">
+                    <li class="long-tabs-link <%= 'active' unless params[:accounts] %>">
+                      <a href="#general_info" data-toggle="tab">Information</a>
+                    </li>
+                    <% if @current_user %>
+                      <li class="long-tabs-link">
+                        <a href="#change_password" data-toggle="tab">Change Password</a>
+                      </li>
+                    <% end %>
+                    <li class=" long-tabs-link <%= 'active' if params[:accounts] %>">
+                      <a href="#account_access" data-toggle="tab">Account Access</a>
+                    </li>
+                  </ul>
+                </div>
+                <div class="portlet-body">
+                  <div class="tab-content">
+                      <!-- PERSONAL INFO TAB -->
+                    <div class="tab-pane <%= 'active' unless params[:accounts] %>" id="general_info">
+                      <%= form_for @user, url: my_company_user_path(@user.id), html: {class: 'form'} do |f| %>
+                        <div class='form-body'>
+                          <%= render partial: "form", locals: {f: f} %>
+                        </div>
+                        <div class="form-actions">
+                          <div class="pull-right">
+                            <%= f.submit "Update Profile", class: "btn btn-primary" %>
+                          </div>
+                        </div>
+                      <% end %>
+                    </div>
+                      <!-- END PERSONAL INFO TAB -->
+                    <% if @current_user %>
+                      <div class="tab-pane" id="change_password">
+                        <%= form_for @user, url: update_password_my_profile_url, html: {class: 'form'} do |f| %>
+                          <div class='form-body'>
+                            <div class="form-group">
+                              <%= f.label :current_password, class: "control-label" %>
+                              <%= f.password_field :current_password, class: "form-control" %>
+                            </div>
+                            <div class="form-group">
+                              <%= f.label :password, class: "control-label" %>
+                              <%= f.password_field :password, class: "form-control" %>
+                            </div>
+                            <div class="form-group">
+                              <%= f.label :password_confirmation, class: "control-label" %>
+                              <%= f.password_field :password_confirmation, class: "form-control" %>
+                            </div>
+                          </div>
+                          <div class='form-actions'>
+                            <div class="pull-right">
+                              <%= f.submit "Change Password", class: "btn btn-primary" %>
+                            </div>
+                          </div>
+                        <% end %>
+                      </div>
+                    <% end %>
+
+                    <div class="tab-pane <%= 'active' if params[:accounts] %>" id="account_access">
+                      <%= render partial: "account_access" %>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+        </div>
+      </div>
+      <!-- END PROFILE CONTENT -->
+    </div>
+  </div>
+</div>

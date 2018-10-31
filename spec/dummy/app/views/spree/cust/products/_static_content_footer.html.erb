@@ -1,0 +1,13 @@
+<h2>Info</h2>
+<ul class="list-unstyled center-block">
+  <% @pages_footer.each do |page| %>
+    <% if page.foreign_link.present? %>
+      <li><%= link_to page.title, page.foreign_link, target: '_blank', rel: 'nofollow', style: 'color: #c2c1c1; text-decoration: none;' %></li>
+    <% else %>
+      <% page_uri = Rails.application.routes.named_routes[:spree].path.spec.to_s == '/' ? page.slug : Rails.application.routes.named_routes[:spree].path.spec.to_s + page.slug %>
+      <li>
+        <%= link_to page.title, page_uri, style: 'color: #c2c1c1; text-decoration: none' %>
+      </li>
+    <% end %>
+  <% end %>
+</ul>

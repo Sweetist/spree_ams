@@ -1,0 +1,6 @@
+<%= render partial: "spree/shared/payments/source_views/#{@payment.payment_method.method_type}",
+  locals: {payment: @payment.source.is_a?(Spree::Payment) ? @payment.source : @payment}%>
+
+<div class="alert alert-info" data-hook="amount">
+  <%= Spree.t(:amount) %>: <%= @payment.display_amount.to_html %>
+</div>

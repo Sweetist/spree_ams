@@ -1,0 +1,23 @@
+<div class='row'>
+  <% option_types = @product.product_option_types.includes(option_type: :option_values).order('position ASC') %>
+  <% if option_types.present? %>
+    <%= f.fields_for :option_value_ids do |option_value_form| %>
+      <% option_types.each do |pot| %>
+        <div class='col-sm-6'>
+          <div class="form-group">
+            <%= option_value_form.label "Option Type: #{pot.option_type.presentation}", class: "control-label" %>
+            <%= option_value_form.select '', {},{include_blank: false}, {class: "form-control option-val-select", id: "#{pot.option_type.dom_id}", data: {'variant-id' => f.object.try(:id)}} do %>
+              <%= render partial: 'option_values', locals: {option_type: pot.option_type, variant: f.object} %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+  <% else %>
+    <div class='col-xs-12'>
+      <span class='help-block-italic'>
+        There are no option types defined for <%= link_to @product.name, edit_manage_product_path(@product) %>.
+      </span>
+    </div>
+  <% end %>
+</div>

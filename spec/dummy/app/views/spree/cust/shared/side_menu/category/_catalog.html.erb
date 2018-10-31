@@ -1,0 +1,16 @@
+<a href="<%= vendor_products_url(current_spree_user.company.vendors.first) %>">
+  <h3>
+    <%=image_tag("spree/manage/img/catalog.png")%>
+    <span class="tablet-hide">Catalog
+       <!-- <i class="fa fa-angle-left"></i> -->
+     </span>
+  </h3>
+</a>
+
+<!-- <div class="accordion-block">
+  <ul>
+    <% current_spree_user.company.vendors.each do |vendor| %>
+      <li><a href="<%= vendor_products_url(vendor) %>"><%= vendor.name %></a></li>
+    <% end %>
+  </ul>
+</div> -->

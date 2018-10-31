@@ -1,0 +1,6 @@
+<% if flash[:error] %>
+  $('#alert').html("<div class='alert alert-danger alert-dismissable'><button type='button' class='close' data-dismiss='alert' aria-hidden='true'></button><%= flash[:error] %></div>");
+<% elsif @line_item && @order %>
+  $("#line_item_<%= @line_item.id %>").remove();
+  $('#subtotals-row').replaceWith("<%= escape_javascript(render(partial: 'subtotal_row.html.erb', locals: {order_total: @order_total})) %>");
+<% end %>

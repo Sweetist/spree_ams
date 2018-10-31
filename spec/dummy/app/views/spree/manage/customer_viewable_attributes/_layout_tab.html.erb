@@ -1,0 +1,373 @@
+<div class='col-md-12 alert alert-info'>
+  Customize your customers theme.
+</div>
+<div class="container-fluid">
+  <div class="row">
+    <div class='col-sm-4' id='layout-form-container'>
+      <div class="row">
+        <div class='pull-right'>
+          <a class='toggle-layout-fields'>
+            Hide Form
+            <i class='fa fa-angle-left'></i>
+          </a>
+          <a class='toggle-layout-fields hidden'>
+            Expand
+            <i class='fa fa-angle-right'></i>
+          </a>
+        </div>
+      </div>
+      <%= simple_form_for [:manage, @cva], html: {class: 'form row', id: "color-view-form"} do |f| %>
+        <div class='form-body'>
+          <%= f.input :theme_name, collection: ["darkblue", "darkred", "grey", "custom"], input_html: {id: "select_theme_box"}, label: "Theme", label_html:{class:"theme-name-label margin-top-30 margin-bottom-30"}, include_blank: false %>
+          <div id="customer_theme_colors" class='row' style="<%= "display:none;" if @cva.theme_name != 'custom' %>">
+            <div class='row'>
+              <div class='col-xs-12'>
+                <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 ">
+                  <%= f.input :pre_header_background_color, label: "Navbar Background", input_html: { class: "minicolors", value: @cva.pre_header_background_color || @cva.theme_colors.fetch('pre_header_background', nil ) } %>
+                </div>
+                <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 ">
+                  <%= f.input :pre_header_text_color, label:  "Navbar Text", input_html: { class: "minicolors", value: @cva.pre_header_text_color || @cva.theme_colors.fetch('pre_header_text', nil ) } %>
+                </div>
+                <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 ">
+                  <%= f.input :header_background_color, label: "Header Background", input_html: { class: "minicolors", value: @cva.header_background_color || @cva.theme_colors.fetch('header_background', nil ) } %>
+                </div>
+                <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 ">
+                  <%= f.input :header_text_color, label: "Header Text", input_html: { class: "minicolors", value: @cva.header_text_color || @cva.theme_colors.fetch('header_text', nil ) } %>
+                </div>
+                <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 ">
+                  <%= f.input :body_background_color, label: "Body Background", input_html: { class: "minicolors", value: @cva.body_background_color || @cva.theme_colors.fetch('body_background', nil ) } %>
+                </div>
+                <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 ">
+                  <%= f.input :body_text_color, label: "Body Text", input_html: { class: "minicolors", value: @cva.body_text_color || @cva.theme_colors.fetch('body_text', nil ) } %>
+                </div>
+                <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 ">
+                  <%= f.input :button_background_color, label: "Button Background", input_html: { class: "minicolors", value: @cva.button_background_color || @cva.theme_colors.fetch('button_background', nil ) } %>
+                </div>
+                <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 ">
+                  <%= f.input :button_text_color, label: "Button Text", input_html: { class: "minicolors", value: @cva.button_text_color || @cva.theme_colors.fetch('button_text', nil ) } %>
+                </div>
+                <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 ">
+                  <%= f.input :footer_background_color, label: "Footer Background", input_html: { class: "minicolors", value: @cva.footer_background_color || @cva.theme_colors.fetch('footer_background', nil ) } %>
+                </div>
+                <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 ">
+                  <%= f.input :footer_text_color, label: "Footer Text", input_html: { class: "minicolors", value: @cva.footer_text_color || @cva.theme_colors.fetch('footer_text', nil ) } %>
+                </div>
+                <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 ">
+                  <%= f.input :announcement_text_color, label: "Announcement Text", input_html: { class: "minicolors", value: @cva.announcement_text_color || @cva.theme_colors.fetch('announcement_text', nil ) } %>
+                </div>
+                <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 ">
+                  <%= f.input :announcement_background_color, label: "Announcement Background", input_html: { class: "minicolors", value: @cva.announcement_background_color || @cva.theme_colors.fetch('announcement_background', nil ) } %>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id='banner-content'>
+            <label class="theme-name-label margin-top-30 margin-bottom-30">
+              Banner
+            </label>
+            <div class='row'>
+              <div class='col-xs-12'>
+                <%= f.input :banner_text_content, label: "Banner Text"%>
+              </div>
+              <div class='col-xs-6'>
+                <%= f.input :banner_text_font_size, label: "Font Size"%>
+              </div>
+              <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 ">
+                <%= f.input :banner_color, label: "Banner Color", input_html: { class: "minicolors", value: @cva.banner_color || @cva.fetch('banner_color', nil ) } %>
+              </div>
+              <div class="col-xs-6">
+                <%= f.input :banner_text_color, label: "Text Color", input_html: { class: "minicolors", value: @cva.banner_text_color || @cva.pages_catalog.fetch('banner_text',{}).fetch('style',{}).fetch('color', nil) } %>
+              </div>
+              <div class='col-xs-6'>
+                <%= f.input :banner_text_opacity, as: :select,
+                collection: (0..1).step(0.1).to_a.map{|x| [x.round(1).to_s, x.round(1).to_s]}.reverse,
+                label_method: :first, value_method: :last, label: "Text Opacity", include_blank: false %>
+              </div>
+              <div class='col-xs-6'>
+                <%= f.input :banner_text_alignment, as: :select, collection: text_align_opts,
+                  label_method: :first, value_method: :last, label: "Horizontal Alignment", include_blank: false %>
+              </div>
+              <div class='col-xs-6'>
+                <%= f.input :banner_text_vertical, as: :select,
+                  collection: [['Top', '20%'], ['Middle', '40%'], ['Bottom', '60%']],
+                  label_method: :first, value_method: :last, label: "Vertical Alignment", include_blank: false %>
+              </div>
+            </div>
+            <div class='col-xs-12'>
+              Banner Image <%= link_to '(manage banner images)', manage_account_banner_images_path, target: 'blank' %>
+            </div>
+            <% if @vendor.banner_images.presence %>
+              <div class='col-xs-12 margin-left-5'>
+                <div class='form-group margin-top-10'>
+                  <label>
+                    <%= radio_button_tag 'customer_viewable_attribute[banner_image_id]',
+                      nil, f.object.banner_image_id.to_i == 0, class: 'noUniform margin-right-10' %>
+                    None
+                  </label>
+                </div>
+                <% @vendor.banner_images.each do |img| %>
+                  <div class='form-group'>
+                    <label>
+                      <%= f.radio_button :banner_image_id, img.id, class: 'noUniform margin-right-10' %>
+                      <%= image_tag(img.attachment.url(:mini)) %>
+                    </label>
+                  </div>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+          <div id='logo-content'>
+            <label class="theme-name-label margin-top-30 margin-bottom-30">
+              Logo
+            </label>
+            <div class='row'>
+              <div class='col-xs-6'>
+                <%= f.input :logo_size, as: :select,
+                  collection: Spree::CompanyLogo.size_options,
+                  label_method: :first, value_method: :last, label: "Logo Size", include_blank: false %>
+              </div>
+              <div class='col-xs-6'>
+                <%= f.input :logo_alignment, as: :select,
+                  collection: [['Left', 'left'], ['Center', 'center']],
+                  label_method: :first, value_method: :last, label: "Logo Position", include_blank: false %>
+              </div>
+            </div>
+          </div>
+          <div id='catalog-content'>
+            <label class="theme-name-label margin-top-30 margin-bottom-30">
+              Catalog
+            </label>
+            <div class='row'>
+              <div class='col-xs-6'>
+                <div class='form-group'>
+                  <label for='catalog_show_logo'>Include Logo</label></br>
+                  <%= f.check_box :catalog_show_logo, class: 'make-switch', data: {size: 'mini'} %>
+                </div>
+              </div>
+              <div class='col-xs-6'>
+                <div class='form-group'>
+                  <label for='catalog_account_name_and_number'>
+                    <%= Spree.t('customer_view_settings.pages.catalog.account_name_and_number.label') %>
+                    <i class='fa fa-info-circle tooltips'
+                      data-original-title='<%= Spree.t('customer_view_settings.pages.catalog.account_name_and_number.helper') %>'
+                      data-container='body'></i>
+                  </label>
+                  </br>
+                  <%= f.check_box :catalog_account_name_and_number, class: 'make-switch', data: {size: 'mini'} %>
+                </div>
+              </div>
+            </div>
+            <div class='row'>
+              <div class='col-xs-6'>
+                <div class='form-group'>
+                  <label for='catalog_search_bar'>
+                    <%= Spree.t('customer_view_settings.pages.catalog.search_bar.label') %>
+                  </label></br>
+                  <%= f.check_box :catalog_search_bar, class: 'make-switch', data: {size: 'mini'} %>
+                </div>
+              </div>
+              <div class='col-xs-6'>
+                <div class='form-group'>
+                  <label for='catalog_categories'>Show Category Filter</label></br>
+                  <%= f.check_box :catalog_categories, class: 'make-switch', data: {size: 'mini'} %>
+                </div>
+              </div>
+            </div>
+            <div class='row'>
+              <div class='col-xs-6'>
+                <div class='form-group'>
+                  <label for='catalog_show_images'>
+                    <%= Spree.t('customer_view_settings.pages.catalog.show_images.label') %>
+                    <i class='fa fa-info-circle tooltips'
+                      data-original-title='<%= Spree.t('customer_view_settings.pages.catalog.show_images.helper') %>'
+                      data-container='body'></i>
+                  </label>
+                  </br>
+                  <%= f.check_box :catalog_show_images, class: 'make-switch', data: {size: 'mini'} %>
+                </div>
+              </div>
+              <div class='col-xs-6'>
+                <div class='form-group'>
+                  <label for='catalog_categories'>
+                    <%= Spree.t('customer_view_settings.pages.catalog.stock_level.in_stock_text.label') %>
+                  </label>
+                  </br>
+                  <% stock_text_opts = [['None', ''],['In stock', 'in_stock'],['X in stock', 'remaining_stock']] %>
+                  <%= f.select :catalog_stock_level_in_stock_text,
+                    options_for_select(stock_text_opts, f.object.catalog_stock_level_in_stock_text),
+                    {include_blank: false}, class: 'form-control' %>
+                </div>
+              </div>
+
+            </div>
+            <div class='row'>
+              <div class='col-xs-6'>
+                <div class='form-group'>
+                  <label for='catalog_categories'>
+                    <%= Spree.t('customer_view_settings.pages.catalog.stock_level.sum.label') %>
+                    <i class='fa fa-info-circle tooltips'
+                      data-original-title='<%= Spree.t('customer_view_settings.pages.catalog.stock_level.sum.helper') %>'
+                      data-container='body'></i>
+                  </label>
+                  </br>
+                  <%= f.check_box :catalog_stock_level_sum, class: 'make-switch', data: {size: 'mini'} %>
+                </div>
+              </div>
+              <div class='col-xs-6'>
+                <div class='form-group'>
+                  <label for='catalog_categories'>
+                    <%= Spree.t('customer_view_settings.pages.catalog.stock_level.show.label') %>
+                    <i class='fa fa-info-circle tooltips'
+                      data-original-title='<%= Spree.t('customer_view_settings.pages.catalog.stock_level.show.helper') %>'
+                      data-container='body'></i>
+                  </label>
+                  </br>
+                  <%= f.check_box :catalog_stock_level_show, class: 'make-switch', data: {size: 'mini'} %>
+                </div>
+              </div>
+            </div>
+            <div class='row'>
+              <div class='col-xs-6'>
+                <div class='form-group'>
+                  <%= f.input :catalog_add_to_cart, as: :select,
+                    collection: [['Product Quickview', 'modals'],['Quantity Field Only', 'legacy']],
+                    label_method: :first, value_method: :last, label: "Add to Cart Interface", include_blank: false %>
+                </div>
+              </div>
+              <div class='col-xs-6'>
+                <div class='form-group'>
+                  <%= f.input :catalog_after_add_to_cart, as: :select,
+                    collection: [['Return to Catalog', 'products'],['Proceed to Checkout', 'order']],
+                    label_method: :first, value_method: :last, label: "After Add to Cart", include_blank: false %>
+                </div>
+              </div>
+            </div>
+            <div class='row'>
+              <div class='col-xs-6'>
+                <div class='form-group'>
+                  <%= f.input :catalog_products_per_page, as: :select,
+                    collection: (10..50).step(5).map {|n| [n,n]},
+                    label_method: :first, value_method: :last, label: "Products Per Page", include_blank: false %>
+                </div>
+              </div>
+              <div class='col-xs-6'>
+                <div class='form-group'>
+                  <label for='catalog_categories'>
+                    <%= Spree.t('customer_view_settings.pages.product.prev_next.show.label') %>
+                    <i class='fa fa-info-circle tooltips'
+                      data-original-title='<%= Spree.t('customer_view_settings.pages.product.prev_next.show.helper') %>'
+                      data-container='body'></i>
+                  </label>
+                  </br>
+                  <%= f.check_box :product_prev_next_show, class: 'make-switch', data: {size: 'mini'} %>
+                </div>
+              </div>
+            </div>
+            <div class='row'>
+              <div class='col-xs-6'>
+                <div class='form-group'>
+                  <label for='similar_products'>Show Similar Products</label></br>
+                  <%= f.check_box :product_similar_products, class: 'make-switch', data: {size: 'mini'} %>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id='footer-content'>
+            <label class="theme-name-label margin-top-30 margin-bottom-30">
+              Footer
+            </label>
+            <div class='row'>
+              <div class='col-xs-6'>
+                <%= f.label :footer_powered_by_sweet, Spree.t('customer_view_settings.pages.footer.powered_by_sweet') %>
+                <%= f.check_box :footer_powered_by_sweet, class: 'make-switch', data: {size: 'mini'} %>
+              </div>
+              <div class='col-xs-6'>
+
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <button id="preview-theme" class="btn btn-primary margin-top-20 margin-bottom-20 pull-right">
+          Preview
+        </button>
+        <div class="clearfix"> </div>
+        <div class='form-actions'>
+          <div class="links pull-right">
+            <%= link_to edit_manage_customer_viewable_attribute_path(anchor: "layout_tab"), method: :get, class: 'btn btn-default' do %>
+              <i class='fa fa-times'></i> Cancel
+            <% end %>
+            <button class="btn btn-primary" name='save' id="update-theme-btn">
+              <i class='fa fa-check'></i> Update
+            </button>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="preview_window col-sm-8 remove-right-padding" id='layout-preview-container'>
+      <h4 class="modal-title margin-bottom-30" id="myModalLabel"><b>Preview Window</b></h4>
+      <div id='modal-container'>
+        <%= render 'customer_layout' %>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  var limitAfterAddToCartOptions = function(){
+    if ($('#customer_viewable_attribute_catalog_add_to_cart').val() === 'modals'){
+      $('#customer_viewable_attribute_catalog_after_add_to_cart').val('products');
+      $('option', '#customer_viewable_attribute_catalog_after_add_to_cart').each(function(){
+        if ($(this).val() !== 'products'){
+          $(this).attr('disabled', 'disabled');
+        }
+      });
+    }else{
+      $('option', '#customer_viewable_attribute_catalog_after_add_to_cart').each(function(){
+        if ($(this).val() !== 'products'){
+          $(this).removeAttr('disabled');
+        }
+      });
+    }
+  }
+
+  var toggleStockWarning = function(){
+    if($('#customer_viewable_attribute_catalog_stock_level_in_stock_text').val() === 'remaining_stock'){
+      $('#customer_viewable_attribute_catalog_stock_level_show').bootstrapSwitch('state', true);
+      $('#customer_viewable_attribute_catalog_stock_level_show').bootstrapSwitch('readonly', true);
+    }else{
+      $('#customer_viewable_attribute_catalog_stock_level_show').bootstrapSwitch('readonly', false);
+    }
+  }
+
+  $('#customer_viewable_attribute_catalog_add_to_cart').change(limitAfterAddToCartOptions);
+  $('#customer_viewable_attribute_catalog_stock_level_in_stock_text').change(toggleStockWarning);
+  $(document).ready(function(){
+    limitAfterAddToCartOptions();
+    toggleStockWarning();
+  });
+  $("#preview-theme").click(function(e){
+    $('#color-view-form').attr('data-remote', true);
+  });
+  $("#update-theme-btn").click(function(e){
+    window.location.reload();
+  });
+  $("#select_theme_box").change(function(){
+    if($('#select_theme_box').val() == "custom"){
+      $('#customer_theme_colors').show();
+    }
+    else{
+      $('#customer_theme_colors').hide();
+    }
+  });
+  $('.toggle-layout-fields').click(function(){
+    $('#color-view-form').toggleClass('hidden');
+    $('#layout-form-container').toggleClass('col-sm-4');
+    $('#layout-form-container').toggleClass('col-sm-1');
+    $('#layout-preview-container').toggleClass('col-sm-8');
+    $('#layout-preview-container').toggleClass('col-sm-11');
+    $('.toggle-layout-fields').toggleClass('hidden');
+  });
+
+</script>

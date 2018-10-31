@@ -1,0 +1,43 @@
+<fieldset data-hook="credit_card">
+  <div>
+    <h3><%= Spree.t(:credit_card) %>
+      <label class="btn circle pull-right payment_status <%= @payment.state %>">
+        <%= Spree.t(@payment.state, scope: :payment_states, default: @payment.state).to_s.titleize %>
+      </label>
+    </h3>
+  </div>
+  <table class="table table-condensed table-bordered">
+    <% if payment.source %>
+      <tr>
+        <th width="24%"><%= Spree.t(:name_on_card) %>:</th>
+        <td><%= payment.source.try(:name) %></td>
+      </tr>
+      <tr>
+        <th><%= Spree.t(:card_type) %>:</th>
+        <td><%= payment.source.try(:cc_type).try(:capitalize)%></td>
+      </tr>
+      <tr>
+        <th><%= Spree.t(:card_number) %>:</th>
+        <td><%= payment.source.try(:display_number) %></td>
+      </tr>
+      <tr>
+        <th><%= Spree.t(:expiration) %>:</th>
+        <td><%= payment.source.try(:month) %>/<%= payment.source.try(:year) %></td>
+      </tr>
+    <% end %>
+    <tr>
+      <th><%= "#{Spree.t('date')}/#{Spree.t('time')}" %></th>
+      <td><%= sweet_full_date_time(payment.created_at, @vendor.try(:time_zone) || 'UTC') %></td>
+    </tr>
+    <tr>
+      <th><%= Spree::Payment.human_attribute_name(:number) %>:</th>
+      <td><%= payment.display_number %></td>
+    </tr>
+    <% if payment.transaction_id%>
+      <tr>
+        <th><%= Spree.t(:transaction_id) %>:</th>
+        <td><%= payment.transaction_id %></td>
+      </tr>
+    <% end %>
+  </table>
+</fieldset>

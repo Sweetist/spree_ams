@@ -1,0 +1,911 @@
+# Files in the config/locales directory are used for internationalization
+# and are automatically loaded by Rails. If you want to use locales other
+# than English, add the necessary files in this directory.
+#
+# To use the locales, use `I18n.t`:
+#
+# I18n.t 'hello'
+#
+# In views, this is aliased to just `t`:
+#
+#     <%= t('hello') %>
+#
+# To use a different locale, set it with `I18n.locale`:
+#
+#    I18n.locale = :es
+#
+# This would use the information in config/locales/es.yml.
+#
+# To learn more, please read the Rails Internationalization guide
+# available at http://guides.rubyonrails.org/i18n.html.
+
+en:
+  hello: "Hello world"
+  download_sample_import_file: Sample %{type} Import CSV
+  payment_name:
+    other: Sales Channel Payment
+    inner: Inner
+    Cash: Cash
+    Check: Check
+  integrations:
+    no_sync_item_for_vendor: Integration %{sync_type} not configured for %{vendor}
+    raise_errors: Errors in Sweet. %{errors}.
+    incomplete_job_message: Sync failed to finish processing
+    no_critical_data: Critical data not found in %{klass}.
+    sync_disabled_callback: Sync callback loop prevented
+    no_sku_in_variant: No SKU found on variant on Shopify product '%{product}'. Please add a sku to the product in Shopify and try again.
+    no_sku_in_product: SKU not found on Shopify product '%{product}'. Please add a sku to the product in Shopify and try again.
+    no_find_line_items: Order line item to refund not found
+    restarted_as_new_action: Restarted as new action
+    not_found_JID: Can't find Sidekiq JID
+    no_objects_to_push: No objects to push
+    object_pushed_to_integration: The %{klass} number '%{number} is pushed to the integration'
+    queued_in_sidekiq: Queued in Sidekiq
+    get_products: Import all products
+    get_orders: Sync orders
+    unknown_integrationable_type: Internal Error - Unknown Integrationable Type
+    query_sent_to_integration_app: Query sent to integration
+    sync_link_not_exist: Your integration settings do not support that sales channel
+    sync_to_other_integrations: Sync to Other Integrations
+    account: Account
+    order: Order
+    account_payment: Payment
+    credit_memo: Credit Memo
+    variant: Product
+    pull_customers:
+      label: Pull Customers
+    pull_products:
+      label: Pull Products
+    pull_variants:
+      label: Pull Products
+    pull_orders:
+      label: Pull Orders
+    pull_chart_accounts:
+      label: Pull Chart of Accounts
+    pull_payments:
+      label: Pull Payments
+    pull_credit_memos:
+      label: Pull Credit Memos
+    polling_frequency:
+      label: Polling Frequency
+      minutes: Every %{minutes} minutes
+      hour: Every hour
+      hours: "Every %{hours} hours"
+      never: Never
+    action:
+      new_action_prevents_restart: This job can no longer be restarted due to a more recent sync attempt.
+    shipping:
+      limit_shipping_method_by:
+        label: Restrict Orders by Shipping Method
+        all: Sync All Shipping Methods
+        blacklist: Ignore Orders with Selected Shipping Methods
+        whitelist: Only Sync Orders with Selected Shipping Methods
+      shipping_methods: Shipping Methods
+
+    payment:
+      limit_payment_method_by:
+        label: Restrict Payments by Payment Method
+        all: Sync All Payment Methods
+        blacklist: Ignore Payments with Selected Payment Methods
+        whitelist: Only Sync Payments with Selected Payment Methods
+      payment_methods: Payment Methods
+    shopify:
+      product_update_disabled: Product update is disabled in integration settings
+      only_three_options: Shopify supports a maximum of 3 option types on a product.
+      sync_orders_to: Sync All Shopify Orders to
+      sync_orders_to_default: Customer Specified on Order
+      overwrite_shipping_cost:
+        label: Overwrite Shipping Cost in Sweet
+      send_automated_emails:
+        label: Send Transactional Emails from Sweet
+      default_stock_location: Default stock location
+      last_sync_order: Last sync date
+      parent_account: Parent account
+      shipping_category: Shipping category
+      shipping_method: Default shipping method
+      tax_zone: Default tax zone
+      tax_category: Default tax category
+      no_variant_with_sku_in_sweet: Cannot find product with sku '%{sku}' in Sweet. Products will not be created while create/update products is off.
+      update_products:
+        label: Create/Update Products
+        is_false:
+          label: No - Only match by SKU
+          helper: Product/variant hierarchies can be bypassed by choosing this method
+    qbd:
+      incomplete_job_message: Web Connector closed before the sync finished. This job will retry during the next sync.
+      pull_account_balance: Use Quickbooks Customer Balance
+      feature_unavailable: Please check your "inventory" and "class" settings in Sweet and Quickbooks.
+      sync_customer_class: Sync Class on Customers
+      sync_item_class: Sync Class on Products
+      collect_taxes: Charge Sales Tax
+      must_enable: Must be enabled in Quickbooks
+      use_external_balance:
+        label: Use Quickbooks balance in Sweet
+      pull_item_types:
+        label: Item Types to Pull from Quickbooks
+      overwrite_orders_in:
+        label: Overwrite changes to orders/payments in
+      update_related_objects:
+        label: Update Customers & Products with Orders
+      send_special_instructions_as:
+        label: Sync Order Special Instructions to
+      special_instructions_item:
+        label: Special Instructions Item Name
+      send_order_as:
+        label: Send Order as
+        options:
+          invoice: Invoice
+          sales_order: Sales Order
+          sales_receipt: Sales Receipt
+      invoice_template:
+        label: Invoice Template Name
+      sales_receipt_template:
+        label: Sales Receipt Template Name
+      sales_order_template:
+        label: Sales Order Template Name
+      credit_memo_template:
+        label: Credit Memo Template Name
+      purchase_order_template:
+        label: Purchase Order Template Name
+      auto_apply_payment:
+        label: Auto Apply Payments
+        helper: Only applies when syncing orders as Sales Orders.
+    qbo:
+      multi_currency:
+        label: Multi-Currency
+      country:
+        label: Quickbooks Subscription Country
+      strip_html:
+        label: Strip HTML from Item Description
+      use_external_balance:
+        label: Use Quickbooks balance in Sweet
+      send_to_line_description:
+        label: Line Item Description to Sync
+        options:
+          fully_qualified_description: Line Item Name
+          pack_size: Pack/Size
+          sku: SKU
+          variant_description: Item Description
+      variant:
+        overwrite_conflicts_in:
+          label: Overwrite Product Conflicts In
+      customer:
+        overwrite_conflicts_in:
+          label: Overwrite Customer Conflicts In
+      vendor:
+        overwrite_conflicts_in:
+          label: Overwrite Vendor Conflicts In
+      overwrite_conflicts_in:
+        label: Overwrite Other Conflicts In
+        helper: Overwrites other objects that are not specifically
+                synced on their own such as chart of accounts, payment methods, and classes.
+                Orders, purchase orders, and payments will always update in Quickbooks.
+        options:
+          quickbooks: QuickBooks
+          sweet: Sweet
+          none: No resolution
+    tax_rate_not_found: Tax rate not found
+    no_product_data: Cannot find product data.
+    no_customer_data: Cannot find customer data.
+    net_error_response: Push not successful. Shopify integration returned response code '%{code}' and message '%{body}'
+    please_implement_in_integration: Please implement in integration
+    vendor_not_found: Cannot find vendor for class '%{klass}'
+    more_than_one_vendor: Found more than one vendor for Shopify source '%{source}'
+    no_variant_with_sku_for_product: Cannot find variant with sku '%{sku}' on product '%{product}'
+    parameters_not_found: Cannot find parameters for class '%{klass}'
+    sync_id_not_found: Cannot find sync ID for class '%{klass}'
+    sync_type_not_found: Cannot find sync type for class %{klass}
+    sync_action_not_found: Cannot find sync action for class %{klass}
+    sync_item_not_found: Cannot find sync integration item for class %{klass}
+    object_type_not_found: Cannot find object type for class %{klass}
+    not_found_default_stock_location: Cannot find default stock location for integration item '%{item}'
+    order_not_found: Cannot find order '%{number}'
+    action_skipped: Execution skipped. Reason - %{reason}
+    sync_disabled_in_settings: Sync disabled in product settings
+    sync_match_not_found: Cannot find integration sync match object for '%{klass}' number '%{number}'.
+    prevents_infinite_update: Prevents infinite update
+    variant_for_vendor_not_found: Cannot find variant with SKU '%{sku}' for vendor '%{vendor}'
+    stock_item_not_found: Cannot find stock item for variant '%{variant}', vendor '%{vendor}'
+    object_received: Integration %{object_type} %{operation} '%{number}, sync_id '%{sync_id}'
+    please_implement: Please implement %{what} into %{where}
+  wombat:
+    updated_action: Action ID = %{action_id} was updated
+    product_received: Product received '%{product}'
+    customer_received: Customer received '%{customer}'
+    shipment_not_found: Cannot find shipments to update for order '%{order_number}'
+  rule_types:
+    minimum_total_value: Forces customers to make orders where the value ($) of line items is greater than or equal to X
+    minimum_total_qty: Forces customers to make orders where the quantity of line items is greater than or equal to X
+    increment_total_value: Forces customers to make orders where the value ($) of line items is a multiple of X
+    increment_total_qty: Forces customers to make orders where the quantity of line items is a multiple of X
+    variant_minimum_order_qty: Forces customers to order at least X quantity of a product
+  spree:
+    data_reset:
+      integrations:
+        label: Integrations
+      sales_orders:
+        label: Sales Orders
+      purchase_orders:
+        label: Purchase Orders
+      standing_orders:
+        label: Standing Orders
+      contacts:
+        label: Contacts
+      customers:
+        label: Customers
+        dependency_msg: must delete sales orders
+      customer_imports:
+        label: Customer Imports
+      vendors:
+        label: Vendors
+        dependency_msg: must delete purchase orders
+      vendor_imports:
+        label: Vendor Imports
+      products:
+        label: Products
+        dependency_msg: must delete sales orders, purchase orders and lots
+      lots:
+        label: Lots
+      product_imports:
+        label: Product Imports
+      promotions:
+        label: Pricing Adjustments
+      promotion_categories:
+        label: Pricing Adjustment Categories
+      price_lists:
+        label: Price Lists
+      payments:
+        label: Payments
+      credit_memos:
+        label: Credit Memos
+      option_types:
+        label: Option Types & Values
+      taxons:
+        label: Product Categories
+      order_rules:
+        label: Order Rules
+      customer_types:
+        label: Customer Types
+      sales_reps:
+        label: Sales Reps
+      chart_of_accounts:
+        label: Chart of Accounts
+      stock_locations:
+        label: Stock Locations
+      shipping_methods:
+        label: Shipping Methods
+      shipping_categories:
+        label: Shipping Categories
+      tax_rates:
+        label: Tax Rates
+      tax_categories:
+        label: Tax Categories
+      payment_methods:
+        label: Payment Methods
+      zones:
+        label: Zones
+      custom_forms:
+        label: Custom Forms
+      shipping_groups:
+        label: Shipping Groups
+      reset_inventory:
+        warning_message: Reseting inventory is permanent and cannot be undone.
+      delete_data:
+        warning_message: Deleting data is permanent and cannot be undone.
+    apply_payment: Apply Payment
+    costing_methods:
+      fixed: Fixed Cost
+      last: Last Purchase Cost
+      avg: Average Cost
+      sum: Sum Component Costs
+    add_field: Add Field
+    archive: Archive
+    archived: Archived
+    unarchive: Unarchive
+    use_for_mark_paid:
+      label: Use to Mark Orders Paid
+      helper: When turned on, this payment method will be applied without prompting for additional payment details.
+      extended_label: Save this payment method to mark orders paid in the future
+      extended_helper: Checking this box will allow you to mark orders paid without this popup coming up each time.
+    in_stock: In stock
+    out_of_stock: Out of stock
+    remaining_stock: "%{count} in stock"
+    bundle_low_stock: Low Stock
+    backordered: Backordered
+    insufficient_stock: Insufficient Stock
+    insufficient_stock_with_remaining: Insufficient Stock (%{remaining} remaining)
+    additional_tax_total: Additional Tax Total
+    available: Available
+    payment_identifier: Payment Identifier
+    credit_amount: Credit amount
+    used_credit: Credit to Apply
+    no_credit_limit: No limit
+    errors:
+      some_items_backordered: "Some items in your Order #%{number} are backordered"
+      unused_credit: is unnecessary because the payment amount you are applying is already equal to or greater than the amount due.
+      not_enough_amount: not enough
+      cannot_edit_error: "Cannot update %{object_class}"
+      less_than_zero: can/'t be less than zero
+      balance_more_than_credit_limit: "Approving this order would cause the customer's account balance to exceed their credit limit. Click 'OK' if you would like to approve the order, or click 'Cancel' to leave the order in its current state. Then, you may want to change the customer's
+        credit limit or edit the order as needed"
+      discontinue_errors:
+        is_part: "You must remove %{part_name} as a component from %{assembly_name} before deactivating."
+      contact:
+        same_email_as_user: "must be the same as the connected user '%{user_email}'"
+        unrelated_accounts: "A contact cannot be linked to non-related accounts. Please contact help@getsweet.com if you have any questions."
+        invalid_company: "The user associated to this contact has already logged in under %{company_name}. Please contact help@getsweet.com if you have any questions."
+        email_is_internal: is already in use as a login by a member of your organization and cannot be used for a contact of a different company.
+    payment_balance_warning: Are you sure you want to apply a payment amount larger than the balance due?
+    shopify: Shopify
+    sweet: Sweet
+    b2b: Sweet B2B Portal
+    qbd: Quickbooks Desktop
+    qbo: Quickbooks Online
+    sales_channel: Sales channel
+    sync_to_sales_channels: Sync to sales channels
+    gateway_preferences:
+      api_login_id: API Login ID
+      transaction_key: Transaction Key
+      authorize_net:
+        server: Server (must be set to either 'test' or 'live')
+      authorize_net_cim:
+        server: Server (must be set to either 'test' or 'live')
+    manage:
+      viewing_as: Viewing As
+      display_name: Display Name
+      account_is_inactive: "This account has been deactivated. Reason: %{reason}"
+    cust:
+      multi_line_warning: This item has multiple lines on the order. Please edit them directly in the cart.
+      viewing_as: Account
+      display_name: Name
+    add_to_cart: Add to Cart
+    update_cart: Update Cart
+    subscription_limit:
+      orders_per_month:
+        exceeded: You have exceeded your monthly order limit of %{limit} orders and will be charged an additional fee. Please contact Sweet if you have any questions.
+    last_log_in: Last Log In
+    invited_at: Invited At
+    account_s: Account(s)
+    position: Position
+    aggregate_stock: All (aggregate inventory totals across all stock locations)
+    min_stock_level: Min. Stock Level
+    selected_quantity_not_available: selected for %{item} exceeds the available stock. Please reduce the quantity to be less than or equal to %{available_qty}.
+    round_method:
+      round: Round to Nearest Integer
+      ceil: Round Up
+      floor: Round Down
+    clone: Copy
+    new_sales_order: New Sales order
+    new_purchase_order: New Purchase Order
+    lots:
+      non_lot_tracked_assembly_with_lot_tracked: Non lot tracked inventory assemblies can't contain lot tracked components.
+      lot_tracked_assembly_with_non_lot_tracked: Lot tracked inventory assemblies can't contain non lot tracked components.
+      bulk_actions:
+        archive: Archive Lots
+        unarchive: Unarchive Lots
+    reference: Reference
+    destination: Destination
+    source: Source
+    minimum_total_value: Minimum total value
+    minimum_total_qty: Minimum total qantity
+    increment_total_value: Increment total value
+    increment_total_qty: Increment total quantity
+    variant_minimum_order_qty: Variant minimum order quantity
+    no_minimum: No Minimum
+    assembly_cannot_be_part: bundle can't be part
+    admin:
+      products:
+        form:
+          can_be_part: Can Be Part
+          individual_sale: Individual Sale
+    build: Build
+    discontinue: Deactivate Product
+    make_available: Make Available for Sale
+    owner_access: Owner Access
+    approve_order: Approve Order
+    receive_order: Receive Order
+    void_order: Void Order
+    order:
+      actions:
+        approve: Approve Order
+        approve_and_invoice: Approve & Send Invoice
+        unapprove: Unapprove Order
+        update: Update
+        ship: Ship
+        ship_and_invoice: Ship & Send Invoice
+        confirm_delivered: Confirm Delivered
+        finalize: Finalize
+        finalize_and_invoice: Finalize & Send Invoice
+        invoice: Invoice
+        cancel: Cancel Order
+        void: Void
+      bulk_actions:
+        approve: Approve Selected
+        ship: Ship Selected
+        receive: Mark Selected as Received
+        invoice: Send Invoices
+        pdf_bills_of_lading: Collate as Bills of Lading
+        pdf_packing_slips: Collate Selected as Packing Slips
+        pdf_invoices: Collate Selected as Invoices
+        pdf_purchase_order: Collate Selected as Purchase Order
+        download_csv: Download CSV
+        download_xlsx: Download XLSX
+        mark_paid: Mark Paid
+    add_item: Add from Catalog
+    submit: Submit
+    submit_order: Submit Order
+    resubmit_order: Resubmit Order
+    resubmit: Resubmit Order
+    pay_and_approve: Pay & Approve Order
+    Cancel: Cancel
+    update: Update
+    update_permissions: Update Permissions
+    new_customer_company: New Customer Company
+    new_customer_account: New Customer Account
+    default_shipping_method_only: Limit Customer to This Method
+    tax_exempt_id: Tax Exempt Number
+    save: Save
+    lot_number: Lot Number
+    sell_by: Sell By
+    payment_terms: Payment Terms
+    terms: Terms
+    purchase_order_number: Purchase Order No.
+    purchase_from: Purchase From
+    ship_to: Ship To
+    from: From
+    to: To
+    number_of_items: Number Of Items
+    invalid_subscription_access: "You do not have access to this feature with your current subscription. Please Contact Sweet to upgrade your plan."
+    set_password: Set New Password
+    invite_customers: Invite Selected Customers
+    invite_selected_contacts: Invite Selected Contacts
+    export_contacts: Export All Contacts
+    export_all_customers: Export All Customers
+    export_inventory: Export Inventory
+    included_tax: Included Tax
+    delivery: Fulfillment
+    send_weekly_invoices: Automatically email weekly invoices
+    send_invoice: Send Invoice
+    resend_invoice: Resend Invoice
+    send_invoice_reminder: Send Invoice Reminder
+    use_separate_invoices: Use Invoices in addition to orders
+    company_notifications:
+      low_stock: Low stock notification
+    company_settings:
+      hard_cutoff_time:
+        label: Enforce Cutoff Time
+        helper: Prevents customers from ordering after the specified cutoff time
+      hard_lead_time:
+        label: Enforce Product Lead Time
+        helper: Prevents customers from placing orders if the maximum lead time on the order is not met
+      use_po_number:
+        label: Use PO Numbers
+        helper: Turning this off will remove the input field for PO Number for both you and your customers
+      resubmit_orders:
+        label: Allow Order Resubmission
+        helper: Select when customers are allowed to resubmit changes to orders. Lead time and cutoff rules will still apply.
+    pdf_settings:
+      bol:
+        terms_and_conditions:
+          label: Terms & Conditions
+        req_shipper_signature:
+          label: Require Shipper Signature
+        req_receiver_signature:
+          label: Require Receiver Signature
+    outgoing_comms_settings:
+      send_confirm_email:
+        label: Order Confirmation Notification
+        helper: This does not apply when auto approve orders is turned on.
+      send_approved_email:
+        label: Order Approved Notification
+        helper: If auto-approve is on, Order Approved Notification should be on if you would like customers ordering via the B2B portal to receive an email confirmation of their order.
+      send_approved_email_b2b_and_standing_only:
+        label: B2B Portal-submitted orders and standing orders only
+        helper: By turning this option on, automated order approved notifications will not be sent when you or your team members are creating orders directly, in your admin.
+    user_comms_settings:
+      stop_all_emails:
+        label: Stop all emails
+      order_confirmed:
+        label: CC Order confirmation
+        helper: If auto-approve is on, Order Confirmation emails will not be sent. Instead, ensure Order Approved notifications are on and CC Order approved is on.
+      order_approved:
+        label: CC Order approved
+        helper: If auto-approve is on, CC on Order Approved should be on if you would like to be copied on email confirmation of orders submitted via the B2B portal.
+      order_received:
+        label: CC Order has been received
+      order_review:
+        label: CC Order review required
+      order_finalized:
+        label: CC Order has been finalized
+      order_canceled:
+        label: CC Order has been canceled
+      so_reminder:
+        label: CC Standing order reminder
+      so_edited:
+        label: CC Standing order has been edited
+      so_create_error:
+        label: CC Error processing standing order
+      discontinued_products:
+        label: Product has been deactivated
+      daily_summary:
+        label: Daily order summary
+        helper: your daily summary email will be sent one hour after order cutoff time
+      low_stock:
+        label: Low stock notification
+      daily_shipping_reminder:
+        label: Unshipped orders notification
+    import_mailer:
+      products_verify:
+        subject_true: Your products csv has been verified.
+        subject_false: Your products csv has been verified with errors!
+      products_import:
+        subject_true: Your products csv has been imported.
+        subject_false: Your products csv has been imported with errors!
+      customers_verify:
+        subject_true: Your customers csv has been verified.
+        subject_false: Your customers csv has been verified with errors!
+      customers_import:
+        subject_true: Your customers csv has been imported.
+        subject_false: Your customers csv has been imported with errors!
+      vendors_import:
+        subject_true: Your vendors csv has been imported.
+        subject_false: Your vendors csv has been imported with errors!
+      vendors_verify:
+        subject_true: Your vendors csv has been verified.
+        subject_false: Your vendors csv has been verified with errors!
+
+    standing_order_mailer:
+      reminder_email:
+        subject1: Reminder to create and finalize your
+        subject2: delivery for
+      changes_email:
+        subject1: Standing order
+        subject2: has been updated.
+    order_mailer:
+      confirm_email:
+        subject: "Your order from"
+        order_summary: 'Order Summary'
+      so_create_email:
+        subject1: "Reminder to finalize your"
+        subject2: "delivery for"
+      so_create_error_email:
+        subject1: "There was an error creating your order from"
+        subject2: "with delivery scheduled for"
+      so_process_error_email:
+        subject1: "There was an error processing your order from"
+        subject2: "with delivery scheduled for"
+      approved_email:
+        subject1: "Your order from"
+        subject2: "is approved"
+      review_order:
+        subject: "Your review request has been submitted to"
+      internal_confirm:
+        subject: "NEW ORDER"
+      internal_cancel:
+        subject: "Canceled order"
+      cancel_email:
+        subject1: "Your order from"
+        subject2: "has been canceled"
+        instructions: "Your order has been canceled. If you have any questions about this order, just reply to this email. Please hold on to the information below for your records."
+        order_summary_canceled: "Order Summary:"
+      final_invoice_email:
+        subject: "Your order has been finalized"
+      weekly_invoice_email:
+        subject: "Your invoice is ready"
+      purchase_order_submit_email:
+        subject: "Purchase order submission from"
+      purchase_order_resubmit_email:
+        subject1: "Purchase order"
+        subject2: "has been updated by"
+      purchase_order_cancel_email:
+        subject1: "Purchase order"
+        subject2: "has been canceled by"
+        instructions1: "Purchase order #"
+        instructions2: "from %{customer} has been canceled"
+        instructions3: "If you have any questions about this order, just reply to this email. Please hold on to the information below for your records."
+    invoice_mailer:
+      invoice_email:
+        subject: "Your invoice (#%{number}) from %{vendor}"
+      reminder_email:
+        subject: "Reminder: Invoice (#%{number}) from %{vendor} is due"
+      past_due_email:
+        subject: "Reminder: Invoice (#%{number}) from %{vendor} is past due"
+    vendor_mailer:
+      confirm_email:
+        subject: "New Order"
+      review_order:
+        subject: "Order review request"
+      cancel_email:
+        subject: "Cancellation of order"
+      daily_summary:
+        subject: "Your Daily Summary of Orders"
+      daily_shipping_reminder:
+        subject: "You have unshipped orders"
+      low_stock:
+        subject: "You have items with low stock"
+      delete_data:
+        subject:
+          success: "Your data has been successfully deleted."
+          failure: "There were some errors deleting your data."
+    shipment_mailer:
+      shipped_email:
+        out_for_delivery: "Your order is out for delivery now."
+        thanks: "Thanks for ordering with Sweet!"
+        count: "Total Qty:"
+      received_email:
+        received: "This order has been received."
+    promotion_rule_types:
+      account:
+        name: "Account"
+        description: "Available only to the specified accounts"
+      variant:
+        name: "Variant"
+        description: "Available only on the specified variants"
+    eligibility_errors:
+      messages:
+        no_applicable_variants: "You need to add an applicable variant before applying this coupon code."
+        missing_variant: "This coupon code can't be applied because you don't have all of the necessary variants in your cart."
+        has_excluded_variant: "Your cart contains a variant that prevents this coupon code from being applied."
+    print_invoice:
+      documents: Documents
+      documents_for_order: "Documents for order %{order_number}"
+      buttons:
+        invoice: Print Invoice
+        packaging_slip: Print Packaging Slip
+        purchase_order: Purchase Order
+      invoice_invoice: Invoice
+      order_bill_of_lading: Bill of Lading
+      order_packaging_slip: Packaging Slip
+      order_purchase_order: Purchase Order
+      reimbursement_invoice: Reimbursement Invoice
+      invoice: Invoice
+      invoices: Invoices
+      reimbursement: Reimbursement
+      reimbursements: Reimbursements
+      item_name: Item Name or SKU
+      of: of
+      via: via
+      on_date: Order Date
+      bill_of_lading: Bill of Lading
+      packaging_slip: Packaging Slip
+      purchase_order: Purchase Order
+      date: Date
+      document_type: Document Type
+      number: Number
+      customer: Customer
+      total: Total
+      page: Page
+      payment_via: "%{gateway} Online Payment #%{number} on %{date}"
+      preferences:
+        next_number: Print Invoice Next Number
+        use_footer: Use Footer
+        use_page_numbers: Use Page Numbers
+        anomaly_message: Order Anomaly Message
+        footer_left: Left Footer Content
+        footer_left_info: E.g. Your company name and address.
+        footer_right: Right Footer Content
+        footer_right_info: E.g. Your phone and email address.
+        page_layout: Page Layout
+        page_size: Page Size
+        print_buttons: Print Buttons
+        print_buttons_info: Comma separated list.
+        logo_path: Print Invoice Logo Path
+        return_message: Order Return Message
+        font_face: Font Face
+        font_size: Font Size
+        logo_scale: Logo Scale
+        store_pdf: Store PDF files
+        storage_path: PDF storage path
+      settings: Print Invoice Settings
+      unprocessed: Unprocessed
+      vat: VAT not applicable
+      pdf_legend: PDF Layout
+      invoice_slip_legend: Invoice/Slip Content
+      invoice_number: 'Invoice #: %{number}'
+      order_number: 'Order #: %{number}'
+      shipper_order_number: 'Shipper Order #: %{number}'
+      order_packaging_slip_number: 'Order Number: %{number}'
+      order_purchase_order_number: 'Order Number: %{number}'
+      po_number: 'Purchase Order #: %{po_number}'
+      invoice_invoice_date: '%{date_type} Date: %{date}'
+      invoice_invoice_invoicedate: 'Invoice Date: %{date}'
+      invoice_invoice_duedate: 'Due Date: %{date}'
+      order_bill_of_lading_date: '%{date_type} Date: %{date}'
+      order_packaging_slip_date: '%{date_type} Date: %{date}'
+      order_purchase_order_date: '%{date_type} Date: %{date}'
+      shipping_method: Shipping Method
+    cities: Cities
+    product_type: Product Type
+    lead_time: Lead Time (days)
+    payment_statuses:
+      paid: paid
+      unpaid: unpaid
+      pending: pending
+      past_due: past_due
+      balance_due: balance_due
+      failed: failed
+      void: void
+      credit_owed: credit_owed
+      updating: updating...
+    payment_amount: Payment Amount
+    cvv_code: CVV Code
+    billing_zipcode: Billing Zipcode
+    credit_allowed: Credit Allowed
+    payment_attrs:
+      memo: Memo
+      txn_id: Transaction Number
+    payment_actions:
+      capture:
+        btn_color: btn-success
+        btn_icon: fa fa-check
+      void:
+        btn_color: btn-danger
+        btn_icon: fa fa-times
+      refund:
+        btn_color: btn-default
+        btn_icon: fa fa-minus
+      mark:
+        paid: Mark Paid
+        unpaid: Mark Unpaid
+        void: Void Payment
+    pack_size: Pack/Size
+    unit_cost: Cost
+    total_cost: Tot Cost
+    unit_weight: Weight
+    total_weight: Tot Wt
+    pack_size_qty: Unit Count
+    total_units: Total Units
+    customer_view_settings:
+      variant:
+        nest_name: 'Nest Variants Under Product in Catalog'
+        pack_size_description: Show pack/size on product, catalog, order, invoice, packing list pages and pdfs
+        lead_time_description: Show lead time on product, catalog, and order pages
+        sku_description: Show SKU on product, order, invoice, catalog, packing list pages and pdfs
+        nest_name_description: Include the product name in the catalog when using variants
+      line_item:
+        lot_number_description: Show lot numbers on orders, invoices, and pdfs
+      order:
+        backordered_notice_label: Insufficient Stock Warning
+        backordered_notice_description: Show warning on order page when there is not enough stock on hand to fulfill the ordered amount. This applies when the item is backordered, out of stock, or the ordered quantity exceeds the on hand quantity.
+      account:
+        balance: Balance
+        balance_description: Show account balance
+        spend_label: '30 Day Spend'
+        spend_description: "Show total for the customer's orders over the last 30 days"
+        past_due_balance_label: Past Due Balance
+        past_due_balance_description: Show outstanding balance exceeding payment terms
+      pages:
+        catalog:
+          show_images:
+            label: Show Images
+            helper: Images will not be shown on the main catalog page, but will still be shown on individual product pages
+          stock_level:
+            sum:
+              label: Sum Stock At All Locations
+              helper: For a single location, stock is considered low when the available drops below the minimum stock level for that location. When aggregating across locations, stock is considered low when the average stock level is below the average minimum stock level of the locations where the minimum stock level is defined.
+            show:
+              label: Show Low Stock Warnings
+              helper: Items that have low stock will indicate the number in stock, out of stock, or backordered. This only applies when selecting 'None' or 'In stock' as the In Stock Label.
+            in_stock_text:
+              label: In Stock Label
+              helper: Choose whether the customer sees a basic 'In stock' message, a message indicating the actual number in stock, or nothing at all
+          search_bar:
+            label: Show Search Bar
+            helper: Choose whether the customer sees a search bar on the catalog
+          account_name_and_number:
+            label: Account Name/Number
+            helper: Show the customer's account name and number
+        product:
+          prev_next:
+            show:
+              label: Previous & Next Product
+              helper: Include links on the product page to the previous and next products based on the current search results in the catalog.
+        footer:
+          powered_by_sweet:
+            label: Powered by Sweet
+    hide_products: Hide Selected Products
+    show_products: Make Products Visible
+    show_products_to_all: Make Products Visible to all Customers
+    hide_products_from_all: Hide Products from all Customers
+    disable_backorderable: Disable Backorderable
+    enable_backorderable: Enable Backorderable
+    cart_options:
+      number_as_is: Keep existing numbers as is (recommended)
+      edit_number: Update all carted order numbers
+      delete_carts: Delete all empty carts
+    variant:
+      step_size: Order in multiples of
+      inactive: Inactive
+      deactivate: Make Inactive
+      deactivated: deactivated
+      make_available: Make Active
+      cost_price: Fixed Cost Price
+      fixed_cost_price: Fixed Cost Price
+      last_cost_price: Last Purchase Cost Price
+      avg_cost_price: Average Cost Price
+      sum_cost_price: Sum of Component Costs
+      text_options: Custom Drop-down Options
+    product_import:
+      label: Product Import
+      replace:
+        label: Update Existing Records
+        helper: If unchecked, importing of a given line will fail if the product name or SKU is already taken.
+    form:
+      form_type:
+        label: Form Type
+      name:
+        label: Name
+        helper: A unique name used to identify the form internally
+      title:
+        label: Form Title
+        helper: The title of the form that the user will see
+      num_columns:
+        label: '# Columns'
+      submit_text:
+        label: Submit Button Text
+      link_to_text:
+        label: Button/Link to Form Text
+        helper: The text on the link or button that directs the user to the form
+      success_message:
+        label: After Submit Message
+      active:
+        label: Active
+      instructions:
+        label: Instructions
+    form_field:
+      label:
+        label: Label
+      field_type:
+        label: Field Type
+      num_columns:
+        label: 'Column Span'
+      required:
+        label: Required
+      field_types:
+        text_area: Text Area
+        text_field: Text
+        number_field: Number
+        email_field: Email
+    price_list:
+      label: Price List
+      adjustment_method:
+        label: Adjust price by
+        options:
+          custom: Custom price per product
+          flat: Flat rate
+          percent: Percentage
+      adjustment_operator:
+        label: Mark Up / Down
+        options:
+          down: Decrease by
+          up: Increase by
+      adjustment_value:
+        label: Amout / Rate
+        flat: Amount
+        percent: Percentage
+    active_shipping:
+      ups_login: UPS Login
+      ups_password: UPS Password
+      ups_key: UPS Key
+      shipper_number: Shipper Number
+      canada_post_login: Canada Post Login
+      fedex_login: FedEx Meter Number
+      fedex_password: FedEx Password
+      fedex_account: FedEx Account
+      fedex_key: FedEx Key
+      fedex_include_surcharges: FedEx Include Surcharges
+      usps_login: Usps Login
+      usps_commercial_base: USPS Commercial Base
+      usps_commercial_plus: USPS Commercial Plus
+      units: Units
+      unit_multiplier: Unit Multiplier
+      default_weight: Default Weight
+      handling_fee: Handling Fee
+      max_weight_per_package: Max Weight Per Package
+      test_mode: Test Mode
+      weight_error: weight_error
+      vendor_weight_error: The total order weight exceeds the limit for a single package. Please manually set the shipping cost
+      customer_weight_error: The total order weight exceeds the limit for a single package. Seller will add shipping fee separately
+      carrier_unable: Unable to reach %{carrier} servers, please contact help@getsweet.com for assistance
+      rate_not_in_list: Unable to retrieve an estimate for %{calculator} from %{carrier}. Please contact help@getsweet.com for more information.
+      update_confirmation: Do you want to update and resubmit the order? Click "Yes" to confirm automatic resubmission of this order after making updates. Clicking "Yes" will also automatically recalculate shipping charges, which may impact the order total. Clicking "No" will require you to manually recalculate shipping charges and resubmit the order.

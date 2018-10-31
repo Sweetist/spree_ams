@@ -1,0 +1,116 @@
+<% if f.object.rule_type.nil? || (f.object.rule_type && f.object.rule_type.include?('value'))%>
+  <% c_class = 'price-input-with-label'%>
+  <% l_class = ''%>
+  <% n_class = 'price-field'%>
+<% else %>
+  <% c_class = '' %>
+  <% l_class = 'hidden' %>
+  <% n_class = '' %>
+<% end %>
+
+<div class="row">
+  <div class="col-md-6">
+    <div class="form-group">
+      <%= label_tag :rule_type, 'Rule type', class: 'control-label' %>
+      <%= f.select :rule_type, Spree::OrderRule.user_rule_types.map { |w| [w.humanize, w] },{},{class: 'select2-no-search form-control'}  %>
+      <span class="help-block-italic rule-type-description">
+        <% if f.object.rule_type %>
+        <%=  I18n.t :"rule_types.#{f.object.rule_type}" %>
+        <% else %>
+        <%=  I18n.t :"rule_types.minimum_total_value" %>
+        <% end %>
+      </span>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="form-group value-group <%= c_class %> <%= 'hidden' if f.object.rule_type == 'variant_minimum_order_qty' %>">
+      <%= f.label f.object.label_text, class: 'control-label type-label' %>
+      <label class="currency-label <%= l_class %>"><%= currency_symbol(@vendor.currency) %></label>
+      <%= f.number_field :value, class: "form-control #{n_class}", min: 0 %>
+    </div>
+  </div>
+
+</div>
+
+<div class="row">
+  <div class="col-md-6">
+    <div class="form-group">
+      <label>Applies to</label>
+      <% selected_value = f.object.taxon_ids.empty? ? 'Entire Order' : 'Categories' %>
+      <%= select_tag 'applies_to', options_for_select(['Entire Order', 'Categories'], selected_value), {style: 'width:100%', class: 'select2-no-search '} %>
+    </div>
+    <div class="form-group">
+        <%= f.label "Active" %> <br />
+        <%= f.check_box :active, class: 'make-switch', 'data-size' => 'mini' %>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="form-group categories-group <%= 'hidden' unless selected_value == 'Categories' %>">
+      <label>Categories</label>
+      <% options = @vendor.taxons.where.not(parent_id: nil).pluck(:name, :id)%>
+      <%= f.select(:taxon_ids, options ,{}, {style: 'width:100%', class: 'select2 form-control', multiple: true}) %>
+    </div>
+  </div>
+</div>
+
+<script>
+  $('#applies_to').change(function(){
+    option_value = $('#applies_to').val()
+    if ($('#applies_to').val() === 'Categories') {
+      $('.categories-group').removeClass('hidden')
+    } else {
+      $('.categories-group').addClass('hidden')
+      $('#order_rule_taxon_ids').val(null).trigger("change");
+    }
+  })
+
+  $('#order_rule_rule_type').on('change', function() {
+    var text = 'Value'
+    switch($('#order_rule_rule_type').val()){
+      case 'minimum_total_value':
+        text = 'Value'
+        $('.value-group').removeClass('hidden').addClass('price-input-with-label')
+        $('.value-group .form-control').addClass('price-field')
+        $('.currency-label').removeClass('hidden')
+        $('.rule-type-description').text('<%=  I18n.t :"rule_types.minimum_total_value" %>')
+        break;
+
+      case 'increment_total_value':
+        $('.rule-type-description').text('<%=  I18n.t :"rule_types.increment_total_value" %>')
+        text = 'Value'
+        $('.value-group').removeClass('hidden').addClass('price-input-with-label')
+        $('.currency-label').removeClass('hidden')
+        $('.value-group .form-control').addClass('price-field')
+        break;
+
+      case 'variant_minimum_order_qty':
+        $('.rule-type-description').text('<%=  I18n.t :"rule_types.variant_minimum_order_qty" %>')
+        $('.value-group').addClass('hidden').removeClass('price-input-with-label')
+        $('.currency-label').addClass('hidden')
+        $('.value-group .form-control').removeClass('price-field')
+        break;
+
+      case 'minimum_total_qty':
+        $('.rule-type-description').text('<%=  I18n.t :"rule_types.minimum_total_qty" %>')
+        $('.value-group').removeClass('hidden').removeClass('price-input-with-label')
+        $('.currency-label').addClass('hidden')
+        $('.value-group .form-control').removeClass('price-field')
+        text = 'Quantity'
+        break;
+
+      case 'increment_total_qty':
+        $('.rule-type-description').text('<%=  I18n.t :"rule_types.increment_total_qty" %>')
+        $('.value-group').removeClass('hidden').removeClass('price-input-with-label')
+        $('.currency-label').addClass('hidden')
+        $('.value-group .form-control').removeClass('price-field')
+        text = 'Quantity'
+        break;
+      default:
+        $('.value-group').removeClass('hidden')
+        text = 'Quantity'
+    }
+    $('.type-label').text(text)
+  })
+
+</script>

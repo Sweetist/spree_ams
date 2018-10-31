@@ -1,0 +1,29 @@
+<h3 class="form-title" style='color:<%= @form_title_color %>'>Request An Account</h3>
+<p> Enter your information to request a wholesale account to <%= @vendor.name %></p>
+<% if flash[:error] %>
+  <div class="alert alert-danger alert-dismissable">
+    <button type='button' class='close' data-dismiss='alert' aria-hidden='true'></button>
+    <span><%= flash[:error] %></span>
+  </div>
+<% end %>
+<section id="user_form">
+  <div class="form-group">
+    <%= f.email_field :email, value: params[:spree_user].try(:[], :email), class: "form-control placeholder-no-fix required", type: "email", autocomplete: "off", placeholder: "Email *" %>
+    <br>
+    <%= f.text_field :company, value: params[:spree_user].try(:[], :company), class: "form-control placeholder-no-fix required", type: "Company Name", autocomplete: "off", placeholder: "Company Name *" %>
+    <br>
+    <%= f.text_field :firstname, value: params[:spree_user].try(:[], :firstname), class: "form-control placeholder-no-fix required", type: "firstname", autocomplete: "off", placeholder: "First Name *" %>
+    <br>
+     <%= f.text_field :lastname, value: params[:spree_user].try(:[], :lastname), class: "form-control placeholder-no-fix required", type: "lastname", autocomplete: "off", placeholder: "Last Name *" %>
+    <br>
+     <%= f.telephone_field :phone, value: params[:spree_user].try(:[], :phone), class: "form-control placeholder-no-fix", type: "Phone Name", autocomplete: "off", placeholder: "Phone Number" %>
+    <br>
+
+  </div>
+</section>
+<section id="user_submit">
+  <div class="form-actions">
+    <%= link_to "Back", root_path, class: "btn btn-default", id: "back-btn"%>
+    <%= f.submit "Request Access", class: "btn btn-primary uppercase pull-right"%>
+  </div>
+</section>

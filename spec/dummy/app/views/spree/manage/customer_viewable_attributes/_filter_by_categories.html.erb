@@ -1,0 +1,51 @@
+<h3>Filter by Categories</h3>
+ <% current_vendor.taxonomies.includes(:taxons).each do |taxonomy| %>
+   <div class="panel-group accordion" id="root_<%= taxonomy.root.id %>">
+
+     <% taxonomy.root.children.order('name ASC').each do |taxon| %>
+       <div class="panel panel-default no-border" id='taxon_<%= taxon.id %>'>
+         <%= render partial: 'spree/cust/products/taxon', locals: {taxon: taxon, myclass: 'bottom-border'} %>
+         <div id="parent_taxon_<%= taxon.id %>" class="panel-collapse">
+
+           <% taxon.children.order('name ASC').each do |taxon| %>
+             <div class="panel-body no-border" id='taxon_<%= taxon.id %>'>
+               <div class="panel panel-default sub-panel no-border">
+                 <%= render partial: 'spree/cust/products/taxon', locals: {taxon: taxon} %>
+                 <div id="parent_taxon_<%= taxon.id %>" class="panel-collapse">
+
+                   <% taxon.children.order('name ASC').each do |taxon| %>
+                     <div class="panel-body no-border" id='taxon_<%= taxon.id %>'>
+                       <div class="panel panel-default sub-panel no-border">
+                         <%= render partial: 'spree/cust/products/taxon', locals: {taxon: taxon} %>
+                         <div id="parent_taxon_<%= taxon.id %>" class="panel-collapse">
+
+                           <% taxon.children.order('name ASC').each do |taxon| %>
+                             <div class="panel-body no-border" id='taxon_<%= taxon.id %>'>
+                               <div class="panel panel-default sub-panel no-border">
+                                 <%= render partial: 'spree/cust/products/taxon', locals: {taxon: taxon} %>
+                                 <div id="parent_taxon_<%= taxon.id %>" class="panel-collapse">
+
+                                 <!-- ADD MORE LEVELS HERE -->
+                                 </div>
+                               </div>
+                             </div>
+                           <% end %>
+                         </div>
+                       </div>
+                     </div>
+                   <% end %>
+                 </div>
+               </div>
+             </div>
+           <% end %>
+         </div>
+       </div>
+     <% end %>
+   </div>
+ <% end %>
+ <div class="row">
+      <button id="search-btn" class="btn btn-primary col-lg-5 col-md-5 col-sm-5"><i class="fa fa-search" aria-hidden="true"></i>Update</button>
+    <%= link_to "#", class: "btn btn-primary col-lg-5 col-md-5 col-sm-5 margin-left-10", id: "clear-all-btn" do %>
+      <i class='fa fa-times'></i>Clear
+    <% end %>
+</div>

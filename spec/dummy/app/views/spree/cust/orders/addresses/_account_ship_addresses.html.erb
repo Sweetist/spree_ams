@@ -1,0 +1,67 @@
+<div class='portlet-body'>
+  <% @ship_addresses.each do |sa| %>
+    <div class="row">
+      <div class="col-md-12 margin-left-20">
+        <div class="form-group ship-addresses">
+          <div class="radio-inline" style="padding-left: 0;">
+            <div class="radio">
+              <span>
+                <% if params[:address_id] == sa.id.to_s %>
+                  <input type="radio" value="<%= sa.id %>" name="ship_address_id" checked>
+                <% elsif @account.default_ship_address_id == sa.id %>
+                  <input type="radio" value="<%= sa.id %>" name="ship_address_id" checked>
+                <% else %>
+                  <input type="radio" value="<%= sa.id %>" name="ship_address_id">
+                <% end %>
+              </span>
+            </div>
+          </div>
+          <span class="margin-left-10">
+            <%= sa.one_line_summary.html_safe %>
+          </span>
+          <span class="edit-ship-address-link">
+            <%= link_to "Edit", edit_account_address_path(account_id: @account.id, id: sa.id, addr_type: "shipping"), :remote => true %>
+          </span>
+        </div>
+      </div>
+    </div>
+  <% end %>
+  <div class="row">
+    <div class="col-md-12 margin-left-20 margin-top-10">
+      <div class="form-group">
+        <span id="use-address-button">
+          <%= link_to new_account_address_path(@account, addr_type: "shipping"), remote: true, data: {'data-toggle' =>  "modal", 'data-target' => '#address_modal'}, class: '' do %>
+            <i class='fa fa-plus'></i>&nbsp;Add a new shipping address
+          <% end %>
+        </span>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">
+      <i class='fa fa-times'></i> Cancel
+    </button>
+    <button type="button" class="btn btn-primary" data-dismiss="modal" id="use-this-address"> Use this Address </button>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function(){
+    $('.ship-addresses input').on('change', function() {
+      $('#order_ship_address_id').val(this.value);
+    });
+  });
+  $('#use-this-address').click(function(){
+    address_id = $('input[name=ship_address_id]:checked', '.ship-addresses').val();
+    account_id = '<%= @account.id %>';
+    $.ajax({
+      url: '/orders/set_ship_address_on_new',
+      type: 'GET',
+      dataType: 'script',
+      data: {
+        address_id: address_id,
+        account_id: account_id
+      }
+    });
+  });
+</script>

@@ -1,0 +1,6 @@
+<a href='void:javascript();' class='label-reset-link date-reset'>Clear</a>
+<div class="input-group">
+  <%= f.text_field "#{date_key}_gteq", class: "form-control date-picker", data:{date_format: company.date_format}, value: params.fetch(:q,{}).fetch("#{date_key}_gteq", nil) %>
+  <span class="input-group-addon"> to </span>
+  <%= f.text_field "#{date_key}_lteq", class: "form-control date-picker", data:{date_format: company.date_format}, value: params.fetch(:q,{}).fetch("#{date_key}_lteq", nil) %>
+</div>

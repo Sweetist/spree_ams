@@ -1,0 +1,128 @@
+<%= content_for :head_title do %>
+  Standing Order: <%= @order.name %> - <%= @order.vendor.name %> Product Catalog
+<% end %>
+
+<%= content_for :page_title do %>
+  Standing Order: <%= @order.name %> - <%= @order.vendor.name %> Product Catalog
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", root_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Orders", orders_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Standing Orders", standing_orders_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to @order.name, standing_order_path(@order) %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <span>Products</span>
+    </li>
+  </ul>
+<% end %>
+
+<div class='row'>
+  <div class="current-order-block col-sm-8">
+    <%= link_to edit_standing_order_path(@order) do %>
+      <h5>Order: <%= @order.name %></h5>
+    <% end %>
+  </div>
+</div>
+
+<div class="content">
+  <%= search_form_for @search, url: standing_order_products_path(@order), class: "form" do |f| %>
+    <%= render partial: 'advanced_search', locals: {f: f} %>
+  <% end %>
+
+  <% unless @account.account_viewable_variants.count == @vendor.variants_including_master.count %>
+    <div class="alert alert-warning alert-dismissable">
+      <button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
+      Your customized catalog is still updating. Some of the products may not be available yet.
+    </div>
+  <% end %>
+  <% unless @account.account_viewable_variants.visible.any? %>
+    <div class="alert alert-warning alert-dismissable">
+      <button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
+      <%= @account.vendor.try(:name) %> has not shared any products yet</div>
+  <% end %>
+
+  <div class="row">
+    <div class="col-md-12">
+      <div class="table-scrollable">
+        <%= form_for @order, url: standing_order_products_path(@order), method: 'post', html: {id: "add-to-order-form"} do |f| %>
+          <table class="table table-hover" id="catalog">
+            <thead>
+              <tr>
+               <%# if @user_is_viewing_images %>
+                <%# CHECK WHETHER USER WANTS TO SEE IMAGES IN CATALOG HERE %>
+                <th></th>
+               <%# end %>
+                <th>
+                  <% if current_vendor.nest_variant_names? %>
+                    <%= sort_link @search, :variant_full_display_name, "Name" %>
+                  <% else %>
+                    <%= sort_link @search, :variant_default_display_name, "Name" %>
+                  <% end %>
+                </th>
+                <% if current_vendor_view_settings.variant_sku %>
+                  <th>
+                    <%= sort_link @search, :variant_sku, "SKU" %>
+                  </th>
+                <% end %>
+                <% if current_vendor_view_settings.variant_pack_size %>
+                  <th>
+                    <%= sort_link @search, :variant_pack_size, "Pack Size" %>
+                  </th>
+                <% end %>
+                <% if current_vendor_view_settings.variant_lead_time %>
+                  <th>
+                    <%= sort_link @search, :variant_lead_time, "Lead Time" %>
+                  </th>
+                <% end %>
+                <th>
+                  <%= sort_link @search, :price %>
+                </th>
+                <th>
+                  Quantity
+                </th>
+              </tr>
+              <% cart_cols = 6 %>
+              <%# cart_cols -= 1 unless @user_is_viewing_images %>
+              <% cart_cols -= 1 unless current_vendor_view_settings.variant_pack_size %>
+              <% cart_cols -= 1 unless current_vendor_view_settings.variant_lead_time %>
+              <% if @account_viewable_variants.count > 8 %>
+                <tr>
+                  <td colspan="<%= cart_cols %>"></td>
+                  <td>
+                    <button class="btn btn-primary pull-right" name="Add to Cart" id="add-to-cart"> Add to Cart</button>
+                  </td>
+                </tr>
+              <% end %>
+            </thead>
+            <tbody>
+              <%= render partial: 'current_order_products_list', locals: {f: f} %>
+              <% unless @account_viewable_variants.blank? %>
+                <tr>
+                  <td colspan="<%= cart_cols %>"></td>
+                  <td>
+                    <button class="btn btn-primary pull-right" name="Add to Cart" id="add-to-cart2" tabindex="1"> Add to Cart</button>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        <% end %>
+      </div>
+      <%= paginate @account_viewable_variants %>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,6 @@
+<h1>Edit Adjustment <%= @adjustment.label %></h1>
+<%= form_for [:manage, @adjustment.order, @adjustment] do |f| %>
+  <%= render partial: 'form', locals: {f: f} %>
+  <button class="btn btn-primary">Update</button>
+  <%= link_to Spree.t(:Cancel), edit_manage_order_path(@adjustment.order), class: 'btn default' %>
+<% end %>

@@ -1,0 +1,84 @@
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th class='hidden-xs'></th>
+      <th>
+        <% if current_vendor.nest_variant_names? %>
+          <%= sort_link @search, :variant_full_display_name, "Name" %>
+        <% else %>
+          <%= sort_link @search, :variant_default_display_name, "Name" %>
+        <% end %>
+      </th>
+      <% if current_vendor_view_settings.variant_sku %>
+        <th class='hidden-xs'>
+          <%= sort_link @search, :variant_sku, "SKU" %>
+        </th>
+      <% end %>
+      <% if current_vendor_view_settings.variant_pack_size %>
+        <th class="white_space_nowrap hidden-xs">
+          <%= sort_link @search, :variant_pack_size, "Pack Size" %>
+        </th>
+      <% end %>
+      <% if current_vendor.try(:include_unit_weight) %>
+        <th class='hidden-xs'>
+          <%= sort_link @search, :variant_weight %>
+        </th>
+      <% end %>
+      <% if current_vendor_view_settings.variant_lead_time %>
+        <th class="white_space_nowrap hidden-xs">
+          <%= sort_link @search, :variant_lead_time, "Lead Time" %>
+        </th>
+      <% end %>
+      <th>
+        <%= sort_link @search, :price %>
+      </th>
+      <% if @current_order %>
+        <th>
+          Quantity
+        </th>
+      <% end %>
+    </tr>
+    <% cart_cols = 7 %>
+    <%# cart_cols -= 1 unless @user_is_viewing_images %>
+    <% cart_cols -= 1 unless current_vendor_view_settings.variant_sku %>
+    <% cart_cols -= 1 unless current_vendor_view_settings.variant_pack_size %>
+    <% cart_cols -= 1 unless current_vendor_view_settings.variant_lead_time %>
+    <% cart_cols -= 1 unless current_vendor.try(:include_unit_weight) %>
+
+    <% if current_vendor_view_settings.try(:catalog_add_to_cart) == 'legacy' && @current_order && @account_viewable_variants.count > 8 %>
+      <tr class='hidden-xs'>
+        <th colspan="<%= cart_cols %>"></th>
+        <th><button class="btn btn-primary pull-right" id="add-to-cart">Add to Cart</button></th>
+      </tr>
+      <tr class='visible-xs'>
+        <th colspan="2"></th>
+        <th>
+          <button class="btn btn-primary pull-right" id="add-to-cart">
+            <i class='fa fa-plus'></i> Add
+          </button>
+        </th>
+      </tr>
+    <% end %>
+  </thead>
+  <tbody id='all-products'>
+    <% if @current_order %>
+      <%= render partial: 'spree/cust/products/current_order_product_list', locals: {f: f} %>
+      <% if current_vendor_view_settings.try(:catalog_add_to_cart) == 'legacy' %>
+        <tr class='hidden-xs'>
+          <th colspan="<%= cart_cols %>"></th>
+          <th><button class="btn btn-primary pull-right" id="add-to-cart2">Add to Cart</button></th>
+        </tr>
+        <tr class='visible-xs'>
+          <th colspan="2"></th>
+          <th>
+            <button class="btn btn-primary pull-right" id="add-to-cart2">
+              <i class='fa fa-plus'></i> Add
+            </button>
+          </th>
+        </tr>
+      <% end %>
+    <% else %>
+      <%= render partial: 'spree/cust/products/product_list' %>
+    <% end %>
+  </tbody>
+</table>

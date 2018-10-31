@@ -1,0 +1,52 @@
+<% if stock_item.low_stock? %>
+  <% if stock_item.variant.should_track_lots? %>
+    <td class="danger">
+      <%= link_to stock_item.on_hand, get_lot_info_manage_products_path(stock_item_id: stock_item.id), remote: true, class: "danger inline" %>
+    </td>
+    <td class="danger">
+      <%= link_to stock_item.available, get_lot_info_manage_products_path(stock_item_id: stock_item.id), remote: true, class: "danger inline" %>
+      <i class='fa fa-exclamation-triangle danger tooltips'
+      data-original-title='Minimum stock level: <%= stock_item.min_stock_level %>'
+      data-container='body'></i>
+    </td>
+    <td class="danger">
+      <%= link_to stock_item.committed, get_lot_info_manage_products_path(stock_item_id: stock_item.id), remote: true, class: "danger inline" %>
+    </td>
+  <% else %>
+    <td>
+      <%= link_to stock_item.on_hand, url, class: "danger inline" %>
+    </td>
+    <td>
+      <%= link_to stock_item.available, url, class: "danger inline" %>
+      <i class='fa fa-exclamation-triangle danger tooltips'
+      data-original-title='Minimum stock level: <%= stock_item.min_stock_level %>'
+      data-container='body'></i>
+    </td>
+    <td>
+      <%= link_to stock_item.committed, url, class: "danger inline" %>
+    </td>
+  <% end %>
+
+<% else %>
+  <% if stock_item.variant.should_track_lots? %>
+    <td>
+      <%= link_to stock_item.on_hand, get_lot_info_manage_products_path(stock_item_id: stock_item.id), remote: true, class: "font-green" %>
+    </td>
+    <td>
+      <%= link_to stock_item.available, get_lot_info_manage_products_path(stock_item_id: stock_item.id), remote: true, class: "font-green" %>
+    </td>
+    <td>
+      <%= link_to stock_item.committed, get_lot_info_manage_products_path(stock_item_id: stock_item.id), remote: true, class: "font-green" %>
+    </td>
+  <% else %>
+    <td>
+      <%= link_to stock_item.on_hand, url %>
+    </td>
+    <td>
+      <%= link_to stock_item.available, url %>
+    </td>
+    <td>
+      <%= link_to stock_item.committed, url %>
+    </td>
+  <% end %>
+<% end %>

@@ -1,0 +1,8 @@
+<% @order.line_items.each do |item| %>
+  <% if item.is_past_cutoff?(params[:delivery_date]) %>
+    $('#variant_lead_time_<%= item.variant_id %>').removeClass('hidden');
+  <% else %>
+    $('#variant_lead_time_<%= item.variant_id %>').addClass('hidden');
+  <% end %>
+<% end %>
+$('#any_variant_past_cutoff').val('<%= @order.any_variant_past_cutoff?(params[:delivery_date]) %>');

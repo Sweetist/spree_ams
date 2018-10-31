@@ -1,0 +1,24 @@
+<div class='col-md-6'>
+  <div class='row'>
+    <%= render partial: 'spree/shared/orders/payments/summary_table' %>
+  </div>
+</div>
+<div class='col-md-6'>
+  <div class='row'>
+    <% unless @order.paid? || @order.final_payments_pending? || States[@order.state] < States['cart']%>
+      <%= link_to '#new_payment', data:{toggle: 'modal', target:'#payment-modal', 'order-id' => @order.id}, class: "btn green-jungle pull-right margin-bottom-20 new-payment-btn" do %>
+        <i class='fa fa-plus'></i> New Payment
+      <% end %>
+    <% end %>
+  </div>
+</div>
+<div class='col-md-12'>
+  <div class='row'>
+    <%= render partial: 'spree/shared/orders/payments/payments_table', locals: {payments: payments, url_prefix: '/manage'} %>
+  </div>
+  <% if @order.refunds.present? %>
+    <div class='row'>
+      <%= render partial: 'spree/manage/refunds/body_content/refunds_table', locals: {refunds: @order.refunds, url_prefix: '/manage', order: @order} %>
+    </div>
+  <% end %>
+</div>

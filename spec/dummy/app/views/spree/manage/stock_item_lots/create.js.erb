@@ -1,0 +1,22 @@
+$(".lot-select").html("<%= escape_javascript(render partial: '/spree/manage/variants/lot_select', locals: { variant: @variant }) %>");
+$('#new_stock_item_lots')[0].reset()
+$('.create-lot-body').addClass('hidden')
+
+$(".lot-location-select").selected(function (e) {
+    // alert('You selected ' + $(e).val());
+    if ($(e).val() == 'New Lot') {
+      $('.create-lot-body').removeClass('hidden')
+    }
+});
+
+<% if flash[:success] %>
+  $('.alert-modal').append("<div class='alert alert-success alert-auto-dissapear'><button type='button' class='close' data-dismiss='alert' aria-hidden='true'></button>Lot <%=flash[:success]%> has been created.</div>");
+  setTimeout(function() {
+      $(".alert-auto-dissapear").fadeOut(1500);
+  },2000);
+<% end %>
+<% if flash[:error] %>
+  $('.alert-modal').append("<div class='alert alert-danger alert-dismissable'><button type='button' class='close' data-dismiss='alert' aria-hidden='true'></button>Lot creation has errors: <%= flash[:error] %></div>");
+<% end %>
+
+reEnableForm()

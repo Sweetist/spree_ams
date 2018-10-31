@@ -1,0 +1,31 @@
+<div class="form-group price-input-with-label cost-price-container" id='fixed-cost-price-container'>
+  <%= f.label :cost_price, Spree.t('variant.cost_price'), class: "control-label" %>
+  <% unless f.object.can_have_parts? %>
+    <label class='control-label help-block-italic pull-right'>
+      Avg Cost <%= display_sweet_price(f.object.avg_cost_price, @vendor.currency) %>
+    </label>
+  <% end %>
+  <label class="currency-label"><%= currency_symbol(@vendor.currency) %></label>
+  <%= f.text_field :cost_price, class: "form-control price-field" %>
+</div>
+<div class="form-group price-input-with-label cost-price-container" id='last-cost-price-container'>
+  <%= f.label :last_cost_price, Spree.t('variant.last_cost_price'), class: "control-label" %>
+  <% unless f.object.can_have_parts? %>
+    <label class='control-label help-block-italic pull-right'>
+      Avg Cost <%= display_sweet_price(f.object.avg_cost_price, @vendor.currency) %>
+    </label>
+  <% end %>
+  <label class="currency-label"><%= currency_symbol(@vendor.currency) %></label>
+  <%= f.text_field :last_cost_price, class: "form-control price-field" %>
+</div>
+<div class="form-group price-input-with-label cost-price-container" id='avg-cost-price-container'>
+  <%= f.label :avg_cost_price, Spree.t('variant.avg_cost_price'), class: "control-label" %>
+  <label class="currency-label"><%= currency_symbol(@vendor.currency) %></label>
+  <%= f.text_field :avg_cost_price, class: "form-control price-field" %>
+</div>
+<div class="form-group price-input-with-label cost-price-container" id='sum-cost-price-container'>
+  <%= f.label :sum_cost_price, Spree.t('variant.sum_cost_price'), class: "control-label" %>
+  <label class="currency-label"><%= currency_symbol(@vendor.currency) %></label>
+  <%= f.text_field :sum_cost_price, class: "form-control price-field",
+    id: 'variant_sum_cost_price', readonly: 'readonly' %>
+</div>

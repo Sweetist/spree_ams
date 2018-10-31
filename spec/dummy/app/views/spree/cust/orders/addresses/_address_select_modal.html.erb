@@ -1,0 +1,23 @@
+<div class="modal fade" id="address-select-modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class='portlet light'>
+        <div class="portlet-title">
+          <div class="caption">
+            <span class="caption-subject font-blue-madison bold uppercase">
+              Edit Address
+            </span>
+          </div>
+          <div class="actions">
+            <button type="button" class="close modal-close" data-dismiss="modal" aria-hidden="true"></button>
+          </div>
+        </div>
+        <% if @order %>
+          <%= render partial: 'spree/cust/orders/addresses/order_ship_addresses' %>
+        <% else %>
+          <%= render partial: 'spree/cust/orders/addresses/account_ship_addresses' %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

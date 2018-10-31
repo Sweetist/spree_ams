@@ -1,0 +1,20 @@
+---
+subject: 'Your order from {{my_company.name}} is approved'                   # REQUIRED
+from: ''   # optional
+cc: ''     # optional
+bcc: ''     # optional
+---
+<p>
+  Dear {{order.customer.name}},
+</p>
+<p>
+    Your order from {{my_company.name}} has been approved.
+<br>
+    Click <a href="{{order.url}}">here</a> to view additional order details.
+</p>
+
+{% include 'invoice_mailer_summary_partial' %}
+
+<p>
+  Thanks for ordering from {{my_company.name}}!
+</p>

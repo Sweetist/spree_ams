@@ -1,0 +1,47 @@
+<table>
+  <tr>
+    <td>
+      <p>
+        Dear <%= @vendor.name %>,
+        <br>
+      </p>
+      <p>
+        The following <%= pluralize(@variants.count, 'item') %> are low in stock.
+        Click <%= link_to 'here', manage_inventory_url(q: {low_stock: true}, host: @vendor.domain, protocol: 'https') %> for more details.
+      </p>
+      <table>
+        <thead>
+          <th>Item</th>
+          <th>SKU</th>
+          <% @vendor.stock_locations.order(id: :asc).each do |location| %>
+            <th style='text-align:right;'><%= location.name %></th>
+          <% end %>
+        </thead>
+        <tbody>
+          <% @variants.each do |variant| %>
+            <tr>
+              <td>
+                <%= variant.full_display_name %>
+              </td>
+              <td>
+                <%= variant.sku %>
+              </td>
+              <% variant.stock_items.order(stock_location_id: :asc).each do |stock_item| %>
+                <td style='text-align:right;'>
+                  <% if stock_item.low_stock? %>
+                    <span style='color:#D91E18;'><%= stock_item.count_on_hand %></span>
+                  <% else %>
+                    <span><%= stock_item.count_on_hand %></span>
+                  <% end %>
+                </td>
+              <% end %>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+
+      <br>
+    </td>
+    <td class="expander"></td>
+  </tr>
+</table>

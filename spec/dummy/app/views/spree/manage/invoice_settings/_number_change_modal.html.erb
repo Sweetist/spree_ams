@@ -1,0 +1,55 @@
+<div class="modal fade" id="order-number-modal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <button type="button" class="close modal-close" data-dismiss="modal" aria-hidden="true"></button>
+        <div class="caption">
+          <span class="caption-subject font-blue-madison bold uppercase">
+            Confirmation Required
+          </span>
+        </div>
+      </div>
+
+      <div class='modal-body'>
+        <div class='row'>
+          <div class='col-xs-12'>
+            <p>
+              It looks like you've edited the order number format.
+              We need to know what you would like to do with orders that are in <strong>cart</strong> state.
+            </p>
+          </div>
+          <div class='col-xs-12 margin-left-20'>
+            <div class='form-group'>
+              <input type='radio' name='cart_options' value="false" id='cart_opt_1' checked='true'>
+              <label for='cart_opt_1'><%= Spree.t('cart_options.number_as_is') %></label>
+            </div>
+            <div class='form-group'>
+              <input type='radio' name='cart_options' value="true" id='cart_opt_2'>
+              <label for='cart_opt_2'><%= Spree.t('cart_options.edit_number') %></label>
+              <br>
+              <span class='help-block-italic'>
+                <strong>Warning</strong> - users may see an error if they are currently viewing one of these orders.
+                Next Order Number will be incremented based on the number of carted orders renumbered.
+              </span>
+            </div>
+            <!-- <div class='form-group'>
+              <input type='radio' name='cart_options' value="<%#= Spree.t('cart_options.delete_carts') %>" id='cart_opt_3'>
+              <label for='cart_opt_3'><%#= Spree.t('cart_options.delete_carts') %></label>
+            </div> -->
+          </div>
+        </div>
+      </div>
+
+      <div class='modal-footer'>
+        <button class='btn btn-default' data-dismiss='modal'>
+          <i class='fa fa-times'></i> Cancel
+        </button>
+        <button class='btn green' id='cart-options-proceed'>
+          <i class='fa fa-check'></i> Proceed
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>

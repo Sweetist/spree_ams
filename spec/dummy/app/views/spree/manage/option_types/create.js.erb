@@ -1,0 +1,10 @@
+<% if flash[:errors].present? %>
+  $('.modal-errors', '#option-type-modal').html("<%= j(render(partial: 'spree/shared/errors.html.erb')) %>");
+<% else %>
+  $('.modal-errors', '#option-type-modal').empty();
+  $('.ot-select-divider').each(function(){
+    $("<option value='<%= @option_type.id %>'><%= @option_type.presentation %></option>").insertBefore(this);
+  });
+  $('.option-type-select[data-ot-position="<%= params[:ot_position] %>"').val('<%= @option_type.id %>')
+  $('#option-type-modal').modal('hide');
+<% end %>

@@ -1,0 +1,18 @@
+<div class="row">
+  <div class='col-md-6'>
+    <div class="form-group">
+      <%= f.label :name, class: 'control-label' %>
+      <%= f.text_field :name, class: 'form-control' %>
+    </div>
+  </div>
+  <div class='col-md-6'>
+    <div class="form-group">
+      <%= f.label :parent_id, 'Parent Class', class: 'control-label' %>
+      <% if @txn_class.persisted? %>
+        <%= f.collection_select :parent_id, (@txn_class.try(:child_classes) ? current_vendor.transaction_classes.where.not(id: @txn_class.id).where.not(id: @txn_class.child_classes.ids) : current_vendor.child_classes.where.not(id: @txn_class.id)), :id, :fully_qualified_name, {include_blank: true}, class: 'form-control' %>
+      <% else %>
+        <%= f.collection_select :parent_id, current_vendor.transaction_classes.where.not(id: @txn_class.id), :id, :fully_qualified_name, {include_blank: true}, class: 'form-control' %>
+      <% end %>
+    </div>
+  </div>
+</div>

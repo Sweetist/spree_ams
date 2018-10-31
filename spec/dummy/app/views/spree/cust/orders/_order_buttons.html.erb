@@ -1,0 +1,81 @@
+<div class="single-order-buttons row">
+  <% delivered = States[@order.state] > States['approved'] || @order.state == 'approved' && @order.past_delivery? %>
+  <% canceled = States[@order.state] < States['cart'] %>
+  <% if !(@order.is_editable? && @order.is_submitable?) %>
+    <p>This order can no longer be edited</p>
+  <% else %>
+    <!-- Cancel Btn -->
+    <% unless canceled || delivered %>
+      <%= link_to 'Cancel Order',  { action: :destroy, id: @order.id },
+        method: :delete, data: { confirm: 'Are you sure you want to cancel this order?' },
+        class: 'btn btn-default cancel'%>
+    <% end %>
+    <!-- END Cancel Btn -->
+    <!-- Submit Btns -->
+    <% @disabled_submit = @order.disable_customer_submit? %>
+    <% if @order.state == 'cart' && @order.line_items.exists? %>
+      <%= submit_tag Spree.t(:update), class: 'btn btn-primary', id: 'update-button' %>
+
+      <%= submit_tag Spree.t(:submit_order), disabled: @disabled_submit,
+        class: 'btn btn-primary add-to-order', id: 'submit-button' %>
+    <% elsif States[@order.state].between?(States['complete'], States['approved']) && !delivered && !@order.past_delivery? %>
+      <%= submit_tag Spree.t(:update), class: 'btn btn-primary', id: 'update-button' %>
+      <%= submit_tag Spree.t(:resubmit_order), disabled: @disabled_submit,
+        class: 'btn btn-primary add-to-order', id: 'resubmit-button' %>
+    <% end %>
+    <!-- END Submit Btns -->
+
+    <!-- Receive Order Btn -->
+    <% if @order.vendor.last_editable_order_state >= States['shipped'] && @order.state == 'shipped' %>
+      <%= submit_tag "Reject Order", class: "btn btn-default", data: {confirm: "Are you sure you want to reject the ENTIRE order?"} %>
+      <%= submit_tag "Order Received", class: "btn btn-primary" %>
+    <% end %>
+    <!-- END Receiv Order Btn -->
+  <% end %>
+
+  <!-- Reorder Btn -->
+  <% if States[@order.state] > States['cart'] %>
+    <%= link_to order_generate_path(@order), class: 'btn green-jungle margin-right-10' do %>
+      Reorder
+    <% end %>
+  <% end %>
+  <!-- END Reorder -->
+
+  <div class="clear"></div>
+  <% if @disabled_submit %>
+    <% if @order.account.try(:inactive?) %>
+    <p class='help-block-italic'>
+      This account has been deactivated. Please contact <%= @order.vendor.name %> to reactivate your account before placing an order.
+    </p>
+
+    <% elsif @order.account.payment_due_before_submit? && @order.payment_status != 'paid' %>
+      <p class='help-block-italic'>You must apply a payment to this order before submitting</p>
+    <% end %>
+  <% elsif @disabled_resubmit %>
+    <p class='help-block-italic'>If you make any changes to your order, please contact
+      <%= @order.vendor.try(:name) %> to ensure your payment is properly adjusted</p>
+  <% end %>
+</div>
+
+<script type='text/javascript'>
+  var canEneableSubmit = '<%= @order.customer_can_submit?(true) %>';
+  var shippingMethod = <%= @order.active_shipping_calculator %>;
+  $(document).ready(function(){
+    $('.order-qty').change(function(){
+      if(canEneableSubmit === 'true'){
+        $('#submit-button').prop('disabled', false);
+      }
+      if(shippingMethod){
+        $('#recalculate_shipping_update').attr('style','');
+        $('#shipment-rate').attr('class','font-red');
+        $('#submit-button').prop('disabled', true);
+        $('#resubmit-button').prop('disabled', true);
+        $('#recalculate_shipping').hide();
+        $('.new-payment-btn').attr('style','pointer-events:none; opacity: 0.65;');
+        if ($('#update-notification').length < 1){
+          $('.single-order-buttons > .clear').after("<span class='help-block-italic text-center' id='update-notification'>You must update the order before submitting</span>");
+        }
+      }
+    });
+  });
+</script>

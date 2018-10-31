@@ -1,0 +1,6 @@
+<% if @account.nil? %>
+  $('#account-address-info').replaceWith("<section id='account-address-info' class='alert alert-warning alert-dismissable'> <button type='button' class='close' data-dismiss='alert' aria-hidden='true'></button> Could not find account</section>");
+<% else %>
+  $('#account-address-info').replaceWith("<%= escape_javascript(render(partial: 'account_address_fields')) %>");
+  $('#payment-terms').html('<%= @account.payment_terms.try(:name) %>');
+<% end %>

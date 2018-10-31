@@ -1,0 +1,10 @@
+<% if @tax_rate %>
+  $("#tax_rate_<%= @tax_rate.id %>").remove();
+  $('#alert').html("<div class='alert alert-success alert-auto-dissapear'><%= flash[:success] %></div>");
+<% else %>
+  $('#alert').html("<div class='alert alert-danger alert-auto-dissapear'><%= flash[:error] %></div>");
+<% end %>
+
+setTimeout(function() {
+  $(".alert-auto-dissapear").fadeOut(1500);
+},2000);

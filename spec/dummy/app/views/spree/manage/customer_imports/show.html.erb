@@ -1,0 +1,264 @@
+<%= content_for :head_title do %>
+  <%= "#{@customer_import.file_file_name} - #{sweet_time(@customer_import.created_at)}"%>
+<% end %>
+
+<%= content_for :page_title do %>
+<%= "#{@customer_import.file_file_name} - #{sweet_time(@customer_import.created_at)}"%>
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Customer Imports", manage_customer_imports_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <span><%= "#{@customer_import.file_file_name} - #{sweet_time(@customer_import.created_at)}"%></span>
+    </li>
+  </ul>
+  <div class="page-toolbar">
+    <% if @customer_import.status == 0 || @customer_import.status == 3 %>
+      <%= link_to "Verify", manage_customer_import_verify_path(@customer_import), method: :post, class: "btn btn-sm btn-success" %>
+    <% end %>
+    <% if @customer_import.status == 2 %>
+      <%= link_to "Import", manage_customer_import_import_path(@customer_import), method: :post, class: "btn btn-sm btn-success" %>
+    <% end %>
+    <% if @customer_import.status != 1 and @customer_import.status != 5 and @customer_import.status != 6 %>
+      <%= link_to "Delete", manage_customer_import_path(@customer_import), method: :delete, data: {confirm: "Are you sure?"}, class: "btn btn-sm btn-danger" %>
+    <% end %>
+  </div>
+<% end %>
+
+<div class="content">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="portlet blue-hoki box col-md-9">
+        <div class="portlet-title">
+          <div class="caption">Import Details</div>
+        </div>
+        <div class="portlet-body">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="row static-info">
+                <div class="col-md-5 name">File:</div>
+                <div class="col-md-7 value"><%= @customer_import.file_file_name %></div>
+              </div>
+            </div>
+          </div>
+          <hr/>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="row static-info">
+                <div class="col-md-5 name">Status:</div>
+                <div class="col-md-7 value"><%= @customer_import.status_message %></div>
+              </div>
+              <div class="row static-info">
+                <div class="col-md-5 name">Import after successful verification:</div>
+                <div class="col-md-7 value"><%= @customer_import.proceed ? "<span class=\"label label-danger\">Yes</span>".html_safe : "<span class=\"label label-info\">No</span>".html_safe %></div>
+              </div>
+              <div class="row static-info">
+                <div class="col-md-5 name">Import valid customers after failed verification:</div>
+                <div class="col-md-7 value"><%= @customer_import.proceed_verified ? "<span class=\"label label-info\">Yes</span>".html_safe : "<span class=\"label label-danger\">No</span>".html_safe %></div>
+              </div>
+              <div class="row static-info">
+                <div class="col-md-5 name">Encoding:</div>
+                <div class="col-md-7 value"><%= @customer_import.encoding %></div>
+              </div>
+              <div class="row static-info">
+                <div class="col-md-5 name">Delimiter:</div>
+                <div class="col-md-7 value"><%= @customer_import.delimer %></div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="row static-info">
+                <div class="col-md-5 name">Created:</div>
+                <div class="col-md-7 value"><%= sweet_time(@customer_import.created_at) %></div>
+              </div>
+              <div class="row static-info">
+                <div class="col-md-5 name">Last Update:</div>
+                <div class="col-md-7 value"><%= sweet_time(@customer_import.updated_at) %></div>
+              </div>
+            </div>
+          </div>
+          <hr/>
+          <div class="row">
+            <% if @customer_import.status >= 2 %>
+              <div class="col-md-6">
+                <div class="row static-info">
+                  <div class="col-md-5 name">Valid:</div>
+                  <div class="col-md-7 value"><%= @customer_import.verify_result.select {|p| p["valid"]}.count rescue "" %></div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="row static-info">
+                  <div class="col-md-5 name">Invalid:</div>
+                  <div class="col-md-7 value"><%= @customer_import.verify_result.select {|p| !p["valid"]}.count rescue "" %></div>
+                </div>
+              </div>
+            <% end %>
+            <% if @customer_import.status == 6 %>
+              <div class="col-md-6">
+                <div class="row static-info">
+                  <div class="col-md-5 name">Imported:</div>
+                  <div class="col-md-7 value"><%= @customer_import.import_result.select {|p| p["imported"]}.count rescue "" %></div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="row static-info">
+                  <div class="col-md-5 name">Failed:</div>
+                  <div class="col-md-7 value"><%= @customer_import.import_result.select {|p| !p["imported"]}.count rescue "" %></div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <% if @customer_import.status == 10 %>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="alert alert-danger alert-dismissable">
+          <button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
+          <%= @customer_import.exception_message %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <%= form_for @customer_import, url: manage_customer_import_path(@customer_import), method: :patch do |f| %>
+    <% if @customer_import.status == 2 || @customer_import.status == 3 %>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="table-scrollable">
+            <table class="table table-striped table-hover">
+              <thead>
+                <tr>
+                  <th>Valid</th>
+                  <th>Customer</th>
+                  <th>Account Name</th>
+                  <th>Account Email</th>
+                  <th>First Name</th>
+                  <th>Last Name</th>
+                  <th>Contact E-mail</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @customer_import.verify_result.each_with_index do |hash_customer, idx| %>
+                  <% customer = hash_customer["customer"] %>
+                  <% account = hash_customer["account"] %>
+                  <% contact = hash_customer["contact"] %>
+                  <% address = hash_customer["bill_address"] %>
+                  <tr>
+                    <td>
+                      <% if hash_customer['valid'] %>
+                        <span class="label label-success"><i class="fa fa-check"></i></span>
+                      <% else %>
+                        <span class="label label-danger"><i class="fa fa-times"></i></span>
+                      <% end %>
+                    </td>
+                    <td><%= customer['name'] rescue "" %></td>
+                    <td><%= account['name'] rescue "" %></td>
+                    <td><%= account['email'] rescue "" %></td>
+                    <td><%= contact['first_name'] rescue "" %></td>
+                    <td><%= contact['last_name'] rescue "" %></td>
+                    <td><%= contact['email'] rescue "" %></td>
+                    <td></td>
+                  </tr>
+                  <% unless hash_customer["errors"].empty? %>
+                    <tr>
+                      <td colspan="6">
+                        <!-- <pre class='debug_dump'> -->
+                          <%# hash_customer['errors'].each do |error| %>
+                            <!-- <li> -->
+                              <!-- <div class='col-xs-8'><%#= error %></div> -->
+                              <!-- <input type='hidden' value='<%#= idx %>'> -->
+                              <!-- <div class='col-xs-4'> -->
+                                <%# if error.include?('contact was found') %>
+                                  <!-- Contact Sweet for Help -->
+                                  <!-- <label for='contact_<%= idx %>'>Use found</label>
+                                  <input type='checkbox' name="contact[<%= idx %>]" id='contact_<%= idx %>' class='noUniform'> -->
+                                <%# end %>
+                                <%# if error.include?('Customer: was found') %>
+                                  <!-- Contact Sweet for Help -->
+                                  <!-- <label for='customer_<%= idx %>'>Use found</label>
+                                  <input type='checkbox' name="customer[<%= idx %>]" id='customer_<%= idx %>' class='noUniform'> -->
+                                <%# end %>
+                              <!-- </div> -->
+                            <!-- </li> -->
+                          <%# end %>
+                        <!-- </pre> -->
+                        <%= debug hash_customer["errors"] %>
+                      </td>
+                      <td>
+                        <%# if hash_customer["errors"].all?{|error| error.include?('was found')} %>
+                          <!-- <input type='checkbox' name="customer[<%= customer['name'] %>]"> -->
+                        <%# end %>
+                      </td>
+                    </tr>
+                  <% end %>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+  <% if @customer_import.status == 6 %>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="table-scrollable">
+          <table class="table table-striped table-hover">
+            <thead>
+              <tr>
+                <th>Imported</th>
+                <th>Customer</th>
+                <th>Account Name</th>
+                <th>Account Email</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Contact E-mail</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @customer_import.import_result.each do |hash_customer| %>
+                <% customer = hash_customer["customer"] %>
+                <% contact = hash_customer["contact"] %>
+                <% account = hash_customer['account'] %>
+                <% address = hash_customer["bill_address"] %>
+                <tr>
+                  <td>
+                    <% if hash_customer["imported"] %>
+                      <span class="label label-success"><i class="fa fa-check"></i></span>
+                    <% else %>
+                      <span class="label label-danger"><i class="fa fa-times"></i></span>
+                    <% end %>
+                  </td>
+                  <td><%= customer['name'] rescue "" %></td>
+                  <td><%= account['name'] rescue "" %></td>
+                  <td><%= account['email'] rescue "" %></td>
+                  <td><%= contact['first_name'] rescue "" %></td>
+                  <td><%= contact['last_name'] rescue "" %></td>
+                  <td><%= contact['email'] rescue "" %></td>
+                </tr>
+                <% unless hash_customer["errors"].empty? %>
+                  <tr>
+                    <td colspan="7"><%= debug hash_customer["errors"] %></td>
+                  </tr>
+                <% end %>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+</div>

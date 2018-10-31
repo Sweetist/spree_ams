@@ -1,0 +1,24 @@
+<% if request.path.include?('standing_order') %>
+  <%= render partial: 'spree/manage/variants/headers/standing_order_header' %>
+<% else %>
+  <%= render partial: 'spree/manage/variants/headers/show_header' %>
+<% end %>
+<div class='row'>
+  <div class='col-md-12'>
+    <div class='row'>
+      <div class="portlet light">
+        <%= render partial: 'spree/manage/variants/page_content/variant_title' %>
+        <%= render partial: 'spree/manage/variants/page_content/show_body', locals: {avv: @avv, variant: @variant} %>
+      </div>
+    </div>
+  </div>
+  <% if @current_order %>
+    <div class='col-sm-3 margin-top-10 '>
+      <%= render partial: 'spree/manage/variants/page_content/add_to_cart', locals: {variant: @variant} %>
+    </div>
+  <% end %>
+</div>
+
+<% if @vendor.subscription_includes?('assemblies') && @product.assemblies_parts.present? && @product.should_track_inventory? %>
+  <%= render partial: 'spree/manage/inventories/build_assembly_modal' %>
+<% end %>

@@ -1,0 +1,41 @@
+<%= content_for :head_title do %>
+  My Company
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="breadcrumb">
+    <li>
+      <%= link_to "Home", root_path %>
+    </li>
+    <li>
+      <span>My Company</span>
+    </li>
+  </ul>
+<% end %>
+<div class="content">
+  <div class="row">
+    <div class="col-md-12">
+      <!-- BEGIN PROFILE CONTENT -->
+      <div class="profile-content">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="portlet light ">
+              <div class="portlet-title tabbable-line">
+                <div class="caption caption-md">
+                  <i class="icon-globe theme-font hide"></i>
+                  <span class="caption-subject font-blue-madison bold uppercase">Corporate Details</span>
+                </div>
+              </div>
+              <div class="portlet-body form">
+                <%= form_for @company, url: my_company_path do |f| %>
+                  <%= render partial: 'spree/cust/companies/company_form', locals: { f: f } %>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- END PROFILE CONTENT -->
+    </div>
+  </div>
+</div>

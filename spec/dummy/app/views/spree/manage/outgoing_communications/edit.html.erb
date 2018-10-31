@@ -1,0 +1,40 @@
+<%= content_for :head_title do %>
+  Outgoing Communications
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <span>Outgoing Communication Settings</span>
+    </li>
+  </ul>
+<% end %>
+
+<div class="row">
+  <div class="portlet light ">
+    <div class="portlet-title">
+      <div class="caption caption-md">
+        <span class="caption-subject font-blue-madison bold uppercase">Outgoing Communication Settings</span>
+      </div>
+    </div>
+    <div class="portlet-body">
+      <div class='row'>
+        <div class='col-md-8 col-lg-6'>
+          <%= render partial: 'mail_to_settings' %>
+          <span class='help-block-italic'>
+            Edit individual account settings from the account page
+          </span>
+        </div>
+      </div>
+      <br><br>
+      <div class='col-md-12 alert alert-info'>
+        Choose which emails to send to your customers.
+      </div>
+      <%= render partial: 'form' %>
+    </div>
+  </div>
+</div>

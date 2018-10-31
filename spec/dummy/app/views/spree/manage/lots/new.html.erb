@@ -1,0 +1,30 @@
+<%= content_for :head_title do %>
+  Lots
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li><li>
+      <%= link_to "Lots", manage_lots_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+		<li>
+      <span>New Lots</span>
+    </li>
+  </ul>
+	<div class="page-toolbar">
+    <div class="btn-group pull-right">
+    </div>
+  </div>
+<% end %>
+
+<%= form_for [:manage, @lot] do |f| %>
+  <%= render partial: 'lot_form', locals: {f: f} %>
+  <div class="col-md-12">
+    <%= f.submit 'Save', class: 'btn btn-primary pull-right'%>
+    <%= link_to Spree.t(:Cancel), manage_lots_path, class: 'btn btn-default pull-right margin-right-10' %>
+  </div>
+<% end %>

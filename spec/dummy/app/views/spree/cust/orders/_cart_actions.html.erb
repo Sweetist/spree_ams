@@ -1,0 +1,29 @@
+<li class="dropdown" id="cart-actions">
+  <%
+    cart = edit_order_path(current_order)
+    save_and_clear = save_and_clear_order_path(prev_controller: params[:controller], prev_action: params[:action])
+  %>
+  <div class="top-cart-info">
+    <%= link_to "#{current_order.item_count}", cart, class: "top-cart-info-count" %>
+    <span id="cart-value">
+      <% total_cost = (current_order.item_count == 0 ? "Empty" : display_sweet_price(current_order.item_total, current_order.currency)) %>
+      <%= link_to total_cost, cart, class: "top-cart-info-value" %>
+    </span>
+    <a href="javascript:;" id="shopping-cart" class="dropdown-toggle" data-hover="dropdown" data-toggle="dropdown" data-close-others="true">
+      <i class="fa fa-shopping-cart"></i>
+    </a>
+  </div>
+
+  <div class="top-cart-content-wrapper">
+    <div class="top-cart-content">
+      <ul class="scroller" style="height: 250px;">
+        <li>
+          <%= render 'spree/cust/orders/cart_overview' %>
+        </li>
+      </ul>
+      <div class="text-right">
+        <%= link_to "Checkout", cart, class: "btn btn-primary" %>
+      </div>
+    </div>
+  </div>
+</li>

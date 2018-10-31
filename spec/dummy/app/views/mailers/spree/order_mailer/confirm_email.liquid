@@ -1,0 +1,22 @@
+---
+subject: 'Your order from {{my_company.name}}'                   # REQUIRED
+from: ''   # optional
+cc: ''     # optional
+bcc: ''     # optional
+---
+<p>
+  Dear {{order.customer.name}},
+</p>
+<p>
+  Thank you for your order with {{my_company.name}}.<br>
+  Click <a href={{order.url}}>here</a> to view additional order details.
+</p>
+<p>
+  You will receive a follow-up email once your order is approved.
+</p>
+<p>
+  Please retain the below order information for your records.
+</p>
+<p>
+	Thanks for ordering from {{my_company.name}}!
+</p>

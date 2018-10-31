@@ -1,0 +1,23 @@
+
+<div class="portlet-title">
+    <div class="caption">
+      <i class="fa fa-cogs"></i>
+      Add Customer Accounts
+    </div>
+    <div class="actions">
+      <%= link_to raw("<i class='fa fa-times' aria-hidden='true'></i>"), '#', class: 'btn red btn-sm close-button' %>
+    </div>
+</div>
+<div class="portlet-body">
+  <div id="account_select_container">
+    <select name='' id='account_select' multiple="multiple" class="form-control select2-multiple select2-hidden-accessible">
+      <% account_ids = rule.nil? ? [] : rule.account_ids %>
+      <% @vendor.customer_accounts.active.order('fully_qualified_name ASC').each do |account| %>
+        <option value="<%= account.id %>" data-id='<%= account.id %>'
+          <%= 'selected' if account_ids.include?(account.id) %>>
+          <%= account.fully_qualified_name %>
+        </option>
+      <% end %>
+    </select>
+  </div>
+</div>

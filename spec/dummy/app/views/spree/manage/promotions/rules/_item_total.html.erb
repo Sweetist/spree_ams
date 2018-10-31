@@ -1,0 +1,42 @@
+<div class="portlet-title">
+    <div class="caption">
+        <i class="fa fa-cogs"></i>
+        Order total meets these criteria
+    </div>
+    <div class="actions">
+      <%= link_to raw("<i class='fa fa-times' aria-hidden='true'></i>"), '#', class: 'btn red btn-sm close-button' %>
+    </div>
+</div>
+<div class="portlet-body">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="form-group">
+        <select name="promotion[rules][item_total][operator_min]" id="item_total_greater_than" class="form-control">
+          <option <%= 'selected' unless rule.nil? || rule.preferences[:operator_min] == 'gte' %> value="gt">greater than</option>
+          <option <%= 'selected' unless rule.nil? || rule.preferences[:operator_min] == 'gt' %> value="gte">greater than or equal to</option>
+        </select>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="form-group">
+        <input class="item-total-input form-control" type="text" name="promotion[rules][item_total][amount_min]" value="<%= rule.preferences[:amount_min] unless rule.nil? %>">
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="form-group">
+        <select name="promotion[rules][item_total][operator_max]" id="item_total_less_than" class="form-control">
+          <option <%= 'selected' unless rule.nil? || rule.preferences[:operator_max] == 'lte' %> value="lt">less than</option>
+          <option <%= 'selected' unless rule.nil? || rule.preferences[:operator_max] == 'lt' %> value="lte">less than or equal to</option>
+        </select>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="form-group">
+        <input class="item-total-input form-control" type="text" name="promotion[rules][item_total][amount_max]" value="<%= rule.preferences[:amount_max] unless rule.nil? %>">
+      </div>
+    </div>
+  </div>
+</div>

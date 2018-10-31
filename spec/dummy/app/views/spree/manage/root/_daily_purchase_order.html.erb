@@ -1,0 +1,13 @@
+<tbody id='daily-purchase-orders-body'>
+  <% if @daily_purchase_orders.present? %>
+    <% @daily_purchase_orders.each do |order| %>
+      <tr>
+        <td><%= link_to order.vendor.try(:name), edit_manage_purchase_order_path(order) %></td>
+        <td><%= link_to order.po_display_number, edit_manage_purchase_order_path(order) %></td>
+        <td><%= link_to display_sweet_price(order.total, order.currency), edit_manage_purchase_order_path(order) %></td>
+      </tr>
+    <% end %>
+  <% else %>
+    <tr><td colspan='3'>No purchase orders found for <%= overview_date %>.</td></tr>
+  <% end %>
+</tbody>

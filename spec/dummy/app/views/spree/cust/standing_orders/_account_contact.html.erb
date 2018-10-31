@@ -1,0 +1,59 @@
+<section id = "contact-user-section">
+  <div id="contact-user">
+     <% if @account %>
+       <% if @account.email %>
+          <div class="row form-group select required">
+            <div class = "string required col-sm-3 control-label"> Email: </div>
+            <div style = "margin-top: 8px;" class="col-sm-9 value"><%= @account.try(:email) %></div>
+         </div>
+       <% end %>
+
+      <% if @account_address_ship && @account_address_ship.address1 != ""%>
+        <div class="row form-group select required">
+          <div class="string required col-sm-3 control-label">Shipping Address:</div>
+          <div style = "margin-top: 8px;" class="col-sm-9" id="ship_address1"> <%= @account_address_ship.try(:address1) %> </div>
+            <% unless @account_address_ship.try(:address2).blank? %>
+              <div class = "string required col-sm-3 control-label"></div>
+              <div style = "margin-top: -4px;" class="col-sm-9 value"> <%= @account_address_ship.address2 %> </div>
+            <% end %>
+          <div class = "string required col-sm-3 control-label "> </div>
+            <div class="col-sm-9 value">
+              <% if @account_address_ship.try(:city).present? && @account_address_ship.try(:state).present? %>
+                <%= @account_address_ship.try(:city) %>, <%= @account_address_ship.try(:state).try(:abbr) %> <%= @account_address_ship.try(:zipcode) %>
+              <% elsif @account_address_ship.try(:city).present? && @account_address_ship.try(:state).blank? %>
+                <%= @account_address_ship.try(:city) %> <%= @account_address_ship.try(:zipcode) %>
+              <% else %>
+                <%= @account_address_ship.try(:state).try(:abbr) %> <%= @account_address_ship.try(:zipcode) %>
+              <% end %>
+            </div>
+          <div class = "string required col-sm-3 control-label "> </div>
+          <div class="col-sm-9 value"> <%= @account_address_bill.try(:phone) %> </div>
+        </div>
+      <% end %>
+
+      <% if @account_address_bill && @account_address_bill.address1 != ""%>
+      <div class="row form-group select required">
+          <div class="string required col-sm-3 control-label"> Billing Address: </div>
+            <div style = "margin-top: 8px;"  class="col-sm-9 value" id="ship_address1"> <%= @account_address_bill.try(:address1) %> </div>
+              <% unless @account_address_bill.try(:address2).blank? %>
+                <div class="string required col-sm-3 control-label"> </div>
+                <div class="col-sm-9 value"> <%= @account_address_bill.try(:address2) %> </div>
+               <% end %>
+          <div class="string required col-sm-3 control-label"> </div>
+            <div class="col-sm-9 value">
+            <% if @account_address_bill.try(:city).present? && @account_address_bill.try(:state).present? %>
+              <%= @account_address_bill.try(:city) %>, <%= @account_address_bill.try(:state).try(:abbr) %>
+              <%= @account_address_bill.try(:zipcode) %>
+            <% elsif @account_address_bill.try(:city).present? && @account_address_bill.try(:state).blank? %>
+              <%= @account_address_bill.try(:city) %> <%= @account_address_bill.try(:zipcode) %>
+            <% else %>
+              <%= @account_address_bill.try(:state).try(:abbr) %> <%= @account_address_bill.try(:zipcode) %>
+            <% end %>
+          </div>
+          <div class="string required col-sm-3 control-label">  </div>
+          <div class="col-sm-9 value"> <%= @account_address_bill.try(:phone) %> </div>
+       </div>
+      <% end %>
+    <% end %>
+  </div>
+</section>

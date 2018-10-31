@@ -1,0 +1,86 @@
+<% user_can_edit = current_spree_user.can_write?('catalog', 'products') %>
+<% idx = 0 %>
+<% last_product_name = '' %>
+<% @account_viewable_variants.each do |avv| %>
+  <% variant = avv.variant %>
+  <% product = variant.product %>
+  <% prod_path = order_type == 'order' ? manage_product_path(product) : manage_standing_order_product_path(@current_order, product) %>
+  <% if last_product_name != variant.product.name && !variant.is_master? %>
+    <% last_product_name = variant.product.name %>
+    <% new_product = true %>
+  <% else %>
+    <% new_product = false %>
+  <% end %>
+  <% if new_product %>
+    <tr class="<%= 'discontinued' if product.discontinued_on %>">
+      <% if @user_is_viewing_images %>
+        <td class='text-center'>
+          <%# CHECK WHETHER USER WANTS TO SEE IMAGES IN CATALOG HERE %>
+             <%= link_to small_image(product, itemprop: "image"), manage_product_path(product), itemprop: 'url' %><br/>
+        </td>
+      <% else %>
+        <td style="width:20px;"></td>
+      <% end %>
+      <td> <%= link_to product.master.variant_name, manage_product_path(product) %></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <%= render partial: 'spree/manage/products/actions/product_only', locals: {product: product, user_can_edit: user_can_edit} %>
+    </tr>
+    <% idx += 1 %>
+  <% end %>
+  <tr class="<%= 'discontinued' if variant.discontinued_on %>">
+    <% url = variant.is_master? ? manage_product_path(product) : manage_product_variant_path(product, variant) %>
+    <% if @user_is_viewing_images %>
+      <td class='text-center' style="<%= 'border-top:none;' unless variant.is_master? %>">
+      <%# CHECK WHETHER USER WANTS TO SEE IMAGES IN CATALOG HERE %>
+        <%= link_to small_image(variant, itemprop: "image"), prod_path, itemprop: 'url' %><br/>
+      </td>
+    <% else %>
+      <td style="width:20px; <%= 'border-top:none;' unless variant.is_master? %>"></td>
+    <% end %>
+    <td style="<%= 'padding-left:40px;' unless variant.is_master? %>">
+      <%= link_to variant.variant_name, url %>
+    </td>
+    <td>
+      <%= link_to PRODUCT_TYPES[product.product_type].to_s, url %>
+    </td>
+    <td>
+      <%= link_to variant.sku, url %>
+    </td>
+    <td>
+      <%= link_to variant.pack_size.to_s, url %>
+    </td>
+    <td>
+      <%= link_to pluralize(variant.lead_time, 'day'), url %>
+    </td>
+    <td>
+      <% if avv.recalculating < Spree::AccountViewableVariant::RecalculatingStatus['complete'] %>
+        <div id="update-price-<%= avv.id %>">
+           Price is updating...
+           <%= link_to "Update Now", manage_update_customized_pricing_path(avv_id: avv.id), class: "btn btn-xs btn-success", remote: true %>
+        </div>
+      <% else %>
+        <%= render partial: 'spree/manage/products/variant_price', locals: { avv: avv, variant: variant, url: url } %>
+      <% end %>
+    </td>
+    <td>
+      <% unless variant.discontinued_on %>
+        <% carted = @current_order.line_items.where(variant_id: variant.id) %>
+        <input id="variant_qty_<%= variant.id %>" tabindex="1" type="number" name='<%= order_type %>[products][<%= variant.id %>]'
+          class="form-control product-qty" min="0" step='<%= variant.step_size %>'
+          placeholder="<%= "#{carted.sum(:quantity)} in cart" unless carted.blank? %>"
+          <%= 'disabled' if avv.recalculating < Spree::AccountViewableVariant::RecalculatingStatus['complete'] %>>
+      <% end %>
+    </td>
+    <% if variant.is_master? %>
+      <%= render partial: 'spree/manage/products/actions/product_only', locals: {product: product, user_can_edit: user_can_edit} %>
+    <% else %>
+      <%= render partial: 'spree/manage/products/actions/variant_only', locals: {variant: variant, user_can_edit: user_can_edit} %>
+    <% end %>
+  </tr>
+  <% idx += 1 %>
+<% end %>

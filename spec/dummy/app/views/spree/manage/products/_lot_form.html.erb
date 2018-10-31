@@ -1,0 +1,58 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="portlet light ">
+      <div class="portlet-body form">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <%= label_tag "lot_number", "Number", {class: 'control-label'} %>
+              <%= text_field_tag "lot_number", "", {class: 'form-control'} %>
+            </div>
+          </div>
+          <div class="col-md-6">
+          <div class="form-group">
+            <%= label_tag "lot_expires", "Expires At", class: "control-label" %>
+            <input type="text" id="lot_expires" name="lot[expires_at]"
+              value="<%= display_vendor_date_format(@lot.expires_at, @vendor.date_format) unless @lot.expires_at.blank? %>"
+              class="form-control date-picker" data-date-format="<%= @vendor.date_format %>" id="expires_at" placeholder="<%= @vendor.date_format %>">
+          </div>
+
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <%= label_tag "lot_available", "Available At", class: "control-label" %>
+              <input type="text" id= "lot_available" name="lot[available_at]"
+                value="<%= display_vendor_date_format(@lot.available_at, @vendor.date_format) unless @lot.available_at.blank? %>"
+                class="form-control date-picker" data-date-format="<%= @vendor.date_format %>" id="available_at" placeholder="<%= @vendor.date_format %>">
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <%= label_tag "lot_sell", "Sell By", class: "control-label" %>
+              <input type="text" id= "lot_sell_by" name="lot[sell_by]"
+                value="<%= display_vendor_date_format(@lot.sell_by, @vendor.date_format) unless @lot.sell_by.blank? %>"
+                class="form-control date-picker" data-date-format="<%= @vendor.date_format %>" id="sell_by" placeholder="<%= @vendor.date_format %>">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <%= label_tag "lot_variant", "Variant", class: 'control-label' %>
+              <%= collection_select("lot", "variant", [@product.master], :id, :full_context, {}, {class: "form-control select2", disabled: true}) %>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <%= label_tag "lot_location", "Stock Location", class: 'control-label' %>
+              <%= collection_select("lot[stock_location]", "", @vendor.stock_locations, :id, :name, {include_blank: true}, {class: "form-control select2", id: "lot_location"}) %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

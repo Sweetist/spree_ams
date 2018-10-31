@@ -1,0 +1,42 @@
+<div class="portlet box blue-hoki">
+
+  <div class="portlet-title">
+    <div class="caption">
+      Shipping Categories
+    </div>
+  </div>
+  <%
+    category_count = @shipping_categories.count
+    middle = category_count.odd? ? category_count / 2 + 1 : category_count / 2
+  %>
+  <div class="portlet-body">
+
+    <div class="row">
+      <div class="col-md-6">
+        <ul class="list-unstyled">
+          <% @shipping_categories.take(middle).each do |category| %>
+            <li>
+              <input type="checkbox" name="shipping_method[shipping_category_ids][]" value="<%= category.id %>"
+                <%= 'checked' if @shipping_method.shipping_category_ids.include?(category.id) %>>
+                <%= category.name %>
+            </li>
+            <% end %>
+        </ul>
+      </div>
+      <div class="col-md-6">
+        <ul class="list-unstyled">
+          <% @shipping_categories.drop(middle).each do |category| %>
+            <li>
+              <input type="checkbox" name="shipping_method[shipping_category_ids][]" value="<%= category.id %>"
+                <%= 'checked' if @shipping_method.shipping_category_ids.include?(category.id) %>>
+                <%= category.name %>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+
+    <div class="clearfix"></div>
+
+  </div>
+</div>

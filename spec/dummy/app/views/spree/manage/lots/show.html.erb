@@ -1,0 +1,125 @@
+<%= content_for :head_title do %>
+  <%= @lot.number %>
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Lots", manage_lots_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <span><%= @lot.number %></span>
+    </li>
+  </ul>
+  <div class="page-toolbar">
+    <div class="pull-right">
+      <%= link_to "Back to Lots", manage_lots_path, class: 'btn btn-success' %>
+    </div>
+  </div>
+<% end %>
+
+  <!--<div class="portlet">-->
+  <div class="row">
+    <!-- BEGIN PORTLET-->
+    <div class="portlet light">
+      <div class="portlet-title">
+        <div class="caption">
+          <span class="caption-subject font-blue-soft bold uppercase">Lot: <%= @lot.number %></span>
+        </div>
+        <%= link_to edit_manage_lot_path(@lot), class: "btn btn-primary pull-right" do %>
+          <i class="fa fa-pencil"></i>&nbsp;Edit
+        <% end %>
+      </div>
+      <div class="portlet-body">
+      <!-- BEGIN Top portion of portlet-body -->
+        <div class="row">
+          <div class="col-md-6 col-lg-5">
+            <div class="row static-info">
+              <div class="col-xs-5 col-md-6 name">Product:</div>
+              <div class="col-xs-7 col-md-6 value"><%= @lot.variant.try(:fully_qualified_name) %></div>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-5">
+            <div class="row static-info">
+              <div class="col-xs-5 col-md-6 name">Product SKU:</div>
+              <div class="col-xs-7 col-md-6 value"><%= @lot.variant.try(:sku) %></div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6 col-lg-5">
+            <div class="row static-info">
+              <div class="col-xs-5 col-md-6 name">Created At:</div>
+              <div class="col-xs-7 col-md-6 value"><%= display_vendor_date_format(@lot.created_at, @vendor.date_format) %></div>
+            </div>
+            <div class="row static-info">
+              <div class="col-xs-5 col-md-6 name">Available At:</div>
+              <div class="col-xs-7 col-md-6 value"><%= display_vendor_date_format(@lot.available_at, @vendor.date_format) %></div>
+            </div>
+            <div class="row static-info">
+              <div class="col-xs-5 col-md-6 name">Sell By:</div>
+              <div class="col-xs-7 col-md-6 value"><%= display_vendor_date_format(@lot.sell_by, @vendor.date_format) %></div>
+            </div>
+            <div class="row static-info">
+              <div class="col-xs-5 col-md-6 name">Expires At:</div>
+              <div class="col-xs-7 col-md-6 value"><%= display_vendor_date_format(@lot.expires_at, @vendor.date_format) %></div>
+            </div>
+
+            <% if @lot.archived? %>
+              <div class="row static-info">
+                <div class="col-xs-5 col-md-6 name">Archived At:</div>
+                <div class="col-xs-7 col-md-6 value"><%= sweet_full_date_time(@lot.archived_at, @vendor.time_zone) %></div>
+              </div>
+              <%= link_to unarchive_manage_lot_path(@lot), method: :post, class: "btn btn-primary disable-after-click" do %>
+                <i class="fa fa-undo"></i>&nbsp;<%= Spree.t(:unarchive) %>
+              <% end %>
+            <% else %>
+              <%= link_to archive_manage_lot_path(@lot), method: :post, class: "btn red disable-after-click" do %>
+                <i class="fa fa-archive"></i>&nbsp;<%= Spree.t(:archive) %>
+              <% end %>
+            <% end %>
+          </div>
+
+          <div class="col-md-6 col-lg-5">
+            <div class="row static-info">
+              <div class="col-xs-5 col-md-6 name">Quantity On Hand:</div>
+              <div class="col-xs-7 col-md-6 value"><%= @lot.qty_on_hand %></div>
+            </div>
+            <div class="row static-info">
+              <div class="col-xs-5 col-md-6 name">Quantity Sold:</div>
+              <div class="col-xs-7 col-md-6 value"><%= @lot.qty_sold %></div>
+            </div>
+            <div class="row static-info">
+              <div class="col-xs-5 col-md-6 name">Quantity Wasted:</div>
+              <div class="col-xs-7 col-md-6 value"><%= @lot.qty_waste %></div>
+            </div>
+          </div>
+        </div>
+        <br>
+        <!-- END Top portion of portlet-body -->
+        <!-- BEGIN table -->
+
+        <%= render partial: 'lot_variant_table' %>
+
+        <br><hr>
+
+        <div class='row'>
+          <div class='col-md-6'>
+            <%= render partial: 'orders' %>
+          </div>
+          <div class='col-md-6'>
+            <%= render partial: 'stock_transfers' %>
+          </div>
+        </div>
+
+      </div><!--/. portlet-body -->
+    </div><!--/. portlet -->
+  </div>
+  <!--</div> /.portlet -->
+  <div class="clearfix"></div>
+</div><!--/.content-->

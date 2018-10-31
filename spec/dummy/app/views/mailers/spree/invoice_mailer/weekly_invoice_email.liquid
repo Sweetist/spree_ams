@@ -1,0 +1,20 @@
+---
+subject: 'Your invoice is ready'                   # REQUIRED
+from: ''   # optional
+cc: ''     # optional
+bcc: ''     # optional
+---
+<p>
+  Dear {{invoice.customer.name}},
+</p>
+<p>
+  Click <a href="{{invoice.url}}">here</a> to view your invoice details online.
+</p>
+
+{% include 'invoice_mailer_summary_partial' %}
+
+<p>
+  Thank you for your business!<br>
+  Sincerely,<br>
+  {{my_company.name}}
+</p>

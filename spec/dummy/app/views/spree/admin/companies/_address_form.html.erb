@@ -1,0 +1,56 @@
+
+  <div class="col-md-6">
+    <div class="form-group <%= "#{type}-row" %>">
+      <%= f.label :firstname, Spree.t(:first_name), class: "control-label" %>
+      <%= f.text_field :firstname, class: 'form-control' %>
+    </div>
+
+    <div class="form-group <%= "#{type}-row" %>">
+      <%= f.label :lastname, Spree.t(:last_name), class: "control-label" %>
+      <%= f.text_field :lastname, class: 'form-control' %>
+    </div>
+
+    <div class="form-group <%= "#{type}-row" %>">
+      <%= f.label :company, Spree.t(:company), class: "control-label" %>
+      <%= f.phone_field :company, class: 'form-control' %>
+    </div>
+
+    <div class="form-group <%= "#{type}-row" %>">
+      <%= f.label :phone, Spree.t(:phone), class: "control-label" %>
+      <%= f.phone_field :phone, class: 'form-control' %>
+    </div>
+
+    <div class="form-group <%= "#{type}-row" %>">
+      <%= f.label :state_id, Spree.t(:state), for: "available-states-#{type}" %>
+      <%= f.collection_select :state_id, Spree::State.all, :id, :name, {include_blank: true}, {class: 'select2 state-select', id: "available-states-#{type}"} %>
+    </div>
+
+    <div class="form-group <%= "#{type}-row" %>">
+      <%= f.label :country_id, Spree.t(:country) %>
+      <%= f.collection_select :country_id, available_countries, :id, :name, {}, { class: 'select2 country-select', data:{type: "#{type}"} } %>
+    </div>
+  </div>
+
+
+
+  <div class="col-md-6">
+    <div class="form-group <%= "#{type}-row" %>">
+      <%= f.label :address1, Spree.t(:street_address) %>
+      <%= f.text_field :address1, class: 'form-control' %>
+    </div>
+
+    <div class="form-group <%= "#{type}-row" %>">
+      <%= f.label :address2, Spree.t(:street_address_2) %>
+      <%= f.text_field :address2, class: 'form-control' %>
+    </div>
+
+    <div class="form-group <%= "#{type}-row" %>">
+      <%= f.label :city, Spree.t(:city) %>
+      <%= f.text_field :city, class: 'form-control' %>
+    </div>
+
+    <div class="form-group <%= "#{type}-row" %>">
+      <%= f.label :zipcode, Spree.t(:zip) %>
+      <%= f.text_field :zipcode, class: 'form-control' %>
+    </div>
+  </div>

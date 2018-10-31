@@ -1,0 +1,52 @@
+<div class="portlet-title">
+    <div class="caption">
+      <i class="fa fa-cogs"></i>
+      Creates an adjustment on the order
+    </div>
+    <div class="actions">
+      <!-- <a class="close-button" href=""><i class="fa fa-times"></i></a> -->
+    </div>
+</div>
+<div class="portlet-body">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="form-group">
+        <div class="left calculator">
+          <label class="control-label">Calculator</label>
+          <select id="order_calculator_select" class="form-control">
+            <option <%= 'selected' if action.nil? || !action.nil? && action.calculator.type == "Spree::Calculator::FlatPercentItemTotal" %> value="flat_percent_item_total">Flat Percent</option>
+            <option <%= 'selected' if !action.nil? && action.calculator.type == "Spree::Calculator::FlatRate" %> value="flat_rate_item_total">Flat Rate</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="right preferences">
+    <div id="flat_percent_item_total" class="option<%= ' hidden' unless action.nil? || !action.nil? && action.calculator.type == 'Spree::Calculator::FlatPercentItemTotal' %>">
+      <label class="control-label">Percent</label>
+      <input type="text" name="promotion[actions][flat_order_percent]" placeholder="example 15"
+      value="<%= action.calculator.preferences[:flat_percent] unless action.nil?%>" class="form-control">
+    </div>
+    <div id="flat_rate_item_total" class="option<%= ' hidden' unless !action.nil? && action.calculator.type == 'Spree::Calculator::FlatRate' %>">
+      <label class="control-label">Amount</label>
+      <input type="text" name="promotion[actions][flat_order_amount]" placeholder="example 0.0"
+        value="<%= action.calculator.preferences[:amount] unless action.nil?%>" class="form-control">
+      <label class="control-label">Currency</label>
+      <select name='promotion[actions][flat_order_amount_currency]' class="form-control">
+        <% ::Money::Currency.each do |currency| %>
+          <option value="<%= currency.iso_code %>"
+            <% if @vendor.currency == currency.iso_code %>
+              <%= 'selected' %>
+              <% else %>
+                <%= 'disabled' %>
+              <% end %>
+              >
+            <%= "#{currency.name} (#{currency.iso_code})" %>
+          </option>
+        <% end %>
+      </select>
+    </div>
+  </div>
+</div>
+
+<div class="clear"></div>

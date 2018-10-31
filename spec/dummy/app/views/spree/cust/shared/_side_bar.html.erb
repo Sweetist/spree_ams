@@ -1,0 +1,125 @@
+<ul class="page-sidebar-menu page-header-fixed" data-keep-expanded="true" data-auto-scroll="false" data-slide-speed="200" style="padding-top: 20px">
+  <li class="sidebar-toggler-wrapper hide">
+    <!-- BEGIN SIDEBAR TOGGLER BUTTON -->
+    <div class="sidebar-toggler"> </div>
+    <!-- END SIDEBAR TOGGLER BUTTON -->
+  </li>
+  <!--<li class="nav-item <%#= "active" if current_controller?(['root']) %>">
+    <%#= link_to root_path, class: "nav-link" do %>
+      <i class="fa fa-home"></i>
+      <span class="title">Dashboard</span>
+    <%# end %>
+  </li>-->
+  <% if current_customer.any_vendor_using_separate_invoices? %>
+    <li class="nav-item  <%= "active" if current_controller?(['invoices']) %>">
+      <%= link_to invoices_path, class: "nav-link" do %>
+        <i class="fa fa-file"></i>
+        <span class="title">Invoices</span>
+      <% end %>
+    </li>
+  <% end %>
+  <li class="nav-item <%= "active open" if current_controller?(['orders', 'shippings', 'standing_orders', 'standing_order_products', 'standing_order_schedules']) %>">
+    <a href="#" class="nav-link nav-toggle">
+      <i class="fa fa-shopping-cart"></i>
+      <span class="title">Orders</span>
+      <span class="arrow <%= "open" if current_controller?(['orders', 'shippings', 'standing_orders']) %>"></span>
+    </a>
+    <ul class="sub-menu">
+      <li class="nav-item <%= "active" if current_controller?(['orders']) && current_action?('new') %>">
+        <%= link_to new_order_path, class: "nav-link" do %>
+          <span class="title">Start New Order</span>
+        <% end %>
+      </li>
+      <li class="nav-item <%= "active" if current_controller?(['orders']) && !current_action?('new') %>">
+        <%= link_to orders_path, class: "nav-link" do %>
+          <span class="title">All Orders</span>
+        <% end %>
+      </li>
+      <li class="nav-item <%= "active" if current_controller?(['standing_orders', 'standing_order_products']) %>">
+        <%= link_to standing_orders_path, class: "nav-link" do %>
+          <span class="title">Standing Orders</span>
+        <% end %>
+      </li>
+      <li class="nav-item <%= "active" if current_controller?(['standing_order_schedules']) %>">
+        <%= link_to standing_order_schedules_path, class: "nav-link" do %>
+          <span class="title">Standing Order Schedules</span>
+        <% end %>
+      </li>
+    </ul>
+  </li>
+
+  <% if current_spree_user.vendors.distinct.count > 1 && request.host == ENV['DEFAULT_URL_HOST'] %>
+    <li class="nav-item <%= "active open" if current_controller?(['products']) %>">
+      <a href="#" class="nav-link nav-toggle">
+        <i class="fa fa-cog"></i>
+        <span class="title">Catalogs</span>
+        <span class="arrow <%= "open" if current_controller?(['products']) %>"></span>
+      </a>
+      <ul class="sub-menu">
+        <% current_spree_user.vendors.distinct.each do |vendor| %>
+          <li class="nav-item <%= "active" if current_controller?(['products']) && params[:vendor_id] == vendor.slug || params[:vendor_id] == vendor.id.to_s %>">
+            <%= link_to vendor_products_path(vendor), class: "nav-link" do %>
+              <span class="title"><%= vendor.name %></span>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    </li>
+  <% else %>
+    <li class="nav-item  <%= "active" if current_controller?(['products']) %>">
+      <% if request.host == ENV['DEFAULT_URL_HOST']
+          vendor = current_spree_user.vendors.first
+        else
+          vendor = current_spree_user.vendors.find_by_custom_domain(request.host)
+        end
+      %>
+      <% if vendor %>
+        <%= link_to vendor_products_path(vendor), class: "nav-link" do %>
+        <i class="fa fa-folder-open"></i>
+        <span class="title">Catalog</span>
+        <% end %>
+      <% end %>
+    </li>
+  <% end %>
+
+  <li class="nav-item <%= "active open" if current_controller?(['accounts']) %>">
+    <% if current_spree_user.vendor_accounts.count == 1 %>
+      <% account = current_spree_user.vendor_accounts.first %>
+      <%= link_to edit_account_path(account), class: "nav-link" do %>
+        <i class="fa fa-user"></i>
+        <span class="title">My Account</span>
+      <% end %>
+    <% else %>
+      <%= link_to accounts_path, class: "nav-link" do %>
+        <i class="fa fa-users"></i>
+        <span class="title">Accounts</span>
+      <% end %>
+    <% end %>
+  </li>
+  <li class="nav-item <%= "active open" if current_controller?(['companies', 'users']) %>">
+    <a href="#" class="nav-link nav-toggle">
+      <i class="fa fa-cog"></i>
+      <span class="title">Settings</span>
+      <span class="arrow <%= "open" if current_controller?(['companies', 'users']) %>"></span>
+    </a>
+    <ul class="sub-menu">
+      <li class="nav-item <%= "active" if current_controller?(['companies']) %>">
+        <%= link_to edit_my_company_path, class: "nav-link" do %>
+          <span class="title">My Company</span>
+        <% end %>
+      </li>
+      <li class="nav-item <%= "active" if request.fullpath.include?('my_profile') %>">
+        <%= link_to edit_my_profile_path, class: "nav-link" do %>
+          <span class="title">My Profile</span>
+        <% end %>
+      </li>
+      <% if current_spree_user.permissions.fetch('users', {}).fetch('basic_options', 1) != 0 %>
+        <li class="nav-item <%= "active" if current_controller?(['users']) && !request.fullpath.include?('my_profile') %>">
+          <%= link_to my_company_users_path, class: "nav-link" do %>
+            <span class="title">Users</span>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  </li>
+</ul>

@@ -1,0 +1,85 @@
+<%= content_for :head_title do %>
+  <%= @current_user ? 'My Profile' : 'User Profile' %>
+<% end %>
+
+<%= content_for :page_bar do %>
+<ul class="page-breadcrumb">
+  <li>
+    <%= link_to "Home", root_path %>
+    <i class="fa fa-circle"></i>
+  </li>
+  <li>
+    <%= @current_user ? 'My Profile' : 'User Profile' %>
+  </li>
+</ul>
+<% end %>
+
+<div class="content">
+  <div class="row">
+    <div class="col-md-12">
+      <!-- BEGIN PROFILE SIDEBAR -->
+      <div class="profile-sidebar">
+          <!-- PORTLET MAIN -->
+        <div class="portlet light profile-sidebar-portlet ">
+          <!-- SIDEBAR USERPIC -->
+          <div class="profile-userpic">
+            <% if @user.images.any? %>
+              <% image = @user.images.find_by(position:1) %>
+              <%= image_tag image.attachment.url(:product), class: "img-responsive", alt: image.alt %>
+            <% else %>
+              <%= image_tag "spree/manage/img/single-user.png", class: "img-responsive", alt: "user image" %>
+            <% end %>
+          </div>
+          <!-- END SIDEBAR USERPIC -->
+          <!-- SIDEBAR USER TITLE -->
+          <div class="profile-usertitle">
+            <div class="profile-usertitle-name">
+
+            </div>
+          </div>
+          <!-- END SIDEBAR USER TITLE -->
+        </div>
+          <!-- END PORTLET MAIN -->
+      </div>
+        <!-- END BEGIN PROFILE SIDEBAR -->
+        <!-- BEGIN PROFILE CONTENT -->
+      <div class="profile-content">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="portlet light ">
+              <div class="portlet-title">
+                <div class="caption caption-md">
+                  <i class="icon-globe theme-font hide"></i>
+                  <span class="caption-subject font-blue-madison bold uppercase"> <%= @user.name %></span>
+                </div>
+                <div class="actions">
+                  <% if @current_user || current_spree_user.can_write?('basic_options', 'users') %>
+                    <%= link_to edit_manage_account_user_path(@user), class: "btn btn-primary" do %>
+                      <i class="fa fa-pencil"></i>&nbsp;Edit
+                    <% end %>
+                  <% end %>
+                </div>
+              </div>
+              <div class="portlet-body">
+                <div class="row static-info">
+                  <div class="col-xs-3 name"> Position: </div>
+                  <div class="col-xs-9 value order-email"> <%= @user.position %> </div>
+                </div>
+                <div class="row static-info">
+                  <div class="col-xs-3 name"> Email: </div>
+                  <div class="col-xs-9 value"> <%= @user.email %> </div>
+                </div>
+                <div class="row static-info">
+                  <div class="col-xs-3 name"> Phone: </div>
+                  <div class="col-xs-9 value"> <%= @user.phone %> </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- END PROFILE CONTENT -->
+    </div>
+  </div>
+</div>

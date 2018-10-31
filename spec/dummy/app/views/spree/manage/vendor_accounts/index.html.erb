@@ -1,0 +1,239 @@
+<%= content_for :head_title do %>
+  Vendors
+<% end %>
+
+<%= content_for :page_title do %>
+  Vendor Accounts
+<% end %>
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Vendor Accounts", manage_vendor_accounts_path %>
+    </li>
+  </ul>
+  <div class="page-toolbar">
+    <% if current_spree_user.can_write?('vendors', 'purchase_orders') %>
+      <%= link_to new_manage_vendor_account_path, class: "btn green margin-right-10" do %>
+        <i class= "fa fa-plus"></i>&nbsp;New Vendor
+      <% end %>
+    <% end %>
+  </div>
+<% end %>
+
+<div class="content">
+
+  <%= search_form_for [:manage, @search], url: manage_vendor_accounts_path, class: "form" do |f| %>
+    <%= render partial: 'advanced_search', locals: { f: f } %>
+  <% end %>
+
+  <% if false %>
+    <!-- No bulk actions for vendors yet -->
+    <div class="btn-group margin-right-10">
+      <div class="btn btn-default">
+        <input type="checkbox" class="group-checkable">
+      </div>
+      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"> Actions
+        <i class="fa fa-angle-down"></i>
+      </button>
+      <ul class="dropdown-menu" role="menu">
+        <li>
+          <%= submit_tag "Invite Selected Vendors", form: "vendor-list-form" %>
+        </li>
+      </ul>
+    </div>
+  <% end %>
+
+<div class = "clearfix"></div>
+<div class="table-scrollable">
+  <%= form_for @company, html: {id: "vendor-list-form"}, url: actions_router_manage_vendors_path, method: :patch do |f| %>
+  <table class="table table-striped table-hover" id="sample_1">
+    <thead>
+      <tr>
+        <!-- <th class="table-checkbox sorting_disabled" width="2%">
+          No bulk actions yet - add table-checkable class to table
+          if we add checkboxes here
+        </th> -->
+        <th>
+          <%= sort_link @search, :number, "Account #" %>
+        </th>
+        <th>
+          <%= sort_link @search, :vendor_name, "Name" %>
+        </th>
+        <th>
+          <%= sort_link @search, :created_at, "Created On" %>
+        </th>
+        <th>
+          <%= sort_link @search, :inactive_date, "Active" %>
+        </th>
+        <th>
+          Last Delivery
+          <%#= sort_link @search, :total, "Total" %>
+        </th>
+        <th>
+          Payment Terms
+        </th>
+        <th>
+          30 Day Spend
+          <%#= sort_link @search, :number, "Order #" %>
+        </th>
+        <% if false %>
+        <!-- Removing until we can caluculate a meaningful balance -->
+          <th>
+            <%#= sort_link @search, :balance, "Balance" %>
+          </th>
+        <% end %>
+        <th>
+          Primary Contact
+          <%#= sort_link @search, :vendor_email, "Email" %>
+        </th>
+        <th>
+          Phone
+          <%#= sort_link @search, :vendor_ship_address_phone, "Phone" %>
+        </th>
+      </tr>
+      <tr class='hidden'>
+        <th></th>
+        <th colspan="100%" style='text-align:left;'>
+          You have selected all <strong><%=@accounts.count%></strong> vendors on this page. <a id='select-all-vendors'>Click Here</a> to select all vendors.
+        </th>
+        <input type="hidden" id='all_vendors' name='all_vendors' value="false">
+      </tr>
+      <tr class='hidden'>
+        <th></th>
+        <th colspan="100%" style='text-align:left;'>
+          All vendors are selected. <a id='unselect-all-vendors'>Clear selection</a>
+        </th>
+      </tr>
+    </thead>
+      <tbody>
+        <% @accounts.each do |account|%>
+          <%= f.fields_for :vendor_accounts, account do |ff|%>
+            <tr>
+              <!-- <td>
+                No bulk actions yet
+                <%#= ff.check_box 'action', class: 'checkboxes noUniform' %>
+              </td> -->
+              <td>
+                <%= link_to manage_vendor_vendor_account_path(account.vendor, account), class: "accounts-list-account-link cel" do %>
+                  <%= account.number %>
+                <% end %>
+              </td>
+              <td>
+                <%= link_to manage_vendor_vendor_account_path(account.vendor, account), class: "accounts-list-account-link cel" do %>
+                  <%= account.fully_qualified_name %>
+                <% end %>
+              </td>
+              <td>
+                <%= link_to manage_vendor_vendor_account_path(account.vendor, account), class: "accounts-list-account-link cel" do %>
+                  <%= display_vendor_date_format(account.created_at, @company.date_format)%>
+                <% end %>
+              </td>
+              <td>
+                <% if account.active? %>
+                  <%= link_to manage_vendor_vendor_account_path(account.vendor, account), class: "accounts-list-account-link cel" do %>
+                    <i class="fa fa-check"></i>
+                  <% end %>
+                <% end %>
+              </td>
+              <td>
+                <%= link_to manage_vendor_vendor_account_path(account.vendor, account), class: "accounts-list-account-link cel" do %>
+                  <% last_delivery_date = account.orders.select(:delivery_date).where("delivery_date < ?", Time.current).approved.order('delivery_date DESC').first.try(:delivery_date) %>
+                  <%= display_vendor_date_format(last_delivery_date, @company.date_format) if last_delivery_date %>
+                <% end %>
+              </td>
+              <td>
+                <%= link_to manage_vendor_vendor_account_path(account.vendor, account), class: "accounts-list-account-link cel" do %>
+                  <%= account.payment_terms.try(:name) %>
+                <% end %>
+              </td>
+              <td>
+                <%= link_to manage_vendor_vendor_account_path(account.vendor, account), class: "accounts-list-account-link cel" do %>
+                  <%= display_sweet_price(account.orders.where('delivery_date BETWEEN ? AND ?', Time.current - 30.days, Time.current).approved.sum(:total), @company.currency) %>
+                <% end %>
+              </td>
+
+              <!-- Removing until we are able to calculate a meaningful balance -->
+              <% if false %>
+                <td>
+                  <%= link_to manage_vendor_account_path(account.vendor, account), class: "accounts-list-account-link cel" do %>
+                    <%= display_sweet_price(account.balance, @company.currency) %>
+                  <% end %>
+                </td>
+              <% end %>
+              <td>
+                <%= link_to manage_vendor_vendor_account_path(account.vendor, account), class: "accounts-list-account-link cel" do %>
+                  <%= account.bill_address.try(:full_name) %>
+                <% end %>
+              </td>
+              <td>
+                <%= link_to manage_vendor_vendor_account_path(account.vendor, account), class: "accounts-list-account-link cel" do %>
+                  <%= account.bill_address.try(:phone) %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
+
+</div>
+
+<%= paginate @accounts %>
+
+
+</div><!--/.containter-->
+
+<script type='text/javascript'>
+  $('.group-checkable').click(function(event) {
+    if(this.checked === true){
+      $('#select-all-vendors').parent().parent().removeClass('hidden');
+      $('.checkboxes:checkbox').each(function() {
+        this.checked = true;
+      });
+    }else{
+      $('#all-vendors-input').val('false');
+      if(!$('#select-all-vendors').parent().parent().hasClass('hidden')){
+        $('#select-all-vendors').parent().parent().addClass('hidden');
+      }
+      if(!$('#unselect-all-vendors').parent().parent().hasClass('hidden')){
+        $('#unselect-all-vendors').parent().parent().addClass('hidden');
+      }
+      $('.checkboxes:checkbox').each(function() {
+        this.checked = false;
+      });
+    }
+  });
+
+  $('#select-all-vendors').click(function(){
+    $('#all-vendors-input').val('true');
+    $(this).parent().parent().addClass('hidden');
+    $('#unselect-all-vendors').parent().parent().removeClass('hidden');
+  });
+
+  $('#unselect-all-vendors').click(function(){
+    $(this).parent().parent().addClass('hidden');
+    $('#all-vendors-input').val('false');
+    $('.group-checkable:checkbox')[0].checked = false;
+
+    $('.checkboxes:checkbox').each(function() {
+      this.checked = false;
+    });
+  });
+
+  $('.checkboxes').click(function(){
+    $('.group-checkable:checkbox')[0].checked = false;
+    if(!$('#select-all-vendors').parent().parent().hasClass('hidden')){
+      $('#select-all-vendors').parent().parent().addClass('hidden');
+    }
+    if(!$('#unselect-all-vendors').parent().parent().hasClass('hidden')){
+      $('#unselect-all-vendors').parent().parent().addClass('hidden');
+    }
+    $('#all-vendors-input').val('false');
+  });
+
+</script>

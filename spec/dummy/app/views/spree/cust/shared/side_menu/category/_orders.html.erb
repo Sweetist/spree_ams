@@ -1,0 +1,22 @@
+
+  <h3>
+    <%=image_tag("spree/manage/img/cart.png")%>
+    <span class="tablet-hide">Orders
+       <i class="fa fa-angle-left"></i>
+     </span>
+  </h3>
+
+<div class="accordion-block">
+  <ul>
+    <li><a href="<%= new_order_url %>">Start New Order</a></li>
+    <li><a href="<%= orders_url %>">All Orders</a></li>
+    <li><a href="<%= receivings_url %>">Receiving</a></li>
+    <li><ul class="recent-orders-list">Recent Orders
+        <% recent_orders = current_spree_user.company.purchase_orders.order('updated_at DESC').limit(5) %>
+        <% recent_orders.each do |order| %>
+          <li><a href="<%= order_url(order) %>">#<%= order.display_number %></a></li>
+        <% end %>
+      </ul>
+    </li>
+  </ul>
+</div>

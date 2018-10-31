@@ -1,0 +1,8 @@
+<%= f.fields_for :master do |ff| %>
+  <%= render partial: 'spree/manage/products/form/master_variant_fields', locals: {f: ff} %>
+  <%= render partial: 'spree/manage/variants/form/purchase_and_costing', locals: {f: ff} %>
+  <%= render partial: 'spree/manage/variants/form/selling_rules', locals: {f: ff} %>
+  <% if current_company.try(:use_variant_text_options) %>
+    <%= render partial: 'spree/manage/variants/form/custom_fields', locals: {f: ff} %>
+  <% end %>
+<% end %>

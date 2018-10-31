@@ -1,0 +1,30 @@
+<div class="portlet-title">
+    <div class="caption">
+      <i class="fa fa-cogs"></i>
+      Add Products
+    </div>
+    <div class="actions">
+      <%= link_to raw("<i class='fa fa-times' aria-hidden='true'></i>"), '#', class: 'btn red btn-sm close-button' %>
+    </div>
+</div>
+<div class="portlet-body">
+  <div id="product_select_container">
+    <select name='' id='product_select' multiple="multiple" class="form-control select2-multiple select2-hidden-accessible">
+      <% product_ids = rule.nil? ? [] : rule.product_ids %>
+      <% @vendor.variants_including_master.active.where(is_master: true).select(:full_display_name, :product_id, :sku).each do |master| %>
+        <option value="<%= master.product_id %>" data-id='<%= master.product_id %>'
+          <%= 'selected' if product_ids.include?(master.product_id) %>>
+          <%= master.full_context %></option>
+      <% end %>
+    </select>
+  </div>
+  <br>
+  <div id="product_qty_requirements">
+    <label class="control-label">Order must contain 'x' amount of these products</label>
+    <select id='product_qty_select' name='promotion[rules][product][match_policy]' class="form-control">
+      <option <%= 'selected' if !rule.nil? && rule.preferences[:match_policy] == 'any' %> value="any">At least one</option>
+      <option <%= 'selected' if !rule.nil? && rule.preferences[:match_policy] == 'all' %> value="all">All</option>
+      <option <%= 'selected' if !rule.nil? && rule.preferences[:match_policy] == 'none' %> value="none">None</option>
+    </select>
+  </div>
+</div>

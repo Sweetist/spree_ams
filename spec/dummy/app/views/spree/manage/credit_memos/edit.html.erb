@@ -1,0 +1,246 @@
+<%= content_for :head_title do %>
+  Credit Memos
+<% end %>
+
+<%= content_for :page_title do %>
+	<span class="credit-memo-id">
+		Credit Memo #<%= @credit_memo.display_number %>
+	</span>
+<% end %>
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+		<li>
+      <%= link_to "Credit Memos", manage_credit_memos_path %>
+			<!--<i class="fa fa-circle"></i>-->
+    </li>
+  </ul>
+	<div class="page-toolbar">
+    <div class="btn-group pull-right">
+    </div>
+  </div>
+<% end %>
+
+<div class="content">
+  <div id='unsynced-inventory-item-warning'></div>
+
+  <%= form_for [:manage, @credit_memo], html: {id: 'credit-memo-form', class: 'prevent-double-submission'} do |credit_memo_form|%>
+    <div class="row">
+      <%= render partial: 'spree/manage/credit_memos/credit_memo_details' %>
+      <div class="col-md-6 col-sm-12" id='account-details'>
+        <div class="portlet blue-hoki box">
+          <div class="portlet-title">
+            <div class="caption">
+              <i class="fa fa-cogs"></i>Customer Information
+            </div>
+          </div>
+          <div class="portlet-body">
+            <div class="row static-info">
+              <div class="col-md-5 name"> Customer Name: </div>
+              <div class="col-md-7 value">
+                <%= credit_memo_form.collection_select(:account_id, @vendor.customer_accounts.active.order('fully_qualified_name ASC'), :id, :fully_qualified_name, {include_blank: true}, {id: 'credit-memo-customer-id', class: "form-control select2 select2-hidden-accessible", placeholder: "Choose Customer"}) %>
+              </div>
+            </div>
+
+            <%= render partial: 'spree/manage/credit_memos/account_address_fields' %>
+            <button id='save-account' class='btn pull-right btn-primary hidden'><i class='fa fa-check'></i>Save</button>
+            <div class='clearfix'></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="clearfix"></div>
+
+    <div class="table-scrollable">
+      <table class="table table-hover draggable-body" id="sample_1">
+        <thead>
+          <%#= search_form_for [:manage, @search], class: "form" do |f| %>
+          <tr>
+            <th></th>
+            <th></th>
+            <th>
+              <%= sort_link @search, :item_name, "Name" %>
+            </th>
+            <th>
+              <%= sort_link @search, :variant_sku, "Sku" %>
+            </th>
+            <th>
+              <%= sort_link @search, :lot_number, 'Lot Number' %>
+            </th>
+            <th width="150px">
+              <%= sort_link @search, :variant_pack_size, "Pack/Size" %>
+            </th>
+            <% if @credit_memo.vendor.try(:include_unit_weight) %>
+              <th>Weight</th>
+            <% end %>
+            <th width="100px">
+              <%= sort_link @search, :price, "Price" %>
+            </th>
+            <th width="150px">
+              <%= sort_link @search, :quantity, "Quantity" %>
+            </th>
+            <% if @credit_memo.vendor.try(:include_total_weight) %>
+              <th>Tot Wt</th>
+            <% end %>
+            <th>
+              <%= sort_link @search, :total, "Total" %>
+            </th>
+            <% if @vendor.track_line_item_class? %>
+              <th>
+                <%= sort_link @search, :txn_class, "Class" %>
+              </th>
+            <% end %>
+          </tr>
+          <tr role="row" class="filter">
+
+          </tr>
+        </thead>
+        <% colspan_left = 7 %>
+        <% colspan_left -= 1 unless @vendor.try(:include_unit_weight) %>
+        <%# colspan_left -= 1 unless current_vendor_view_settings.line_item_lot_number %>
+        <%# colspan_left -= 1 unless current_vendor_view_settings.variant_pack_size %>
+        <%= render partial: 'line_item', collection: @line_items, locals: { credit_memo_form: credit_memo_form } %>
+        <tbody id='variant-quick-add'>
+          <tr id='variant-search-row'>
+            <td></td>
+            <td>
+              <%= link_to '#', class: 'btn btn-xs red delete-input-row-btn', id: 'clear-new-line-item' do %>
+                <i class='fa fa-times'></i>
+              <% end %>
+            </td>
+            <td id='variant-select-cell' colspan="<%= colspan_left %>">Loading Products <%= image_tag 'frontend/loading.gif' %></td>
+            <td class='form-group'>
+              <input name='line_item_variant_qty' type='number' min='0' step='any' id='new-line-item-qty' class='form-control new-item-required line-item-number'>
+            </td>
+            <td colspan="100%">
+              <button id='add-new-line-item-button' class='btn green-jungle'>
+                <i class='fa fa-plus'></i> Add
+              </button>
+            </td>
+
+          </tr>
+
+          <%#= render partial: 'subtotal_row', locals: {colspan_left: colspan_left} %>
+        </tbody>
+        <% colspan_right = 2 %>
+        <% colspan_right += 1 if @vendor.try(:include_total_weight) %>
+        <%= render partial: 'additional_tax_total',
+          locals: { credit_memo_form: credit_memo_form,
+                    currency: @vendor.currency,
+                    colspan_left: colspan_left,
+                    colspan_right: colspan_right } %>
+        <%= render partial: 'shipping',
+          locals: { available_methods: @shipping_methods,
+                    credit_memo_form: credit_memo_form,
+                    currency: @vendor.currency,
+                    colspan_left: colspan_left,
+                    colspan_right: colspan_right } %>
+
+        <%= render partial: 'total_row', locals: {colspan_left: colspan_left, colspan_right: colspan_right} %>
+      </table>
+    </div>
+    <div class="single-order-buttons" id='edit-credit-memo-buttons'>
+      <%= submit_tag Spree.t('order.actions.update'), class: 'btn btn-primary warn-before-action', id: 'update-button', tabindex: 1 %>
+    </div>
+
+  <% end %>
+
+
+</div>
+
+
+<script type="text/javascript">
+  var date_selected = false;
+  var date = null;
+
+  var getAccountDetails = function(account_id, credit_memo_number){
+    $.ajax({
+      url: '/manage/credit_memos/customer_accounts' ,
+      type: 'GET',
+      dataType: 'script',
+      data: {
+        account_id: account_id,
+        credit_memo_number: credit_memo_number,
+        date_selected: date_selected
+      }
+    });
+    // $('#credit-memo-customer-id').select2('enable', false);
+    $('#save-account').addClass('disabled');
+  };
+
+  var loadVariantSearchRow = function(){
+    $.ajax({
+      url: '/manage/credit_memos/variant_search.js',
+      type: 'GET',
+      dataType: 'script',
+      data: {credit_memo_id: "<%= @credit_memo.try(:id) %>"}
+    });
+  }
+
+  $(document).ready(function(){
+    loadVariantSearchRow();
+    $('#clear-new-line-item').click(function(e){
+      e.preventDefault();
+      $('#new-line-item-select').select2('val', '');
+      $('#new-line-item-qty').val('');
+    });
+    $('#credit-memo-customer-id').change(function(){
+      var credit_memo_number = $('#credit-memo-number').data('credit-memo-number');
+      var account_id = $('#credit-memo-customer-id option:selected').val();
+      if(typeof account_id !== "undefined"){
+        getAccountDetails(account_id, credit_memo_number);
+      }
+      $('#credit-memo-user-id').empty();
+      $('.value', '#customer-address-info').each(function(){
+        if(!$(this).hasClass('hidden')){
+          $(this).addClass('hidden');
+        }
+      });
+    });
+    $('#save-account').click(function(e){
+      e.preventDefault();
+      $('#credit-memo-form').submit();
+      $('#credit-memo-customer-id').select2('enable', false);
+      $('#save-account').addClass('disabled');
+    });
+  });
+
+
+  //Drag-Drop line items
+  $(function(){
+    var ready, set_positions;
+    set_positions = function(){
+      // loop through and give each task a data-pos
+      // attribute that holds its position in the DOM
+      $('table.draggable-body tbody.line-item-row').each(function(i){
+        $(this).attr("data-pos",i+1);
+      });
+    }
+    ready = function(){
+      // call set_positions function
+      set_positions();
+      // after the credit_memo changes
+      $('table.draggable-body').sortable({items: 'tbody.line-item-row'}).bind('sortupdate', function(e, ui) {
+          // array to store new credit_memo
+          updated_credit_memo = []
+          // set the updated positions
+          set_positions();
+
+          // populate the updated_credit_memo array with the new task positions
+          $('table.draggable-body tbody.line-item-row').each(function(i){
+            updated_credit_memo.push({ id: $(this).data("id"), position: i+1 });
+          });
+          // send the updated credit_memo via ajax
+          $.ajax({
+            type: "post",
+            url: '/manage/credit_memos/update_credit_memo_line_items_position',
+            data: { credit_memo: updated_credit_memo }
+          });
+      });
+    }
+    $(document).ready(ready);
+  })
+</script>

@@ -1,0 +1,97 @@
+  <div class="modal fade" id="lot_modal" role="dialog">
+    <div class="modal-dialog">
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-body">
+          <div id="lot_info">
+            <!--<div class="portlet">-->
+              <div class="row">
+                <!-- BEGIN PORTLET-->
+                <div class="portlet light">
+                  <div class="table-scrollable">
+                    <table class="table table-hover ">
+                      <thead>
+                        <th>Number</th>
+                        <th>Created At</th>
+                        <th>Available At</th>
+                        <th>Expires At</th>
+                        <th>Sell By</th>
+                        <th>Quantity</th>
+                      </thead>
+                      <tbody>
+                        <% if @stock_item %>
+                          <% sell_date = Time.current
+                            stock_item_lots = @stock_item.stock_item_lots.joins(:lot)
+                            .where('archived_at is NULL')
+                           %>
+                          <% unassigned_count = @stock_item.unassigned_inventory_count %>
+                          <% if stock_item_lots.present? || unassigned_count > 0 %>
+                            <% stock_item_lots.each do |stock_item_lot| %>
+                              <% lot = stock_item_lot.lot %>
+                              <tr class="<%= 'warning' unless stock_item_lot.can_sell?(sell_date) %>">
+                                <td><%= link_to lot.number, manage_lot_path(lot) %></td>
+                                <td><%= display_vendor_date_format(lot.created_at, @vendor.date_format) %></td>
+                                <td><%= display_vendor_date_format(lot.available_at, @vendor.date_format) %></td>
+                                <td><%= display_vendor_date_format(lot.expires_at, @vendor.date_format) %></td>
+                                <td><%= display_vendor_date_format(lot.sell_by, @vendor.date_format) %></td>
+                                <td><%= stock_item_lot.count %></td>
+                              </tr>
+                            <% end %>
+                            <% if unassigned_count > 0 %>
+                              <tr>
+                                <td>Unassigned</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td><%= unassigned_count %></td>
+                              </tr>
+                            <% end %>
+                          <% else %>
+                            <tr>
+                              <td colspan="100%">No sellable lots available at this location.</td>
+                            </tr>
+                          <% end %>
+                        <% else %>
+                          <tr>
+                            <td colspan="100%">No sellable lots available at this location.</td>
+                          </tr>
+                        <% end %>
+                      </tbody>
+                    </table>
+                  </div>
+                </div><!--/. portlet -->
+              </div>
+            <!--</div> /.portlet -->
+            <div class="clearfix"></div>
+          </div><!--/.content-->
+        </div>
+        <div class="modal-footer">
+          <%= link_to "New Lot", new_manage_lot_path, class: 'btn btn-primary'%>
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <script>
+    var getLotInfo = function(stock_item_id){
+      $.ajax({
+        url: '/manage/products/get_lot_info.js' ,
+        type: 'GET',
+        dataType: 'script',
+        data: {
+          stock_item_id: stock_item_id,
+        }
+      });
+    };
+    $('.lot_info').off("click").click(function(e) {
+      e.stopPropagation();
+      var stock_item_id = this.name;
+      if (stock_item_id != undefined || stock_item_id != ""){
+        getLotInfo(stock_item_id);
+      }
+    });
+
+  </script>

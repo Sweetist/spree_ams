@@ -1,0 +1,43 @@
+<div class='col-md-12 important-clarifier'>
+  <% order_type = @current_order.class.to_s.demodulize.underscore %>
+  <% form_path = order_type == 'order' ? order_add_to_cart_path(@current_order) : standing_order_products_path(@current_order) %>
+
+  <%= form_for @current_order, url: form_path, method: 'post',
+    remote: current_vendor_view_settings.try(:catalog_after_add_to_cart) == 'products',
+    html: {id: "add-to-order-form"} do |f| %>
+
+    <% if @avv && @avv.try(:recalculating).to_i < Spree::AccountViewableVariant::RecalculatingStatus['complete'] %>
+      <div id="update-price-<%= @avv.id %>">
+        Price is updating...
+        <%= link_to "Update Now", update_customized_pricing_path(avv_id: @avv.id), class: "btn btn-xs btn-success" %>
+      </div>
+    <% else%>
+      <div class='row'>
+        <div class='col-xs-4'>
+          <label for='order_products_<%= variant.id %>', class='control-label'>Quantity</label>
+        </div>
+        <div class='col-xs-8'>
+          <% carted = @current_order.line_items.where(variant_id: variant.id) %>
+          <% multi_line = carted.count > 1 %>
+          <% sum_stock_items = current_vendor_view_settings.try(:catalog_stock_level_sum) %>
+          <% stock_location = @current_order.try(:default_stock_location) %>
+          <% stock_message = variant.display_stock_level(sum_stock_items, stock_location) %>
+          <% if stock_message == Spree.t(:out_of_stock) %>
+            <span class='help-block-italic'><%= stock_message %></span>
+          <% else %>
+            <%= render partial: "spree/cust/products/add_to_cart/#{@vendor.cva.try(:catalog_add_to_cart) || 'modals'}",
+              locals: { variant: variant, avv: @avv, carted: carted, multi_line: multi_line } %>
+            <span class='help-block-italic'><%= stock_message %></span>
+          <% end %>
+          <% if current_vendor_view_settings.try(:catalog_add_to_cart) == 'legacy' %>
+            <div class="margin-top-25 pull-right">
+              <button class="btn btn-primary" style="margin-right: 0" id="add-to-cart"> Add To Cart</button>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+  <% end %> <!-- end form -->
+  <div class='clearfix'></div>
+</div>

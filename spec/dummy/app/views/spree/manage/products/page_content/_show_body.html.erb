@@ -1,0 +1,196 @@
+<div class="content">
+
+  <!--<div class="portlet">-->
+  <div class="row">
+    <!-- BEGIN PORTLET-->
+    <div class="portlet light">
+      <div class="portlet-title">
+        <div class="caption">
+          <span class="caption-subject font-blue-soft bold uppercase"><%= @product.default_display_name %></span>
+        </div>
+        <% unless request.path.include?('standing_order') %>
+          <% if current_spree_user.can_write?('catalog', 'products') %>
+            <%= link_to edit_manage_product_path(@product), class: "btn btn-primary pull-right margin-left-5 modal-hide" do %>
+              <i class="fa fa-pencil"></i>&nbsp;Edit
+            <% end %>
+          <% end %>
+        <% end %>
+      </div>
+
+      <% if @product.discontinued_on %>
+        <div class='alert alert-danger'>
+          This product has been <%= Spree.t('variant.deactivated') %>.
+        </div>
+      <% end %>
+
+      <% if @product.has_variants_with_no_option_types %>
+        <div class="alert alert-danger alert-dismissable">
+          <button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
+          This product has variants with option values that do not belong to the option types specified below. Please edit either the variants or the product.
+        </div>
+      <% end %>
+      <div class="portlet-body">
+      <!-- BEGIN Top portion of portlet-body -->
+        <div class="row">
+          <div class="col-md-4">
+            <%= render partial: 'spree/manage/products/image' %>
+            <br>
+            <div class='row margin-top-20'>
+              <div class='col-md-12'>
+                <%= raw(@product.description.to_s.html_safe) %>
+              </div>
+            </div>
+            <% if @product.taxons.any? %>
+              <hr>
+              <dt>Categories:</dt>
+              <% @product.taxons.order('name ASC').each do |taxon| %>
+                <dd data-id='<%= taxon.id %>'><%= taxon.pretty_name %></dd>
+              <% end %>
+            <% end %>
+          </div>
+
+          <div class='col-md-8'>
+            <h3>General Information</h3><hr>
+            <div class='row'>
+              <div class='col-md-6'>
+                <div class="row static-info">
+                  <div class="col-xs-5 col-md-6 name">Product Type:</div>
+                  <div class="col-xs-7 col-md-6 value"><%= PRODUCT_TYPES[@product.product_type] %></div>
+                </div>
+              </div>
+              <div class='col-md-6'>
+                <div class="row static-info">
+                  <% if @product.discontinued_on %>
+                    <div class="col-xs-5 col-md-6 name"><%= Spree.t('variant.deactivated').titleize %> on:</div>
+                    <div class="col-xs-7 col-md-6 value"><%= display_vendor_date_format(@product.discontinued_on, @vendor.date_format) %></div>
+                  <% else %>
+                    <div class="col-xs-5 col-md-6 name">Available On:</div>
+                    <div class="col-xs-7 col-md-6 value"><%= display_vendor_date_format(@product.available_on, @vendor.date_format) %></div>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+
+            <div class='row'>
+              <div class='col-md-6'>
+                <div class="row static-info">
+                  <div class="col-xs-5 col-md-6 name">Shipping Category:</div>
+                  <div class="col-xs-7 col-md-6 value"><%= @product.shipping_category.try("name") %></div>
+                </div>
+              </div>
+              <div class='col-md-6'>
+                <div class="row static-info">
+                  <div class="col-xs-5 col-md-6 name">Tax Category:</div>
+                  <div class="col-xs-7 col-md-6 value"><%= @product.tax_category.try("name") %></div>
+                </div>
+              </div>
+            </div>
+
+            <div class='row'>
+              <div class='col-md-6'>
+                <div class="row static-info">
+                  <div class="col-xs-5 col-md-6 name">Sell this to Customers:</div>
+                  <div class="col-xs-7 col-md-6 value"><%= @product.for_sale ? Spree.t(:say_yes) : Spree.t(:say_no) %></div>
+                </div>
+              </div>
+              <div class='col-md-6'>
+                <div class="row static-info">
+                  <div class="col-xs-5 col-md-6 name">Buy this from Vendor:</div>
+                  <div class="col-xs-7 col-md-6 value"><%= @product.for_purchase ? Spree.t(:say_yes) : Spree.t(:say_no) %></div>
+                </div>
+              </div>
+            </div>
+
+            <% if @product.sync_to_sales_channels.any?%>
+              <div class="row">
+                <div class='col-md-6'>
+                  <div class="row static-info">
+                    <div class="col-xs-5 col-md-6 name"><%= Spree.t('sync_to_sales_channels') %>:</div>
+                    <div class="col-xs-7 col-md-6 value"><%= @product.sync_to_sales_channels.map(&:integration_key).map(&:capitalize).join('. ') %></div>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+            <h3 class='form-section'>Accounts</h3><hr>
+            <div class='row'>
+              <div class='col-md-12 col-lg-9'>
+                <% acc_count = 0 %>
+                <% if PRODUCT_TYPE_CHART_ACCOUNTS[@product.product_type] %>
+                  <% PRODUCT_TYPE_CHART_ACCOUNTS[@product.product_type].each do |acct_cat| %>
+                    <% next unless @product.try(acct_cat) %>
+                    <% account = @product.try(acct_cat) %>
+                    <% acc_count += 1 %>
+                    <div class="row static-info">
+                      <div class="col-xs-5 col-md-6 name"><%= "#{account.chart_account_category.try(:name)}:" %></div>
+                      <div class="col-xs-7 col-md-6 value"><%= account.try("fully_qualified_name") %></div>
+                    </div>
+                  <% end %>
+                <% end %>
+                <% if acc_count == 0 %>
+                  <div class="row static-info">
+                    <div class="col-xs-12">
+                      <span class='help-block-italic'>No accounts assigned to this product.
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+
+            <div class='row'>
+              <div class='col-md-4'>
+              </div>
+              <div class='col-md-4'>
+              </div>
+            </div>
+
+            <div class='row'>
+              <div class='col-md-4'>
+              </div>
+              <div class='col-md-4'>
+              </div>
+            </div>
+          </div>
+          <% unless @product.has_variants? %>
+
+            <div class='col-md-4'></div>
+            <div class='col-md-8'>
+              <% variant = @product.master %>
+              <% avv = @avvs.try(:first) %>
+              <%= render partial: 'spree/manage/variants/page_content/show_body', locals: {variant: variant, avv: avv} %>
+            </div>
+          <% end %>
+        </div>
+        <!-- END Top portion of portlet-body -->
+        <!-- BEGIN table -->
+        <% inventory_on = @product.should_track_inventory? %>
+        <% order_type = @current_order.class.to_s.demodulize.underscore %>
+        <% if @current_order && @product.has_variants? %>
+          <% form_path = order_type == 'order' ? manage_order_add_to_cart_path(@current_order) : manage_standing_order_products_path(@current_order) %>
+          <%= form_for [:manage, @current_order], url: form_path, method: 'post', html: {id: "add-to-order-form"} do |f| %>
+            <%= render partial: 'spree/manage/products/product_table', locals: {f: f, inventory_on: inventory_on, order_type: order_type} %>
+            <div class="pull-right">
+              <% unless @product.discontinued_on %>
+                <button class="btn btn-primary modal-hide" style="margin-right: 0" id="add-to-cart"> Add To Cart</button>
+              <% end %>
+            </div>
+          <% end %>
+        <% elsif @product.has_variants? %>
+          <%= render partial: 'spree/manage/products/product_table', locals: {f: nil, inventory_on: inventory_on, order_type: order_type} %>
+        <% end %>
+          <div id="non_build" class="form-actions">
+          <% if @vendor.allow_variants && current_spree_user.can_write?('catalog', 'products') %>
+            <% if @product.has_variants? || @product.option_types.present? %>
+              <%= link_to '#variant-modal',
+                {data:{toggle: 'modal', target:'#variant-modal', action: 'new', 'product-id' => "#{@product.id}"},
+                class: "btn green variant-modal-btn margin-top-10"} do %>
+                <i class='fa fa-plus'></i> New Variant
+              <% end %>
+            <% end %>
+          <% end %>
+        </div>
+      </div><!--/. portlet-body -->
+    </div><!--/. portlet -->
+  </div>
+  <!--</div> /.portlet -->
+  <div class="clearfix"></div>
+</div><!--/.content-->

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9"> <![endif]-->
+<!--[if !IE]><!--><html lang="en"> <!--<![endif]-->
+  <head>
+    <%= render partial: 'layouts/shared/head' %>
+    <% # include intercom partial %>
+    <%= render 'layouts/intercom' %>
+
+    <% @theme_name ||= current_spree_user.company.try(:theme_name) %>
+    <% if @theme_name == "custom" %>
+      <% @theme_css ||= current_spree_user.company.theme_css %>
+      <style>
+        <%= raw(@theme_css) %>
+      </style>
+    <% else %>
+      <% theme_name = @theme_name || current_spree_user.company.try(:theme_name) || "darkblue" %>
+      <%= stylesheet_link_tag "sweet-frontend/layouts/layout/themes/#{theme_name}" %>
+    <% end %>
+
+    <%= javascript_include_tag "spree/sweet-frontend/manage/manage_all" %>
+  </head>
+
+  <body class="vendor page-header-fixed page-sidebar-closed-hide-logo page-content-white">
+    <!-- BEGIN HEADER -->
+    <div class="page-header navbar navbar-fixed-top">
+      <!-- BEGIN HEADER INNER -->
+      <div class="page-header-inner ">
+        <%= render partial: 'layouts/manage/page_logo' %>
+
+        <!-- BEGIN RESPONSIVE MENU TOGGLER -->
+        <div class="menu-toggler sidebar-toggler"> </div>
+        <a href="javascript:;" class="menu-toggler responsive-toggler" data-toggle="collapse" data-target=".navbar-collapse"> </a>
+        <!-- END RESPONSIVE MENU TOGGLER -->
+        <!-- BEGIN TOP NAVIGATION MENU -->
+
+        <div class="top-menu">
+          <ul class="nav navbar-nav pull-right">
+            <!-- BEGIN USER LOGIN DROPDOWN -->
+            <!-- DOC: Apply "dropdown-dark" class after below "dropdown-extended" to change the dropdown styte -->
+              <% if current_order.try(:persisted?) && current_order.is_a?(Spree::Order) %>
+                <%= render partial: 'spree/manage/orders/cart_actions', locals: {current_order: current_order} %>
+              <% end %>
+            <!-- BEGIN GLOBAL BUTTON -->
+            <li class="dropdown">
+              <a class="dropdown-toggle" data-toggle="dropdown" data-target="#" href="javascript:;">
+                <i class="fa fa-plus-circle" id="btn-create-global" aria-hidden="true"></i>
+              </a>
+              <ul class="dropdown-menu">
+                <li>
+                  <%= link_to "New Sales Order", new_manage_order_path, class: "dropdown-link" %>
+                </li>
+                <li>
+                  <%= link_to "New Standing Order", new_manage_standing_order_path, class: "dropdown-link" %>
+                </li>
+                <li>
+                  <%= link_to "New Purchase Order", new_manage_purchase_order_path, class: "dropdown-link" %>
+                </li>
+                <li>
+                  <%= link_to "New Payment", new_manage_account_payment_path, class: "dropdown-link" %>
+                </li>
+                <li>
+                  <%= link_to "New Product", new_manage_product_path, class: "dropdown-link" %>
+                </li>
+                <li>
+                  <%= link_to "New Customer", new_manage_customer_path, class: "dropdown-link" %>
+                </li>
+                <li>
+                  <%= link_to "New Vendor", new_manage_vendor_account_path, class: "dropdown-link" %>
+                </li>
+                <li>
+                  <%= link_to "New Contact", new_manage_account_contact_path, class: "dropdown-link" %>
+                </li>
+                <li>
+                  <%= link_to "New Pricing Adjustment", new_manage_promotion_path, class: "dropdown-link" %>
+                </li>
+                <% if current_company.track_inventory %>
+                  <li>
+                    <%= link_to "New Stock Transfer", new_manage_stock_transfer_path, class: "dropdown-link" %>
+                  </li>
+                <% end %>
+              </ul>
+            </li>
+            <!-- END GLOBAL BUTTON -->
+            <li class="dropdown dropdown-user">
+              <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" data-close-others="true">
+                <% if current_spree_user.images.exists? %>
+                  <%= image_tag current_spree_user.images.first.attachment.url(:product), :class => "img-responsive", alt: current_spree_user.images.first.alt %>
+                <% else %>
+                  <img alt="" class="img-circle" src="/assets/frontend/avatar.png" />
+                <% end %>
+                <span class="username username-hide-on-mobile"><%= current_spree_user.firstname %> <%= current_spree_user.lastname %></span>
+                <i class="fa fa-angle-down"></i>
+              </a>
+
+              <ul class="dropdown-menu dropdown-menu-default">
+                <%
+                  user_path = edit_manage_account_user_path(current_spree_user)
+                  contact_path = new_manage_message_path
+                %>
+                <li>
+                  <%= link_to user_path, class: "dropdown-link" do %>
+                    <i class="fa fa-user"></i> My Profile
+                  <% end %>
+                </li>
+
+                <li class="divider"> </li>
+                <li>
+                    <%= link_to contact_path, class: "dropdown-link" do %>
+                        <i class='fa fa-envelope'></i> Contact Sweet
+                    <% end %>
+                </li>
+                <li class="divider"> </li>
+                <li>
+                  <%= link_to spree.logout_path, class: "dropdown-link" do %>
+                    <i class="fa fa-key"></i> Log Out
+                  <% end %>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+        <!-- END TOP NAVIGATION MENU -->
+
+      </div>
+      <!-- END HEADER INNER -->
+    </div>
+    <!-- END HEADER -->
+
+    <!-- BEGIN HEADER & CONTENT DIVIDER -->
+    <div class="clearfix"> </div>
+    <!-- END HEADER & CONTENT DIVIDER -->
+
+    <!-- BEGIN CONTAINER -->
+    <div class="page-container">
+      <!-- BEGIN SIDEBAR -->
+      <div class="page-sidebar-wrapper">
+        <!-- BEGIN SIDEBAR -->
+        <!-- DOC: Set data-auto-scroll="false" to disable the sidebar from auto scrolling/focusing -->
+        <!-- DOC: Change data-auto-speed="200" to adjust the sub menu slide up/down speed -->
+        <div class="page-sidebar navbar-collapse collapse">
+          <!-- BEGIN SIDEBAR MENU -->
+          <%= render partial: "spree/manage/shared/side_bar" %>
+
+          <!-- END SIDEBAR MENU -->
+        </div>
+        <!-- END SIDEBAR -->
+      </div>
+      <!-- END SIDEBAR -->
+      <!-- BEGIN CONTENT -->
+      <div class="page-content-wrapper">
+        <!-- BEGIN CONTENT BODY -->
+        <div class="page-content">
+          <!-- BEGIN PAGE HEADER-->
+          <!-- BEGIN PAGE BAR -->
+          <div class="page-bar">
+            <%= yield(:page_bar) %>
+          </div>
+          <!-- END PAGE BAR -->
+          <!-- BEGIN PAGE TITLE-->
+          <!-- <h3 class="page-title">
+            <%#= yield(:page_title) %>
+          </h3> -->
+          <!-- END PAGE TITLE-->
+          <!-- END PAGE HEADER-->
+          <%= render partial: 'layouts/shared/alert_box' %>
+          <%= yield %>
+          <div style='height:40px; background-color: #fff;'></div>
+        </div>
+
+        <!-- END CONTENT BODY -->
+      </div>
+      <!-- END CONTENT -->
+    </div>
+    <!-- END CONTAINER -->
+
+    <div class="page-footer">
+
+      <div class="page-footer-inner padding-top-10 padding-bottom-10 text-center">
+        <div class='row hidden-xs'>
+          <div class='col-sm-12'>
+            <%= render partial: 'spree/shared/copyright_text' %> |
+            <%= mail_to 'help@getsweet.com', 'Contact Us', target: '_blank' %> |
+            <%= link_to "Support", 'http://support.getsweet.com', target: '_blank' %>
+          </div>
+        </div>
+        <div class='row visible-xs'>
+          <div class='col-xs-12'>
+            <%= link_to "Support", 'http://support.getsweet.com', target: '_blank' %>
+          </div>
+          <div class='col-xs-12'>
+            <%= mail_to 'help@getsweet.com', 'Contact Us', target: '_blank' %>
+          </div>
+          <div class='col-xs-12'>
+            <%= render partial: 'spree/shared/copyright_text' %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Google analytics send code -->
+    <%= render 'layouts/ga_send' %>
+
+  </body>
+</html>

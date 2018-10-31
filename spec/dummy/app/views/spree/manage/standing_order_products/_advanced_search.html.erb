@@ -1,0 +1,87 @@
+<div class="portlet box blue-hoki" id="search">
+  <div class="portlet-title">
+    <div class="col-xs-12 col-sm-6 col-lg-4">
+      <%= f.text_field :variant_full_display_name_or_variant_sku_cont, class: 'form-control', placeholder: 'Enter search term' %>
+      <div class="visible-xs-block" style="min-height:10px;">
+      </div>
+    </div>
+    <div class="col-xs-8 col-sm-4" id="basic-search-buttons">
+      <button type="submit" class="btn green"><i class="fa fa-search" aria-hidden="true"></i> Search</button>
+      <%= link_to manage_standing_order_products_path(@current_order), class: "btn default" do %>
+        <i class='fa fa-times'></i> Reset
+      <% end %>
+    </div>
+    <div class="tools">
+      <a href="javascript:;" id='toggle-advanced-search'>Advanced <i class="fa fa-angle-down"></i></a>
+    </div>
+  </div>
+  <div class="portlet-body form hidden" id='advanced-search-form'>
+    <div class="form-body">
+      <input type="hidden" name='customer_id' value="<%= session[:customer_id] %>" id="view-as-customer-id">
+      <div class='row'>
+        <div class='col-md-4'>
+          <div class='form-group' data-open="<%= params[:q] && !params[:q].fetch(:variant_full_display_name_cont, nil).blank? %>">
+            <%= f.label :variant_full_display_name_cont, 'Product Name', class: 'control-label' %>
+            <%= f.text_field :variant_full_display_name_cont, class: 'form-control' %>
+          </div>
+        </div>
+        <div class='col-md-4'>
+          <div class='form-group' data-open="<%= params[:q] && !params[:q].fetch(:variant_sku_cont, nil).blank? %>">
+            <%= f.label :variant_sku_cont, 'Sku', class: 'control-label' %>
+            <%= f.text_field :variant_sku_cont, class: 'form-control' %>
+          </div>
+        </div>
+        <div class='col-md-4'>
+          <div class='form-group' data-open="<%= params[:q] && !params[:q].fetch(:variant_product_taxons_name_cont, nil).blank? %>">
+            <%= f.label :variant_product_taxons_name_cont, 'Category', class: 'control-label' %>
+            <%= f.text_field :variant_product_taxons_name_cont, class: 'form-control' %>
+          </div>
+        </div>
+      </div>
+
+      <div class='row'>
+        <div class='col-md-4'>
+          <div class='form-group' data-open="<%= @open_search && params[:product_list].present? %>">
+          <label for='account_show_all'>View Results For</label>
+            <select name='product_list' class="form-control" id="account_show_all">
+              <option></option>
+              <option value="true" <%= 'selected' if params[:product_list] =='true' %>>All Products</option>
+              <option value="false" <%= 'selected' if params[:product_list] =='false' %>>Account Only</option>
+            </select>
+          </div>
+        </div>
+        <div class='col-md-4'>
+          <div class='row'>
+            <div class='col-xs-6'>
+              <div class='form-group' data-open="<%= !params.fetch(:q, {}).fetch(:include_unavailable, true) %>">
+                <%= f.label :include_unavailable, 'Include Unavailable', class: 'control-label' %><br>
+                <%= f.check_box :include_unavailable, class: 'form-control make-switch',
+                    'data-size' => 'mini', checked: params.fetch(:q, {}).fetch(:include_unavailable, false) %>
+              </div>
+            </div>
+            <div class='col-xs-6'>
+              <div class='form-group' data-open="<%= params.fetch(:q, {}).fetch(:include_inactive, false).to_bool %>">
+                <%= f.label :include_inactive, "Include #{Spree.t('variant.inactive')}", class: 'control-label' %><br>
+                <%= f.check_box :include_inactive, class: 'form-control make-switch',
+                'data-size' => 'mini', checked: params.fetch(:q, {}).fetch(:include_inactive, false).to_bool %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="form-actions">
+      <div class="row">
+        <div class="col-md-12">
+          <div class='btn-set pull-right'>
+            <button type="submit" class="btn green"><i class="fa fa-search" aria-hidden="true"></i> Search</button>
+            <%= link_to manage_standing_order_products_path(@current_order), class: "btn default" do %>
+              <i class='fa fa-times'></i> Reset
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

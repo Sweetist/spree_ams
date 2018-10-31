@@ -1,0 +1,23 @@
+<div class='col-xs-12'>
+  <div class='row'>
+    <div class='col-md-6'>
+      <div class='form-group'>
+        <%= f.label :vendor_account_ids, "Vendors" %>
+        <%= f.collection_select :vendor_account_ids, current_company.vendor_accounts,
+          :id, :fully_qualified_name, {},
+          { class: 'form-control select2-multiple select2-hidden-accessible', multiple: true} %>
+      </div>
+    </div>
+    <div class='col-md-6'>
+      <div class='form-group'>
+        <%= f.label :vendor_account_ids, "Preferred Vendor" %>
+        <%= f.collection_select :preferred_vendor_account_id, current_company.vendor_accounts,
+          :id, :fully_qualified_name, {include_blank: true},
+          { class: 'form-control select2' } %>
+          <span class='hidden help-block-italic' id='add-to-vendor-list-msg'>
+            Preferred Vendor will be added to the vendor list upon saving.
+          </span>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,20 @@
+<h1>Adjustments for order #<%= @order.display_number %></h1>
+
+<div id="all-adjustments">
+  <% @adjustments.each do |adjustment| %>
+    <ul id='adjustment-row'>
+      <li class="label">
+        <%= adjustment.label %>
+      </li>
+      <li class="amount">
+        <%= display_sweet_price(adjustment.amount, @order.currency) %>
+      </li>
+      <li class="actions">
+        <% unless adjustment.source_type == "Spree::PromotionAction" %>
+          <a href="<%= edit_manage_order_adjustment_url(@order, adjustment.id) %>">edit</a> |
+          <%= link_to "delete", manage_order_adjustment_url(@order.id, adjustment.id), :confirm => "Are you sure you want to delete this adjustment?", :method => :delete %>
+        <% end %>
+      </li>
+    </ul>
+  <% end %>
+</div>

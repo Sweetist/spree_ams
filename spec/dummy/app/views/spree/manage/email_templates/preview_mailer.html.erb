@@ -1,0 +1,11 @@
+<div>
+  <div style="margin: 0 130px;">
+    <div style="border-bottom: 1px solid grey; padding-bottom: 5px;">
+      <%= "Email Subject: #{@subject}" %>
+    </div>
+  </div>
+  <%= content_for :preview_body do %>
+    <%= render template: "mailers/spree/#{@mailer_path}" %>
+  <% end %>
+  <%= render template: 'layouts/spree/base_mailer' %>
+</div>

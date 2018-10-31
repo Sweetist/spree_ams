@@ -1,0 +1,28 @@
+<div class="row">
+  <div class="col-md-6">
+    <div class="form-group">
+      <%= f.label :name, Spree.t(:name) %>
+      <%= f.text_field :name, class: 'form-control' %>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="form-group">
+      <%= f.label :tax_code, Spree.t(:tax_code) %> <span class='help-block-italic'>(limit 3 char)</span>
+      <%= f.text_field :tax_code, maxlength:"3", class: 'form-control' %>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-6">
+    <div class="form-group">
+      <%= f.label :description, Spree.t(:description) %><br>
+      <%= f.text_field :description, class: 'form-control' %>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="form-group">
+      <%= f.label :is_default, Spree.t(:default) %><br>
+      <%= f.check_box :is_default, class: 'make-switch', 'data-size' => 'mini' %>
+    </div>
+  </div>
+</div>

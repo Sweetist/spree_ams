@@ -1,0 +1,167 @@
+<%= content_for :head_title do %>
+  <%= @vendor.name %>
+<% end %>
+
+<%= content_for :page_title do %>
+  <%= @vendor.name %>
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="breadcrumb">
+    <li>
+      <%= link_to "Home", root_path %>
+    </li>
+    <li>
+      <span>Account Info</span>
+    </li>
+  </ul>
+  <div class="page-toolbar">
+		<div class="btn-group pull-right">
+			<button type="button" class="btn btn-success btn-sm dropdown-toggle" data-toggle="dropdown"> Actions
+        <i class="fa fa-angle-down"></i>
+      </button>
+      <ul class="dropdown-menu pull-right" role="menu">
+        <li>
+          <%= link_to "Start New Order", new_order_path %>
+        </li>
+      </ul>
+    </div>
+		<div class="btn-group pull-right" style="padding-right: 10px;">
+      <button type="button" class="btn btn-success btn-sm dropdown-toggle" data-toggle="dropdown"> Recent Orders
+        <i class="fa fa-angle-down"></i>
+      </button>
+      <ul class="dropdown-menu pull-right" role="menu">
+				<% @recent_orders.each do |order| %>
+					<li><%= link_to "#{order.delivery_date.to_date.to_formatted_s(:short)} #(#{order.display_number})", order_path(order) %></li>
+				<% end %>
+      </ul>
+    </div>
+  </div>
+  <div class="clearfix"></div>
+<% end %>
+
+<div class="content">
+  <% if @account.inactive? %>
+    <div class="alert alert-danger alert-dismissable">
+      <button type='button' class='close' data-dismiss='alert' aria-hidden='true'></button>
+      This account has been deactivated. Please contact <%= @vendor.name %> to reactivate your account.
+    </div>
+  <% end %>
+  <div class="row">
+    <div class="col-md-8">
+			<div class="portlet blue-hoki box">
+				<div class="portlet-title">
+					<div class="caption">
+						<i class="fa fa-cogs"></i>Vendor Details
+					</div>
+				</div>
+				<div class="portlet-body">
+					<div class="row">
+						<div class="col-md-4">
+							<% if @vendor.images.any? %>
+								<% @vendor.images.each do |image| %>
+									<%= image_tag image.attachment.url(:product), :class => "img-responsive", alt: image.alt %>
+								<% end %>
+							<% else %>
+								<%= image_tag "spree/manage/img/multi-user.png", :class => "img-responsive", alt: "account image" %>
+							<% end %>
+						</div>
+						<div class="col-md-8">
+							<div class="row static-info">
+								<div class="col-md-5 name">Name:</div>
+								<div class="col-md-7 value"><%= @vendor.name %> </div>
+							</div>
+							<div class="row static-info">
+								<div class="col-md-5 name">Email:</div>
+								<div class="col-md-7 value"><%= @vendor.email %> </div>
+							</div>
+							<div class="row static-info">
+								<div class="col-md-5 name">Order Cutoff Time:</div>
+								<div class="col-md-7 value"><%= "#{@vendor.order_cutoff_time} #{@vendor.time_zone}"%> </div>
+							</div>
+
+							<div class="row static-info">
+								<div class="col-md-5 name">Payment Terms:</div>
+								<div class="col-md-7 value"><%= @payment_terms = Spree::PaymentTerm.find_by_id(@account.payment_terms_id).try(:name) %> </div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-4">
+			<div class="portlet blue-hoki box">
+				<div class="portlet-title">
+					<div class="caption">
+						<i clas="fa fa-usd"></i>Vendor Orders
+					</div>
+				</div>
+				<div class="portlet-body">
+          <!-- Removing until we can caluculate a meaningful balance -->
+          <% if false %>
+  					<div class="row static-info">
+  						<div class="col-md-5 name">Finance Balance:</div>
+  						<div class="col-md-7 value"><%#= display_sweet_price(@account.balance, @vendor.currency) %></div>
+  					</div>
+  					<div class="row static-info">
+  						<div class="col-md-5 name">Past Due Balance:</div>
+  						<div class="col-md-7 value"><%#= display_sweet_price(0, @vendor.currency) %></div>
+  					</div>
+          <% end %>
+					<div class="row static-info">
+						<div class="col-md-5 name">Payment Terms:</div>
+						<div class="col-md-7 value"><%= @payment_terms %></div>
+					</div>
+					<div class="row static-info">
+						<div class="col-md-12">
+							<%= link_to "Orders", orders_path, class: "btn btn-sm btn-info "%>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<% @vendor.users.each do |user| %>
+		<% next if user.has_spree_role?('admin') %>
+		<div class="row">
+			<div class="col-md-8">
+				<div class="portlet blue-hoki box">
+					<div class="portlet-title">
+						<div class="caption">
+							<i class="fa fa-cogs"></i>Contact Details
+						</div>
+					</div>
+					<div class="portlet-body">
+						<div class="row">
+							<div class="col-md-4">
+								<% if user.images.any? %>
+									<%= image_tag user.images.first.attachment.url(:product), :class => "img-responsive", alt: user.images.first.alt %>
+								<% else %>
+									<%= image_tag "frontend/avatar.png", :class => "img-responsive", alt: "contact image" %>
+								<% end %>
+							</div>
+							<div class="col-md-8">
+								<div class="row static-info">
+									<div class="col-md-5 name">Contact:</div>
+									<div class="col-md-7 value"><%= user.name %> </div>
+								</div>
+								<div class="row static-info">
+									<div class="col-md-5 name">Position:</div>
+									<div class="col-md-7 value"><%= user.position %> </div>
+								</div>
+								<div class="row static-info">
+									<div class="col-md-5 name">Phone:</div>
+									<div class="col-md-7 value"><%= user.phone %> </div>
+								</div>
+								<div class="row static-info">
+									<div class="col-md-5 name">Email:</div>
+									<div class="col-md-7 value"><%= user.email %> </div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	<% end %>
+</div>

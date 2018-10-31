@@ -1,0 +1,14 @@
+<div class="portlet-title">
+    <div class="caption">
+        <i class="fa fa-cogs"></i>
+        Must be customer's first order
+    </div>
+    <div class="actions">
+      <%= link_to raw("<i class='fa fa-times' aria-hidden='true'></i>"), '#', class: 'btn red btn-sm close-button' %>
+    </div>
+</div>
+
+<div class="portlet-body">
+  <p>Yay! Nothing else to select for this rule.</p>
+  <input id="first_order" type="hidden" name="promotion[rules][first_order]">
+</div>

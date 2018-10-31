@@ -1,0 +1,5 @@
+<% if defined?(image) && image %>
+  <%= image_tag image.attachment.url(:small), :itemprop => "image" %>
+<% else %>
+  <%= small_image(variant, :itemprop => "image" ) %>
+<% end %>

@@ -1,0 +1,310 @@
+<% theme_name = (@cva.theme_name rescue "darkblue") %>
+<% if theme_name == "custom" %>
+  <%= stylesheet_link_tag "sweet-frontend/layouts/layout/themes-customer/darkblue" %>
+    <% if @theme_css.nil? %>
+      <style>
+        <%= raw(@cva.theme_css) %>
+      </style>
+    <% else %>
+      <style>
+        <%= raw(@theme_css) %>
+      </style>
+    <% end %>
+<% else %>
+  <%= stylesheet_link_tag "sweet-frontend/layouts/layout/themes-customer/#{theme_name}" %>
+<% end %>
+<% display_categories = @vendor.cva.pages_catalog.fetch('categories', true) %>
+<% @hide_logo = @vendor.cva.hide_logo('catalog') %>
+<% @hide_search_bar = !@vendor.cva.catalog_search_bar %>
+<% @current_customer_account = current_company.customer_accounts.active.first %>
+<div class="customer">
+  <!-- BEGIN PRE-HEADER -->
+  <div class="pre-header col-md-12 col-lg-12">
+    <div class="container col-md-12 col-lg-12">
+      <div class="row">
+        <div class="col-sm-6 hidden-xs">
+          <% if @vendor.cva.try(:catalog_account_name_and_number) %>
+            <h4 class='margin-top-10'>
+              <b><%= @current_customer_account.try(:display_name_and_number) %></b>
+            </h4>
+          <% end %>
+        </div>
+        <div class="col-sm-6 col-xs-12 additional-nav">
+          <ul class="list-unstyled list-inline pull-right">
+            <li>
+              <%= link_to 'void:javascript();', class: "dropdown-toggle" do %>
+                <span class='hidden-sm hidden-xs'>
+                  Catalog
+                </span>
+                <span class='visible-sm visible-xs'>
+                  <i class='fa fa-shopping-cart'></i>
+                </span>
+              <% end %>
+            </li>
+            <li class="dropdown">
+              <a class="dropdown-toggle" data-toggle="dropdown" data-target="#" href="javascript:;">
+                My Account
+              </a>
+              <ul class="dropdown-menu">
+                <li>
+                    <%= link_to "void:javascript;", class: "dropdown-link" do %>
+                    Account Info
+                  <% end %>
+                </li>
+                <li>
+                  <%= link_to "void:javascript;", class: "dropdown-link" do %>
+                    My Company
+                  <% end %>
+                </li>
+                <li>
+                  <%= link_to "void:javascript;", class: "dropdown-link" do %>
+                    My Profile
+                  <% end %>
+                </li>
+                <li>
+                  <%= link_to "void:javascript;", class: "dropdown-link" do %>
+                    Users
+                  <% end %>
+                </li>
+              </ul>
+            </li>
+
+            <li class="dropdown">
+              <a class="dropdown-toggle" data-toggle="dropdown" data-target="#" href="javascript:;">
+                My Orders
+              </a>
+              <ul class="dropdown-menu">
+                <li>
+                  <%= link_to "void:javascript;", class: "dropdown-link" do %>
+                    Start New Order
+                  <% end %>
+                </li>
+                <li>
+                  <%= link_to "void:javascript;", class: "dropdown-link" do %>
+                    All Orders
+                  <% end %>
+                </li>
+                <% if false %>
+                <li>
+                  <%= link_to "void:javascript;", class: "dropdown-link" do %>
+                    Standing Orders
+                  <% end %>
+                </li>
+                <li>
+                  <%= link_to "void:javascript;", class: "dropdown-link" do %>
+                    Standing Order Schedules
+                  <% end %>
+                </li>
+                <% end %>
+                <li>
+                  <% if current_vendor.any_vendor_using_separate_invoices? %>
+                    <%= link_to "void:javascript;", class: "dropdown-link" do %>
+                      Invoices
+                    <% end %>
+                  <% end %>
+                </li>
+              </ul>
+            </li>
+            <li style='border-right:none;'>
+              <%= link_to "void:javascript;", class: "dropdown-toggle" do %>
+                Log Out
+              <% end %>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- END PRE-HEADER -->
+
+  <!-- BEGIN HEADER -->
+  <div class="header col-md-12 col-lg-12">
+    <div class="container col-md-12 col-lg-12">
+      <%= render partial: 'layouts/cust/page_logo' %>
+
+      <div class="header-navigation col-md-6 col-sm-6 col-xs-12 margin-top-10 <%= 'hidden' unless current_company.cva.catalog_search_bar %>">
+        <div class="menu-search">
+
+              <input class="form-control search-text" placeholder="Enter search term" type="text">
+              <button type="" id="cust_search_btn" class="btn btn btn-primary"><i class="fa fa-search" aria-hidden="true"></i></button>
+              <%= link_to "void:javascript;", class: "btn default cust_reset_btn" do %>
+                <i class='fa fa-times'></i> Reset
+              <% end %>
+        </div>
+      </div>
+
+      <div class="top-cart-block <%= 'no-logo' if @hide_logo %> <%= 'no-search' if @hide_search_bar %>">
+        <li class="dropdown" id="cart-actions">
+          <div class="top-cart-info">
+            <%= link_to "12", 'void:javascript();', class: "top-cart-info-count" %>
+            <span id="cart-value">
+              <% total_cost = display_sweet_price(293.78, current_company.currency || 'USD') %>
+              <%= link_to total_cost, 'void:javascript();', class: "top-cart-info-value" %>
+            </span>
+            <a href="void:javascript();" id="shopping-cart" class="dropdown-toggle" data-hover="dropdown" data-toggle="dropdown" data-close-others="true">
+              <i class="fa fa-shopping-cart"></i>
+            </a>
+          </div>
+        </li>
+      </div>
+    </div>
+  </div>
+  <!-- Header END -->
+
+  <!-- BEGIN HEADER & CONTENT DIVIDER -->
+  <div class="clearfix"> </div>
+  <!-- END HEADER & CONTENT DIVIDER -->
+  <% if @pages_header.present? %>
+    <%= render partial: 'spree/cust/products/banner_with_static' %>
+  <% else %>
+    <%= render partial: 'spree/cust/products/banner' %>
+  <% end %>
+
+  <div class="main page-content-wrapper padding-top-10">
+    <div class="container page-content col-lg-12 col-md-12 col-sm-12">
+      <!-- BEGIN PAGE BAR -->
+      <div class="page-bar-breadcrumb">
+        <ul class="breadcrumb">
+          <li>
+            <%= link_to "Home", "#" %>
+          </li>
+          <li>
+            <span> <%= current_vendor.name %> Product Catalog</span>
+          </li>
+        </ul>
+        <% unless display_categories %>
+          <div class='margin-bottom-10'>
+            <%= @current_customer_account.try(:display_name_and_number) %>
+          </div>
+        <% end %>
+      </div>
+        <!-- END PAGE BAR -->
+      <div class="content col-lg-12 col-md-12 col-sm-12">
+        <div class="row">
+          <% if display_categories %>
+            <div>
+              <%= @current_customer_account.try(:display_name_and_number) %>
+            </div>
+            <div class="sidebar col-md-3 col-sm-5">
+              <%= render partial: 'filter_by_categories' %>
+            </div>
+          <% end %>
+          <div class="<%= display_categories ? 'col-md-9 col-sm-7' : 'col-xs-12' %>">
+            <div class="row product-list">
+              <% if current_vendor.account_viewable_variants.count < current_vendor.variants_including_master.count %>
+                <div class="alert alert-warning alert-dismissable">
+                <button type='button' class='close' data-dismiss='alert' aria-hidden='true'></button>
+                Your customized catalog is still updating. Some of the products may not be available yet.</div>
+              <% end %>
+              <% if @current_customer_account.present? %>
+                <div class="table-scrollable margin-bottom-10">
+                  <%
+                  params[:q] ||= {}
+                  params[:preview_theme] ||= "preview_theme"
+
+                  @search = @current_customer_account.account_viewable_variants
+                                    .where(variant_id: @current_customer_account.vendor.variants_for_sale.ids)
+                                    .visible
+                                    .includes(variant: [:product, :prices])
+                                    .ransack(nil)
+                  if current_vendor_variant_nest_name?
+                    @search.sorts = current_company.cva.try(:associated_default_sort, :variant, :variant)
+                  else
+                    @search.sorts = current_company.cva.try(:associated_default_sort, :flat_variant, :variant)
+                  end
+                  @account_viewable_variants = @search.result.page(params[:page]).per(current_company.cva.try(:catalog_products_per_page))
+
+                  %>
+                  <% if @current_order %>
+                    <%= form_for @current_order, url: manage_orders_path,
+                      method: 'get', html: {id: 'add-to-order-form', class: 'prevent-double-submission', disabled: 'disabled'},
+                      remote: (@vendor.cva.try(:catalog_after_add_to_cart) == 'products') do |f| %>
+                      <%= render partial: 'spree/cust/products/products_table', locals: {f: f} %>
+                    <% end %>
+                  <% else %>
+                    <%= render partial: 'spree/cust/products/products_table' %>
+                  <% end %>
+                </div>
+              <% else %>
+                <div class="alert alert-warning alert-dismissable">
+                <button type='button' class='close' data-dismiss='alert' aria-hidden='true'></button>
+                <%= current_vendor.name %> has not shared any products with this account.  Please contact <%= current_vendor.name %> and request that their catalog be made visible to your account.</div>
+              <% end %>
+            </div>
+          </div>
+          <div class='pull-right'>
+            <%= paginate @variants if @variants.present? %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BEGIN PRE-FOOTER -->
+    <div class="pre-footer col-md-12 col-sm-12 col-lg-12">
+      <div class="container col-md-12 col-sm-12 col-lg-12">
+        <div class="row">
+          <!-- BEGIN BOTTOM ABOUT BLOCK -->
+          <div class="col-md-6 col-sm-6">
+            <h2>About us</h2>
+            <p><%= @cva.about_us %></p>
+          </div>
+          <!-- END BOTTOM ABOUT BLOCK -->
+          <div class="col-md-3 col-sm-6"></div>
+          <!-- BEGIN BOTTOM CONTACTS -->
+          <div class="col-md-3 col-sm-6">
+            <h2>Contact Us</h2>
+            <%
+             bill_add_id = current_vendor.bill_address_id || current_vendor.ship_address_id
+             bill_address = Spree::Address.find(bill_add_id)
+             %>
+            <address>
+              <%= bill_address.address1 %><br/>
+              <% if bill_address.address2.present? %>
+                <%= bill_address.address2 %><br>
+              <% end %>
+              <%= bill_address.city %>, <%= bill_address.state.try(:abbr) %>  <%= bill_address.zipcode %><br>
+              <%= bill_address.country.try(:name) %><br/>
+              <% if bill_address.phone.present? %>
+              Phone: <%= bill_address.phone %><br><br>
+              <% end %>
+            </address>
+          </div>
+          <!-- END BOTTOM CONTACTS -->
+        </div>
+      </div>
+    </div>
+    <!-- END PRE-FOOTER -->
+
+    <!-- BEGIN FOOTER -->
+    <% if @cva.footer_powered_by_sweet %>
+      <div class="footer col-md-12 col-sm-12 col-lg-12">
+        <div class="container col-md-12 col-sm-12 col-lg-12">
+          <div class="row">
+            <div class="col-md-6 col-sm-6 col-lg-6 padding-top-10">
+              <%= render partial: 'spree/shared/copyright_text' %>
+              All Rights Reserved.
+            </div>
+            <div class="col-md-2 col-sm-2 col-lg-2">
+            </div>
+            <div class="col-md-4 col-sm-4 col-lg-4 text-right">
+              <p class="powered">Powered by: <a href="http://www.getsweet.com/">Sweet</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+    <!-- END FOOTER -->
+  </div>
+</div>
+<div class="clearfix"> </div>
+<script>
+  $(document).ready(function(){
+    $('div.customer').find('a').attr("href","void:javascript;");
+    $('.add-to-cart-modal-btn').each(function(){
+      $(this).removeAttr('data-target');
+      $(this).removeAttr('data-toggle');
+    });
+    $('.add-to-cart-modal-btn').off('click');
+    viewOnlyForm($('#add-to-order-form'));
+  })
+</script>

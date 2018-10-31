@@ -1,0 +1,8 @@
+<% if page.foreign_link.present? %>
+  <li><h2><%= link_to page.title, page.foreign_link, target: '_blank', rel: 'nofollow', class: "static-link" %></h2></li>
+<% else %>
+  <% page_uri = Rails.application.routes.named_routes[:spree].path.spec.to_s == '/' ? page.slug : Rails.application.routes.named_routes[:spree].path.spec.to_s + page.slug %>
+  <li>
+    <h2><%= link_to page.title, page_uri, class: "static-link" %></h2>
+  </li>
+<% end %>

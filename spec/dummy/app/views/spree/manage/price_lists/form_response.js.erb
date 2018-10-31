@@ -1,0 +1,16 @@
+<% if flash[:errors] %>
+  // $('#alert').html("<div class='alert alert-danger alert-dismissable'><button type='button' class='close' data-dismiss='alert' aria-hidden='true'></button><%= flash[:errors] %></div>");
+  $('#alert').html("<%= j render(partial: 'spree/shared/errors') %>");
+  $(window).scrollTop(0);
+<% end %>
+<% if flash[:success] %>
+  $('#alert').html("<div class='alert alert-success alert-auto-dissapear alert-dismissable'><button type='button' class='close' data-dismiss='alert' aria-hidden='true'></button><%= flash[:errors] %></div>");
+  setTimeout(function() {
+    $(".alert-auto-dissapear").fadeOut(1500);
+  },2000);
+<% end %>
+<% if current_spree_user.can_write?('catalog', 'products') %>
+  $('input').removeClass('disabled');
+  $('button').removeClass('disabled');
+  $('a').removeClass('disabled');
+<% end %>

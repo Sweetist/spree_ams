@@ -1,0 +1,42 @@
+<%= f.fields_for :line_items, line_item do |l_form|%>
+
+  <tr>
+    <td><%= line_item.item_name %></td>
+    <% if current_vendor_view_settings.variant_sku %>
+      <td><%= line_item.sku %></td>
+    <% end %>
+    <% if current_vendor_view_settings.line_item_lot_number && !@invoice.multi_order %>
+      <td><%= line_item.line_item_lots_text(line_item.line_item_lots, {sparse: true}) %></td>
+    <% end %>
+    <% if current_vendor_view_settings.variant_pack_size %>
+      <td><%= line_item.pack_size %></td>
+    <% end %>
+    <% if current_company.try(:include_unit_weight) %>
+      <td><%= line_item.variant.display_weight %></td>
+    <% end %>
+    <td class='price-input'>
+      <%= display_sweet_price(line_item.discount_price, line_item.currency) %>
+    </td>
+    <td>
+      <%= line_item.quantity %>
+    </td>
+    <% if current_company.try(:include_total_weight) %>
+      <td><%= line_item.display_weight %></td>
+    <% end %>
+    <td><%= display_sweet_price(line_item.amount, line_item.currency) %></td>
+
+  </tr>
+  <% unless @invoice.try(:multi_order) %>
+    <% if line_item.variant.is_bundle? %>
+      <%= render partial: 'spree/manage/orders/shared/line_item_bundle_parts',
+                 locals: { line_item: line_item,
+                           line_qty: line_item.quantity }  %>
+
+    <% end %>
+    <% if line_item.variant.is_assembly? && line_item.variant.should_show_parts? %>
+      <%= render partial: 'spree/manage/orders/shared/line_item_assembly_parts',
+                 locals: { line_item: line_item,
+                           line_qty: line_item.quantity }  %>
+    <% end %>
+  <% end %>
+<% end %>

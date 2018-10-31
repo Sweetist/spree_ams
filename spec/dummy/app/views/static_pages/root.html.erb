@@ -1,0 +1,57 @@
+<% if current_vendor.present? && current_vendor.customer_viewable_attribute.try(:theme_name) == "custom" %>
+  <%
+    @button_background_color = current_vendor.customer_viewable_attribute.theme_colors["button_background"]
+    @button_text_color = current_vendor.customer_viewable_attribute.theme_colors["button_text"]
+    @form_title_color = current_vendor.customer_viewable_attribute.theme_colors["body_text"]
+  %>
+  <style>
+    .btn-primary{
+      color: <%= @button_text_color %> !important;
+      background-color:<%= @button_background_color %>;
+      border-color:<%= @button_background_color %>;
+    }
+
+    .btn-primary:hover,
+    .btn-primary:focus,
+    .btn-primary:active{
+      color: <%= @button_text_color %> !important;
+      background-color:  <%= @button_background_color %>;
+      border-color: <%= @button_background_color %>;
+      filter: brightness(80%);
+    }
+  </style>
+<% end %>
+<div class='form-container one-column-form'>
+  <%= form_for :spree_user, url: '/login', method: :post, html: {class: "login-form"} do |f| %>
+    <h3 class="form-title" style='color:<%= @form_title_color %>'>Sign In</h3>
+    <%= render partial: 'layouts/shared/alert_box' %>
+    <% if flash[:info] %>
+      <div class="alert alert-info">
+        <%= flash[:info] %>
+      </div>
+    <% end %>
+    <input type="hidden" name="authenticity_token" value="<%=form_authenticity_token%>">
+    <div class="form-group">
+      <!--ie8, ie9 does not support html5 placeholder, so we just show field title for that-->
+      <label class="control-label visible-ie8 visible-ie9">Username</label>
+      <%= f.text_field :email, value: params[:spree_user].try(:[], :email), class: "form-control form-control-solid placeholder-no-fix", type: "email", autocomplete: "off", placeholder: "Email" %>
+    </div>
+    <div class="form-group">
+      <label class="control-label visible-ie8 visible-ie9">Password</label>
+      <%= f.password_field :password, class: "form-control form-control-solid placeholder-no-fix", autocomplete: "off", placeholder: "Password" %>
+    </div>
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary uppercase">Login</button>
+
+      <% if current_vendor.present? %>
+        <% link_to_text = current_vendor.request_account_form.try(:link_to_text) %>
+        <% link_to_text = 'Request an Account' if link_to_text.blank? %>
+        <%= link_to link_to_text, "/request_access", class: 'btn btn-primary uppercase pull-right' %>
+      <% end %>
+      <label class="rememberme check">
+        <%= f.check_box :remember_me %> Remember Me
+      </label>
+      <%= link_to "Forgot Password?", '/password/recover', id: "forget-password", class: 'forget-password'%>
+    </div>
+  <% end %>
+</div>

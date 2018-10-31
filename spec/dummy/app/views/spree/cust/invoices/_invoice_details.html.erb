@@ -1,0 +1,84 @@
+<div class="col-md-6 col-sm-12">
+  <div class="portlet blue-hoki box">
+    <div class="portlet-title">
+      <div class="caption">
+        <i class="fa fa-cogs"></i><%= @invoice.vendor.name %>
+      </div>
+    </div>
+      <div class="portlet-body">
+        <div class="row static-info">
+          <div class="col-md-5 name"> Invoice #:</div>
+          <div class="col-md-7 value">
+            <%= link_to invoice_path(@invoice, format: :pdf), target: "_blank" do %>
+              <%= @invoice.number %> <i class="fa fa-file-pdf-o"></i>
+            <% end %>
+          </div>
+        </div>
+
+        <% unless @invoice.po_number.blank? %>
+          <div class="row static-info">
+            <div class="col-md-5 name">
+              Purchase Order #:
+            </div>
+            <div class="col-md-7 value">
+              <%= @invoice.po_number %>
+            </div>
+          </div>
+        <% end %>
+
+        <div class="row static-info">
+          <div class="col-md-5 name"> Date:</div>
+          <div class="col-md-7 value">
+            <%= @invoice.display_date %>
+          </div>
+        </div>
+
+        <div class="row static-info">
+          <div class="col-md-5 name"> Invoice Date:</div>
+          <div class="col-md-7 value">
+            <%= @invoice.display_invoice_date %>
+          </div>
+        </div>
+
+        <div class="row static-info">
+          <div class="col-md-5 name"> Due Date:</div>
+          <div class="col-md-7 value">
+            <%= @invoice.display_due_date %>
+          </div>
+        </div>
+        <% unless @invoice.multi_order %>
+          <div class="row static-info">
+            <div class="col-md-5 name"> Order State: </div>
+            <div class="col-md-7 value">
+              <%= @invoice.state == 'complete' ? 'Submitted' : @invoice.state.to_s.capitalize %>
+            </div>
+          </div>
+        <% end %>
+        <% if @invoice.vendor.cust_can_view?('invoice', 'payment_state') %>
+          <div class="row static-info">
+            <div class="col-md-5 name"> Payment Status: </div>
+            <div class="col-md-7 value">
+              <% status = @invoice.payment_status %>
+              <label class="btn btn-sm circle payment_status <%= status %> margin-right-10">
+                <%= Spree.t(status, scope: :payment_statuses, default: [:missing, '']).to_s.titleize %>
+              </label>
+            </div>
+          </div>
+        <% end %>
+        <div class="row static-info">
+          <div class="col-md-5 name"> Item Count: </div>
+          <div class="col-md-7 value"> <span class='total-price'><%= @invoice.item_count %></span> </div>
+        </div>
+        <div class="row static-info">
+          <div class="col-md-5 name"> Total: </div>
+          <div class="col-md-7 value"> <span class='total-price'><%= display_sweet_price(@invoice.total, @invoice.currency) %></span> </div>
+        </div>
+        <div class="row static-info">
+          <div class="col-md-5 name"> <%= pluralize(@invoice.orders.count, 'Order') %>: </div>
+          <div class="col-md-7 value">
+            <%= safe_join(@invoice.orders.map { |order| link_to(order.state == 'void' ? "#{order.display_number} (void)" : order.display_number, edit_order_path(order)) }, ", ".html_safe) %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

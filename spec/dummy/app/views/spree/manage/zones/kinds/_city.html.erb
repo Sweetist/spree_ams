@@ -1,0 +1,58 @@
+<% default_country_id = params[:country_filter_id].present? ? params[:country_filter_id] : @zone.try(:cities).try(:first).try(:state).try(:country_id) %>
+<% default_country_id ||= Spree::Country.find_by_name('United States').try(:id) %>
+<%= render partial: 'spree/manage/zones/filters/country_filter', locals: { filter_id: default_country_id} %>
+
+<% default_state_id = params[:state_filter_id].present? ? params[:state_filter_id] : @zone.try(:cities).try(:first).try(:state_id) %>
+<%= render partial: 'spree/manage/zones/filters/state_filter', locals: { country_id: default_country_id, filter_id: default_state_id} %>
+
+<div class='row'>
+  <div class='col-md-12 margin-bottom-30' id='city'>
+    <div class="form-group">
+      <%= label_tag :city_ids, Spree.t(:cities), class: 'control-label' %><br>
+      <% cities = Spree::City.where(state_id: default_state_id) %>
+      <% if default_state_id.nil? %>
+        <span class='help-block-italic'>Please select a state first</span>
+      <% else %>
+        <%= collection_select :zone, :city_ids, Spree::City.where(state_id: default_state_id).order('name ASC'), :id, :state_and_city, {include_blank: true}, {name: 'zone[city_ids][]', multiple: true, class: 'select2 select2-multiple form-control'} %>
+      <% end %>
+    </div>
+  </div>
+
+  <% unless default_state_id.nil? %>
+    <div class='col-md-12'>
+      Can't find the city you're looking for?<br><br>
+      <%= link_to '#new_city', data:{toggle: 'modal', target:'#city-modal'}, class: 'btn green-jungle', id: 'add-city-btn' do %>
+        <i class='fa fa-plus'></i> New City
+      <% end %>
+    </div>
+  <% end %>
+</div>
+
+
+
+<script type='text/javascript'>
+  $(document).ready(function(){
+    $('#zone_city_ids').select2({width: '100%'});
+
+    $('#zone_country_filter_id').select2({width: '100%'});
+    $('#zone_country_filter_id').select2('val','<%= default_country_id %>');
+
+    $('#zone_state_filter_id').select2({width: '100%'});
+    $('#zone_state_filter_id').select2('val','<%= default_state_id %>');
+
+    $('#add-city-btn').click(function(){
+      var stateId = $('#zone_state_filter_id').val();
+      if (stateId === '' || stateId === undefined){
+        alert('You must select a state first.');
+      }else{
+        $.ajax({
+          url: "<%= new_manage_city_path %>.js",
+          type: 'GET',
+          data: {
+            state_id: stateId
+          }
+        });
+      }
+    });
+  });
+</script>

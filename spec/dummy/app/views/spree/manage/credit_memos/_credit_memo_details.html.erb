@@ -1,0 +1,62 @@
+<div class="col-md-6 col-sm-12" id='credit-memo-details'>
+  <div class="portlet blue-hoki box">
+    <div class="portlet-title">
+      <div class="caption">
+        <i class="fa fa-cogs"></i><%= @credit_memo.vendor.name %>
+      </div>
+    </div>
+    <div class="portlet-body">
+      <div class="row static-info">
+        <div class="col-md-5 name"> Credit Memo #:</div>
+        <div class="col-md-7 value" id='credit-memo-number' data-credit-memo-number='<%= @credit_memo.number %>'><%= @credit_memo.display_number %></div>
+      </div>
+      <div class="row static-info">
+        <div class="col-md-5 name"> Date:</div>
+        <div class="col-md-7 value">
+          <input data-provide = "datepicker" type="text" name="credit_memo[txn_date]" value="<%= display_vendor_date_format(@credit_memo.txn_date, @credit_memo.vendor.date_format) unless @credit_memo.txn_date.blank? %>"
+          class="form-control date-picker" data-date-format="<%= @credit_memo.vendor.date_format %>" id="txn-date" readonly='readonly'>
+        </div>
+      </div>
+
+      <div class="row static-info">
+        <div class="col-md-5 name"> Created At: </div>
+        <div class="col-md-7 value" id='invoice-sent-at'>
+          <%= sweet_full_date_time(@credit_memo.created_at, @credit_memo.vendor.time_zone) %>
+        </div>
+      </div>
+
+      <div class="row static-info">
+        <div class="col-md-5 name"> Last Updated At: </div>
+        <div class="col-md-7 value" id='invoice-sent-at'>
+          <%= sweet_full_date_time(@credit_memo.updated_at, @credit_memo.vendor.time_zone) %>
+        </div>
+      </div>
+      <div class="row static-info">
+        <div class="col-sm-5 name"> Payment Terms: </div>
+        <div class="col-sm-7 value" id='payment-terms'> <%= @credit_memo.account.try(:payment_terms).try(:name) %> </div>
+      </div>
+      <div class="row static-info">
+        <div class="col-md-5 name"> Total: </div>
+        <div class="col-md-7 value"> <span class='total-price'><%= display_sweet_price(@credit_memo.total, @credit_memo.currency) %></span> </div>
+      </div>
+
+      <div class="row static-info">
+        <div class="col-md-5 name"> Stock Location: </div>
+        <div class="col-md-7 value" id='ships-from'>
+
+        </div>
+      </div>
+      <% if @credit_memo.vendor.track_order_class? %>
+        <div class="row static-info">
+          <div class="col-md-5 name"> Class: </div>
+          <% if @credit_memo.persisted? %>
+            <div class="col-md-7 value" id='credit-memo-transaction-class'>
+              <%= collection_select(:credit_memo, :txn_class_id, @vendor.transaction_classes, :id, :fully_qualified_name, {include_blank: true}, class: 'form-control') %>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+
+    </div>
+  </div>
+</div>

@@ -1,0 +1,311 @@
+<div class="portlet-body form">
+  <div class="form-body">
+    <div class="row static-info">
+      <section class='margin-left-10 margin-right-10'>
+        <div class="row">
+          <div class="col-md-3 name">Password</div>
+          <div class="col-md-9 value">
+            <%= @integration.qbd_password %>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-md-3 name">Match Quickbooks Item Name to</div>
+          <div class="col-md-9 value">
+            <%= @integration.qbd_match_with_name ? 'Product Name in Sweet' : 'Product SKU in Sweet' %>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-md-3 name">
+            <%= I18n.t("integrations.qbd.send_order_as.label") %>
+          </div>
+          <div class="col-md-9 value">
+            <%= I18n.t("integrations.qbd.send_order_as.options.#{@integration.qbd_send_order_as}") %>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-md-3 name">
+            <%= I18n.t("integrations.qbd.#{@integration.qbd_send_order_as}_template.label") %>
+          </div>
+          <div class="col-md-9 value">
+            <%= @integration.send("qbd_#{@integration.qbd_send_order_as}_template") %>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-md-3 name">
+            <%= raw("#{I18n.t('integrations.qbd.auto_apply_payment.label')}
+            <i class='fa fa-info-circle tooltips' data-container='body'
+            data-original-title='#{I18n.t('integrations.qbd.auto_apply_payment.helper')}'></i>") %>
+          </div>
+          <div class="col-md-9 value">
+            <%= @integration.qbd_auto_apply_payment ? Spree.t(:say_yes) : Spree.t(:say_no) %>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-md-3 name">Credit Memo Template Name</div>
+          <div class="col-md-9 value">
+            <%= @integration.qbd_credit_memo_template %>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-md-3 name">Create Customers, Products and others in Quickbooks</div>
+          <div class="col-md-9 value">
+            <%= @integration.qbd_create_related_objects ? Spree.t(:say_yes) : Spree.t(:say_no) %>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-md-3 name"><%= I18n.t('integrations.qbd.update_related_objects.label') %></div>
+          <div class="col-md-9 value">
+            <%= @integration.qbd_update_related_objects ? Spree.t(:say_yes) : Spree.t(:say_no) %>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-md-3 name">Overwrite conflicts in</div>
+          <div class="col-md-9 value">
+            <%= @integration.qbd_overwrite_conflicts_in.to_s.capitalize %>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-md-3 name"><%= I18n.t('integrations.qbd.use_external_balance.label') %></div>
+          <div class="col-md-9 value">
+            <%= @integration.qbd_use_external_balance ? Spree.t(:say_yes) : Spree.t(:say_no) %>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-md-3 name">Is To Be Printed</div>
+          <div class="col-md-9 value">
+            <%= @integration.qbd_is_to_be_printed ? Spree.t(:say_yes) : Spree.t(:say_no) %>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-md-3 name"><%= I18n.t('integrations.qbd.overwrite_orders_in.label') %></div>
+          <div class="col-md-9 value">
+            <%= @integration.qbd_overwrite_orders_in.to_s.capitalize %>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-md-3 name">Use Assemblies</div>
+          <div class="col-md-9 value">
+            <%= @integration.qbd_use_assemblies ? Spree.t(:say_yes) : Spree.t(:say_no) %>
+          </div>
+        </div>
+        <br>
+        <% unless @integration.qbd_use_assemblies %>
+          <div class="row">
+            <div class="col-md-3 name">Build Assemblies Account</div>
+            <div class="col-md-9 value">
+              <%= @integration.vendor.chart_accounts.find_by_id(@integration.qbd_build_assembly_account_id).try(:name) %>
+            </div>
+          </div>
+          <br>
+        <% end %>
+        <div class="row">
+          <div class="col-md-3 name">Track Inventory</div>
+          <div class="col-md-9 value">
+            <%= @integration.qbd_track_inventory ? Spree.t(:say_yes) : Spree.t(:say_no) %>
+          </div>
+        </div>
+        <br>
+
+        <div class="row">
+          <div class="col-md-3 name">Use Multi-site Inventory</div>
+          <div class="col-md-9 value">
+            <%= @integration.qbd_use_multi_site_inventory ? Spree.t(:say_yes) : Spree.t(:say_no) %>
+          </div>
+        </div>
+        <br>
+        <% if @integration.vendor.track_order_class? %>
+          <div class="row">
+            <div class="col-md-3 name">Include Order Class on Line Items</div>
+            <div class="col-md-9 value">
+              <%= @integration.qbd_use_order_class_on_lines ? Spree.t(:say_yes) : Spree.t(:say_no) %>
+            </div>
+          </div>
+          <br>
+        <% end %>
+        <% if @integration.vendor.track_order_class? || @integration.vendor.track_line_item_class? %>
+          <div class="row">
+            <div class="col-md-3 name">
+              <%= I18n.t("integrations.qbd.#{@integration.vendor.track_order_class? ? 'sync_customer_class' : 'sync_item_class'}") %>
+            </div>
+            <div class="col-md-9 value">
+              <%= @integration.qbd_sync_class_on_items_and_customers ? Spree.t(:say_yes) : Spree.t(:say_no) %>
+            </div>
+          </div>
+          <br>
+        <% end %>
+        <div class="row">
+          <div class="col-md-3 name">Line Item Sort By</div>
+          <div class="col-md-9 value">
+            <%= "#{Spree::LineItem.company_sort(@integration.vendor, @integration.qbd_line_item_sort).titleize.gsub('.',' ').gsub('Spree ','')}" %>
+          </div>
+          <% unless @integration.qbd_line_item_sort == 'spree_line_items.created_at asc' %>
+          <div class="col-md-3"></div>
+            <div class='col-md-9'>
+              <span class='help-block-italic'>
+                <b>Important:</b> Editing an order with custom line sorting may
+                result in errors if the line item sequencing is changed after syncing to
+                Quickbooks. Please contact
+                <%= mail_to 'help@getsweet.com', 'help@getsweet.com',
+                  subject: 'Quickbooks Desktop Line Item Sequencing' %>
+                if you have any problems with this.
+              </span>
+            </div>
+          <% end %>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-md-3 name">Include Lots in Line Description</div>
+          <div class="col-md-9 value">
+            <%= @integration.qbd_track_lots ? Spree.t(:say_yes) : Spree.t(:say_no) %>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-md-3 name">Include Assembly Component Lots in Line Description</div>
+          <div class="col-md-9 value">
+            <%= @integration.qbd_include_assembly_lots ? Spree.t(:say_yes) : Spree.t(:say_no) %>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-md-3 name"><%= I18n.t('integrations.qbd.collect_taxes') %></div>
+          <div class="col-md-9 value">
+            <%= @integration.qbd_collect_taxes ? Spree.t(:say_yes) : Spree.t(:say_no) %>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-md-3 name">Include Discounts</div>
+          <div class="col-md-9 value">
+            <%= @integration.qbd_group_discounts ? 'Grouped as one line item' : 'As individual line for each discount (not yet supported)' %>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-md-3 name">
+            <%= I18n.t('integrations.qbd.send_special_instructions_as.label') %>
+          </div>
+          <div class="col-md-9 value">
+            <%= @integration.qbd_send_special_instructions_options.to_h.key(
+                @integration.qbd_send_special_instructions_as) %>
+          </div>
+        </div>
+        <br>
+        <% if @integration.qbd_send_special_instructions_as == 'line_item' %>
+          <div class="row">
+            <div class="col-md-3 name">
+              <%= I18n.t('integrations.qbd.special_instructions_item.label') %>
+            </div>
+            <div class="col-md-9 value">
+              <%= @integration.qbd_special_instructions_item %>
+            </div>
+          </div>
+          <br>
+        <% end %>
+
+        <%= render partial: "spree/manage/integrations/shared/settings", locals: { item: @integration } %>
+        <% @vendor.sales_integration_items.pluck(:integration_key).uniq.each do |key| %>
+          <%= render partial: "spree/manage/integrations/shared/#{key}_settings", locals: {item: @integration} %>
+        <% end %>
+      </section>
+      <section class='important-clarifier'>
+        <% if @integration.qbd_group_discounts %>
+          <div class="row">
+            <div class="col-md-3 name">Discount Item</div>
+            <div class="col-md-9 value">
+              <%= @integration.qbd_discount_item_name %>
+            </div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-md-3 name">Discount Account</div>
+            <div class="col-md-9 value">
+              <%= @integration.vendor.chart_accounts.find_by_id(@integration.qbd_discount_account_id).try(:name) %>
+            </div>
+          </div>
+          <br>
+        <% end %>
+        <div class="row">
+          <div class="col-md-3 name"><%= raw("Default Shipping Category <i class='fa fa-info-circle tooltips' data-original-title='Used for creating products in Sweet' data-container='body'></i>") %></div>
+          <div class="col-md-9 value">
+            <%= @integration.vendor.shipping_categories.find_by_id(@integration.qbd_default_shipping_category_id).try(:name) %>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-md-3 name">Shipping Item</div>
+          <div class="col-md-9 value">
+            <%= @integration.qbd_shipping_item_name %>
+          </div>
+        </div>
+        <br>
+
+        <div class="row">
+          <div class="col-md-3 name">Bundle Adjustment Name</div>
+          <div class="col-md-9 value">
+            <%= @integration.qbd_bundle_adjustment_name %>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-md-3 name">Bundle Adjustment Account</div>
+          <div class="col-md-9 value">
+            <%= @integration.vendor.chart_accounts.find_by_id(@integration.qbd_bundle_adjustment_account_id).try(:name) %>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-md-3 name">
+            Accounts Receivable Account
+            <i class='fa fa-info-circle tooltips' data-original-title="Receivable Account in Quickbooks that will be used for all Invoices and Payments. This is required if you have multiple Receivable Accounts in Quickbooks" data-container='body'></i>
+          </div>
+          <div class="col-md-9 value">
+            <%= @integration.qbd_accounts_receivable_account %>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-md-3 name">
+            Deposit to Account (optional)
+            <i class='fa fa-info-circle tooltips' data-original-title="Account that payments will be applied to.  Quickbooks defaults this to &#39;Undeposited Funds&#39; if no account is supplied." data-container='body'></i>
+          </div>
+          <div class="col-md-9 value">
+          <%= @integration.qbd_deposit_to_account %>
+          </div>
+        </div>
+        <br>
+        <div class='col-sm-3'></div>
+        <div class='col-sm-9'>
+          <p class='help-block-italic'>
+            NOTE: To successfully sync Sweet orders to QuickBooks Desktop, please create a discount item, shipping item, and bundle adjustment item named as you've specified above in your Quickbooks Desktop file. Sweet will then match those items and adjust discounts, shipping, and bundle price adjustment values as needed.
+          </p>
+        </div>
+        <div class='clearfix'></div>
+      </section>
+      <section class='important-clarifier margin-top-20'>
+        <div class="row">
+          <div class="col-md-3 name">
+            <%= I18n.t('integrations.qbd.pull_item_types.label') %>
+          </div>
+          <div class="col-md-9 value">
+            <%= @integration.qbd_pull_item_types_arr.map{|type| PRODUCT_TYPES[type]}.join(', ') rescue '' %>
+          </div>
+        </div>
+        <%= render partial: "spree/manage/integrations/shared/show_last_pulled_at", locals: { item: @integration } %>
+        <div class='clearfix'></div>
+      </section>
+    </div>
+  </div>
+</div>

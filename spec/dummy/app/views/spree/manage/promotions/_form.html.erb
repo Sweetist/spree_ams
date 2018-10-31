@@ -1,0 +1,229 @@
+<div id="general-fields">
+  <% only_price_list_pricing = current_company.only_price_list_pricing %>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="form-group">
+        <%= f.label :promotion_category, class: "control-label" %>
+        <%= f.collection_select(:promotion_category_id, @promotion_categories, :id, :name, { :include_blank => Spree.t('match_choices.none') }, { class: 'form-control'}) %>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <%= f.label :usage_limit, class: "control-label" %>
+      <%= f.number_field :usage_limit, :min => 0, placeholder: 'Leave blank for infinite usage', class: 'form-control' %>
+    </div>
+  </div>
+
+  <div class="row" id="expiry_fields">
+    <div class="col-md-6">
+      <div class="form-group" id="starts_at_field">
+        <%= f.label :starts_at %>
+        <input type="text" name="promotion[starts_at]" value="<%= display_vendor_date_format(@promotion.starts_at, @vendor.date_format) unless @promotion.starts_at.blank? %>" class="form-control date-picker" data-date-format="<%= @vendor.date_format %>">
+      </div>
+    </div>
+    <div class="col-md-6" id="expires_at_field">
+      <%= f.label :expires_at %>
+      <input type="text" name="promotion[expires_at]" value="<%= display_vendor_date_format(@promotion.expires_at, @vendor.date_format) unless @promotion.expires_at.blank? %>" class="form-control date-picker" data-date-format="<%= @vendor.date_format %>">
+    </div>
+  </div>
+
+  <% if !current_company.only_price_list_pricing || !@promotion.advertise %>
+    <div class="row">
+      <div class="col-md-6">
+        <div class='row'>
+          <div class="form-group" id="promotion-advertise-field">
+            <div class="col-md-6">
+              <input type="radio" name=promotion[advertise] class="noUniform" id="advertise_false" value="false" <%= 'checked' unless @promotion.advertise == true %> <%= 'disabled' unless @promotion.actions.first.try(:type) == 'Spree::Promotion::Actions::CreateItemAdjustments' %>>
+              <label for="advertise_false" class="control-label">Show Discount Price</label>
+            </div>
+            <div class="col-md-6">
+              <input type="radio" name=promotion[advertise] class="noUniform" id="advertise_true" value="true" <%= 'checked' if @promotion.advertise == true %>>
+              <label for="advertise_true" class="control-label">Show Base Price</label>
+            </div>
+          </div>
+        </div>
+        <p id='advertise_checked' class="important-clarifier <%= 'hidden' unless @promotion.advertise %>">
+          Only the base price is shown in the catalog. The discount amount is applied and shown only once the product is added to an order.
+          <span class="help-block">
+            <br>
+            Show Discount Price is only available for item-specific adjustments.
+          </span>
+        </p>
+        <p id='advertise_unchecked' class="important-clarifier <%= 'hidden' if @promotion.advertise %>">
+          The discount price is shown in catalog and on order details. The base price will be shown alongside the discount price if you have turned on “Show suggested retail price” in the business account settings.
+          <% if only_price_list_pricing %>
+            <br>
+            <strong>
+              This feature is no longer available. Please use <%= link_to 'price lists', manage_price_lists_path %> instead.
+            </strong>
+          <% end %>
+        </p>
+        <div class="form-group">
+          <input type='checkbox' disabled <%= 'checked' if @vendor.show_suggested_price %> id='show_suggested_price'>
+          <label for='show_suggested_price'>Show Suggested Price <%= link_to '(edit this from My Company page)', edit_manage_account_path, target: '_blank' %></label>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <div class="form-group">
+            <%= f.label :description, class: "control-label" %>
+            <%= f.text_area :description, :rows => 3, class: 'form-control' %>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <script>
+
+  $("#promotions-form").submit(function(e) {
+    if(validateActionForm())
+      return;
+    else {
+      alert("Please select an action and fill in a discount amount");
+      e.preventDefault();
+    }
+   });
+
+  var validateActionForm = function() {
+    if ($("#action_type_free_shipping", ".action_type.hidden").length === 0) {
+        return true;
+    } else if($("#action_type_create_item_adjustments", ".action_type.hidden").length === 0 &&
+      (($("input[name='promotion[actions][percent_on_line_item]']").val() != "") ||
+      ($("input[name='promotion[actions][flat_amount]']").val() != ""))) {
+        return true;
+    } else if ($("#action_type_create_adjustment", ".action_type.hidden").length === 0 &&
+      (($("input[name='promotion[actions][flat_order_percent]']").val() != "") ||
+      ($("input[name='promotion[actions][flat_order_amount]']").val() != ""))) {
+        return true;
+    } else {
+        return false;
+    }
+  }
+
+  var PromotionsScripts = function() {
+    //change calculator inputs
+    $('body').on('change', '.calculator', function(e){
+      var option_val = e.target.value
+      $('div', '.preferences').each(function(){
+        if (!$(this).hasClass('hidden')){
+          $(this).addClass('hidden');
+        }
+      });
+      $('#' + option_val).removeClass('hidden');
+      $('input', 'div.option.hidden').val('')
+    });
+
+    $("#promotions-form").submit( function(e) {
+      if ($('#promotion_name').val() === ''){
+        e.preventDefault();
+        $('#promotion_name').parent().addClass('has-error');
+        $('#promotion_name_error').replaceWith("<span class='help-block' id='promotion_name_error'>Name can't be blank</span>");
+      }else{
+
+        var account_ids = $('#account_select').val();
+        var product_ids = $('#product_select').val();
+        var variant_ids = $('#variant_select').val();
+        var taxon_ids = $('#taxon_select').val();
+
+        $('<input />').attr('type', 'hidden')
+            .attr('name', "promotion[rules][account][account_ids][]")
+            .attr('value', account_ids)
+            .appendTo('#promotions-form');
+        $('<input />').attr('type', 'hidden')
+            .attr('name', "promotion[rules][product][product_ids][]")
+            .attr('value', product_ids)
+            .appendTo('#promotions-form');
+        $('<input />').attr('type', 'hidden')
+            .attr('name', "promotion[rules][variant][variant_ids][]")
+            .attr('value', variant_ids)
+            .appendTo('#promotions-form');
+        $('<input />').attr('type', 'hidden')
+            .attr('name', "promotion[rules][taxon][taxon_ids][]")
+            .attr('value', taxon_ids)
+            .appendTo('#promotions-form');
+
+        if ($('#rule_type_first_order', '.rule_type.hidden').length === 0){
+          $('input#first_order').attr('value', 'true');
+        }else{
+          $('input#first_order').attr('value', 'false');
+        }
+
+        if ($("#action_type_create_item_adjustments", ".action_type.hidden").length === 0){
+          $('input#action_type').attr('value', 'Spree::Promotion::Actions::CreateItemAdjustments')
+        }
+        if ($("#action_type_free_shipping", ".action_type.hidden").length === 0){
+          $('input#action_type').attr('value', 'Spree::Promotion::Actions::FreeShipping')
+        }
+        if ($("#action_type_create_adjustment", ".action_type.hidden").length === 0){
+          $('input#action_type').attr('value', 'Spree::Promotion::Actions::CreateAdjustment')
+        }
+      }
+
+    });
+
+    $('a.close-button', '.rule_type').click( function(e){
+      e.preventDefault();
+      var target_id = $(e.currentTarget).parents('.rule_type').children()[0].id
+      $(e.currentTarget).parents('.rule_type').addClass('hidden')
+      $('input', '#' + target_id).val('');
+      $('.select2-multiple', '#' + target_id).val('');
+      $('ul', '#' + target_id).empty();
+    });
+
+    $('#add-rule').click( function(e){
+      e.preventDefault();
+
+      var rule_type = $(':selected', '.rule-selector').text()
+      // var rule_type = $('li.selected:first', '#rules').text()
+      rule_type = rule_type.toLowerCase().replace(/ /g,"_");
+      $('#rule_type_' + rule_type).parent().removeClass('hidden');
+    });
+
+    $('#add-action').click( function(e){
+      e.preventDefault();
+      var action_type = $(':selected', '.action-selector').attr('id')
+      action_type = action_type.toLowerCase().replace(/ /g,"_");
+      $('input', '.action_type').val('');
+      $('.action_type').each(function(){
+        if (!$(this).hasClass('hidden')){
+          $(this).addClass('hidden');
+        }
+      });
+      $('#action_type_' + action_type).parent().removeClass('hidden');
+    });
+
+    $('#promotion-advertise-field').change( function(e){
+        $('#advertise_checked').toggleClass("hidden");
+        $('#advertise_unchecked').toggleClass("hidden");
+    });
+
+    $('#add-action').click(function(){
+      var itemAdjustment = "Spree::Promotion::Actions::CreateItemAdjustments";
+      var onlyPriceList = <%= only_price_list_pricing %>;
+      if($('#promo-action-select').val() === itemAdjustment && !onlyPriceList){
+        $('#advertise_false').prop("disabled", false);
+        if(!$('.help-block', '#advertise_checked').hasClass('hidden')){
+          $('.help-block', '#advertise_checked').addClass('hidden');
+        }
+      }else{
+        if($('#advertise_false').is(':checked')){
+          $('.important-clarifier').toggleClass('hidden');
+        }
+        $('#advertise_true').prop("checked", true);
+        $('#advertise_false').prop("checked", false);
+        $('#advertise_false').prop("disabled", true);
+        if($('#advertise_false').is(':disabled')){
+          $('.help-block', '#advertise_checked').removeClass('hidden');
+        }else if(!$('.help-block', '#advertise_checked').hasClass('hidden')){
+          $('.help-block', '#advertise_checked').addClass('hidden');
+        }
+      }
+
+    });
+  }
+
+  jQuery(document).on('ready', function() {
+    PromotionsScripts();
+  });
+
+  </script>

@@ -1,0 +1,13 @@
+  <select id="send_field" name="build_assembly[assembly_stock_item_lot]" class="form-control lot-location-select">
+    <option disabled selected value> <%= 'Select A Lot from a Stock Location' %> </option>
+      <option>New Lot</option>
+    <% lot_ids = variant.lot_ids %>
+    <% stock_locations_with_lot = variant.stock_item_lots.map(&:stock_location).distinct %>
+    <% stock_locations_with_lot.each do |location| %>
+      <optgroup label='<%=location.name%>'>
+        <% location.stock_item_lots.includes(:lot).where(lot_id: lot_ids).each do |stock_item_lot| %>
+          <option data-total='<%=stock_item_lot.count%>' value='<%=stock_item_lot.id%>'><%=stock_item_lot.lot.number%></option>
+        <% end %>
+      </optgroup>
+    <% end %>
+  </select>

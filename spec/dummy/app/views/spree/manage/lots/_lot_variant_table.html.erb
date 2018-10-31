@@ -1,0 +1,17 @@
+<div class='table-scrollable'>
+  <table class="table table-hover">
+    <tbody>
+      <tr>
+        <% stock_locations = @vendor.stock_locations.active.order(:name) %>
+        <% stock_locations.each do |location| %>
+          <th><%= location.name %></th>
+        <% end %>
+      </tr>
+      <tr>
+        <% stock_locations.each do |location| %>
+          <td><%= location.count_for_lot(@lot.id) %> / <%= @lot.qty_on_hand %></td>
+        <% end %>
+      </tr>
+    </tbody>
+  </table>
+</div>

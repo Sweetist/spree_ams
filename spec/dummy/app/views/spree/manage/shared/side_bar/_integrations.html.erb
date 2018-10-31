@@ -1,0 +1,31 @@
+<% if current_company.subscription_includes?('integrations') && current_spree_user.can_write?('integrations', 'settings') %>
+  <li class="nav-item <%= "active open" if current_controller?(['integrations']) %>">
+    <a href="#" class="nav-link nav-toggle">
+      <i class="fa fa-puzzle-piece"></i>
+      <span class="title">Integrations</span>
+      <span class="arrow <%= "open" if current_controller?(['integrations']) %>"></span>
+    </a>
+    <ul class="sub-menu">
+      <% current_company.integration_items.order(integration_key: :asc).each do |ii| %>
+        <li class="nav-item <%= "active" if (current_controller?(['integrations']) && params[:id].to_i == ii.id) %>">
+          <%= link_to manage_integration_path(ii), class: "nav-link" do %>
+            <span class="title"><%= ii.default_name %></span>
+          <% end %>
+        </li>
+      <% end %>
+      <li class="nav-item <%= "active" if (current_controller?(['integrations']) && params[:id].nil?) %>">
+        <%= link_to manage_integrations_path, class: "nav-link" do %>
+          <span class="title">Manage Integrations</span>
+        <% end %>
+      </li>
+    </ul>
+  </li>
+<% else %>
+  <li class="nav-item <%= "active" if current_controller?(['integrations']) %>">
+    <%= link_to 'void:javascript();', class: "nav-link" do %>
+      <i class="fa fa-puzzle-piece"></i>
+      <span class="title">Integrations</span>
+      <i class='fa fa-lock'></i>
+    <% end %>
+  </li>
+<% end %>

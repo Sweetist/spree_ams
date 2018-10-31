@@ -1,0 +1,26 @@
+<tr id='<%= "#{schedule.id}_row_1" %>'>
+  <% decorator = "text-decoration: line-through;" if schedule.skip %>
+  <td rowspan="2">
+    <%= link_to schedule.standing_order.try(:name), edit_manage_standing_order_path(schedule.standing_order) %>
+  </td>
+  <td rowspan="2">
+    <% if schedule.order %>
+      <%= link_to schedule.order.try(:display_number), edit_manage_order_path(schedule.order) %>
+    <% end %>
+  </td>
+  <td>
+    <span style="<%= decorator.to_s %>"><%= sweet_date(schedule.deliver_at, @vendor.time_zone) %></span>
+  </td>
+  <td>
+    <% create_decorator = "color: red;" if schedule.create_at && schedule.created_at.nil? && schedule.create_at <= start_at %>
+    <span style="<%= decorator.to_s + create_decorator.to_s %>"><%= sweet_full_date_time(schedule.create_at, @vendor.time_zone) %></span>
+  </td>
+  <td>
+    <% process_decorator = "color: red;" if schedule.process_at && schedule.processed_at.nil? && schedule.process_at <= start_at %>
+    <span style="<%= decorator.to_s + process_decorator.to_s %>"><%= sweet_full_date_time(schedule.process_at, @vendor.time_zone) %></span>
+  </td>
+  <td>
+    <% remind_decorator = "color: red;" if schedule.remind_at && schedule.reminded_at.nil? && schedule.remind_at <= start_at %>
+    <span style="<%= decorator.to_s + remind_decorator.to_s%>"><%= sweet_full_date_time(schedule.remind_at, @vendor.time_zone) %></span>
+  </td>
+</tr>

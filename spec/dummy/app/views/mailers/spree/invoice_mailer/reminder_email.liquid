@@ -1,0 +1,21 @@
+---
+subject: 'Reminder: Invoice ({{invoice.number}}) from {{my_company.name}} is due'                   # REQUIRED
+from: ''   # optional
+cc: ''     # optional
+bcc: ''     # optional
+---
+<p>
+  Dear {{invoice.customer.name}},
+</p>
+<p>
+  Reminder: Your invoice is due on <b>{{invoice.due_date}}</b>
+</p>
+<p>
+  Click <a href="{{invoice.url}}">here</a> to view additional details.<br>
+</p>
+{% include 'invoice_mailer_summary_partial' %}
+<p>
+  Thank you for your business!<br><br>
+  Sincerely,<br>
+  {{my_company.name}}
+</p>

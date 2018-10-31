@@ -1,0 +1,81 @@
+<div class="col-md-12">
+  <% any_vendor_showing_account_balance = current_customer.any_vendor_showing_account_balance? %>
+  <% any_vendor_showing_account_spend = current_customer.any_vendor_showing_account_spend? %>
+    <table class="table table-hover basic-table-no-buttons">
+      <thead>
+        <tr>
+          <th>
+            Account #
+          </th>
+          <th>
+            Vendor
+          </th>
+          <th>
+            Name
+          </th>
+          <th>
+            Active
+          </th>
+          <th>
+            Last Order
+          </th>
+          <th>
+            Payment Terms
+          </th>
+          <% if any_vendor_showing_account_spend %>
+            <th>
+              30 Day Spend
+            </th>
+          <% end %>
+          <% if any_vendor_showing_account_balance %>
+          <!-- Removing until we can caluculate a meaningful balance -->
+            <th>
+              Balance
+            </th>
+          <% end %>
+        </tr>
+
+      </thead>
+      <tbody>
+        <% @accounts.each do |account| %>
+          <tr>
+            <% url = edit_account_path(account) %>
+            <td><%= link_to account.number.to_s, url %></td>
+            <td><%= link_to account.vendor.name.to_s, url %></td>
+            <td><%= link_to account.default_display_name, url %></td>
+            <td>
+              <% if account.active? %>
+                <%= link_to url do %><i class='fa fa-check'></i><% end %>
+              <% end %>
+            </td>
+            <td>
+              <%= link_to url do %>
+                <% last_delivery_date = account.orders.where("delivery_date < ?", Time.current).approved.order('delivery_date DESC').pluck(:delivery_date).first %>
+                <%= display_vendor_date_format(last_delivery_date, account.vendor.date_format) if last_delivery_date %>
+              <% end %>
+            </td>
+            <td><%= link_to account.payment_terms.try(:name).to_s, url %></td>
+            <% if any_vendor_showing_account_spend %>
+              <td>
+                <% if account.should_see_spend? %>
+                  <%= link_to url do %>
+                    <%= display_sweet_price(account.orders.where('delivery_date BETWEEN ? AND ?', Time.current.to_date - 30.days, Time.current.to_date).approved.sum(:total), account.vendor.currency) %>
+                  <% end %>
+                <% end %>
+              </td>
+            <% end %>
+            <% if any_vendor_showing_account_balance %>
+              <td>
+                <% if account.should_see_balance? %>
+                  <%= link_to url do %>
+                    <%= account.display_account_balance %>
+                  <% end %>
+                <% end %>
+              </td>
+            <% end %>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+
+</div>

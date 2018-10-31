@@ -1,0 +1,76 @@
+<%= content_for :head_title do %>
+  Permission Groups
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+		<li><span>Permission Groups</span></li>
+  </ul>
+<% end %>
+
+<div class='content'>
+  <!-- PAGE TITLE -->
+  <h2 class="page-title">
+    This feature isn't available for your current plan
+    <br>
+    <%= link_to new_manage_message_path(subject: 'Upgrade Plan') do%>
+      <small><strong>Upgrade</strong> your plan today to configure User Permissions!</small>
+    <% end %>
+  </h2>
+  <!-- END PAGE TITLE -->
+  <div class="row margin-bottom-20">
+    <div class="col-lg-12">
+      <div class="panel panel-info">
+        <div class="panel-heading">
+        <h4>
+          <i class="fa fa-info-circle"></i>&nbsp;&nbsp;What you're missing out on
+        </h4>
+        </div>
+        <div class="panel-body">
+        <p class="margin-top-20">
+           Our Permission Groups feature let's you configure each user's permissions to ensure they see only data relevant to them
+        </p>
+        <div class="row">
+          <div class="col-lg-6 col-md-6">
+            <div class="portlet light">
+              <div class="card-icon">
+                <i class="fa fa-gear font-red-sunglo inventory-info"></i>
+              </div>
+              <div class="card-title card-desc-font">
+                <span>Basic</span>
+              </div>
+              <div class="card-desc">
+                <span>Our Basic use permissions plan is limited to two permission groups. You can choose from the user permissions - <b>Owner</b> and <b>Staff</b>, by default.</span>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6 col-md-6">
+            <div class="portlet light">
+              <div class="card-icon">
+                <i class="fa fa-gears font-green-haze inventory-info"></i>
+              </div>
+              <div class="card-title card-desc-font">
+                <span>Advanced</span>
+              </div>
+              <div class="card-desc">
+                <span>This plan lets you create unlimited permission groups. For example, you can have permissions for <b>Customer Support</b>, <b>Production</b> and <b>Owner</b>.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <%= image_tag "spree/manage/img/user_permissions_1.png", alt: "permission groups", class: "inventory-img-size" %>
+          </div>
+        </div>
+      </div>
+      </div>
+    </div>
+    <div class="col-lg-6">
+    </div>
+  </div>
+</div>

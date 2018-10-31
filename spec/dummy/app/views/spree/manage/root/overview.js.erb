@@ -1,0 +1,24 @@
+<% if current_spree_user.can_read?('basic_options', 'reports') %>
+  $('#order-controls').replaceWith('<%= escape_javascript(render(partial: "order_controls")) %>');
+  $('#daily-orders-body').replaceWith('<%= escape_javascript(render(partial: "daily_order")) %>');
+  $('#next-day').attr('data-overview-date', '<%= next_day %>');
+  $('#prev-day').attr('data-overview-date', '<%= prev_day %>');
+  $('.open-pdf').off('click').click(function(e){
+    var anyApprovedOrdersToday = <%= @any_approved_orders_today %>
+    var anyOrdersToday = <%= @any_orders_today %>
+    if ($(this).data('approved-only')){
+      if(!anyApprovedOrdersToday){
+        e.preventDefault();
+        alert('There are no approved orders for today.');
+      }
+    }else{
+      if(!anyOrdersToday){
+        e.preventDefault();
+        alert('There are no orders for today.');
+      }
+    }
+  });
+<% else %>
+  $('#daily-purchase-orders-body').replaceWith('<%= escape_javascript(render(partial: "daily_purchase_order")) %>');
+  $('#purchase-order-controls').replaceWith('<%= escape_javascript(render(partial: "purchase_order_controls")) %>');
+<% end %>

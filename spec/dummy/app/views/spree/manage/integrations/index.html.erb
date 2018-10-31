@@ -1,0 +1,77 @@
+<%= content_for :head_title do %>
+  Integrations
+<% end %>
+
+<%= content_for :page_title do %>
+  Integrations
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <span>Integrations</span>
+    </li>
+  </ul>
+<% end %>
+
+<% if (@integration_limit) && (@integration_count >= @integration_limit) %>
+  <div class="alert alert-warning">
+    Your current plan only allows for <%= @integration_limit %> integration(s).
+    <%= link_to new_manage_message_path(subject: 'Add integration'), class: "alert-link" do%>
+      Upgrade your plan
+    <% end %>
+    &nbsp;to add another integration
+  </div>
+<% end %>
+
+  <div class="content">
+    <div class="row">
+      <div class="col-md-11">
+        <div class="list-group row">
+          <% user_is_admin = current_spree_user.is_admin? %>
+          <% @items.each do |item| %>
+            <% next unless item.fetch(:visible, false) || user_is_admin %>
+            <% next if item.fetch(:integration_key, nil) == 'sweetist' && !user_is_admin && !current_spree_user.company.has_integration?('sweetist') %>
+
+            <div class="list-group-item list-group-item-integration col-md-12">
+              <h4 class="list-group-item-heading">
+                <%=image_tag(item[:image], width: '32')%>
+                <%= item[:name] %>
+              </h4>
+              <p class="list-group-item-text"><%= item[:description] %></p>
+              <ul class="list-unstyled">
+                <% if item.fetch(:integrations, []).each do |integration_item| %>
+                  <li>
+                    <%= link_to manage_integration_path(integration_item), class: "btn btn-xs btn-info" do %>
+                      <i class="fa fa-cogs"></i> Configure <%= integration_item.name %>
+                    <% end %>
+                    <% if current_spree_user.can_write?('integrations', 'settings') %>
+                      <%= link_to manage_integration_path(integration_item), class: "btn btn-xs btn-danger", method: :delete, data: { confirm: 'Are you sure you want to remove this Integration.' } do %>
+                        <i class="fa fa-times"></i>
+                      <% end %>
+                    <% end %>
+                  </li>
+                <% end.empty? || item.fetch(:multi, false) %>
+                  <li>
+                    <% if (item.fetch(:integration_key, nil) != 'sweetist') && (@integration_limit) && (@integration_count >= @integration_limit) %>
+                      <%= link_to new_manage_integration_path(integration: item[:integration_key]), class: "btn btn-xs btn-success disabled" do %>
+                        <i class="fa fa-plus"></i> Add
+                      <% end %>
+                    <% else %>
+                      <%= link_to new_manage_integration_path(integration: item[:integration_key]), class: "btn btn-xs btn-success" do %>
+                        <i class="fa fa-plus"></i> Add
+                      <% end %>
+                    <% end %>
+                  </li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>

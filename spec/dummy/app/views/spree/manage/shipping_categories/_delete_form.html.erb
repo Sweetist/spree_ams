@@ -1,0 +1,43 @@
+<div class="modal fade" id="myModal<%= @target_shipping_categories.id %>" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                <h4 class="modal-title">Choose New Shipping Category</h4>
+            </div>
+            <% if @dettached_shipping_category %>
+              <div class="modal-message" style="margin: 12px; line-height: 150%;">
+                Are you sure you want to delete the "<%= @target_shipping_categories.name %>" shipping category?
+              </div>
+            <% else %>
+              <div class="modal-message" style="margin: 12px; line-height: 150%;">
+                Before confirming deletion of this shipping category, please select a different shipping category to be assigned to products, shipping methods which currently are using the "<%= @target_shipping_categories.name %>" shipping category.
+              </div>
+            <% end %>
+            <div class="clear"></div>
+            <br>
+            <%= form_for @target_shipping_categories ,url: manage_shipping_category_path(),method: "DELETE" do |f| %>
+              <div class="form-body">
+                <div class="form-actions">
+                  <div class="col-md-4"></div>
+                  <div class="col-md-4">
+                    <div style="margin:15px 0 15px 0;"></div>
+                    <% unless @dettached_shipping_category %>
+                    <select class="bs-select form-control" name="new_shipping_category_id">
+                      <% @other_shipping_categories.each do |shipping_category| %>
+                      <%= raw("<option value=#{shipping_category.id}>#{shipping_category.name}</option>") %>
+                      <% end %>
+                    </select>
+                    <% end %>
+                  </div>
+                  <div class="col-md-4"></div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn dark btn-outline" data-dismiss="modal">Close</button>
+                  <button type="sumbit" class="btn red">Delete</button>
+                </div>
+              </div>
+            <% end %>
+        </div>
+    </div>
+</div>

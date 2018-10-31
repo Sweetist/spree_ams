@@ -1,0 +1,12 @@
+<div class="portlet-title">
+  <div class="caption">
+    <span class="caption-subject font-blue-madison bold uppercase pull-left variant-name">
+      <%= "#{@variant.full_display_name}" %>
+    </span>
+  </div>
+  <% if current_spree_user.can_write?('catalog', 'products') %>
+    <%= link_to edit_manage_product_variant_path(@product, @variant), class: "btn btn-primary pull-right margin-left-5 modal-hide" do %>
+      <i class="fa fa-pencil"></i>&nbsp;Edit
+    <% end %>
+  <% end %>
+</div>

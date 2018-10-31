@@ -1,0 +1,4 @@
+<div class='form-group'>
+  <%= f.label :stock_location_id, "Ship From #{Spree.t(:stock_location)}", class: 'control-label' %>
+  <%= f.collection_select :stock_location_id, @vendor.stock_locations.active.order('name ASC'), :id, :name, {include_blank: false}, {class: 'form-control stock-locations'} %>
+</div>

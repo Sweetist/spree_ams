@@ -1,0 +1,15 @@
+<% unless @account && @account.account_viewable_variants.visible.any? %>
+  <div class="alert alert-warning alert-dismissable" id="no-viewable-products">
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
+    <% if @account.account_viewable_variants.count < @vendor.variants_including_master.count %>
+      The customized catalog for <%= @account.fully_qualified_name %> is still being built. Please check back in a few minutes to make some/all products visible to this customer.
+    <% else %>
+      You have not made any products visible to <%= @account.try(:fully_qualified_name) %>
+      <div class="pull-right">
+        <%= link_to "Select Some Products to Share", manage_products_path(account_id: @account.id, account_show_all: 'true'), class: "btn btn-default" %>
+        <%= link_to "Share Entire Catalog", manage_update_all_viewable_variants_path(format: :js, account_id: @account.id, all_viewable_by: 'true'), remote: true, method: :post, class: "btn btn-primary" %>
+      </div>
+    <% end %>
+    <div class="clearfix"></div>
+  </div>
+<% end %>

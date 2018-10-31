@@ -1,0 +1,39 @@
+<%= form_for @order, url: order_set_ship_address_path(@order), method: :get, remote: true do |f| %>
+  <div class='portlet-body'>
+    <% @ship_addresses.each do |sa| %>
+      <div class="row">
+        <div class="col-md-12 margin-left-20">
+          <div class="form-group ship-addresses">
+            <div class="radio-inline" style="padding-left: 0;">
+              <%= f.radio_button :ship_address_id, sa.id %>
+            </div>
+            <span class="margin-left-10">
+              <%= sa.one_line_summary.html_safe %>
+            </span>
+            <span class="edit-ship-address-link">
+              <%= link_to "Edit", edit_account_address_path(account_id: @order.account_id, id: sa.id, order_id: @order.id, addr_type: "shipping"), :remote => true %>
+            </span>
+          </div>
+        </div>
+      </div>
+    <% end %>
+    <div class="row">
+      <div class="col-md-12 margin-left-20 margin-top-10">
+        <div class="form-group">
+          <span id="use-address-button">
+            <%= link_to order_new_ship_address_path(@order),
+            remote: true, data: {'data-toggle' =>  "modal", 'data-target' => '#address_modal'}, class: '' do %>
+              <i class='fa fa-plus'></i>&nbsp;Add a new shipping address
+            <% end %>
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-default" data-dismiss="modal">
+        <i class='fa fa-times'></i> Cancel
+      </button>
+      <%= f.submit "Use this Address", class: "btn btn-primary" %>
+    </div>
+  </div>
+<% end %>

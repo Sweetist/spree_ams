@@ -1,0 +1,269 @@
+<% configuration_controller = current_controller?(
+    ['stock_locations', 'shipping_categories', 'order_rules', 'shipping_groups',
+     'shipping_methods', 'tax_categories', 'tax_rates', 'payment_terms',
+     'chart_accounts', 'customer_types', 'reps',
+     'invoice_settings', 'customer_viewable_attributes', 'zones', 'payment_methods',
+     'outgoing_communications', 'transaction_classes', 'forms', 'carriers', 'pages'
+    ]
+   ) %>
+<li class="nav-item <%= "active open" if configuration_controller %>">
+  <a href="#" class="nav-link nav-toggle">
+    <i class="fa fa-cogs"></i>
+    <span class="title">Configurations</span>
+    <span class="arrow <%= "open" if configuration_controller %>"></span>
+  </a>
+  <ul class="sub-menu">
+    <% if current_spree_user.can_read?('company') %>
+      <li class="nav-item <%= "active" if current_controller?(['order_rules']) %>">
+        <%= link_to manage_order_rules_path, class: "nav-link" do %>
+          <span class="title">Order Rules</span>
+        <% end %>
+      </li>
+      <li class="nav-item <%= "active" if current_controller?(['customer_types']) %>">
+        <%= link_to manage_customer_types_path, class: "nav-link" do %>
+          <span class="title">Customer Types</span>
+        <% end %>
+      </li>
+      <li class="nav-item <%= "active" if current_controller?(['reps']) %>">
+        <%= link_to manage_reps_path, class: "nav-link" do %>
+          <span class="title">Sales Reps</span>
+        <% end %>
+      </li>
+      <li class="nav-item <%= "active" if current_controller?(['chart_accounts']) %>">
+        <%= link_to manage_chart_accounts_path, class: "nav-link" do %>
+          <span class="title">Chart of Accounts</span>
+        <% end %>
+      </li>
+      <li class="nav-item <%= "active" if current_controller?(['transaction_classes']) %>">
+        <%= link_to manage_transaction_classes_path, class: "nav-link" do %>
+          <span class="title">Classes</span>
+        <% end %>
+      </li>
+    <% else %>
+      <li class="nav-item">
+        <%= link_to 'void:javascript();', class: "nav-link" do %>
+          <span class="title">Order Rules</span>
+          <i class='fa fa-lock'></i>
+        <% end %>
+      </li>
+      <li class="nav-item">
+        <%= link_to 'void:javascript();', class: "nav-link" do %>
+          <span class="title">Customer Types</span>
+        <% end %>
+      </li>
+      <li class="nav-item">
+        <%= link_to 'void:javascript();', class: "nav-link" do %>
+          <span class="title">Reps</span>
+          <i class='fa fa-lock'></i>
+        <% end %>
+      </li>
+
+      <li class="nav-item">
+        <%= link_to 'void:javascript();', class: "nav-link" do %>
+          <span class="title">Chart of Accounts</span>
+          <i class='fa fa-lock'></i>
+        <% end %>
+      </li>
+      <li class="nav-item">
+        <%= link_to 'void:javascript();', class: "nav-link" do %>
+          <span class="title">Classes</span>
+          <i class='fa fa-lock'></i>
+        <% end %>
+      </li>
+    <% end %>
+
+    <% if current_spree_user.can_write?('company') %>
+      <li class="nav-item <%= "active" if current_controller?(['invoice_settings']) %>">
+        <%= link_to edit_manage_invoice_settings_path, class: "nav-link" do %>
+          <span class="title">Order/Invoice Settings</span>
+        <% end %>
+      </li>
+      <li class="nav-item <%= "active" if current_controller?(['outgoing_communications']) %>">
+        <%= link_to edit_manage_outgoing_communications_path, class: "nav-link" do %>
+          <span class="title">Outgoing Communications</span>
+        <% end %>
+      </li>
+      <li class="nav-item <%= "active" if current_controller?(['customer_viewable_attributes']) %>">
+        <%= link_to edit_manage_customer_viewable_attribute_path, class: "nav-link" do %>
+          <span class="title">Customer View Settings</span>
+        <% end %>
+      </li>
+      <li class="nav-item <%= "active" if current_controller?(['forms']) %>">
+        <%= link_to manage_forms_path, class: "nav-link" do %>
+          <span class="title">Custom Forms</span>
+        <% end %>
+      </li>
+      <li class="nav-item <%= "active" if current_controller?(['carriers']) %>">
+        <%= link_to edit_manage_carriers_path, class: "nav-link" do %>
+          <span class="title">Carriers</span>
+        <% end %>
+      </li>
+      <li class="nav-item <%= "active" if current_controller?(['pages']) %>">
+        <%= link_to manage_pages_path, class: "nav-link" do %>
+          <span class="title">Custom Pages</span>
+        <% end %>
+      </li>
+    <% else %>
+      <li class="nav-item">
+        <%= link_to 'void:javascript();', class: "nav-link" do %>
+          <span class="title">Order/Invoice Settings</span>
+          <i class='fa fa-lock'></i>
+        <% end %>
+      </li>
+      <li class="nav-item">
+        <%= link_to 'void:javascript();', class: "nav-link" do %>
+          <span class="title">Outgoing Comms</span>
+          <i class='fa fa-lock'></i>
+        <% end %>
+      </li>
+      <li class="nav-item">
+        <%= link_to 'void:javascript();', class: "nav-link" do %>
+          <span class="title">Customer View Settings</span>
+          <i class='fa fa-lock'></i>
+        <% end %>
+      </li>
+      <li class="nav-item">
+        <%= link_to 'void:javascript();', class: "nav-link" do %>
+          <span class="title">Custom Forms</span>
+          <i class='fa fa-lock'></i>
+        <% end %>
+      </li>
+      <li class="nav-item">
+        <%= link_to 'void:javascript();', class: "nav-link" do %>
+          <span class="title">Carriers</span>
+          <i class='fa fa-lock'></i>
+        <% end %>
+      </li>
+      <li class="nav-item">
+        <%= link_to 'void:javascript();', class: "nav-link" do %>
+          <span class="title">Pages</span>
+          <i class='fa fa-lock'></i>
+        <% end %>
+      </li>
+    <% end %>
+
+    <% if current_spree_user.can_read?('stock_locations', 'inventory') %>
+      <li class="nav-item <%= "active" if current_controller?(['stock_locations']) %>">
+        <%= link_to manage_stock_locations_path, class: "nav-link" do %>
+          <span class="title">Stock Locations</span>
+        <% end %>
+      </li>
+    <% else %>
+      <li class="nav-item">
+        <%= link_to 'void:javascript();', class: "nav-link" do %>
+          <span class="title">Stock Locations</span>
+          <i class='fa fa-lock'></i>
+        <% end %>
+      </li>
+    <% end %>
+
+    <% if current_spree_user.can_read?('shipping_categories', 'settings') %>
+      <li class="nav-item <%= "active" if current_controller?(['shipping_categories']) %>">
+        <%= link_to manage_shipping_categories_path, class: "nav-link" do %>
+          <span class="title">Shipping Categories</span>
+        <% end %>
+      </li>
+    <% else %>
+      <li class="nav-item">
+        <%= link_to 'void:javascript();', class: "nav-link" do %>
+          <span class="title">Shipping Categories</span>
+          <i class='fa fa-lock'></i>
+        <% end %>
+      </li>
+    <% end %>
+
+    <% if current_spree_user.can_read?('shipping_methods', 'settings') %>
+      <li class="nav-item <%= "active" if current_controller?(['shipping_methods']) %>">
+        <%= link_to manage_shipping_methods_path, class: "nav-link" do %>
+          <span class="title">Shipping Methods</span>
+        <% end %>
+      </li>
+      <li class="nav-item <%= "active" if current_controller?(['zones']) %>">
+        <%= link_to manage_zones_path, class: "nav-link" do %>
+          <span class="title">Zones</span>
+        <% end %>
+      </li>
+    <% else %>
+      <li class="nav-item">
+        <%= link_to 'void:javascript();', class: "nav-link" do %>
+          <span class="title">Shipping Methods</span>
+          <i class='fa fa-lock'></i>
+        <% end %>
+      </li>
+      <li class="nav-item">
+        <%= link_to 'void:javascript();', class: "nav-link" do %>
+          <span class="title">Zones</span>
+          <i class='fa fa-lock'></i>
+        <% end %>
+      </li>
+    <% end %>
+
+    <% if current_company.selectable_delivery %>
+      <% if current_spree_user.can_read?('shipping_groups', 'settings') %>
+        <li class="nav-item <%= "active" if current_controller?(['shipping_groups']) %>">
+          <%= link_to manage_shipping_groups_path, class: "nav-link" do %>
+            <span class="title"><%= current_company.display_shipping_group_class %>s</span>
+          <% end %>
+        </li>
+      <% else %>
+        <li class="nav-item">
+          <%= link_to 'void:javascript();', class: "nav-link" do %>
+            <span class="title"><%= current_company.display_shipping_group_class %>s</span>
+            <i class='fa fa-lock'></i>
+          <% end %>
+        </li>
+      <% end %>
+    <% end %>
+
+    <% if current_spree_user.can_read?('tax_categories', 'settings') %>
+      <li class="nav-item <%= "active" if current_controller?(['tax_categories']) %>">
+        <%= link_to manage_tax_categories_path, class: "nav-link" do %>
+        <span class="title">Tax Categories</span>
+        <% end %>
+      </li>
+      <li class="nav-item <%= "active" if current_controller?(['tax_rates']) %>">
+        <%= link_to manage_tax_rates_path, class: "nav-link" do %>
+          <span class="title">Tax Rates</span>
+        <% end %>
+      </li>
+    <% else %>
+      <li class="nav-item">
+        <%= link_to 'void:javascript();', class: "nav-link" do %>
+          <span class="title">Tax Categories</span>
+          <i class='fa fa-lock'></i>
+        <% end %>
+      </li>
+      <li class="nav-item">
+        <%= link_to 'void:javascript();', class: "nav-link" do %>
+          <span class="title">Tax Rates</span>
+          <i class='fa fa-lock'></i>
+        <% end %>
+      </li>
+    <% end %>
+    <% if current_spree_user.can_read?('payment_methods', 'settings') %>
+      <li class="nav-item <%= "active" if current_controller?(['payment_terms']) %>">
+        <%= link_to manage_payment_terms_path, class: "nav-link" do %>
+          <span class="title">Payment Terms</span>
+        <% end %>
+      </li>
+      <li class="nav-item <%= "active" if current_controller?(['payment_methods']) %>">
+        <%= link_to manage_payment_methods_path, class: "nav-link" do %>
+          <span class="title">Payment Methods</span>
+        <% end %>
+      </li>
+    <% else %>
+      <li class="nav-item">
+        <%= link_to 'void:javascript();', class: "nav-link" do %>
+          <span class="title">Payment Terms</span>
+          <i class='fa fa-lock'></i>
+        <% end %>
+      </li>
+      <li class="nav-item">
+        <%= link_to 'void:javascript();', class: "nav-link" do %>
+          <span class="title">Payment Methods</span>
+          <i class='fa fa-lock'></i>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+</li>

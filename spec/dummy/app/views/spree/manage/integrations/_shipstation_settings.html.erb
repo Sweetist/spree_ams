@@ -1,0 +1,131 @@
+<div class="portlet-body form">
+  <div class="form-body">
+    <div class="row static-info">
+      <div class="row">
+        <div class="col-md-3 name">Overwrite shipping cost in Sweet</div>
+        <div class="col-md-9 value">
+          <%= @integration.shipstation_overwrite_shipping_cost ? 'Yes' : 'No' %>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-3 name">Default Weight Units</div>
+        <div class="col-md-9 value">
+          <%= @integration.shipstation_weight_units %>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-3 name">Fractional Line Quantity</div>
+        <div class="col-md-9 value">
+          <%= Spree.t(@integration.shipstation_round, scope: :round_method) %>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-3 name">Include Lots in Line Description</div>
+        <div class="col-md-9 value">
+        <%= @integration.shipstation_include_lots ? 'Yes' : 'No' %>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-3 name">Include Assembly Component Lots in Line Description</div>
+        <div class="col-md-9 value">
+        <%= @integration.shipstation_include_assembly_lots ? 'Yes' : 'No' %>
+        </div>
+      </div>
+      <br>
+          <%= render partial: "spree/manage/integrations/shared/settings", locals: { item: @integration } %>
+      <div class="row">
+        <div class="col-md-3 name">Buyer / Recipient Email</div>
+        <div class="col-md-9 value">
+          <%= @integration.shipstation_email_type_options.key(@integration.shipstation_email_type) rescue '' %>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-3 name">CustomField1</div>
+        <div class="col-md-9 value">
+          <%= @integration.shipstation_custom_field_options_display(@integration.shipstation_custom_field_1) %>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-3 name">CustomField2</div>
+        <div class="col-md-9 value">
+          <%= @integration.shipstation_custom_field_options_display(@integration.shipstation_custom_field_2) %>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-3 name">CustomField3</div>
+        <div class="col-md-9 value">
+          <%= @integration.shipstation_custom_field_options_display(@integration.shipstation_custom_field_3) %>
+        </div>
+      </div>
+      <br>
+      <section class='important-clarifier'>
+        <div class='alert alert-info'>
+          <h4 class='text-center'><strong>Copy the below fields into your ShipStation Custom Store connection</strong></h4>
+        </div>
+        <div class="row">
+          <div class="col-md-3 name">URL to Custom XML Page</div>
+          <div class="col-md-9 value">
+            <%= @integration.shipstation_url %>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-md-3 name">User Name</div>
+          <div class="col-md-9 value">
+            <%= @integration.shipstation_username %>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-md-3 name">Password</div>
+          <div class="col-md-9 value">
+            <%= @integration.shipstation_password %>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-md-3 name">Unpaid Status</div>
+          <div class="col-md-9 value">
+            <%= @integration.shipstation_unpaid_status %>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-md-3 name">Paid Status</div>
+          <div class="col-md-9 value">
+            <%= @integration.shipstation_paid_status %>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-md-3 name">Shipped Status</div>
+          <div class="col-md-9 value">
+            <%= @integration.shipstation_shipped_status %>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-md-3 name">Cancelled Status</div>
+          <div class="col-md-9 value">
+            <%= @integration.shipstation_canceled_status %>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-md-3 name">On-Hold Status</div>
+          <div class="col-md-9 value">
+            <%= @integration.shipstation_on_hold_status %>
+          </div>
+        </div>
+        <br>
+      </section>
+    </div>
+  </div>
+</div>

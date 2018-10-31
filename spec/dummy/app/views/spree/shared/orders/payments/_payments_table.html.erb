@@ -1,0 +1,115 @@
+
+<div id='payments-table'>
+  <h3>Payments</h3>
+  <div class='table-scrollable'>
+    <table class="table table-bordered", data-order-id='<%= @order.id %>' >
+      <thead>
+        <tr data-hook="payments_header">
+          <th><%= Spree::Payment.human_attribute_name(:number) %></th>
+          <th><%= "#{Spree.t('date')}/#{Spree.t('time')}" %></th>
+          <th class="text-center"><%= Spree.t(:amount) %></th>
+          <th class="text-center"><%= Spree.t(:payment_method) %></th>
+          <th class="text-center"><%= Spree.t(:transaction_id) %></th>
+          <th class="text-center"><%= Spree.t(:payment_state) %></th>
+          <% if url_prefix == '/manage' &&
+                current_spree_user.can_write?('payments', 'order') &&
+                payments.any?{ |payment| !%w[void failed].include?(payment.state) } &&
+                payments.any?{ |payment| payment.editable_on_order_page? } %>
+            <th class="actions text-center"></th>
+          <% end %>
+        </tr>
+      </thead>
+      <tbody>
+        <% if payments.present? %>
+          <% zone = @order.try(:vendor).try(:time_zone) %>
+          <% payments.each do |payment| %>
+            <% if payment.account_payment %>
+              <% next if payment.void? && !payment.account_payment.void? %>
+              <%= render 'spree/shared/orders/payments/account_payment_line',
+                        payment: payment, zone: zone,
+                        url_prefix: url_prefix, payments: payments %>
+            <% else %>
+              <%= render 'spree/shared/orders/payments/payment_line',
+                        payment: payment, zone: zone,
+                        url_prefix: url_prefix, payments: payments %>
+            <% end %>
+          <% end %>
+        <% else %>
+          <tr>
+            <td colspan="100%">
+              No Payments
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script type="text/javascript">
+
+  $(document).ready(function() {
+    // setup each button in table
+    function buttonsSetup() {
+      let payments = $(".payment-row");
+      let orderId = "<%= @order.id %>";
+      let buttonTypes = ["edit-button", "capture-button", "void-button", "refund-button"];
+      // setup edit button on each payment
+      for (let p=0; p<payments.length; p++) {
+        // grab ids
+        let paymentId = $(payments[p]).attr("data-payment-id");
+        // finding the buttons
+        for (let b=0; b<buttonTypes.length; b++) {
+          if (buttonTypes[b]==="edit-button") {
+            // find the amount data
+            let amountObj = $(payments[p]).find('td.amount');
+            let amount = $(amountObj).text().substr(1);
+            let editBtn = $(payments[p]).find('button.edit-button');
+            $(editBtn).bind( "click", function() {
+              amount = $(amountObj).text().substr(1);
+              let inputBox = '<input type="text" class="amount text-center" value="'+amount+'" id="amount-input-box" />';
+              $(amountObj).html(inputBox);
+              $(editBtn).hide();
+              // disable other buttons
+              $(payments[p]).find('button.update-button').prop("disabled",true);
+              $(payments[p]).find('button.void-button').prop("disabled",true);
+               // create edit amount buttons
+               let btnArea = $('<div class="btn-area" />');
+               $(amountObj).append(btnArea);
+               let saveBtn = $('<div class="btn btn-success btn-sm fa fa-check payment-btn" />');
+               $(btnArea).append(saveBtn);
+               let cancelBtn= $('<div class="btn btn-success btn-sm fa fa-times payment-cancel-btn" />');
+               $(btnArea).append(cancelBtn);
+               // reset input boxes
+               function setInputBox(inputValue) {
+                 $(inputBox).remove();
+                 $(amountObj).html('<div type="text" id="amount-value">$'+inputValue+'</div>');
+                 $(btnArea).remove();
+                 $(editBtn).show();
+                 $(payments[p]).find('button.update-button').prop("disabled",false);
+                 $(payments[p]).find('button.void-button').prop("disabled",false);
+               }
+               $(saveBtn).bind("click", function() {
+                 let newAmount = $(payments[p]).find('td.amount').find('input.amount').val();
+                 $.ajax({
+                   type: "PUT",
+                   url: "/manage/orders/"+orderId+"/payments/"+paymentId,
+                   data: {"amount": newAmount}
+                 }).done(function( d ) {
+                   setInputBox(d.amount);
+                 });
+               });
+               $(cancelBtn).bind( "click", function() {
+                 setInputBox(amount);
+               });
+            });
+          };
+        }
+
+      };
+    }
+    // run setup button at load
+    buttonsSetup();
+  })
+
+</script>

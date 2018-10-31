@@ -1,0 +1,26 @@
+<table>
+  <tr>
+    <td>
+      <p class="lede">
+				Dear <%= @order.vendor.name %>,
+      </p>
+      <p>
+        <%= Spree.t('shipment_mailer.received_email.received') %><br>
+        <% if @order.vendor.include_website_url_in_emails %>
+          Click <%= link_to "here", edit_manage_order_url(@order, host: @order.vendor.domain, protocol: 'https') %> to view additional order details.<br>
+        <% end %>
+      </p>
+
+      <!-- partial for shipment line items table -->
+      <%= render partial: 'mailers/spree/shared/ship_mailer_line_items_table' %>
+
+      <p>
+        <%= Spree.t('shipment_mailer.shipped_email.track_information', :tracking => @shipment.tracking)     if @shipment.tracking %>
+      </p>
+      <p>
+        <%= Spree.t('shipment_mailer.shipped_email.track_link',        :url      => @shipment.tracking_url) if @shipment.tracking && @shipment.tracking_url %>
+      </p>
+    </td>
+    <td class="expander"></td>
+  </tr>
+</table>

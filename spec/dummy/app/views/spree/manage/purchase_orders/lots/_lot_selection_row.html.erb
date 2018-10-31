@@ -1,0 +1,19 @@
+<tr class="<%= 'lot-selection-row' unless unsellable %> <%= 'hidden' if hidden %>" data-lot-id='<%= lot.id %>'>
+  <td class="number_lot" data-total='<%= line_item.quantity %>'
+    data-lot-id='<%= lot.id %>' style="text-align: left;"><%= lot.number%></td>
+  <td class='qty_available' data-lot-id='<%= lot.id %>'>
+    <%= lot.stock_item_lots.detect do |item_lot|
+          item_lot.stock_item.try(:stock_location_id) == line_item.order.shipments.first.try(:stock_location_id)
+        end.try(:count) || 0 %>
+  </td>
+  <td>
+    <%= display_vendor_date_format(lot.try(:sell_by), current_vendor.try(:date_format)) %>
+  </td>
+  <td>
+    <% unless unsellable %>
+      <%= number_field_tag "", qty, step_size: :any, class: "submit_lot_count form-control",
+        data:{id: lot.id, line_item: line_item.id, row: order.line_items.find_index(line_item)} %>
+    <% end %>
+  </td>
+  <td></td>
+</tr>

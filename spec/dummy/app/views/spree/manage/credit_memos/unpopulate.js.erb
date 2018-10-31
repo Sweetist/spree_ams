@@ -1,0 +1,22 @@
+<% if flash[:error] %>
+  $('#alert').html("<div class='alert alert-danger alert-dismissable'><button type='button' class='close' data-dismiss='alert' aria-hidden='true'></button><%= flash[:error] %></div>");
+<% elsif @line_item && @credit_memo %>
+  <% colspan_left = 6 %>
+  <%# colspan_left -= 1 unless current_vendor_view_settings.line_item_lot_number %>
+  <%# colspan_left -= 1 unless current_vendor_view_settings.variant_pack_size %>
+  $("#line_item_<%= @line_item.id %>").remove();
+  
+  $('.subtotal-price').replaceWith("<span class='subtotal-price'><%= display_sweet_price(@credit_memo.item_total, @credit_memo.currency) %></span>");
+  $('.total-price').replaceWith("<span class='total-price'><%= display_sweet_price(@credit_memo.total, @credit_memo.currency) %></span>");
+  // $('#subtotals-row').replaceWith("<%#= j (render(partial: 'subtotal_row.html.erb', locals: {colspan_left: colspan_left})) %>");
+  // $('#totals-row').replaceWith("<%#= j (render(partial: 'total_row.html.erb', locals: {colspan_left: colspan_left})) %>");
+<% end %>
+
+if($('.line-item-row').length === 0){
+  if($('#order-customer-id').length > 0){
+    $('#order-customer-id').select2('enable', true);
+  }
+  $('#tracking-fields').empty();
+  $('#subtotals-row').empty();
+  $('#all-adjustments').empty();
+}

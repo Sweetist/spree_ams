@@ -1,0 +1,64 @@
+<div class="form-group">
+  <% if @vendor.customer_types.present? %>
+    <label>Select Customer Types</label>
+    <select multiple name="cust_type_ids[]" class="select2-tags input-large form-control" id="cust_type_select" style="width:100%">
+          <% @vendor.customer_types.each do |cust_type| %>
+            <option value="<%= cust_type.id %>" <%= 'selected' if params[:cust_type_ids].present? && params[:cust_type_ids].include?(cust_type.id.to_s)%> >
+              <%= cust_type.name %>
+            </option>
+          <% end %>
+    </select>
+  <% end %>
+  <label class="margin-top-15">Select Customers</label>
+  <select multiple name="account_ids[]" class="select2-tags input-large form-control" id="cust_account_select" style="width:100%">
+      <% @vendor.customer_accounts.order('fully_qualified_name asc').each do |account| %>
+        <option <%= 'selected' if params[:account_ids].present? && params[:account_ids].include?(account.id.to_s) %> value="<%= account.id %>" data-customer-type="<%= account.customer_type.id unless account.customer_type.nil?%>">
+          <%= account.fully_qualified_name %>
+        </option>
+      <% end %>
+  </select>
+</div>
+
+<script>
+  $(document).ready(function(){
+    $('#cust_type_select').on("select2:unselect", function (e){
+      //get selected element values
+      var selectedElemValArr = $('#cust_account_select').select2().val();
+      selectedElemValArr = $.unique(selectedElemValArr);
+      //get selected element values
+
+      var finalValueArr = [];
+      for(var i = 0; i < selectedElemValArr.length; i++){
+        //get selected element and add if condition met
+        var $elem = $('#cust_account_select option[value = ' + selectedElemValArr[i] + ']');
+        if($elem.attr('data-customer-type') != e.params.data.id){
+          finalValueArr.push($elem.val());
+        }
+      }
+      $('#cust_account_select').select2('val', finalValueArr);
+    });
+
+    $('#cust_type_select').on("select2:select", function (e){
+      //get selected element values
+      var selectedElemValArr = []
+      if($('#cust_account_select').select2().val() != null){
+        selectedElemValArr = $('#cust_account_select').select2().val()
+      }
+      else{
+        selectedElemValArr = [];
+      }
+      //get selected element values
+
+      //find new elements and to array
+      var custAccountSelected = $('#cust_account_select option[data-customer-type = ' + e.params.data.id + ']');
+      for(var i = 0; i < custAccountSelected.length; i++){
+        selectedElemValArr.push($(custAccountSelected[i]).val());
+      }
+      //find new elements and to array
+
+      selectedElemValArr = $.unique(selectedElemValArr);
+      $('#cust_account_select').select2('val', selectedElemValArr);
+    });
+
+  })
+</script>

@@ -1,0 +1,322 @@
+<% @discount_price = avv ? avv.price : variant.price %>
+<% show_components_section = BUILD_TYPES.has_key?(variant.variant_type) && @vendor.subscription_includes?('assemblies') %>
+<% if variant.discontinued_on && !(variant.is_master && current_controller?(['products'])) %>
+  <div class='alert alert-danger'>
+    This item has been <%= Spree.t('variant.deactivated') %>.
+  </div>
+<% end %>
+<% unless variant.is_master? %>
+  <div class="row">
+    <div class="col-md-4">
+      <%= render partial: 'spree/manage/variants/page_content/image' %>
+    <br>
+    </div>
+    <div class='col-md-8'>
+      <%= raw(variant.variant_description.to_s.html_safe) %>
+    </div>
+  </div>
+<% end %>
+
+<div class='row'>
+  <div class="portlet light ">
+    <div class="portlet-title tabbable-line">
+      <% if variant.is_master? %>
+        <h3 class='inline-block margin-top-10'>Item Details</h3>
+      <% end %>
+      <ul class="nav nav-tabs">
+        <li class="active long-tabs-link">
+          <a href="#general" data-toggle="tab">General</a>
+        </li>
+        <% if show_components_section  %>
+          <li class="long-tabs-link">
+            <a href="#parts" data-toggle="tab">Parts</a>
+          </li>
+        <% end %>
+        <% if variant.should_track_inventory? %>
+          <li class="long-tabs-link">
+            <a href="#stock" data-toggle="tab">Stock</a>
+          </li>
+        <% end %>
+        <% if current_company.try(:use_price_lists) %>
+          <li class="long-tabs-link">
+            <a href="#price_lists" data-toggle="tab">Price Lists</a>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+
+    <div class="portlet-body form">
+      <div class="horizontal-form">
+        <div class="form-body">
+          <div class="tab-content">
+
+            <div class="tab-pane active" id="general">
+              <% unless variant.is_master? || variant.all_taxons.blank?%>
+                <div class="row">
+                  <div class="col-md-12">
+                    <% product = variant.product %>
+                    <dt>Categories:</dt>
+                    <% variant.all_taxons.sort { |a, b| a.name <=> b.name }.each do |taxon| %>
+                      <% if (variant.taxons.include? taxon) && (product.taxons.include? taxon) %>
+                        <dd data-id='<%= taxon.id %>'>
+                          <%= taxon.pretty_name %>
+                          <span class='help-block-italic'>
+                            (via <%= product.default_display_name.capitalize %>)
+                          </span>
+                        </dd>
+                      <% elsif variant.taxons.include? taxon %>
+                        <dd data-id='<%= taxon.id %>'>
+                          <%= taxon.pretty_name %>
+                        </dd>
+                      <% else %>
+                        <dd data-id='<%= taxon.id %>'>
+                          <%= taxon.pretty_name %>
+                          <span class='help-block-italic'>
+                            (via <%= product.default_display_name %>)
+                          </span>
+                        </dd>
+                      <% end %>
+                    <% end %>
+
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-xs-12">
+                    <hr>
+                  </div>
+                </div>
+              <% end %>
+              <% ovs = variant.ordered_option_values %>
+              <% if ovs.present? %>
+                <div class='row'>
+                  <% ovs.each do |ov| %>
+                    <div class="col-md-6">
+                      <div class="row static-info">
+                        <div class="col-xs-5 name"><%= ov.option_type.try(:presentation) %>:</div>
+                        <div class="col-xs-7 value"><%= ov.presentation %></div>
+                      </div>
+                    </div>
+                  <% end %>
+                </div>
+                <hr>
+              <% end %>
+              <% if variant.try(:for_purchase?) %>
+                <div class='row'>
+                  <div class='col-md-6'>
+                    <div class="row static-info">
+                      <div class="col-xs-5 name">Vendors:</div>
+                      <div class="col-xs-7 value">
+                        <% variant.vendor_accounts.order(:fully_qualified_name).pluck(:fully_qualified_name).each_with_index do |vendor_name, idx| %>
+                          <%= vendor_name %><br>
+                        <% end %>
+                      </div>
+                    </div>
+                  </div>
+                  <div class='col-md-6'>
+                    <div class="row static-info">
+                      <div class="col-xs-5 name">Preferred Vendor:</div>
+                      <div class="col-xs-7 value">
+                        <%= variant.preferred_vendor_account.try(:fully_qualified_name) %>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <hr>
+              <% end %>
+              <div class='row'>
+                <div class="col-md-6">
+                  <div class="row static-info">
+                    <div class="col-xs-5 name"><%= Spree.t(:display_name, scope: :manage) %>:</div>
+                    <div class="col-xs-7 value"><%= variant.display_name %></div>
+                  </div>
+                  <div class="row static-info">
+                    <div class="col-xs-5 name">SKU:</div>
+                    <div class="col-xs-7 value"><%= variant.sku %></div>
+                  </div>
+                  <div class="row static-info">
+                    <div class="col-xs-5 name">Minimum order quantity:</div>
+                    <div class="col-xs-7 value"><%= variant.minimum_order_quantity %></div>
+                  </div>
+                  <div class="row static-info">
+                    <div class="col-xs-5 name">Price:</div>
+                    <div class="col-xs-7 value">
+                      <% if avv && avv.try(:recalculating).to_i < Spree::AccountViewableVariant::RecalculatingStatus['complete'] %>
+                        Price is updating...
+                        <%  if request.fullpath.include?("manage")
+                              update_url = manage_update_customized_pricing_path(avv_id: avv.id)
+                            else
+                              update_url = update_customized_pricing_path(avv_id: avv.id)
+                            end
+                        %>
+                        <%= link_to "Update Now", update_url, class: "btn btn-xs btn-success", id: "update-price-#{avv.id}" %>
+                      <% elsif variant.price %>
+                        <%= display_sweet_price(@discount_price, @product.currency) %>
+                        <% if @vendor.show_suggested_price && @discount_price.to_d < variant.price  %>
+                          <span class="suggested-price">SRP. <span class="price"><%= display_sweet_price(variant.price, @product.currency) %></span>
+                        <% end %>
+                      <% else %>
+                        <%= link_to "Set up price", edit_manage_product_path(@product) %>
+                      <% end %>
+                    </div>
+                  </div>
+                  <div class="row static-info">
+                    <div class="col-xs-5 name">Cost Price:</div>
+                    <div class="col-xs-7 value"><%= display_sweet_price(variant.current_cost_price, @product.currency) %></div>
+                  </div>
+                  <div class="row static-info">
+                    <div class="col-xs-5 name">Lead Time (Days):</div>
+                    <div class="col-xs-7 value"><%= variant.lead_time %></div>
+                  </div>
+                   <% if variant.is_bundle? || variant.is_assembly? %>
+                    <div class="row static-info">
+                      <% display_show_text = variant.is_bundle? ? 'Display bundle:' : 'Display assembly:'%>
+                      <div class="col-xs-5 name"><%= display_show_text %></div>
+                      <div class="col-xs-7 bold"><%= variant.should_show_parts? ? 'Yes' : 'No' %></div>
+                    </div>
+                  <% end %>
+                  <% if variant.should_track_lots? %>
+                    <div class="row static-info">
+                      <div class="col-xs-5 name">Lot Tracking:</div>
+                      <div class="col-xs-7 value"><%= variant.lot_tracking? ? 'Yes' : 'No' %></div>
+                    </div>
+                  <% end %>
+                  <div class="row static-info">
+                    <div class="col-xs-5 name">Visible To:</div>
+                    <div class="col-xs-7 value"><%= variant.visible_to_text %></div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="row static-info">
+                    <div class="col-xs-5">Pack/Size:</div>
+                    <div class="col-xs-7 bold"><%= variant.pack_size %></div>
+                  </div>
+                  <div class="row static-info">
+                    <div class="col-xs-5 name">Weight:</div>
+                    <div class="col-xs-7 bold"><%= "#{variant.weight} #{variant.weight_units}" unless variant.weight == 0 %></div>
+                  </div>
+                  <div class="row static-info">
+                    <div class="col-xs-5 name">Dimensions:</div>
+                    <div class="col-xs-7 bold"><%= "#{variant.dimensions.join(' x ')} #{variant.dimension_units}" %></div>
+                  </div>
+                  <div class="row static-info">
+                    <div class="col-xs-5 name">Unit Count:</div>
+                    <div class="col-xs-7 bold"><%= "#{variant.pack_size_qty}" %></div>
+                  </div>
+                  <% if @vendor.track_line_item_class? %>
+                    <div class="row static-info">
+                      <div class="col-xs-5 name">Class:</div>
+                      <div class="col-xs-7 bold"><%= "#{variant.transaction_class.try(:fully_qualified_name)}" %></div>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+            <% if show_components_section %>
+              <div class="tab-pane" id="parts">
+                <div class='row'>
+                  <div class='col-md-12'>
+                    <%= render partial: 'spree/manage/variants/page_content/parts', locals: {f: nil, variant: variant } %>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+            <% if variant.should_track_inventory? %>
+              <div class="tab-pane" id="stock">
+                <div class='row'>
+                  <div class='col-md-12'>
+                    <% if @vendor.subscription_includes?('assemblies') && variant.parts_variants.present? && variant.variant_type == 'inventory_assembly'%>
+                      <%= link_to '#build_assembly',
+                        {data:{toggle: 'modal', target:'#build-assembly-modal', 'variant-id' => "#{variant.id}"},
+                        class: 'btn-build-assembly btn green load-parts margin-bottom-10'} do %>
+                        <i class='fa fa-sitemap' style='transform: rotate(90deg); display: inline-block;'></i> Build Assembly
+                      <% end %>
+                    <% end %>
+                    <table class="table table-hover table-striped" data-paging='false'>
+                      <thead>
+                        <tr>
+                          <th>Location</th>
+                          <th><%= Spree.t(:min_stock_level) %></th>
+                          <th>On Hand</th>
+                          <th>Available</th>
+                          <th>Committed</th>
+                          <th class='no-sort'>Backorderable</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <% variant.stock_items.joins(:stock_location).where('spree_stock_locations.active = ?', true).order('spree_stock_locations.name ASC').each do |item| %>
+                          <tr>
+                            <td>
+                              <%= item.stock_location.try(:name) %>
+                            </td>
+                            <td>
+                              <%= item.min_stock_level %>
+                            </td>
+                            <td>
+                              <%= item.on_hand %>
+                            </td>
+                            <td>
+                              <%= item.available %>
+                            </td>
+                            <td>
+                              <%= item.committed %>
+                            </td>
+                            <td>
+                              <%= item.backorderable? ? Spree.t(:say_yes) : Spree.t(:say_no) %>
+                              <% if item.variant.should_track_lots? %>
+                                <button type="button" name='<%=item.id%>' class="lot_info btn btn-xs btn-info" data-toggle="modal" data-target="#lot_modal">View Lot(s)</button>
+                              <% end %>
+                            </td>
+
+                          </tr>
+                        <% end %>
+                        <tr>
+                          <% total_committed = variant.total_committed %>
+                          <% total_available = variant.total_available %>
+                          <% total_on_hand = [total_available + total_committed, 0].max %>
+                          <td><strong>Total</strong></td>
+                          <td></td>
+                          <td><strong><%= total_on_hand %></strong></td>
+                          <td><strong><%= total_available %></strong></td>
+                          <td><strong><%= total_committed %></strong></td>
+                          <td></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+            <% if current_company.try(:use_price_lists) %>
+              <div class="tab-pane" id="price_lists">
+                <%= render partial: 'spree/manage/variants/page_content/price_lists', locals: {variant: variant} %>
+              </div><!-- END PRICE LIST TAB -->
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+<!-- BEGIN STOCK -->
+
+
+<% if current_spree_user.can_write?('catalog', 'products') %>
+  <% if variant.discontinued_on %>
+    <%= link_to Spree.t('variant.make_available'), make_available_manage_product_variant_path(@product, variant),
+      class: 'btn btn-primary', method: :post %>
+  <% else %>
+    <%= link_to Spree.t('variant.deactivate'), discontinue_manage_product_variant_path(@product, variant),
+      class: 'btn red', method: :post %>
+  <% end %>
+<% end %>
+
+<% if @vendor.lot_tracking %>
+    <%= render partial: '/spree/manage/products/lot_info_modal' %>
+<% end %>
+
+<!-- END STOCK -->

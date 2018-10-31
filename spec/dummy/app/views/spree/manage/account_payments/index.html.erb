@@ -1,0 +1,49 @@
+<%= content_for :head_title do %>
+  Payments
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Payment", manage_account_payments_path %>
+    </li>
+  </ul>
+  <div class="page-toolbar">
+    <%= link_to new_manage_account_payment_path, class: "btn green-jungle pull-right" do %>
+      <i class="fa fa-plus"></i>&nbsp;New Payment
+    <% end %>
+  </div>
+<% end %>
+
+<div class="content">
+
+<%= search_form_for [:manage, @search], class: "form", id: "search-form" do |f| %>
+  <%= render partial: 'advanced_search', locals: {f: f} %>
+<% end %>
+
+  <div class="row">
+    <div class="col-md-12">
+      <div class="">
+        <table class="table table-striped table-hover ajaxDatatable" data-source="<%= manage_dt_account_payments_path(format: :json) %>" data-dt-order="0, 'desc'">
+          <thead>
+            <tr>
+              <th data-source='payment_date' class='sorting_desc'>Payment Date</th>
+              <th data-source='created_at'>Created</th>
+              <th data-source='number'>Number</th>
+              <th data-source='account_fully_qualified_name'>Account</th>
+              <th data-source='state'>Status</th>
+              <th data-source='amount'>Total</th>
+              <th data-source='credit_amount'>Unapplied Amt</th>
+            </tr>
+          </thead>
+          <tbody id='all-orders'>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

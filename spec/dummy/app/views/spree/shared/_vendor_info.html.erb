@@ -1,0 +1,19 @@
+<% if vendor.try(:name) %>
+  <%= vendor.name %>
+<% end %>
+ <br>
+<% if vendor.try(:bill_address) %>
+  <%= vendor.try(:bill_address).try(:address1) %>
+  <%= vendor.try(:bill_address).try(:address2) %>
+  <br>
+  <% if vendor.try(:bill_address).try(:city).present? && vendor.try(:bill_address).try(:state).present? %>
+    <%= vendor.try(:bill_address).try(:city) %>, <%= vendor.try(:bill_address).try(:state).try(:abbr) %> <%= vendor.try(:bill_address).try(:zipcode) %>
+  <% elsif vendor.try(:bill_address).try(:city).present? && vendor.try(:bill_address).try(:state).blank? %>
+    <%= vendor.try(:bill_address).try(:city) %> <%= vendor.try(:bill_address).try(:zipcode) %>
+  <% else %>
+    <%= vendor.try(:bill_address).try(:state).try(:abbr) %> <%= vendor.try(:bill_address).try(:zipcode) %>
+  <% end %>
+  <br>
+  <%= vendor.try(:bill_address).try(:phone) %>
+<% end %>
+<br>

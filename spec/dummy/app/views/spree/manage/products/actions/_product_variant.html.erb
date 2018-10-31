@@ -1,0 +1,16 @@
+<td class='actions-1'>
+  <ul class='list-unstyled pull-right' style='margin-bottom:0;'>
+    <li>
+      <%= link_to '#product-modal', {data:{toggle: 'modal', target:'#product-modal', action: 'edit', 'product-id' => "#{product.id}", 'account-id' => "#{@account.try(:id)}"}, class:'btn btn-sm pull-right btn-primary margin-bottom-5 product-modal-btn'} do %>
+        <i class='fa fa-pencil'></i>
+      <% end %>
+    </li>
+    <% product.variants.each do |variant| %>
+      <li>
+        <%= link_to '#variant-modal', {data:{toggle: 'modal', target:'#variant-modal', action: 'edit', 'variant-id' => "#{variant.id}", 'product-id' => "#{variant.product_id}", 'account-id' => "#{@account.try(:id)}"}, class: 'btn btn-sm pull-right btn-primary variant-modal-btn', style: 'display:inline;'} do %>
+          <i class='fa fa-pencil'></i>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+</td>

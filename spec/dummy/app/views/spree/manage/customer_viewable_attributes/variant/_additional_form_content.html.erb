@@ -1,0 +1,13 @@
+<div class='col-sm-6'>
+  <div class='form-group'>
+    <%= f.check_box :variant_nest_name, class: 'make-switch',
+    data: { size: 'mini' } %>
+    <%= f.label :variant_nest_name,
+        Spree.t(:nest_name, scope: [:customer_view_settings, :variant], default: '') %>
+    <br>
+    <span class='help-block-italic'><%= Spree.t(:nest_name_description, scope: [:customer_view_settings, :variant], default: '') %></span>
+  </div>
+</div>
+<div class='col-xs-12'>
+  <%= render partial: "spree/manage/customer_viewable_attributes/default_sorts", locals: {base: 'variant', f: f} %>
+</div>

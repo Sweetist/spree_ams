@@ -1,0 +1,27 @@
+<div class="portlet-title">
+    <div class="caption">
+      <i class="fa fa-cogs"></i>
+      Populates the cart with the specified quantity of variant
+    </div>
+    <div class="actions">
+      <!-- <a class="close-button" href=""><i class="fa fa-times"></i></a> -->
+    </div>
+</div>
+<div class="portlet-body">
+  <div class="search_container">
+    <input type='text' id='variant_search' autocomplete="off" placeholder="Search for Variant" class="form-control">
+  </div>
+  <div id="variant_select_container">
+    <select name='' id='variant_select' multiple="multiple" class="form-control">
+      <% @vendor.products.each do |product| %>
+        <% product.variants_including_master.each do |variant| %>
+          <option value="<%= variant.id %>" data-id='<%= variant.id %>'> <%= product.name %> - <%= variant.sku %></option>
+        <% end %>
+      <% end %>
+    </select>
+  </div>
+
+  <label class="control-label">Quantity</label>
+  <input type="number" name="promotion[actions][line_item_quantity]"
+    value="<%= action.promotion_action_line_items.last.quantity unless action.nil? %>" class="form-control">
+</div>

@@ -1,0 +1,23 @@
+<div class='row'>
+
+  <% if current_spree_user.can_read?('basic_options', 'reports') && @account.vendor.show_account_balance %>
+    <div class='col-xs-12'>
+      <h5>Balance</h5>
+      <h4 class='margin-top-0'><%= @account.display_account_balance %></h4>
+    </div>
+    <div class='col-xs-12'>
+      <h5>Past Due</h5>
+      <h4 class='margin-top-0'><%= display_sweet_price(@account.past_due_balance, @account.currency) %></h4>
+    </div>
+    <div class='col-xs-12'>
+      <h5>Credit Limit</h5>
+      <h4 class='margin-top-0'>
+        <% if @account.credit_limit.nil? %>
+          <%= Spree.t(:no_credit_limit) %>
+        <% else %>
+          <%= display_sweet_price(@account.credit_limit, @account.currency) %>
+        <% end %>
+      </h4>
+    </div>
+  <% end %>
+</div>

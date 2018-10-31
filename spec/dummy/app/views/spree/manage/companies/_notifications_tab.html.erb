@@ -1,0 +1,35 @@
+<%= form_for @account, url: manage_account_path, method: 'patch', remote: true, html: {class: 'form'} do |f| %>
+  <div class='form-body'>
+    <div class="form-group">
+      <%= f.check_box :notify_daily_summary, class: 'make-switch', "data-size" =>'mini' %>
+      <%= f.label :notify_daily_summary, 'Daily order summary email', class: 'margin-left-20'%>
+    </div>
+    <div class="form-group">
+      <%= f.check_box :notify_daily_shipping_reminder, class: 'make-switch', "data-size" =>'mini' %>
+      <%= f.label :notify_daily_shipping_reminder, 'Daily unshipped orders email', class: 'margin-left-20'%>
+    </div>
+    <div class="form-group">
+      <%= f.check_box :notify_order_confirmation, class: 'make-switch', "data-size" =>'mini' %>
+      <%= f.label :notify_order_confirmation, 'Order submitted by customer email', class: 'margin-left-20'%>
+    </div>
+    <div class="form-group">
+      <%= f.check_box :notify_order_review, class: 'make-switch', "data-size" =>'mini' %>
+      <%= f.label :notify_order_review, 'Order requires review email', class: 'margin-left-20'%>
+    </div>
+    <div class="form-group">
+      <%= f.check_box :notify_discontinued_product, class: 'make-switch', "data-size" =>'mini' %>
+      <%= f.label :notify_discontinued_product, "Product has been #{Spree.t('variant.deactivated')}", class: 'margin-left-20'%>
+    </div>
+    <div class="form-group">
+      <%= f.check_box :notify_low_stock, class: 'make-switch', "data-size" =>'mini' %>
+      <%= f.label :notify_low_stock, Spree.t(:low_stock, scope: [:company_notifications]), class: 'margin-left-20'%>
+    </div>
+  </div>
+  <div class='form-actions'>
+    <div class="pull-right">
+      <button class='btn btn-primary'>
+        <i class='fa fa-check'></i> Update
+      </button>
+    </div>
+  </div>
+<% end %>

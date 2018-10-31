@@ -1,0 +1,6 @@
+$('.portlet', '#variant-modal').empty();
+$('.portlet', '#variant-modal').first().append("<%= j render(partial: 'spree/manage/variants/page_content/variant_title.html.erb') %>");
+$('.portlet', '#variant-modal').first().append("<%= j render(partial: 'spree/manage/variants/page_content/show_body.html.erb', locals: {avv: @avv, variant: @variant}) %>");
+
+$('.portlet-title', '#variant-modal').first().prepend("<div class='margin-bottom-20'><button type='button' class='close modal-close' data-dismiss='modal' aria-hidden='true'></button></div>")
+$(document).ready(initLoadAssemblyForm);

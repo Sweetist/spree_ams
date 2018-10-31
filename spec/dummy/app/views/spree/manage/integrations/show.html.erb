@@ -1,0 +1,66 @@
+<%= content_for :head_title do %>
+  Integration
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Integrations", manage_integrations_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <span><%= @item.fetch(:name, '') %></span>
+    </li>
+  </ul>
+<% end %>
+
+<div class="content">
+  <div class="row">
+    <div class="portlet light">
+      <div class="portlet-title">
+        <div class="caption">
+          <span class="caption-subject font-blue-madison bold uppercase">
+            <%=image_tag(@item.fetch(:image, ''), width: '32')%>
+            <%= @item.fetch(:name, '') %>
+          </span>
+        </div>
+        <% if current_spree_user.can_write?('integrations', 'settings') %>
+          <div class="actions">
+            <%= link_to edit_manage_integration_path(@integration), class: "btn btn-primary" do %>
+              <i class='fa fa-pencil'></i> <%= Spree.t(:edit) %>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+      <% if lookup_context.exists?("connection_status", ["spree/manage/integrations/#{@item.fetch(:integration_key)}"], true) %>
+        <%= render partial: "spree/manage/integrations/#{@item.fetch(:integration_key)}/connection_status" %>
+      <% end %>
+      <%= link_to 'void:javascript();', class: 'pull-right', id: 'toggle-settings-view' do %>
+        <span class='toggle-settings-text'>
+          Show Settings <i class='fa fa-angle-down'></i>
+        </span>
+        <span class='toggle-settings-text hidden'>
+          Hide Settings <i class='fa fa-angle-up'></i>
+        </span>
+      <% end %>
+      <div class='col-md-12 hidden' id='settings-container'>
+        <%= render partial: "#{@item.fetch(:integration_key)}_settings" %>
+      </div>
+    </div>
+  </div>
+  <%= render partial: 'synchronization_log', locals: {integration: @integration} %>
+</div>
+
+<script type='text/javascript'>
+  $(document).ready(function(){
+    $('#toggle-settings-view').click(function(e){
+      e.preventDefault();
+      $('#settings-container').toggleClass('hidden');
+      $('.toggle-settings-text').toggleClass('hidden');
+    });
+  });
+</script>

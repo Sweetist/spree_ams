@@ -1,0 +1,6 @@
+<div class="form-group">
+  <label>Taxons</label>
+  <%= select_tag("taxon_ids",
+    options_for_select(@vendor.taxons.pluck(:name, :id), params[:taxon_ids]),
+    {class: 'select2-tags input-large form-control', multiple: true }) %>
+</div>

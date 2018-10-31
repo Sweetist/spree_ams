@@ -1,0 +1,14 @@
+<div class='col-sm-6'>
+  <div class='form-group'>
+    <%= f.check_box :account_spend, class: 'make-switch', data: {size: 'mini'}  %>
+    <%= f.label :account_spend, Spree.t(:spend_label, scope: [:customer_view_settings, :account], default: '') %><br>
+    <span class='help-block-italic'><%= Spree.t(:spend_description, scope: [:customer_view_settings, :account], default: '') %></span>
+  </div>
+</div>
+<div class='col-sm-6'>
+  <div class='form-group'>
+    <%= f.check_box :account_past_due_balance, class: 'make-switch', data: {size: 'mini'}  %>
+    <%= f.label :account_past_due_balance, Spree.t(:past_due_balance_label, scope: [:customer_view_settings, :account], default: '') %><br>
+    <span class='help-block-italic'><%= Spree.t(:past_due_balance_description, scope: [:customer_view_settings, :account], default: '') %></span>
+  </div>
+</div>

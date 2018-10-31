@@ -1,0 +1,7 @@
+<td class='actions-1'>
+  <div class='div-right'>
+    <%= link_to '#variant-modal', {data:{toggle: 'modal', target:'#variant-modal', action: 'edit', 'variant-id' => "#{variant.id}", 'product-id' => "#{variant.product_id}", 'account-id' => "#{@account.try(:id)}"}, class: 'btn btn-sm pull-right btn-primary variant-modal-btn'} do %>
+      <i class='fa fa-pencil'></i>
+    <% end %>
+  </div>
+</td>

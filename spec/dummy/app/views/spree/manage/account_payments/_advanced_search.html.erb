@@ -1,0 +1,96 @@
+<div class="portlet box blue-hoki" id="search">
+  <div class="portlet-title">
+    <div class="col-xs-12 col-sm-6 col-lg-4">
+      <%= f.text_field :number_or_account_fully_qualified_name_cont, class:'form-control', placeholder: 'Enter search term' %>
+      <div class="visible-xs-block" style="min-height:10px;"></div>
+    </div>
+    <div class="col-xs-8 col-sm-4" id="basic-search-buttons">
+      <button type="button" class="btn green dt-search-form-btn"><i class="fa fa-search" aria-hidden="true"></i> Search</button>
+      <button type="button" class="btn default dt-reset-form-btn"><i class="fa fa-times" ></i> Reset</button>
+    </div>
+    <div class="tools">
+      <a href="javascript:;" id="toggle-advanced-search">
+        Advanced <i class="fa fa-angle-down"></i>
+      </a>
+    </div>
+  </div>
+  <div class="portlet-body form hidden" id='advanced-search-form'>
+    <div class="form-body">
+      <div class="row">
+        <div class='col-md-8'>
+
+
+          <div class='row'>
+            <div class='col-sm-6'>
+              <div class='form-group' data-open="<%= params[:q] && !params[:q].fetch(:account_id_or_account_parent_id_eq, nil).blank? %>">
+                <%= f.label :account_id_or_account_parent_id_eq, 'Account', class: 'control-label' %>
+                <%= f.collection_select :account_id_or_account_parent_id_eq, @vendor.customer_accounts.order(:fully_qualified_name), :id, :fully_qualified_name, {include_blank: true }, {class: 'form-control select2 select2-allow-clear'} %>
+              </div>
+            </div>
+            <div class='col-sm-6'>
+              <div class='form-group' data-open="<%= params[:q] && (!params[:q].fetch(:created_at_gteq, nil).blank? || !params[:q].fetch(:created_at_lteq, nil).blank?) %>">
+                <label class='control-label'><%= Spree.t(:created_at) %></label>
+                <%= render partial: 'spree/shared/forms/fields/date_range', locals: {f: f, date_key: :created_at, company: @vendor} %>
+              </div>
+            </div>
+            <div class='col-sm-6'>
+              <div class='form-group' data-open="<%= params[:q] && (!params[:q].fetch(:amount_gteq, nil).blank? || !params[:q].fetch(:total_lteq, nil).blank?) %>">
+                <label class='control-label'>Total (<%= currency_symbol(@vendor.currency) %>)</label>
+                <div class="input-group">
+                  <%= f.text_field :amount_gteq, class: 'form-control' %>
+                  <span class="input-group-addon"> to </span>
+                  <%= f.text_field :amount_lteq, class: 'form-control' %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class='col-md-4'>
+          <div class='form-group' data-open="<%= params[:q] && params[:q].fetch(:state_eq_any, nil) != @default_statuses %>">
+            <label class='control-label'>Payment Status</label>
+            <div class='checkbox-group'>
+              <% statuses = %w{checkout pending processing completed void failed invalid} %>
+              <% statuses.each do |status| %>
+                <div>
+                  <label class="inline-check-100">
+                  <input type="checkbox" name="q[state_eq_any][]" id="state_eq_any_"
+                    value='<%= status %>' class="noUniform" <%= 'checked' if params[:q] && params[:q][:state_eq_any].include?(status) %>>
+                    <%= status.titleize %>
+                  </label>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="form-actions">
+      <div class="row">
+        <div class="col-md-12">
+          <div class='btn-set pull-right'>
+            <button type="button" class="btn green dt-search-form-btn"><i class="fa fa-search" aria-hidden="true"></i> Search</button>
+            <button type="button" class="btn default dt-reset-form-btn"><i class="fa fa-times" ></i> Reset</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script type="text/javascript">
+  var updateTable = function(){
+    var table = $('.ajaxDatatable')
+    table.DataTable().draw()
+    // table.DataTable().ajax.url( table.data('source') + '?' +  $('#search-form').serialize() ).load();
+  }
+  $('.dt-search-form-btn').off('click').on('click', function(){
+    updateTable()
+  })
+  $('.dt-reset-form-btn').off('click').on('click', function(){
+    console.log('Reset search')
+    document.getElementById("search-form").reset();
+    $('#q_account_id_or_account_parent_id_eq').select2("val", "");
+    updateTable()
+  })
+</script>

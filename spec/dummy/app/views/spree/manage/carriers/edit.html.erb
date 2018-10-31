@@ -1,0 +1,52 @@
+<% content_for :page_title do %>
+  <%= Spree.t(:carriers) %>
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Carriers", manage_carriers_path %>
+    </li>
+  </ul>
+  <div class="page-toolbar">
+    <div class="btn-group pull-right">
+    </div>
+  </div>
+<% end %>
+
+<div class="content">
+  <div class="row">
+    <div class="portlet light">
+
+      <div class="portlet-body">
+        <div class='form'>
+          <%= form_for @vendor, url: manage_carriers_path,
+              method: 'patch', class:'prevent-double-submission'  do |f| %>
+            <div class='form-body'>
+              <%= render partial: 'ups_settings', locals: {f: f} %>
+              <%= render partial: 'fedex_settings', locals: {f: f} %>
+              <%= render partial: 'usps_settings', locals: {f: f} %>
+              <%= render partial: 'general_settings', locals: {f: f} %>
+            </div>
+
+            <div class="form-actions" data-hook="buttons">
+              <div class='pull-right'>
+                <%= link_to manage_carriers_path, class: 'btn btn-default prevent-double-submission' do %>
+                  <i class='fa fa-times'></i> <%= Spree.t(:Cancel) %>
+                <% end %>
+                <button class='btn btn-primary prevent-double-submission' id='carriers-submit'>
+                  <i class='fa fa-check'></i> <%= Spree.t(:update) %>
+                </button>
+              </div>
+            </div>
+
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

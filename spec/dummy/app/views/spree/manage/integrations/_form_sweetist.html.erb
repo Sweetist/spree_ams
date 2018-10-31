@@ -1,0 +1,99 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="row">
+      <%= simple_form_for integration, url: path, method: method, wrapper: :horizontal_form do |f| %>
+        <div class="portlet light">
+          <div class="portlet-title tabbable-line">
+            <div class="caption">
+              <span class="caption-subject font-blue-madison bold uppercase">
+                <%=image_tag(item.fetch(:image, ''), width: '32')%>
+                <%= item.fetch(:name, '') %>
+              </span>
+            </div>
+            <ul class="nav nav-tabs">
+              <li class="active">
+                <a href="#integration" data-toggle="tab">Integration</a>
+              </li>
+              <li>
+                <a href="#sweetist" data-toggle="tab">Sweetist</a>
+              </li>
+            </ul>
+          </div>
+          <div class="portlet-body form">
+            <div class="form-body">
+              <div class="tab-content">
+                <div class="tab-pane form active" id="integration">
+                  <%= f.input :integration_key, as: :hidden, input_html: { value: item.fetch(:integration_key, '') } %>
+                  <%= f.input :sweetist_access_key, disabled: false, as: :string, label: 'Access Key' %>
+                  <div class="form-group">
+                    <%= f.label :sweetist_integration_state, 'Send / Receive Data from Your Sweetist Account', class: "optional control-label col-sm-3"%>
+                    <div class="col-sm-9">
+                      <%= f.check_box :sweetist_integration_state, class: 'make-switch', 'data-size' => 'mini'%>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <%= f.label :sweetist_send_automated_emails, 'Send Automated Emails', class: "optional control-label col-sm-3"%>
+                    <div class="col-sm-9">
+                      <%= f.check_box :sweetist_send_automated_emails, class: 'make-switch', 'data-size' => 'mini'%>
+                    </div>
+                  </div>
+                  <%= f.input :sweetist_overwrite_conflicts_in, as: :radio_buttons, collection: [['none', 'No resolution'], ['sweetist', 'Sweetist'], ['sweet', 'Sweet']], label: 'Overwrite conflicts in', label_method: :last, value_method: :first, wrapper: :horizontal_radio_and_checkboxes %>
+                  <div class='form-group'>
+                    <%= f.label :sweetist_account_name, "Customer / Account", class: 'optional control-label col-sm-3' %>
+                    <div class='col-sm-9'>
+                      <%= f.collection_select :sweetist_account_name, integration.vendor.customer_accounts, :fully_qualified_name, :fully_qualified_name, {}, {class: 'select2 form-control'} %>
+                    </div>
+                  </div>
+                  <%= f.input :sweetist_stock_location_id, as: :select, collection: @vendor.stock_locations, label: 'Stock Location', include_blank: false %>
+                  <%= f.input :sweetist_weight_units, as: :select, collection: Sweet::Application.config.x.weight_units, label: 'Default Product Weight Units', include_blank: false %>
+                  <%= f.input :sweetist_dimension_units, as: :select, collection: Sweet::Application.config.x.dimension_units, label: 'Default Product Dimension Units', include_blank: false %>
+                </div>
+                <div class="tab-pane form" id="sweetist">
+                  <%= f.input :sweetist_min_order_reqmt, as: :integer, label: "Minimum Order Req. (#{currency_symbol(@vendor.currency)})" %>
+                  <%= f.input :sweetist_email, as: :string, label: 'Email' %>
+                  <%= f.input :sweetist_phone, as: :string, label: 'Phone' %>
+                  <%= f.input :sweetist_address, as: :string, label: 'Address' %>
+                  <%= f.input :sweetist_city, as: :string, label: 'City' %>
+                  <%= f.input :sweetist_state, as: :string, label: 'State', input_html: {value: 'New York'}, disabled: true %>
+                  <%= f.input :sweetist_country, as: :string, label: 'Country', input_html: {value: 'United States'}, disabled: true %>
+                  <h4 class='form-section'>Hours of Operation</h4>
+                  <% days = %w[Sunday Monday Tuesday Wednesday Thursday Friday Saturday] %>
+                  <% days.each do |day| %>
+                    <div class='row'>
+                      <div class='col-md-3'>
+                        <label style='padding: 10px 0px;'><b><%= day %></b></label>
+                      </div>
+                      <div class='col-md-9'>
+                        <div class='col-xs-6'>
+                          <%= f.input "sweetist_open_#{day.first(2).downcase}", as: :select, as: :string, label: 'Open', input_html: { class: 'no-init-timepicker timepicker timepicker-no-seconds'} %>
+                        </div>
+                        <div class='col-xs-6'>
+                          <%= f.input "sweetist_closed_#{day.first(2).downcase}", as: :select, as: :string, label: 'Close', input_html: { class: 'no-init-timepicker timepicker timepicker-no-seconds'} %>
+                        </div>
+                      </div>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+            <div class='form-actions'>
+              <div class='pull-right'>
+                <%= link_to manage_integration_path(integration.id), class:'btn btn-default' do %>
+                  <i class='fa fa-times'></i> Cancel
+                <% end %>
+                <button class='btn btn-primary'>
+                  <i class='fa fa-check'></i> Save
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+
+<script type='text/javascript'>
+  $('.no-init-timepicker').timepicker({defaultTime: ''});
+</script>

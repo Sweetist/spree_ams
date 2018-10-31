@@ -1,0 +1,12 @@
+  <%
+    img = current_spree_user.company.try(:logo)
+  %>
+  <div class="page-logo">
+    <%= link_to root_path, class: 'logo-default-link' do %>
+      <% if img %>
+        <%= image_tag(img.attachment.url, class: "logo-default") %>
+      <% else %>
+        <%= image_tag("sweet.png", class: "logo-default") %>
+      <% end %>
+    <% end %>
+  </div>

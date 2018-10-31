@@ -1,0 +1,31 @@
+<table>
+  <tr>
+    <td>
+      <p>
+        Dear <%= @vendor.name %>,
+        <br><br>
+        <b><%= @variant.full_display_name %> has been <%= Spree.t('variant.deactivated') %></b>
+      </p>
+      <p>
+        The following orders may be affected:<br>
+        <% if @variant.is_master? %>
+          <%= safe_join(@variant.product.orders.where('state IN (?) AND delivery_date >= ?', %w{cart complete approved}, DateHelper.sweet_today(@vendor.time_zone)).map { |order| link_to(order.display_number, edit_manage_order_url(order, host: @vendor.domain, protocol: 'https')) }, ", ".html_safe) %>
+        <% else %>
+          <%= safe_join(@variant.orders.where('state IN (?) AND delivery_date >= ?', %w{cart complete approved}, DateHelper.sweet_today(@vendor.time_zone)).map { |order| link_to(order.display_number, edit_manage_order_url(order, host: @vendor.domain, protocol: 'https')) }, ", ".html_safe) %>
+        <% end %>
+      </p>
+
+      <br>
+
+      <p>
+        The following standing orders may be affected:<br>
+        <% if @variant.is_master? %>
+          <%= safe_join(@variant.product.standing_orders.map { |order| link_to(order.name, edit_manage_standing_order_url(order, host: @vendor.domain, protocol: 'https')) }, ", ".html_safe) %>
+        <% else %>
+          <%= safe_join(@variant.standing_orders.map { |order| link_to(order.name, edit_manage_standing_order_url(order, host: @vendor.domain, protocol: 'https')) }, ", ".html_safe) %>
+        <% end %>
+      </p>
+    </td>
+    <td class="expander"></td>
+  </tr>
+</table>

@@ -1,0 +1,7 @@
+<div class='form-group'>
+  <%= f.label :costing_method, class: 'control-label' %>
+  <% opts = (f.object.can_have_parts? ? COSTING_METHODS : NO_COMPONENT_COSTING_METHODS).map{|cm| [Spree.t(cm, scope: 'costing_methods'), cm]} %>
+  <%= f.select :costing_method,
+    options_for_select(opts, f.object.try(:costing_method)),
+    {include_blank: false}, class: 'form-control', id: 'variant_costing_method' %>
+</div>

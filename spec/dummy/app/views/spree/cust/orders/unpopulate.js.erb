@@ -1,0 +1,24 @@
+<% if flash[:error] %>
+  $('#alert').html("<div class='alert alert-danger alert-dismissable'><button type='button' class='close' data-dismiss='alert' aria-hidden='true'></button><%= flash[:error] %></div>");
+<% elsif @line_item && @order %>
+  <% colspan_left = 5 %>
+  $("#line_item_<%= @line_item.id %>").remove();
+  $("#line_item_parts<%= @line_item.id %>").remove();
+  $("#order_line_items_attributes_<%= params[:item_form_idx] %>_id").remove();
+  $('#cart-value').replaceWith("<span id='cart-value'>( <%= @order.item_count == 0 ? 'Empty' : display_sweet_price(@order.item_total, @order.currency) %> )</span>");
+  $('#cart-overview').replaceWith("<%= escape_javascript(render(:partial => 'spree/cust/orders/cart_overview.html.erb', locals: {current_order: @order})) %>");
+  $("#shopping-cart").fadeIn(100).fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100);
+  $('.subtotal-price').replaceWith("<span class='subtotal-price'><%= display_sweet_price(@order.item_total, @order.currency) %></span>")
+  $('.total-price').replaceWith("<span class='total-price'><%= display_sweet_price(@order.total, @order.currency) %></span>");
+  $('.item-count').replaceWith("<span class='item-count'><%= @order.item_count %></span>");
+  $('#subtotals-row').replaceWith("<%= escape_javascript(render(partial: 'subtotal_row.html.erb', locals: {colspan_left: colspan_left})) %>");
+  $('.single-order-buttons').replaceWith("<%= escape_javascript(render(partial: 'order_buttons.html.erb')) %>");
+  $('#all-adjustments').html("<%= escape_javascript(render(partial: 'adjustments.html.erb', locals: {colspan_left: colspan_left})) %>");
+  $('#totals-row').replaceWith("<%= escape_javascript(render(partial: 'total_row.html.erb', locals: {colspan_left: colspan_left})) %>");
+  $('#delivery_date').replaceWith("<%= escape_javascript(render(partial: 'delivery_date_fields')) %>");
+  $('#any_variant_past_cutoff').val('<%= @order.any_variant_past_cutoff?(params[:delivery_date]) %>');
+  <% if  @order.recalculate_shipping && @order.active_shipping_calculator %>
+    $('.new-payment-btn').attr('style','pointer-events:none; opacity: 0.65;');
+    $('.single-order-buttons > .clear').after("<span class='help-block-italic text-center' id='update-notification'>You must update the order before submitting</span>");
+  <% end %>
+<% end %>

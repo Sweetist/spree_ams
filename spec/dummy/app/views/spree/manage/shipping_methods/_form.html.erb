@@ -1,0 +1,68 @@
+<div class="form-section">
+  <div class="row" id="shipping-method-top">
+
+    <div class="col-md-6">
+      <div class="form-group">
+        <%= f.label :name, class: "control-label" %>
+        <%= f.text_field :name, class: "form-control" %>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="form-group">
+        <%= f.label :code, class: "control-label" %>
+        <%= f.text_field :code, class: "form-control" %>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="form-group">
+        <%= f.label :rate_tbd, "Set Shipping Rate as 'TBD'", class: "control-label" %><br>
+        <%= f.check_box :rate_tbd, class: "form-control make-switch", data:{size: 'mini'}%><br>
+        <span class='help-block-italic'>Turning this on will show the shipping rate as 'TBD' until manually set by either a member of your company or a shipping integration</span>
+      </div>
+    </div>
+  </div>
+  <br>
+</div>
+
+<div class="row" id="shipping-method-groups">
+  <div class="left-groups col-md-6">
+    <%= render partial: "shipping_categories" %>
+    <%= render partial: "shipping_calculator" %>
+  </div>
+
+  <div class="right-groups col-md-6">
+    <%= render partial: 'shipping_zones' %>
+    <%= render partial: 'tax_category', locals: {f: f} %>
+  </div>
+</div>
+
+<script type='text/javascript'>
+  $(document).ready(function(){
+    $('#shipping_method_rate_tbd').on('switchChange.bootstrapSwitch', function(){
+      if(this.checked){
+        disableCalculator();
+      }else{
+        enableCalculator();
+      }
+    });
+
+    var disableCalculator = function(){
+      $('#shipping_calculator_name').val('Spree::Calculator::Shipping::FlatRate').change();
+      $('input', '#shipping_calculator_box').val('');
+      $('input', '#flat_rate').val('0');
+      $('input', '#shipping_calculator_box').prop('disabled', true);
+      $('select', '#shipping_calculator_box').prop('disabled', true);
+    };
+
+    var enableCalculator = function(){
+      $('input', '#shipping_calculator_box').prop('disabled', false);
+      $('select', '#shipping_calculator_box').prop('disabled', false);
+    };
+
+    if($('#shipping_method_rate_tbd').prop('checked')){
+      disableCalculator();
+    }else {
+      enableCalculator();
+    }
+  });
+</script>

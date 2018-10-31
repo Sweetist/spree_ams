@@ -1,0 +1,58 @@
+<div class="row">
+  <div class="col-md-6">
+    <div class="form-group">
+      <%= f.label :name, Spree.t(:name), class: 'control-label' %>
+      <%= f.text_field :name, class: 'form-control' %>
+    </div>
+    <div class="form-group">
+      <%= f.label :description, Spree.t(:description), class: 'control-label' %>
+      <%= f.text_field :description, class: 'form-control' %>
+    </div>
+    <div class="form-group">
+      <%= f.label :default_tax, 'Default Tax Zone', class: 'control-label' %><br>
+      <%= f.check_box :default_tax, class: 'form-control', class: 'make-switch', data: {size: 'mini'} %>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="form-group">
+      <%= f.label :kind, Spree.t(:type), class: 'control-label' %>
+      <%= f.select :kind, [['Country Based', 'country'], ['State Based', 'state'], ['City Based', 'city']], {}, class: 'form-control' %>
+    </div>
+    <div class='zone-loader'>
+      Loading Zone Members <%= image_tag 'frontend/loading.gif' %>
+    </div>
+    <div class='row'>
+      <div class='col-md-12' id='zone-members'>
+        <!-- This section is populated after load -->
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<script type='text/javascript'>
+  var loadZoneMembers = function(){
+    $('.zone-loader').show();
+    var kind = $('#zone_kind').val();
+    var zoneId = '<%= @zone.try(:id) %>'
+    var countryFilterId = $('#zone_country_filter_id').val();
+    var stateFilterId = $('#zone_state_filter_id').val();
+    $.ajax({
+      url: "<%= load_members_manage_zones_path %>.js",
+      type: 'GET',
+      data: {
+        kind: kind,
+        zone_id: zoneId,
+        country_filter_id: countryFilterId,
+        state_filter_id: stateFilterId
+      }
+    }).done(function() {
+      $('.zone-loader').hide();
+    });
+  }
+
+  $('#zone_kind').change(loadZoneMembers);
+  $(document).ready(loadZoneMembers);
+</script>

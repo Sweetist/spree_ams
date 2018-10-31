@@ -1,0 +1,56 @@
+<%= content_for :head_title do %>
+  Tax Categories
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <span>Tax Categories</span>
+    </li>
+  </ul>
+  <div class="page-toolbar">
+    <% if current_spree_user.can_write?('tax_categories', 'settings') %>
+      <%= link_to new_manage_tax_category_path, class: "btn green pull-right" do %>
+        <i class="fa fa-plus"></i>&nbsp;New Tax Category
+      <% end %>
+    <% end %>
+  </div>
+<% end %>
+
+<table class="table table-striped table-hover" data-paging='false'>
+  <thead>
+    <tr>
+      <th><%= Spree.t(:name) %></th>
+      <th><%= Spree.t(:tax_code) %></th>
+      <th><%= Spree.t(:description) %></th>
+      <th><%= Spree.t(:default) %></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% if current_spree_user.can_write?('tax_categories', 'settings') %>
+      <% @tax_categories.each do |tax_category|%>
+      <% url = edit_manage_tax_category_path(tax_category) %>
+        <tr id="<%= spree_dom_id tax_category %>">
+          <td><%=link_to tax_category.name.to_s, url %></td>
+          <td><%=link_to tax_category.tax_code.to_s, url %></td>
+          <td><%= link_to tax_category.description.to_s, url %></td>
+          <td><%= link_to tax_category.is_default? ? Spree.t(:say_yes) : Spree.t(:say_no), url %></td>
+        </tr>
+      <% end %>
+    <% else %>
+      <% @tax_categories.each do |tax_category|%>
+        <tr id="<%= spree_dom_id tax_category %>">
+          <td></td>
+          <td><%= tax_category.name.to_s %></td>
+          <td><%= tax_category.tax_code.to_s %></td>
+          <td><%= tax_category.description %></td>
+          <td><%= tax_category.is_default? ? Spree.t(:say_yes) : Spree.t(:say_no) %></td>
+        </tr>
+      <% end %>
+    <% end %>
+  </tbody>
+</table>

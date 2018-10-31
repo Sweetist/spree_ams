@@ -1,0 +1,17 @@
+<div class="modal fade bs-modal-lg" id="option-type-modal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+
+    <div class="modal-content">
+      <div class='modal-errors'></div>
+      <div class="portlet light" style='margin-bottom:0px;'>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type='text/javascript'>
+  $('#option-type-modal').on('hidden.bs.modal', function(){
+    $('.portlet', '#option-type-modal').empty();
+  });
+</script>

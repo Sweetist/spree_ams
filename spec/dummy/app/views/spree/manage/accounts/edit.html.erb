@@ -1,0 +1,261 @@
+<%= content_for :head_title do %>
+  Customers
+<% end %>
+
+<%= content_for :page_bar do %>
+  <%= render partial: 'breadcrumbs', locals: { account: @account } %>
+  <div class="page-toolbar">
+    <div class="btn-group pull-right">
+      <%= link_to new_manage_order_path, class: 'btn green-jungle margin-right-10' do%>
+        <i class="fa fa-plus"></i>&nbsp;<%= Spree.t(:new_sales_order) %>
+      <% end %>
+      <% if current_spree_user.can_write?('basic_options', 'customers') %>
+        <%= link_to new_manage_account_path, class: "btn green margin-right-10" do %>
+          <i class= "fa fa-plus"></i>&nbsp;New Customer
+        <% end %>
+      <% end %>
+      <button type="button" class="btn green dropdown-toggle" data-toggle="dropdown"> Actions
+        <i class="fa fa-angle-down"></i>
+      </button>
+      <ul class="dropdown-menu pull-right" role="menu">
+        <li>
+          <%= link_to 'Add Contact', "#", "data-toggle" => "modal", 'data-target' => '#contact_new' %>
+        </li>
+        <% unless @account.contacts.where(email: @account.valid_emails).present? %>
+          <li>
+            <%= link_to 'Invite Customer', invite_email_manage_customer_path(@customer, account_id: @account.id) %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+<% end %>
+
+<%= render partial: 'catalog_share' %>
+
+<!-- BEGIN CONTENT -->
+<div class="profile-content">
+  <div class="row">
+    <div class="portlet light">
+      <div class="portlet-title tabbable-line">
+        <div class="btn-group hidden-md hidden-lg pull-left" style ='width:100%'>
+          <button type="button" class="btn green dropdown-toggle dropdown-btn-text" data-toggle="dropdown" style = "width:100%">
+            <label>Sales</label>&nbsp;
+            <i class="fa fa-angle-down"></i>
+          </button>
+          <ul class="dropdown-menu pull-left" style="width:100%" role="menu">
+            <li class="tab-link">
+              <a href="#sales" data-toggle="tab" class='sales-tab' aria-expanded="<%= params[:promotion].blank? %>">Sales</a>
+            </li>
+            <li class="tab-link">
+              <a href="#details" data-toggle="tab" aria-expanded="<%= params[:promotion].blank? %>">Details</a>
+            </li>
+            <li class="tab-link">
+              <a href="#shipping_tab" data-toggle="tab" aria-expanded="<%= params[:promotion].blank? %>">Delivery & Addresses</a>
+            </li>
+            <% if @account.sub_accounts.present? %>
+              <li class="tab-link">
+                <a href="#sub_accounts" data-toggle="tab" aria-expanded="<%= params[:promotion].blank? %>">Sub Accounts</a>
+              </li>
+            <% end %>
+            <li class="tab-link">
+               <a href="#pricing_adjustments" data-toggle="tab" aria-expanded="<%= !params[:promotion].blank? %>">Pricing</a>
+            </li>
+            <li class="tab-link">
+              <a href="#contacts_tab" data-toggle="tab" aria-expanded="<%= !params[:contacts].blank? %>">Contacts</a>
+            </li>
+          </ul>
+        </div>
+        <ul class="nav nav-tabs hidden-xs hidden-sm pull-left">
+          <li class="long-tabs-link active">
+            <a href="#sales" data-toggle="tab" class='sales-tab' aria-expanded="<%= params[:promotion].blank? %>">Sales</a>
+          </li>
+          <li class="long-tabs-link">
+            <a href="#details" data-toggle="tab" aria-expanded="<%= params[:promotion].blank? %>">Details</a>
+          </li>
+          <li class="long-tabs-link">
+            <a href="#shipping_tab" data-toggle="tab" aria-expanded="<%= params[:promotion].blank? %>">Delivery & Addresses</a>
+          </li>
+          <% if @account.sub_accounts.present? %>
+            <li class="long-tabs-link">
+              <a href="#sub_accounts" data-toggle="tab" aria-expanded="<%= params[:promotion].blank? %>">Sub Accounts</a>
+            </li>
+          <% end %>
+          <li class="long-tabs-link">
+            <a href="#pricing_adjustments" data-toggle="tab" aria-expanded="<%= !params[:promotion].blank? %>">Pricing</a>
+          </li>
+           <li class="long-tabs-link">
+            <a href="#contacts_tab" data-toggle="tab" aria-expanded="<%= !params[:contacts].blank? %>">Contacts</a>
+          </li>
+        </ul>
+      </div>
+      <div class="portlet-body">
+        <%= form_for @account, url: manage_customer_account_path, html: {class:"horizontal-form form", id:'account-form'} do |f| %>
+          <div class="form-body">
+
+            <div class="tab-content">
+              <div class='tab-pane active' id='sales'>
+                <% if @account.inactive? %>
+                  <%= render partial: 'inactive_account_message' %>
+                <% else %>
+                  <%= render partial: 'active_account_message', locals: {f: f} %>
+                <% end %>
+                <%= render partial: "sales", locals: {f: f} %>
+              </div>
+              <div class='tab-pane' id='details'>
+                <%= render partial: "account_form", locals: {f: f} %>
+              </div>
+              <% if @account.sub_accounts.present? %>
+                <div class='tab-pane' id='sub_accounts'>
+                  <%= render partial: "sub_accounts", locals: { accounts: @account.sub_accounts } %>
+                </div>
+              <% end %>
+              <div class='tab-pane' id='shipping_tab'>
+                <div id="account_addresses">
+                  <%= render partial: 'spree/manage/accounts/addresses', locals: {f: f} %>
+                </div>
+                <%= render partial: 'spree/manage/accounts/special_instructions', locals: {f: f} %>
+                <% if current_vendor.selectable_delivery %>
+                  <%= render partial: 'shipping_group', locals: {f: f, edit: true} %>
+                <% end %>
+              </div>
+              <div class='tab-pane' id='pricing_adjustments'>
+                <%= render partial: "promotions_table" %>
+                <% if current_company.use_price_lists %>
+                  <%= render partial: "price_lists" %>
+                <% end %>
+              </div>
+              <div class='tab-pane' id='contacts_tab'>
+                <%= render partial: "contacts_table", locals: {edit: true} %>
+              </div>
+            </div>
+            <div class="form-actions right">
+              <% if current_spree_user.can_write?('basic_options', 'customers') %>
+                <%= link_to manage_customer_account_path(@customer, @account), class: "btn btn-default" do %>
+                  <i class='fa fa-times'></i> <%= Spree.t(:Cancel) %>
+                <% end %>
+                <button class="btn btn-primary"><i class="fa fa-check"></i>Update</button>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  <hr>
+  <%= commontator_thread(@account) %>
+</div>
+
+<!-- BEGIN CONTACT MODAL -->
+<%= render partial: "new_contact_modal" %>
+<!-- END CONTACT MODAL -->
+
+<!-- BEGIN ADDRESS MODAL -->
+<div class="modal fade" id="address_modal" tabindex="-1" role="basic" aria-labelledby="myModalLabel" aria-hidden="true"></div>
+<!-- END ADDRESS MODAL -->
+
+<script type='text/javascript'>
+  $(document).on('ready', function(){
+    var clickOnEditAddressLink = function(){
+      $('#shipping_tab').on('click', '.edit-address-btn', function(){
+        $('#address_modal').modal('show');
+      });
+    }
+    clickOnEditAddressLink();
+
+    if ($('#include_sub_accounts').length) {
+      function showSubAccounts(reflowChart = false) {
+        $('#sales-history-chart-div-sa').removeClass('hidden');
+        if (reflowChart) { $('#sales-history-chart-sa').highcharts().reflow(); }
+        $('#sales-history-chart-div').addClass('hidden');
+        $('#revenue-product-chart-div-sa').removeClass('hidden');
+        if (reflowChart) { $('#revenue-product-chart-sa').highcharts().reflow(); }
+        $('#revenue-product-chart-div').addClass('hidden');
+        $('#all-orders-table-sa').removeClass('hidden');
+        $('#all-orders-table').addClass('hidden');
+      }
+      function showParentAccountOnly(reflowChart = false) {
+        $('#sales-history-chart-div').removeClass('hidden');
+        if (reflowChart) { $('#sales-history-chart').highcharts().reflow(); }
+        $('#sales-history-chart-div-sa').addClass('hidden');
+        $('#revenue-product-chart-div').removeClass('hidden');
+        if (reflowChart) { $('#revenue-product-chart').highcharts().reflow(); }
+        $('#revenue-product-chart-div-sa').addClass('hidden');
+        $('#all-orders-table').removeClass('hidden');
+        $('#all-orders-table-sa').addClass('hidden');
+      }
+      $('#include_sub_accounts').on('switchChange.bootstrapSwitch', function() {
+        if ($(this).bootstrapSwitch('state')) {
+          localStorage['include_sub_accounts'] = true;
+          showSubAccounts(true);
+        } else {
+          localStorage['include_sub_accounts'] = false;
+          showParentAccountOnly(true);
+        }
+      });
+      if ($('#include_sub_accounts').bootstrapSwitch('state')) {
+        showSubAccounts();
+      } else {
+        showParentAccountOnly();
+      }
+      $('#sales-history-chart-sa').highcharts(<%= raw @sales_history_chart_data_sa.to_json %>);
+      $('#revenue-product-chart-sa').highcharts(<%= raw @revenue_chart_data_sa.to_json %>);
+    }
+    $('#sales-history-chart').highcharts(<%= raw @sales_history_chart_data.to_json %>);
+    $('#revenue-product-chart').highcharts(<%= raw @revenue_chart_data.to_json %>);
+    $('#deactivate-account-btn').click(function(){
+      $(this).addClass('hidden');
+      $('#account-activity').removeClass('hidden');
+    });
+    $('#promotion-search-reset').click(function(){
+      $('input', '#promotions-search').val('');
+      $('#promotion-product-select').select2('val', '');
+      $('#promotion-product-select option').prop("selected", false);
+    });
+    $('#promotion-search-reset2').click(function(){
+      $('input', '#promotions-search').val('');
+      $('#promotion-product-select').select2('val', '');
+      $('#promotion-product-select option').prop("selected", false);
+    });
+    var getPromotions = function(){
+      var customer_id = '<%= params[:customer_id] %>'
+      var account_id = '<%= params[:id] %>'
+      $.ajax({
+         url: '/manage/customers/' + customer_id +'/accounts/ '+ account_id+ '/promotions',
+        type: 'GET',
+        dataType: 'script',
+        data: {
+          customer_id: customer_id
+        }
+      });
+    };
+    getPromotions();
+    $(document).on( 'shown.bs.tab', 'a[data-toggle="tab"]', function (e) { // on tab selection event
+      if($('#sales-history-chart-sa').length){
+        $('#sales-history-chart-sa').highcharts().reflow();
+        $('#revenue-product-chart-sa').highcharts().reflow();
+      }
+      if($('#sales-history-chart').length){
+        $('#sales-history-chart').highcharts().reflow();
+        $('#revenue-product-chart').highcharts().reflow();
+      }
+    });
+    var disableForm = "<%= current_spree_user.cannot_write?('basic_options', 'customers') %>";
+    if(disableForm === 'true'){
+      disableFormInputs($('#account-form'));
+    }
+    $('#deactivate-account-btn').click(function(){
+      $(this).addClass('hidden');
+      $('#account-activity').removeClass('hidden');
+    });
+  });
+  if (localStorage['include_sub_accounts']) {
+    if(localStorage['include_sub_accounts'] === 'true') {
+      $('#include_sub_accounts').bootstrapSwitch('state', true)
+    } else {
+      $('#include_sub_accounts').bootstrapSwitch('state', false)
+    }
+  } else {
+    $('#include_sub_accounts').bootstrapSwitch('state', false)
+  }
+</script>

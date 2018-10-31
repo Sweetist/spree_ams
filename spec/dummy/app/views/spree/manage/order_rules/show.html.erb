@@ -1,0 +1,14 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Vendor:</strong>
+  <%= @order_rule.vendor.name %>
+</p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @order_rule.name %>
+</p>
+
+<%= link_to 'Edit', edit_manage_order_rule_path(@order_rule) %> |
+<%= link_to 'Back', manage_order_rules_path %>

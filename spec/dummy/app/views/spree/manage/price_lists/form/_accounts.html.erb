@@ -1,0 +1,132 @@
+<div class="row">
+  <div class="col-sm-6">
+    <div class="form-group">
+      <%= f.label :customer_type, 'Select Customers', class: "control-label" %>
+      <%= render partial: 'spree/manage/price_lists/form/customer_type_select' %>
+    </div>
+  </div>
+  <div class='col-sm-6 hidden' id='accounts-select-container'>
+    <div class="form-group">
+      <%= f.label :accounts, 'Customers', class: 'control-label' %>
+      <div class="input-group mb-3">
+        <%= f.collection_select :accounts, current_company.customer_accounts.active.order(:fully_qualified_name),
+          :id, :fully_qualified_name, {},
+          { class: 'form-control select2-multiple select2-hidden-accessible',
+            id: 'price-list-accounts-select' } %>
+        <div class="input-group-btn">
+          <button class='btn green-jungle' type='button' id='add-account-btn'>
+            <i class='fa fa-plus'></i>
+            Add
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class='col-xs-12'>
+    <div class="table-scrollable">
+      <table class="table table-hover" id='accounts'>
+        <thead>
+          <th class='remove-account' style='width:40px;'>
+            <!-- placeholder for delete buttons -->
+          </th>
+          <th>
+            Customer
+          </th>
+          <th>
+            Customer Type
+          </th>
+        </thead>
+        <%= render partial: 'spree/manage/price_lists/form/loading_accounts' %>
+        <% if %w[new create update clone].include? params[:action] %>
+          <%= render partial: 'spree/manage/price_lists/form/accounts_by_type_table_body',
+            locals: { price_list_accounts: @price_list.price_list_accounts,
+                      accounts: [],
+                      customer_type: @price_list.select_customers_by } %>
+        <% end %>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script type='text/javascript'>
+  var loadPriceListCustomers = function(selectBy){
+    var tbodyId = 'customers_by_' + String(selectBy);
+    $('tbody', 'table#accounts').each(function(){
+      $(this).addClass('hidden');
+    });
+    if($('tbody#' + tbodyId).length){
+      $('tbody#' + tbodyId).removeClass('hidden');
+      $('#loading-accounts').addClass('hidden');
+    }else{
+      // ajax load
+      $('#loading-accounts').removeClass('hidden');
+      $.ajax({
+        url: '/manage/price_lists/accounts_by_type.js',
+        method: 'GET',
+        data: {
+          customer_type_id: selectBy,
+          price_list_id: '<%= @price_list.try(:id) %>'
+        },
+        dataType: 'script'
+      })
+    }
+  }
+
+  var toggleCustomerSelects = function(){
+    var selectBy = $('#select-customers-by').val();
+
+    if(selectBy === 'individual'){
+      $('#accounts-select-container').removeClass('hidden');
+      $('.remove-account', '#accounts').show();
+    }else{
+      $('#accounts-select-container').addClass('hidden');
+      $('.remove-account', '#accounts').hide();
+    }
+
+    loadPriceListCustomers(selectBy);
+  }
+
+  var addCustomerToPriceList = function(accountId){
+    if(accountId === ''){
+      $('#add-account-btn').removeProp('disabled');
+      return;
+    }
+    var rowIdx = parseInt($('.account-row', '#customers_by_individual').last().data('idx'));
+    var idx = parseInt($('#customers_by_individual').data('next-row'));
+    if(isNaN(rowIdx)){
+      rowIdx = 0;
+    }else{
+      rowIdx = rowIdx + 1;
+    }
+    if(rowIdx > idx){
+      idx = rowIdx;
+      $('#customers_by_individual').data('next-row', rowIdx);
+    }
+    $.ajax({
+      url: '/manage/price_lists/add_account.js',
+      method: 'GET',
+      data: {
+        account_id: accountId,
+        idx: idx
+      },
+      dataType: 'script'
+    });
+  }
+
+  $(document).on('click', '.remove-account', function(e){
+    e.preventDefault();
+    var $tr = $(this).closest('tr');
+    var idx = $tr.data('idx');
+    $('input[name="price_list[price_list_accounts_attributes][' + idx + '][_destroy]"]', '#customers_by_individual').val('true');
+    $tr.hide();
+  });
+
+
+  $('#select-customers-by').change(toggleCustomerSelects);
+  $('#add-account-btn').click(function(e){
+    e.preventDefault();
+    $(this).prop('disabled', 'disabled');
+    addCustomerToPriceList($('#price-list-accounts-select').val());
+  });
+  $(document).ready(toggleCustomerSelects);
+</script>

@@ -1,0 +1,50 @@
+<div class='portlet-body'>
+    <div class='col-md-12 alert alert-info'>
+      Customize your customers content.
+    </div>
+  <%= simple_form_for [:manage, @cva], url: '/manage/configuration/customer_view_settings', html: {class: 'form', multipart: true} do |f| %>
+    <div class='form-body col-lg-12 margin-bottom-40'>
+      <div class="col-lg-12 remove-left-padding remove-right-padding">
+        <%= f.label :about_us, "About Us", class:"theme-name-label margin-bottom-30" %>
+        <%= f.text_area :about_us, class: 'form-control' %>
+        <span class='help-block-italic'>Accepts text or html</span>
+      </div>
+    </div>
+    <div class='form-body col-lg-12 margin-bottom-40'>
+      <div class="col-lg-12 remove-left-padding remove-right-padding">
+        <%= f.label :order_success_text, "Order Success Message", class:"theme-name-label margin-bottom-30" %>
+        <%= f.text_area :order_success_text, class: 'form-control' %>
+        <span class='help-block-italic'>Accepts text or html</span>
+      </div>
+      <div class='clearfix'></div>
+      <div class='margin-top-20 margin-bottom-10'>
+        <b>Default Message</b>
+        <span class='help-block-italic'> (will show when above text area is empty)</span>
+      </div>
+      <p>
+        The cutoff time for this order is <%= "#{current_company.order_cutoff_time} #{current_company.time_zone}" %> on
+        <%= (Date.today).to_formatted_s(:long) %>. Any changes after that are at the discretion of <%= current_company.name %>.
+      </p>
+    </div>
+    <div class='form-body col-lg-12 margin-bottom-40'>
+      <div class="col-lg-12 remove-left-padding remove-right-padding">
+        <%= f.label :announcement, "Announcement", class:"theme-name-label margin-bottom-30" %>
+        <div class='form-group'>
+          <%= f.check_box :announcement_state, class: 'make-switch', data: {size: 'mini'}  %>
+          <%= f.label 'Active' %>
+        </div>
+          <%= f.text_area :announcement, class: 'form-control', maxlength: '150', rows: '1' %>
+      </div>
+    </div>
+    <div class='form-actions'>
+      <div class="links pull-right">
+        <%= link_to edit_manage_customer_viewable_attribute_path, class: 'btn btn-default' do %>
+          <i class='fa fa-times'></i> Cancel
+        <% end %>
+        <button class="btn btn-primary" name='save'>
+          <i class='fa fa-check'></i> Update
+        </button>
+      </div>
+    </div>
+  <% end %>
+</div>

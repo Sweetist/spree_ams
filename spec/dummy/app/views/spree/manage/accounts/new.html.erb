@@ -1,0 +1,85 @@
+<%= content_for :head_title do %>
+  Account
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Customer Accounts", manage_accounts_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <span class="font-blue-madison bold uppercase">New Customer</li>
+    </li>
+  </ul>
+
+<% end %>
+<div class='row'>
+  <div class="portlet light">
+    <div class="portlet-title tabbable-line">
+      <div class="btn-group hidden-md hidden-lg pull-left" style = "width:100%">
+        <button type="button" class="btn green dropdown-toggle dropdown-btn-text" data-toggle="dropdown" style = "width:100%">
+          <label>General</label>&nbsp;
+          <i class="fa fa-angle-down"></i>
+        </button>
+        <ul class="dropdown-menu pull-left" style="width:100%" role="menu">
+          <li class="tab-link">
+            <a href="#general" data-toggle="tab" aria-expanded="<%= params[:promotion].blank? %>">General</a>
+          </li>
+          <li class="tab-link">
+            <a href="#delivery_and_address" data-toggle="tab" aria-expanded="<%= params[:promotion].blank? %>">Delivery & Addresses</a>
+          </li>
+        </ul>
+      </div>
+      <!-- START TABS-->
+      <ul class="nav nav-tabs hidden-xs hidden-sm pull-left">
+        <li class="long-tabs-link active <%= 'active' if params[:promotion].blank? && params[:contacts].blank? && params[:shipping].blank? %>">
+          <a href="#general" data-toggle="tab" aria-expanded="<%= params[:promotion].blank? %>">General</a>
+        </li>
+        <li class="long-tabs-link  <%= 'active' if params[:promotion].blank? && params[:contacts].blank? && params[:shipping].present? %>">
+          <a href="#delivery_and_address" data-toggle="tab" aria-expanded="<%= params[:promotion].blank? %>">Delivery & Addresses</a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="portlet-body">
+        <!-- BEGIN FORM-->
+      <%= form_for @account, url: manage_accounts_path, html: {class: "horizontal-form form", id: 'account-form'} do |f| %>
+
+        <div class="tab-content">
+          <div class='tab-pane active' id='general'>
+            <%= render partial: "account_form", locals: {f: f} %>
+          </div>
+          <div class='tab-pane' id='delivery_and_address'>
+            <%= render partial: 'spree/manage/accounts/form/addresses', locals: {f: f} %>
+            <% if current_vendor.selectable_delivery %>
+              <%= render partial: 'shipping_group', locals: {f: f, edit: true} %>
+            <% end %>
+          </div>
+        </div>
+        <div class="form-actions right">
+          <%= link_to manage_accounts_path, class: "btn btn-default" do %>
+            <i class='fa fa-times'></i> <%= Spree.t(:Cancel) %>
+          <% end %>
+          <button class="btn btn-primary"><i class="fa fa-check"></i>Save</button>
+        </div>
+      <% end %>
+      <!-- END FORM-->
+    </div>
+  </div>
+</div>
+
+<script type='text/javascript'>
+  $('form').submit(function(e){
+    var subAccount = $('#make-sub-account')[0];
+    if((subAccount != undefined) && subAccount.checked && $("#account_parent_id").select2("val") === ""){
+      e.preventDefault();
+      $('#account-parent-id-container').addClass('has-error');
+      alert("You must select a parent account to create a sub-account");
+    }
+  });
+</script>

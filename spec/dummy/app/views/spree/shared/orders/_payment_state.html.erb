@@ -1,0 +1,39 @@
+<% if params[:controller].include?('manage') || @order.vendor.cust_can_view?('order', 'payment_state') %>
+  <div id='order-payment-state'>
+    <div class="row static-info">
+      <div class="col-md-5 name"> Payment Status: </div>
+      <div class="col-md-7 value">
+        <% status = @order.payment_status(params[:controller].include?('manage')) %>
+        <label class="btn btn-sm circle payment_status <%= status %>">
+          <%= Spree.t(status, scope: :payment_statuses, default: [:missing, '']).to_s.titleize %>
+        </label>
+        <% if params[:controller].include?('manage') \
+          && current_spree_user.can_write?('payments', 'order') \
+          && States[@order.state] > States['cart'] %>
+          <% if @order.payments.completed.count == 1 && @order.payments.completed.first.editable_on_order_page? %>
+            <% acpay = @order.payments.completed.first.account_payment %>
+            <% if acpay %>
+              <%= link_to fire_manage_account_payment_path(acpay, e: 'void'),
+                class: 'btn btn-sm btn-outline red disable-after-click', method: :put do %>
+                <i class='fa fa-undo'></i> <%= Spree.t('payment_actions.mark.void') %>
+              <% end %>
+            <% end %>
+          <% elsif %w[balance_due failed].include?(@order.payment_state) %>
+            <% if current_company.can_mark_paid? %>
+              <%= link_to mark_paid_manage_order_path(@order), class: 'btn btn-sm btn-outline green disable-after-click',
+                id: 'mark-paid-btn', method: :post, remote: true do %>
+                <i class='fa fa-check'></i> <%= Spree.t('payment_actions.mark.paid') %>
+              <% end %>
+            <% else %>
+              <%= link_to '#payment', data: { toggle: 'modal', target:'#payment-modal', 'order-id' => @order.id},
+                class: "btn btn-sm btn-outline green mark-paid-visible new-payment-btn #{'disabled' unless @order.line_items.present?}",
+                id: 'mark-paid-btn', style: 'display:inline-block;' do %>
+                <i class='fa fa-check'></i> <%= Spree.t('payment_actions.mark.paid') %>
+              <% end %>
+            <% end %>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>

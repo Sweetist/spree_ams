@@ -1,0 +1,88 @@
+<div class='row'>
+  <div class="col-md-6">
+    <div class="form-group">
+      <%= f.label :name, class: "control-label" do %>
+        <%= Spree.t(:name) %> <span class='required'>*</span>
+      <% end %>
+      <%= f.text_field :name, class: "form-control" %>
+    </div>
+    <div class="form-group">
+      <%= f.label :display_name, class: "control-label" do %>
+        <%= Spree.t(:display_name, scope: [:manage]) %>
+      <% end %>
+      <%= f.text_field :display_name, class: "form-control" %>
+    </div>
+    <div class="form-group">
+      <%= f.label :available_on, class: "control-label" do %>
+        <%= Spree.t(:available_on) %> <span class='required'>*</span>
+      <% end %>
+      <input type="text" name="product[available_on]"
+        value="<%= display_vendor_date_format(@product.available_on, @product.vendor.date_format) unless @product.available_on.blank? %>"
+        class="form-control date-picker" data-date-format="<%= @product.vendor.date_format %>" id="available_on">
+    </div>
+  </div>
+  <div class='col-md-6'>
+    <div class="form-group">
+      <%= f.label :shipping_category_id, class: "control-label" do %>
+        <%= Spree.t(:shipping_category) %> <span class='required'>*</span>
+      <% end %>
+      <%= f.collection_select(:shipping_category_id, @vendor.shipping_categories, :id, :name, {}, {class: "form-control"}) %>
+    </div>
+    <div class="form-group">
+      <%= f.label :tax_category_id, class: "control-label" do %>
+        <%= Spree.t(:tax_category) %> <span class='required'>*</span>
+      <% end %>
+      <%= f.collection_select(:tax_category_id, @vendor.tax_categories, :id, :name, {}, {class:"form-control"}) %>
+    </div>
+    <div class="form-group">
+      <%= f.label :taxon_ids, "Categories", class: 'control-label' %>
+      <%= f.collection_select :taxon_ids, @vendor.taxons.where.not(parent_id: nil).order('name ASC'), :id, :pretty_name, {include_blank: true}, {selected: @product.taxon_ids, multiple: true, name: 'product[taxon_ids][]', class: 'form-control select2 select2-multiple select2-hidden-accessible'} %>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="form-group">
+      <%= f.label :description, class: "control-label" %>
+      <%= f.text_area :description, rows: 9, class: 'form-control' %>
+    </div>
+  </div>
+</div>
+
+
+
+<script type='text/javascript'>
+  $('#add-option-type-btn').click(function(e){
+    e.preventDefault();
+    var $lastOptionTypeContainer = $('.form-group', '#option-types-container').last();
+    var nextIdx = 0;
+    var maxOptTypeIdx = <%= Sweet::Application.config.x.max_option_types %> - 1;
+    if ($lastOptionTypeContainer.length){
+      nextIdx = parseInt($lastOptionTypeContainer.data('index') + 1);
+    }
+
+    switch (nextIdx) {
+      case 0:
+        $('#option-types-container').append("<%= j(render(partial: 'option_type_select.html.erb', locals: {idx: 0, product_option_type: nil})) %>");
+        break;
+      case 1:
+        $('#option-types-container').append("<%= j(render(partial: 'option_type_select.html.erb', locals: {idx: 1, product_option_type: nil})) %>");
+        break;
+      case 2:
+        $('#option-types-container').append("<%= j(render(partial: 'option_type_select.html.erb', locals: {idx: 2, product_option_type: nil})) %>");
+        break;
+      case 3:
+        $('#option-types-container').append("<%= j(render(partial: 'option_type_select.html.erb', locals: {idx: 3, product_option_type: nil})) %>");
+        break;
+      case 4:
+        $('#option-types-container').append("<%= j(render(partial: 'option_type_select.html.erb', locals: {idx: 4, product_option_type: nil})) %>");
+        break;
+      default:
+        $('#add-option-type-btn').replaceWith("<span class='help-block-italic'>Max number of option types reached</span>");
+        break;
+    }
+    if (nextIdx >= maxOptTypeIdx){
+      $('#add-option-type-btn').replaceWith("<span class='help-block-italic'>Max number of option types reached</span>");
+    }
+
+  });
+</script>

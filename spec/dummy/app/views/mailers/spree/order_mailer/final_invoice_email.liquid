@@ -1,0 +1,20 @@
+---
+subject: 'Your order has been finalized ({{order.number}})'                   # REQUIRED
+from: ''   # optional
+cc: ''     # optional
+bcc: ''     # optional
+---
+<p>
+  Dear {{order.customer.name}},
+</p>
+<p>
+    Your order has been finalized. Please see the details below.
+  <br>
+  Click <a href="{{invoice.url}}">here</a> to view additional details.
+</p>
+{% include 'invoice_mailer_summary_partial' %}
+<p>
+  Thank you for your business!<br><br>
+  Sincerely,<br>
+  {{my_company.name}}
+</p>

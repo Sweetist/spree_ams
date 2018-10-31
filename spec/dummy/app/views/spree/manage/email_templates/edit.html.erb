@@ -1,0 +1,74 @@
+<%= content_for :head_title do %>
+  Outgoing Communication Template
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li><li>
+      <%= link_to "Outgoing Communications", edit_manage_outgoing_communications_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= @email_template.slug.to_s.underscore.humanize %>
+    </li>
+  </ul>
+  <div class="page-toolbar">
+    <div class="btn-group pull-right">
+
+    </div>
+  </div>
+<% end %>
+<div class="row">
+  <%#= link_to "‹ Return to Outgoing Communications", edit_manage_outgoing_communications_path %>
+  <div class="portlet light ">
+    <div class="portlet-title">
+      <div class="caption caption-md">
+        <span class="caption-subject font-blue-madison bold uppercase"><%= @email_template.slug.underscore.humanize %> Template</span>
+      </div>
+    </div>
+    <div class="portlet-body">
+
+      <%= form_for [:manage, @email_template], url: email_template_form_url(@email_template), html: {class: 'form'} do |f| %>
+        <div class='form-body'>
+          <%= render partial: 'form', locals: {f: f, edit: true, email_template: @email_template } %>
+        </div>
+        <div class="form-actions right">
+          <%= link_to "Cancel", edit_manage_outgoing_communications_path, {class: "btn btn-default pull-left"} %>
+          <%= link_to "Restore Original Template", manage_email_template_restore_template_path(@email_template), {method: :post, class: "btn btn-default pull-left margin-left-5"} %>
+          <%= link_to '#mailer-modal',
+            {data:{toggle: 'modal', id: @email_template.id, target:'#mailer-modal', mailer: @email_template.slug },
+            class: "mailer-preview btn btn-default"} do %>
+            <i class='fa fa-search'></i> Preview
+          <% end %>
+          <%= f.submit "Save and Continue Editing", class: 'btn btn-primary' %>
+          <%= f.submit Spree.t(:save), class: 'btn btn-primary' %>
+        </div>
+      <% end %>
+    </div>
+  </div><!-- /.portlet-body -->
+</div>
+
+<%= render partial: 'mailer_modal' %>
+
+<script type="text/javascript">
+  (function($) {
+    $(document).ready(function() {
+      $('.mailer-preview').click(function(){
+        var mailer_id = $(this).data('id');
+        // get latest body text to pass into preview
+        var body = CKEDITOR.instances.email_template_body.getData();
+        var subject = $('#email_template_subject')[0].value;
+        $.ajax({
+          dataType: 'script',
+          url: '/manage/email_templates/'+ mailer_id + '/preview_mailer.js',
+          type: 'get',
+          data: {body: body, subject: subject}
+        });
+      })
+    })
+  })(jQuery);
+
+</script>

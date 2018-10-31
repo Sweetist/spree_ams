@@ -1,0 +1,37 @@
+<tbody id='promotions-list'>
+  <% if @promotions.present? %>
+    <% @promotions.each do |promo| %>
+      <%# next unless promo.accounts.blank? || promo.account_ids.include?(@account.id)%>
+      <%# next unless params[:promotion].blank? || params[:promotion][:product_id].blank? || promo.products.blank? || promo.product_ids.include?(params[:product_id].to_i)%>
+      <tr class="promo_<%= promo.id %>">
+        <td><%= link_to promo.name, edit_manage_promotion_path(promo.id) %></td>
+        <td><%= link_to(promo.promotion_category.name, edit_manage_promotion_path(promo.id)) unless promo.promotion_category.nil? %></td>
+        <td><%= link_to promo.account_fully_qualified_name, edit_manage_promotion_path(promo.id) %></td>
+        <td><%= link_to promo.product_name, edit_manage_promotion_path(promo.id) %></td>
+        <td>
+          <%= link_to edit_manage_promotion_path(promo.id) do %>
+            <%= promo.price_type_shown %>
+          <% end %>
+        </td>
+        <td>
+          <%= link_to edit_manage_promotion_path(promo.id) do %>
+            <%= promo.action_type %>
+          <% end %>
+        </td>
+        <td>
+          <% if promo.active? %>
+            <%= link_to edit_manage_promotion_path(promo.id) do %>
+              <i class="fa fa-check"></i>
+            <% end %>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  <% else %>
+  <tr>
+    <td colspan='100%'>
+      There aren't any pricing adjustments that apply to this account.
+    </td>
+  </tr>
+  <% end %>
+</tbody>

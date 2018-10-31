@@ -1,0 +1,215 @@
+<div class="row">
+  <div class="col-sm-6">
+    <div class="form-group">
+      <%= f.label :category, 'Select Products', class: "control-label" %>
+      <%= render partial: 'spree/manage/price_lists/form/category_select' %>
+    </div>
+  </div>
+  <div class='col-sm-6 hidden' id='variants-select-container'>
+    <div class="form-group">
+      <%= f.label :variants, 'Products / Variants', class: 'control-label' %>
+      <div class="input-group mb-3">
+        <%= f.collection_select :variants, current_company.variants_for_sale.order(:fully_qualified_name),
+          :id, :full_context, {},
+          { class: 'form-control select2-multiple select2-hidden-accessible',
+            id: 'price-list-variants-select' } %>
+        <div class="input-group-btn">
+          <button class='btn green-jungle' type='button' id='add-variant-btn'>
+            <i class='fa fa-plus'></i>
+            Add
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class='row'>
+  <div class='col-xs-12'>
+    <div class="table-scrollable">
+      <table class="table table-hover" id='variants'>
+        <thead>
+          <th class='remove-variant'>
+            <!-- placeholder for delete buttons -->
+          </th>
+          <th>
+            Product / Variant
+          </th>
+          <th>
+            SKU
+          </th>
+          <th>
+            Cost Price
+          </th>
+          <th>
+            Sales Price
+          </th>
+          <th>
+            Adjusted Price
+          </th>
+        </thead>
+        <%= render partial: 'spree/manage/price_lists/form/loading_variants' %>
+        <% if %w[new create update clone].include? params[:action] %>
+          <%= render partial: 'spree/manage/price_lists/form/variants_by_category_table_body',
+            locals: { price_list_variants: @price_list.price_list_variants,
+                      variants: [],
+                      category: @price_list.select_variants_by,
+                      currency: current_company.currency } %>
+        <% end %>
+        <%# if params[:action] == 'new' %>
+          <!-- <tbody id='variants_by_individual' data-next-row='0'></tbody> -->
+        <%# end %>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script type='text/javascript'>
+  var loadPriceListVariants = function(selectBy){
+    var tbodyId = 'variants_by_' + String(selectBy);
+    $('tbody', 'table#variants').each(function(){
+      $(this).addClass('hidden');
+      $(this).removeClass('active');
+    });
+    if($('tbody#' + tbodyId).length){
+      $('tbody#' + tbodyId).removeClass('hidden');
+      $('tbody#' + tbodyId).addClass('active');
+      $('#loading-variants').addClass('hidden');
+    }else{
+      // ajax load
+      $('#loading-variants').removeClass('hidden');
+      $.ajax({
+        url: '/manage/price_lists/variants_by_category.js',
+        method: 'GET',
+        data: {
+          category_id: selectBy,
+          price_list_id: '<%= @price_list.try(:id) %>'
+        },
+        dataType: 'script'
+      })
+    }
+  }
+
+  var toggleVariantSelects = function(){
+    var selectBy = $('#select-variants-by').val();
+
+    if(selectBy === 'individual'){
+      $('#variants-select-container').removeClass('hidden');
+      $('.remove-variant', '#variants').show();
+    }else{
+      $('#variants-select-container').addClass('hidden');
+      $('.remove-variant', '#variants').hide();
+    }
+
+    loadPriceListVariants(selectBy);
+  }
+
+  var addVariantToPriceList = function(variantId){
+    if(variantId === ''){
+      $('#add-variant-btn').removeProp('disabled');
+      return;
+    }
+    var rowIdx = parseInt($('.variant-row', '#variants_by_individual').last().data('idx'));
+    var idx = parseInt($('#variants_by_individual').data('next-row'));
+    if(isNaN(rowIdx)){
+      rowIdx = 0;
+    }else{
+      rowIdx = rowIdx + 1;
+    }
+    if(rowIdx > idx){
+      idx = rowIdx;
+      $('#variants_by_individual').data('next-row', rowIdx);
+    }
+    $.ajax({
+      url: '/manage/price_lists/add_variant.js',
+      method: 'GET',
+      data: {
+        variant_id: variantId,
+        idx: idx
+      },
+      dataType: 'script'
+    });
+  }
+
+  var toggleAdjustmentOptions = function(){
+    var adjustmentMethod = $('#price_list_adjustment_method').val();
+    if(adjustmentMethod === 'custom'){
+      $('.hide_for_custom_adjustment').hide();
+    }else{
+      $('.hide_for_custom_adjustment').show();
+    }
+    if(adjustmentMethod === 'percent'){
+      $('label[for="price_list_adjustment_value"]').text("<%= Spree.t('price_list.adjustment_value.percent') %>");
+      $('.flat_or_percent.currency-label').hide();
+    }else{
+      $('.flat_or_percent.currency-label').show();
+    }
+    if(adjustmentMethod === 'flat'){
+      $('label[for="price_list_adjustment_value"]').text("<%= Spree.t('price_list.adjustment_value.flat') %>");
+      $('#price_list_adjustment_value').addClass('price-field');
+      $('.flat_or_percent.percent-label').hide();
+    }else{
+      $('.flat_or_percent.percent-label').show();
+      $('#price_list_adjustment_value').removeClass('price-field');
+    }
+  }
+
+  var applyFlatAdjustment = function(base, adjustmentOperator, adjustmentValue, row){
+    var newPrice = base + (adjustmentOperator * adjustmentValue);
+    $(row).find('.price-field').val(Math.max(newPrice, 0).toFixed(2));
+  }
+
+  var applyPercentAdjustment = function(base, adjustmentOperator, adjustmentValue, row){
+    var newPrice = base + ((base * adjustmentOperator * adjustmentValue) / 100.0);
+    $(row).find('.price-field').val(Math.max(newPrice, 0).toFixed(2));
+  }
+
+  var applyPricingAdjustment = function(){
+    var adjustmentMethod = $('#price_list_adjustment_method').val();
+    var adjustmentOperator = parseInt($('#price_list_adjustment_operator').val());
+    var adjustmentValue = parseFloat($('#price_list_adjustment_value').val());
+
+    if(isNaN(adjustmentValue)){
+      if(adjustmentMethod === 'flat'){
+        alert('Please enter an ammount to apply.');
+      }else{
+        alert('Please enter a percentage to apply.');
+      }
+      return;
+    }
+
+    $('tr.variant-row', '#variants tbody.active').each(function(){
+      var base = parseFloat($(this).find('span.price').text());
+      if(adjustmentMethod === 'flat'){
+        applyFlatAdjustment(base, adjustmentOperator, adjustmentValue, this)
+      }else{
+        applyPercentAdjustment(base, adjustmentOperator, adjustmentValue, this)
+      }
+    });
+  }
+
+  $(document).on('click', '.remove-variant', function(e){
+    e.preventDefault();
+    var $tr = $(this).closest('tr');
+    var idx = $tr.data('idx');
+    $('input[name="price_list[price_list_variants_attributes][' + idx + '][_destroy]"]', '#variants_by_individual').val('true');
+    $tr.hide();
+  });
+
+  $('#apply-adjustment').click(function(e){
+    e.preventDefault();
+    applyPricingAdjustment();
+  })
+
+  $('#select-variants-by').change(toggleVariantSelects);
+  $('#price_list_adjustment_method').change(toggleAdjustmentOptions);
+  $('#add-variant-btn').click(function(e){
+    e.preventDefault();
+    $(this).prop('disabled', 'disabled');
+    addVariantToPriceList($('#price-list-variants-select').val());
+  });
+  $(document).ready(function(){
+    toggleVariantSelects();
+    toggleAdjustmentOptions();
+  });
+</script>

@@ -1,0 +1,58 @@
+<% variant = f.object %>
+<div class="table-scrollable">
+  <table class="table table-hover" data-paging='false'>
+    <thead>
+      <tr>
+        <th>Location</th>
+        <th><%= Spree.t(:min_stock_level) %></th>
+        <th>On Hand</th>
+        <th>Available</th>
+        <th>Committed</th>
+        <th class='no-sort'>Backorderable</th>
+      </tr>
+    </thead>
+    <tbody>
+      <%= f.fields_for :stock_items, f.object.stock_items.joins(:stock_location).where('spree_stock_locations.active = ?', true).order('spree_stock_locations.name ASC') do |ff| %>
+        <tr>
+          <td>
+            <%= ff.object.stock_location.try(:name) %>
+          </td>
+          <td>
+            <%= ff.number_field :min_stock_level, step_size: 'any', class: 'form-control' %>
+          </td>
+          <td>
+            <%= ff.object.on_hand %>
+          </td>
+          <td>
+            <%= ff.object.available %>
+          </td>
+          <td>
+            <%= ff.object.committed %>
+          </td>
+          <td>
+            <%= ff.check_box :backorderable, class: 'make-switch', 'data-size'=>'mini' %>
+            <%= ff.hidden_field :id %>
+            <% if ff.object.variant.should_track_lots? %>
+              <button type="button" name='<%=ff.object.id%>' class="lot_info btn btn-xs btn-info" data-toggle="modal" data-target="#lot_modal">View Lot(s)</button>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+      <tr>
+        <% total_committed = variant.total_committed %>
+        <% total_available = variant.total_available %>
+        <% total_on_hand = [total_available + total_committed, 0].max %>
+        <td><strong>Total</strong></td>
+        <td></td>
+        <td><strong><%= total_on_hand %></strong></td>
+        <td><strong><%= total_available %></strong></td>
+        <td><strong><%= total_committed %></strong></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<% if @vendor.lot_tracking %>
+    <%= render partial: '/spree/manage/products/lot_info_modal' %>
+<% end %>

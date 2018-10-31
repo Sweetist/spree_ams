@@ -1,0 +1,22 @@
+<%= content_for :head_title do %>
+  New City
+<% end %>
+
+<%= content_for :page_title do %>
+  New City
+<% end %>
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+		<li>
+      <%= link_to "Zones", manage_zones_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      New City
+    </li>
+  </ul>
+<% end %>

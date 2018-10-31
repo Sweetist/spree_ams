@@ -1,0 +1,42 @@
+<div class="portlet box blue-hoki" id='search'>
+  <div class="portlet-title">
+      <div class='col-xs-12 col-sm-6 col-lg-4'>
+        <%= f.text_field :fully_qualified_name_cont, class: 'form-control', placeholder: 'Enter search term' %>
+        <div class="visible-xs-block" style="min-height:10px;"></div>
+      </div>
+      <div class="col-xs-8 col-sm-4" id="basic-search-buttons">
+        <button type="submit" class="btn green"><i class="fa fa-search" aria-hidden="true"></i> Search</button>
+        <%= link_to manage_chart_accounts_path, class: "btn default" do %>
+          <i class='fa fa-times'></i> Reset
+        <% end %>
+      </div>
+    <div class="tools">
+      <a href="javascript:;" id='toggle-advanced-search'>Advanced <i class="fa fa-angle-down"></i></a>
+    </div>
+  </div>
+  <div class="portlet-body form hidden" id='advanced-search-form'>
+    <div class="form-body">
+      <div class='row'>
+        <div class='col-md-4'>
+          <div class='form-group' data-open="<%= params[:q] && !params[:q].fetch(:chart_account_category_id_eq, nil).blank? %>">
+            <%= f.label :chart_account_category_id_eq, 'Category' %>
+            <%= f.collection_select :chart_account_category_id_eq, Spree::ChartAccountCategory.all, :id, :name, {include_blank: true}, {class: 'form-control'} %>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="form-actions">
+      <div class="row">
+        <div class="col-md-12">
+          <div class='btn-set pull-right'>
+            <button type="submit" class="btn green"><i class="fa fa-search" aria-hidden="true"></i> Search</button>
+            <%= link_to manage_chart_accounts_path, class: "btn default" do %>
+              <i class='fa fa-times'></i> Reset
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

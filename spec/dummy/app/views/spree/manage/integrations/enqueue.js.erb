@@ -1,0 +1,9 @@
+<% if flash[:error] %>
+  $('#alert').append("<div class='alert alert-danger alert-auto-dissapear'><button type='button' class='close' data-dismiss='alert' aria-hidden='true'></button><%= flash[:error] %></div>");
+  setTimeout(function() {
+    $(".alert-auto-dissapear").fadeOut(1500);
+  },2000);
+<% else %>
+  $("#action-status-<%= @integration_action.try(:id) %>").replaceWith("<div class='label label-<%= @integration_action.status_color %>' id='action-status-<%= @integration_action.id %>'><%= @integration_action.status_text %></div>");
+  $("#action-restart-<%= @integration_action.try(:id) %>").remove();
+<% end %>

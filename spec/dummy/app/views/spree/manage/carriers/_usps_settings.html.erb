@@ -1,0 +1,23 @@
+<h4 class='form-section'>USPS Settings</h4>
+<div class='row'>
+  <div class='col-md-6'>
+    <div class='col-md-12'>
+      <div class="form-group">
+        <%= f.label :usps_login, Spree.t('active_shipping.usps_login'), class: "control-label" %><br>
+        <%= f.text_field :usps_login, class: 'form-control' %>
+      </div>
+    </div>
+    <div class='col-md-12'>
+      <div class="form-group">
+        <%= f.label :usps_commercial_base, Spree.t('active_shipping.usps_commercial_base'), class: "control-label" %><br>
+        <%= f.check_box :usps_commercial_base, class: 'make-switch', 'data-size' => 'mini' %>
+      </div>
+    </div>
+    <div class='col-md-12'>
+      <div class="form-group">
+        <%= f.label :usps_commercial_plus, Spree.t('active_shipping.usps_commercial_plus'), class: "control-label" %><br>
+        <%= f.check_box :usps_commercial_plus, class: 'make-switch', 'data-size' => 'mini' %>
+      </div>
+    </div>
+  </div>
+</div>

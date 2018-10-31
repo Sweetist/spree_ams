@@ -1,0 +1,107 @@
+<% url = variant.is_master ? manage_product_path(variant.product) : manage_product_variant_path(variant.product, variant) %>
+<% track_lots = variant.should_track_lots? %>
+<% @user_edit_line_item = current_spree_user.permissions.fetch('order',{}).fetch('edit_line_item') %>
+<tr id="line_item_<%= @line_item.id %>" data-formlineid="<%= item_form_idx %>"
+  class="line-item-row <%= 'lot-tracked' if track_lots %>">
+  <td>
+    <div class="cel">
+      <%= link_to raw("<i class='fa fa-times'></i>"), {format: :js, action: :unpopulate, order_id: @order.id, line_item_id: @line_item.id, item_form_idx: item_form_idx},
+        class: 'btn btn-xs red delete-input-row-btn close-button', id: "delete-item-button-#{@line_item.id}", remote: true %>
+    </div>
+  </td>
+  <td>
+    <%= link_to @line_item.item_name.to_s, 'void:javascript();', class: 'edit-link inline' %>
+    <div class='edit-field hidden'>
+      <input type='textarea' name='order[line_items_attributes][<%= item_form_idx %>][item_name]'
+        value='<%= @line_item.item_name %>' class='form-control line-item-area'
+        id="order_line_items_attributes_<%= item_form_idx %>_lot_number">
+    </div>
+  </td>
+  <td>
+    <%= link_to variant.sku.to_s, url %>
+  </td>
+    <% if track_lots %>
+        <%= render partial: 'spree/manage/purchase_orders/line_item_lots', locals: {line_item: @line_item, url: url} %>
+    <% else %>
+      <td>
+        <%= link_to 'void:javascript();', class: 'edit-link inline' do %>
+          <i class='fa fa-pencil'></i>
+        <% end %>
+        <div class='edit-field hidden'>
+          <input type='text' name='order[line_items_attributes][<%= item_form_idx %>][lot_number]'
+            value='<%= @line_item.lot_number %>' class='form-control line-item-area'
+            id="order_line_items_attributes_<%= item_form_idx %>_lot_number">
+        </div>
+      </td>
+    <% end %>
+  <td>
+    <%= link_to variant.pack_size.to_s, url %>
+  </td>
+  <% if @order.customer.try(:po_include_unit_weight) %>
+    <td>
+      <%= link_to variant.display_weight, url, class: 'nowrap' %>
+    </td>
+  <% end %>
+  <td class='price-input'>
+      <% displayed_price = @line_item.price %>
+      <%= link_to display_sweet_price(displayed_price, @line_item.currency), 'void:javascript();', class: 'edit-link inline' %>
+      <div class='edit-field hidden'>
+        <label class="currency-label"><%= currency_symbol(@order.currency) %></label>
+        <input value="<%= number_with_precision(displayed_price, precision: 2)%>" class="form-control price-field" tabindex="1" step="0.01" type="number" name="order[line_items_attributes][<%= item_form_idx %>][price]" id="order_line_items_attributes_<%= item_form_idx %>_price">
+      </div>
+  </td>
+  <td>
+    <% if @order.complete? %>
+      <%= link_to @line_item.ordered_qty, 'void:javascript();', class: 'edit-link inline' %>
+      <div class='edit-field hidden'>
+        <input min="0" class="form-control line-item-qty" tabindex="1"
+          data-id="<%= item_form_idx %>" data-line-id="<%= @line_item.id %>"
+          type="number" value="<%= @line_item.ordered_qty %>" step="any"
+          name="order[line_items_attributes][<%= item_form_idx %>][ordered_qty]"
+          id="order_line_items_attributes_<%= item_form_idx %>_ordered_quantity">
+      </div>
+    <% else %>
+      <% if variant.should_track_lots? %>
+        <%= link_to '#lot', data: {toggle: 'modal', target: '#lot_selection_modal', 'order-id' => "#{@order.id}"}, name: "#{@line_item.id}", class: 'lot_qty_btn edit-link edit-link-to-modal inline' do %>
+          <span class='line-item-qty received-qty'><%= @line_item.quantity %></span>
+        <% end %>
+      <% else %>
+        <%= link_to @line_item.quantity, 'void:javascript();', class: 'edit-link inline' %>
+        <div class='edit-field hidden'>
+          <input min="0" class="form-control line-item-qty" tabindex="1"
+            data-id="<%= item_form_idx %>" data-line-id="<%= @line_item.id %>"
+            type="number" value="<%= @line_item.quantity %>" step="any"
+            name="order[line_items_attributes][<%= item_form_idx %>][quantity]"
+            id="order_line_items_attributes_<%= item_form_idx %>_quantity">
+        </div>
+      <% end %>
+    <% end %>
+  </td>
+  <% if @order.complete? %>
+    <td>
+      <% if variant.should_track_lots? %>
+        <%= link_to '#lot', data: {toggle: 'modal', target: '#lot_selection_modal', 'order-id' => "#{@order.id}"}, name: "#{@line_item.id}", class: 'lot_qty_btn edit-link edit-link-to-modal inline' do %>
+          <span class='line-item-qty received-qty'><%= @line_item.quantity %></span>
+        <% end %>
+      <% else %>
+      <%= link_to @line_item.quantity, 'void:javascript();', class: 'edit-link inline' %>
+        <div class='edit-field hidden'>
+          <input min="0" class="form-control line-item-qty" tabindex="1"
+            data-id="<%= item_form_idx %>" data-line-id="<%= @line_item.id %>"
+            type="number" value="<%= @line_item.quantity %>" step="any"
+            name="order[line_items_attributes][<%= item_form_idx %>][quantity]"
+            id="order_line_items_attributes_<%= item_form_idx %>_quantity">
+        </div>
+      <% end %>
+    </td>
+  <% end %>
+  <% if @order.customer.try(:po_include_total_weight) %>
+    <td>
+      <%= link_to @line_item.display_weight.to_s, url, class: 'total-weight nowrap' %>
+    </td>
+  <% end %>
+  <td>
+    <%= link_to display_sweet_price(@line_item.amount, @line_item.currency), url, class: 'line-total' %>
+  </td>
+</tr>
+<input type="hidden" value="<%= @line_item.id %>" name="order[line_items_attributes][<%= item_form_idx %>][id]" id="order_line_items_attributes_<%= item_form_idx %>_id">

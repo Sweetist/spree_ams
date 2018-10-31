@@ -1,0 +1,35 @@
+<h4 class='form-section'>FedEx Settings</h4>
+<div class='row'>
+  <div class='col-md-6'>
+    <div class='col-md-12'>
+      <div class="form-group">
+        <%= f.label :fedex_login, Spree.t('active_shipping.fedex_login'), class: "control-label" %><br>
+        <%= f.text_field :fedex_login, class: 'form-control' %>
+      </div>
+    </div>
+    <div class='col-md-12'>
+      <div class="form-group">
+        <%= f.label :fedex_password, Spree.t('active_shipping.fedex_password'), class: "control-label" %><br>
+        <%= f.text_field :fedex_password, class: 'form-control' %>
+      </div>
+    </div>
+    <div class='col-md-12'>
+      <div class="form-group">
+        <%= f.label :fedex_account, Spree.t('active_shipping.fedex_account'), class: "control-label" %><br>
+        <%= f.text_field :fedex_account, class: 'form-control' %>
+      </div>
+    </div>
+    <div class='col-md-12'>
+      <div class="form-group">
+        <%= f.label :fedex_key, Spree.t('active_shipping.fedex_key'), class: "control-label" %><br>
+        <%= f.text_field :fedex_key, class: 'form-control' %>
+      </div>
+    </div>
+    <div class='col-md-12'>
+      <div class="form-group">
+        <%= f.label :fedex_include_surcharges, Spree.t('active_shipping.fedex_include_surcharges'), class: "control-label" %><br>
+        <%= f.check_box :fedex_include_surcharges, class: 'make-switch', 'data-size' => 'mini' %>
+      </div>
+    </div>
+  </div>
+</div>

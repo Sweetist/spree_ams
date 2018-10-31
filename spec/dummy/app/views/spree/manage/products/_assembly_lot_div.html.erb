@@ -1,0 +1,15 @@
+<div class="assembly_lot_div">
+  <%= label_tag "send_lot", "Send to Stock Location/Lot", {class: "control-label"} %>
+  <select id="send_field" name="build_product[assembly_stock_location]" class="form-control">
+    <option disabled selected value> Select A Lot from a Stock Location </option>
+      <% @vendor.stock_locations.each do |location| %>
+        <optgroup label= <%=location.name%>>
+          <% @product.master.lots.each do |lot| %>
+            <% lot.stock_item_lots.select{|stock_item_lot| stock_item_lot.stock_location == location}.each do |stock_item_lot| %>
+              <option data-total=<%=stock_item_lot.count%> value=<%=stock_item_lot.id%>><%=stock_item_lot.lot.number%></option>
+            <% end %>
+          <% end %>
+        </optgroup>
+      <% end %>
+    </select>
+</div>

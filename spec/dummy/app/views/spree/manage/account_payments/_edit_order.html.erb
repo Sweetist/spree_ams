@@ -1,0 +1,40 @@
+<% payment = edit_order.payments.new() %>
+<%= fields_for 'payments_attributes[]', payment do |ff| %>
+  <tr data-order-id="<%= edit_order.id %>">
+    <td>
+      <%= ff.hidden_field :order_id %>
+      <% if @account_payment.editable? %>
+        <% if edit_order.payments.where(account_payment_id: @account_payment.id).present? && (!edit_order.payments.where(account_payment_id: @account_payment.id).last.void? || @account_payment.void?) %>
+          <input type='checkbox' name='payments_attributes[][check]' class='checkboxes noUniform' checked>
+        <% else %>
+          <input type='checkbox' name='payments_attributes[][check]' class='checkboxes noUniform'>
+        <% end %>
+      <% elsif edit_order.payments.where(account_payment_id: @account_payment.id).present? %>
+        <i class='fa fa-check'></i>
+      <% end %>
+    </td>
+    <td>
+      <%= link_to edit_manage_order_path(edit_order), target: '_blank' do %>
+        <%= edit_order.display_order_and_invoice_number %>
+      <% end %>
+    </td>
+    <td><%= display_vendor_date_format(edit_order.delivery_date, @vendor.date_format) %></td>
+    <td><%= display_vendor_date_format(edit_order.due_date, @vendor.date_format) %></td>
+    <td><%= display_sweet_price(edit_order.total, edit_order.currency) %></td>
+    <td><%= display_sweet_price(edit_order.outstanding_balance, edit_order.currency) %></td>
+    <td>
+      <div class='price-input'>
+        <% if @account_payment.editable? %>
+          <label class="currency-label"><%= currency_symbol(edit_order.currency) %></label>
+          <% if edit_order.payments.where(account_payment_id: @account_payment.id).present? && (!edit_order.payments.where(account_payment_id: @account_payment.id).last.void? || @account_payment.void?) %>
+            <%= ff.number_field :amount, value: display_sweet_price(edit_order.payments.where(account_payment_id: @account_payment.id).last.amount_after_refund, @account_payment.vendor.currency).to_s[1..-1].gsub(/\,/,""), in: 0..edit_order.outstanding_balance, step: '0.01', class: 'form-control price-field payment-amount' %>
+          <% else %>
+            <%= ff.number_field :amount, in: 0..edit_order.outstanding_balance, step: '0.01', class: 'form-control price-field payment-amount' %>
+          <% end %>
+        <% elsif edit_order.payments.where(account_payment_id: @account_payment.id).present? %>
+          <%= display_sweet_price(edit_order.payments.where(account_payment_id: @account_payment.id).last.amount_after_refund, @account_payment.vendor.currency) %>
+        <% end %>
+      </div>
+    </td>
+  </tr>
+<% end %>

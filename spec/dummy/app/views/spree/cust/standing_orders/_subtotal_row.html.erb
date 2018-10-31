@@ -1,0 +1,11 @@
+<% colspan = 5 %>
+<% colspan -= 1 unless current_vendor_view_settings.variant_pack_size %>
+<tr id='subtotals-row'>
+  <td colspan="<%= colspan %>"></td>
+  <td>
+    Category Count: <b><%= @order.standing_line_items.sum(:quantity) %></b>
+  </td>
+  <td>
+    Subtotal: <b><%= display_sweet_price(order_total, @order.currency) %></b>
+  </td>
+</tr>

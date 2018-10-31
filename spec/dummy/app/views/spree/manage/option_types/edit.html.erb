@@ -1,0 +1,26 @@
+<%= content_for :head_title do %>
+  Option Types
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+		<li>
+      <%= link_to "Option Types", manage_option_types_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <span><%= @option_type.presentation %></span>
+    </li>
+  </ul>
+	<div class="page-toolbar">
+    <div class="btn-group pull-right">
+
+    </div>
+  </div>
+<% end %>
+
+<%= render partial: 'spree/manage/option_types/body/edit' %>

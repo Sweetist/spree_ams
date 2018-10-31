@@ -1,0 +1,27 @@
+<div class="portlet-body">
+  <table class="table table-bordered table-advance table-hover">
+    <thead>
+      <tr>
+        <th><i class="fa"></i>First Name</th>
+        <th><i class="fa"></i>Last Name</th>
+        <th><i class="fa"></i>Position</th>
+        <th><i class="fa"></i>Email</th>
+        <th><i class="fa"></i>Phone</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% current_spree_user.company.users.each do |u| %>
+        <% unless u.has_spree_role?("admin") %>
+          <tr>
+            <!-- <td><a href="javascript:;">u.</a></td>-->
+            <td><%= u.firstname %></td>
+            <td><%= u.lastname %></td>
+            <td><%= u.position %></td>
+            <td><%= u.email %></td>
+            <td><%= u.phone %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    <% end %>
+  </table>
+</div>

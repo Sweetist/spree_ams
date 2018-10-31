@@ -1,0 +1,54 @@
+<div class="portlet-body">
+<!--
+
+Add contact button is hiidden because we wanted to create one common route for customers and vendors contacts,
+instead of having create_new_contact_manage_customer_account and create_new_contact_manage_vendor_vendor_account
+
+  <%# if ['show','edit','update','create_new_contact','update_primary_contact','delete_contact'].include? params[:action] %>
+    <%#= link_to "#",  {remote: true, 'data-toggle' =>  "modal", 'data-target' => '#contact_new', class: 'btn btn-primary btn-green pull-right new-contact-btn'} do %>
+       <i class='fa fa-plus'></i>
+      Add Contact
+    <%# end %>
+  <%# end %>
+-->
+
+  <table class="table table-hover" id='basic-table-no-buttons'>
+    <thead>
+      <tr>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Position</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @contacts.each do |contact| %>
+        <% url = manage_account_contact_path(contact) %>
+        <tr>
+          <td><%= link_to contact.first_name.to_s, url %></td>
+          <td><%= link_to contact.last_name.to_s, url %></td>
+          <td><%= link_to contact.position.to_s, url %></td>
+          <td><%= link_to contact.email.to_s, url %></td>
+          <td><%= link_to contact.phone.to_s, url %></td>
+          <% if @account.primary_cust_contact_id == contact.id %>
+            <td>Primary</td>
+          <% else %>
+            <td><%= link_to "Make Primary", update_primary_contact_manage_customer_account_path(id: @account.id, customer_id: @account.customer_id, contact_id: contact.id), method: :patch, remote: true, class: "italics" %></td>
+          <% end %>
+          <td align="right">
+            <% if contact.account_ids.count > 0 && contact.email.present? %>
+              <%= link_to raw("Invite"), invite_email_manage_account_contact_path(contact), class: "btn btn-primary btn-sm", style: 'display:inline-block' %>
+            <% end %>
+            <%= link_to raw("<i class='fa fa-pencil'></i>"), edit_manage_account_contact_path(contact), class: "btn btn-primary btn-sm", style: 'width:32px;display:inline-block' %>
+            <%= link_to delete_contact_manage_customer_account_path(id: @account.id, customer_id: @account.customer_id, contact_id: contact.id), method: :post, remote: true, data: { confirm: 'Are you sure?' }, :class=>'btn btn-sm btn-danger btn-action', style:'width:32px;display:inline-block' do %>
+            <i class="fa fa-trash"></i>
+              <% end %>
+            </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

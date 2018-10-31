@@ -1,0 +1,65 @@
+<%= content_for :head_title do %>
+  Users
+<% end %>
+<%= content_for :page_bar do %>
+  <ul class="breadcrumb">
+    <li>
+      <%= link_to "Home", root_path %>
+    </li>
+    <li>
+      <span>Users</span>
+    </li>
+  </ul>
+<% end %>
+<div class="portlet light ">
+  <% can_edit = current_spree_user.customer_admin %>
+  <div class="portlet-title">
+    <div class="caption caption-md">
+      <i class="icon-globe theme-font hide"></i>
+      <span class="caption-subject font-blue-madison bold uppercase">
+        <%= @company.name %> Users
+      </span>
+    </div>
+    <% if can_edit %>
+      <%= link_to new_my_company_user_path, class: "btn green pull-right", id: "addUser" do %>
+        <i class="fa fa-plus"></i>&nbsp;Add User
+      <% end %>
+    <% end %>
+  </div>
+  <div class="portlet-body">
+    <table class="table table-hover" data-title="<%= @company.name %> Contacts">
+      <thead>
+        <tr>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>Position</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Account</th>
+          <% if can_edit %>
+            <th class="dt-no-settings-visible no-sort"> </th>
+          <% end %>
+        </tr>
+      </thead>
+      <tbody>
+        <% current_spree_user.company.users.each do |u| %>
+          <% unless u.has_spree_role?("admin") %>
+            <tr>
+              <td><%= u.firstname %></td>
+              <td><%= u.lastname %></td>
+              <td><%= u.position %></td>
+              <td><%= u.email %></td>
+              <td><%= u.phone %></td>
+              <td><%= u.display_vendor_account_names %></td>
+              <% if can_edit %>
+                <td>
+                  <%= link_to raw("<i class='fa fa-pencil'></i>"), edit_my_company_user_path(u), class: "btn btn-primary btn-sm", style: 'width:32px;' %>
+                </td>
+              <% end %>
+            </tr>
+          <% end %>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

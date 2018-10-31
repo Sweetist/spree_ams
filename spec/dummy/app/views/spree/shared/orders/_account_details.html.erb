@@ -1,0 +1,108 @@
+<div class="col-md-6 col-sm-12" id='account-details'>
+  <div class="portlet blue-hoki box">
+    <div class="portlet-title">
+      <div class="caption">
+        <i class="fa fa-cogs"></i>Customer Information
+      </div>
+    </div>
+    <div class="portlet-body">
+      <div class="row static-info">
+        <div class="col-md-5 name"> Customer Name: </div>
+        <div class="col-md-7 value">
+          <% if request.fullpath.include?("manage") %>
+            <%= link_to manage_customer_account_path(@order.account.customer, @order.account) do %>
+              <%= @order.account.try(:fully_qualified_name) %>
+            <% end %>
+          <% else %>
+            <%= @order.account.try(:fully_qualified_name) %>
+          <% end %>
+        </div>
+      </div>
+      <div class="row static-info">
+        <div class="col-md-5 name"> Sales channel: </div>
+        <div class="col-md-7 value"> <%= Spree.t(@order.channel) %> </div>
+      </div>
+      <div class="row static-info">
+        <div class="col-md-5 name"> Email: </div>
+        <div class="col-md-7 value order-email"> <%= @order.try(:email) %> </div>
+      </div>
+      <% if request.fullpath.include?("manage") %>
+        <% condition = (@order.account && States[@order.state].between?(States['cart'], States['approved'])) %>
+      <% else %>
+        <% condition = (@order.try(:account) && (@order.nil? || (@order.is_submitable? && !@order.approved?))) %>
+      <% end %>
+      <div class="row static-info">
+        <div class="col-md-5 name">
+          Shipping Address:
+          <% if condition %>
+            <%= link_to '#address-select-modal', class: 'edit-address-link nowrap',
+              data: { toggle: 'modal', addr_type: 'shipping' } do %>
+              <i class='fa fa-pencil'></i> Edit
+            <% end %>
+          <% end %>
+        </div>
+        <div class="col-md-7 value"> <%= @order.try(:ship_address).try(:company) %> </div>
+      </div>
+      <% unless @order.ship_address.try(:address1).blank? %>
+        <div class="row static-info">
+          <div class="col-md-5 name"> </div>
+          <div class="col-md-7 value"> <%= @order.ship_address.address1 %> </div>
+        </div>
+      <% end %>
+      <% unless @order.ship_address.try(:address2).blank? %>
+        <div class="row static-info">
+          <div class="col-md-5 name"> </div>
+          <div class="col-md-7 value"> <%= @order.ship_address.address2 %> </div>
+        </div>
+      <% end %>
+      <div class="row static-info">
+        <div class="col-md-5 name"> </div>
+        <div class="col-md-7 value">
+          <% unless @order.ship_address.blank? %>
+            <%= @order.ship_address.city %><%= "," unless @order.ship_address.city.blank? || @order.ship_address.state.blank? %> <%= @order.ship_address.state.abbr unless @order.ship_address.state.blank? %> <%= @order.ship_address.zipcode %>
+          <% end %>
+        </div>
+      </div>
+      <div class="row static-info">
+        <div class="col-md-5 name">Shipping Phone Number: </div>
+        <div class="col-md-7 value"> <%= @order.try(:ship_address).try(:phone)%> </div>
+      </div>
+      <div class="row static-info">
+        <div class="col-md-5 name">
+          Billing Address:
+          <% if condition %>
+            <% if @order.bill_address.try(:persisted?) %>
+              <%= link_to '#edit-bill-address-modal', class: 'edit-address-link nowrap',
+                data: { toggle: 'modal', addr_type: 'billing' } do %>
+                <i class='fa fa-pencil'></i> Edit
+              <% end %>
+            <% else %>
+              <%= link_to new_bill_address_manage_order_path(@order), remote: true, data: {'data-toggle' =>  "modal", 'data-target' => '#create-bill-address-modal'}, class: '' do %>
+                <i class='fa fa-pencil'></i> Edit
+              <% end %>
+            <% end %>
+          <% end %>
+        </div>
+        <div class="col-md-7 value"> <%= @order.try(:bill_address).try(:address1) %> </div>
+      </div>
+      <% unless @order.bill_address.blank? || @order.bill_address.address2.blank? %>
+        <div class="row static-info">
+          <div class="col-md-5 name"> </div>
+          <div class="col-md-7 value"> <%= @order.bill_address.address2 %> </div>
+        </div>
+      <% end %>
+      <div class="row static-info">
+        <div class="col-md-5 name"> </div>
+        <div class="col-md-7 value">
+          <% unless @order.bill_address.blank? %>
+            <%= @order.bill_address.city %><%= "," unless @order.bill_address.city.blank? || @order.bill_address.state.blank? %> <%= @order.bill_address.state.abbr unless @order.bill_address.state.blank? %> <%= @order.bill_address.zipcode %>
+          <% end %>
+        </div>
+      </div>
+      <div class="row static-info">
+        <div class="col-md-5 name"> Billing Phone Number: </div>
+        <div class="col-md-7 value"> <%= @order.try(:bill_address).try(:phone)%> </div>
+      </div>
+    </div>
+  </div>
+</div>

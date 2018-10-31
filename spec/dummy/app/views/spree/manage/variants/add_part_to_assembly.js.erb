@@ -1,0 +1,3 @@
+$('#sub-parts-table-body-<%= @variant.try(:id) %>').append("<%= j(render(partial: 'spree/manage/variants/part_row.html.erb', locals: {variant: @variant, part_variant: @part_variant, idx: params[:idx], variant_idx: params[:variant_idx]})) %>");
+$('#component-totals').remove();
+sumPartCost();

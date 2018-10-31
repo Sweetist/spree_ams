@@ -1,0 +1,21 @@
+<tbody id='customers_by_<%= customer_type %>' data-next-row='0'>
+  <% idx = 0 %>
+  <% price_list_accounts.each do |price_list_account| %>
+    <% account = price_list_account.account %>
+    <%= render partial: 'spree/manage/price_lists/form/account_row',
+      locals: {account: account, price_list_account: price_list_account, customer_type: customer_type, idx: idx} %>
+    <% idx += 1 %>
+  <% end %>
+  <% accounts.each do |account| %>
+    <%= render partial: 'spree/manage/price_lists/form/account_row',
+      locals: {account: account, price_list_account: nil, customer_type: customer_type, idx: idx} %>
+    <% idx += 1 %>
+  <% end %>
+  <% if price_list_accounts.blank? && accounts.blank? && customer_type != 'individual' %>
+    <tr>
+      <td colspan="100%">
+        There are no active accounts with the selected customer type.
+      </td>
+    </tr>
+  <% end %>
+</tbody>

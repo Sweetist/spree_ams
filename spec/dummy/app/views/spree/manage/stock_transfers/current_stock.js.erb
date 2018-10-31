@@ -1,0 +1,25 @@
+$('#alert').empty();
+
+<% if @source_stock && @source_stock.count_on_hand <= 0 %>
+  if($('.variant-transfer-row').length === 0){
+    $('#stock_transfer_source_location_id').prop('disabled', false);
+    $('#stock_transfer_destination_location_id').prop('disabled', false);
+    $("#is_transfer_false").prop('disabled', false);
+    $("#is_transfer_true").prop('disabled', false);
+  }
+  $('#alert').append("<div class='alert alert-danger'><%= @source_stock.stock_location.name %> does not have any <%= @variant.full_display_name %> on hand, please select a different source or add stock.</div>");
+<% elsif @source_stock.nil? %>
+  variantIdStr = '<%= "#variant_#{@variant.id}" %>';
+  if($(variantIdStr).length > 0){
+    $(variantIdStr).remove();
+  }
+  $('#variant-search-row').before("<%= escape_javascript(render(partial: 'adjustment_row.html.erb')) %>")
+<% else %>
+  variantIdStr = '<%= "#variant_#{@variant.id}" %>';
+  if($(variantIdStr).length > 0){
+    $(variantIdStr).remove();
+  }
+  $('#variant-search-row').before("<%= escape_javascript(render(partial: 'transfer_row.html.erb')) %>")
+<% end %>
+
+lotChangeHandler() //new.html.erb

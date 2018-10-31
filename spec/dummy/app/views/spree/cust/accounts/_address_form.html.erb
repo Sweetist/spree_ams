@@ -1,0 +1,111 @@
+<h3 class="form-section">Billing Contact and Address</h3>
+<div id='bill-address-container'>
+  <%= f.fields_for :billing_addresses, @bill_address do |ba_form| %>
+  <%= render partial: 'spree/shared/forms/address_form', locals: { f: ba_form, type: 'billing' } %>
+  <% end %>
+</div>
+<h3 class="form-section">Shipping Contact and Address</h3>
+<input id="same-as-address" type="checkbox" <%= 'checked' if @bill_address && @bill_address.same_address?(@ship_address) && @bill_address.persisted? && @ship_address.persisted?%>>
+<label for="same-as-address">Same as billing address</label>
+<br><br>
+<div id='ship-address-container' class="<%= 'hidden' if @bill_address && @bill_address.same_address?(@ship_address) && @bill_address.persisted? && @ship_address.persisted? %>">
+  <%= f.fields_for :shipping_addresses, @ship_address do |sa_form| %>
+  <%= render partial: 'spree/shared/forms/address_form', locals: { f: sa_form, type: 'shipping' } %>
+  <% end %>
+</div>
+
+<div class="form-actions">
+  <%= f.submit class: "btn btn-primary"%>
+</div>
+
+
+<script type="text/javascript">
+  $(document).on('ready', function(){
+    $('.country-select').change(function(){
+      $.ajax({
+         url: '/my_company/update_states',
+        type: 'GET',
+        dataType: 'script',
+        data: {
+          address_type: $(this).data('type'),
+          country_id: this.value
+        }
+      });
+    });
+
+    $('#same-as-address').change(function(){
+      if (this.checked === true) {
+        $('#account_shipping_addresses_attributes_0_firstname').val($('#account_billing_addresses_attributes_0_firstname').val());
+        $('#account_shipping_addresses_attributes_0_lastname').val($('#account_billing_addresses_attributes_0_lastname').val());
+        $('#account_shipping_addresses_attributes_0_company').val($('#account_billing_addresses_attributes_0_company').val());
+        $('#account_shipping_addresses_attributes_0_phone').val($('#account_billing_addresses_attributes_0_phone').val());
+        $('#account_shipping_addresses_attributes_0_address1').val($('#account_billing_addresses_attributes_0_address1').val());
+        $('#account_shipping_addresses_attributes_0_address2').val($('#account_billing_addresses_attributes_0_address2').val());
+        $('#account_shipping_addresses_attributes_0_city').val($('#account_billing_addresses_attributes_0_city').val());
+        $('#account_shipping_addresses_attributes_0_zipcode').val($('#account_billing_addresses_attributes_0_zipcode').val());
+        $('#account_shipping_addresses_attributes_0_country_id').val($('#account_billing_addresses_attributes_0_country_id').val());
+        $('#account_shipping_addresses_attributes_0_country_id').trigger('change');
+        $('#available-states-shipping').val($('#available-states-billing').val());
+
+        if(!$('#ship-address-container').hasClass('hidden')){
+          $('#ship-address-container').addClass('hidden')
+        }
+      } else {
+        $('#ship-address-container').removeClass('hidden')
+      }
+    });
+
+
+    $('#account_billing_addresses_attributes_0_firstname').keyup(function(){
+      if($('#same-as-address').is(':checked')){
+        $('#account_shipping_addresses_attributes_0_firstname').val($('#account_billing_addresses_attributes_0_firstname').val());
+      }
+    });
+    $('#account_billing_addresses_attributes_0_lastname').keyup(function(){
+      if($('#same-as-address').is(':checked')){
+        $('#account_shipping_addresses_attributes_0_lastname').val($('#account_billing_addresses_attributes_0_lastname').val());
+      }
+    });
+    $('#account_billing_addresses_attributes_0_company').keyup(function(){
+      if($('#same-as-address').is(':checked')){
+        $('#account_shipping_addresses_attributes_0_company').val($('#account_billing_addresses_attributes_0_company').val());
+      }
+    });
+    $('#account_billing_addresses_attributes_0_phone').keyup(function(){
+      if($('#same-as-address').is(':checked')){
+        $('#account_shipping_addresses_attributes_0_phone').val($('#account_billing_addresses_attributes_0_phone').val());
+      }
+    });
+    $('#account_billing_addresses_attributes_0_address1').keyup(function(){
+      if($('#same-as-address').is(':checked')){
+        $('#account_shipping_addresses_attributes_0_address1').val($('#account_billing_addresses_attributes_0_address1').val());
+      }
+    });
+    $('#account_billing_addresses_attributes_0_address2').keyup(function(){
+      if($('#same-as-address').is(':checked')){
+        $('#account_shipping_addresses_attributes_0_address2').val($('#account_billing_addresses_attributes_0_address2').val());
+      }
+    });
+    $('#account_billing_addresses_attributes_0_city').keyup(function(){
+      if($('#same-as-address').is(':checked')){
+        $('#account_shipping_addresses_attributes_0_city').val($('#account_billing_addresses_attributes_0_city').val());
+      }
+    });
+    $('#account_billing_addresses_attributes_0_zipcode').keyup(function(){
+      if($('#same-as-address').is(':checked')){
+        $('#account_shipping_addresses_attributes_0_zipcode').val($('#account_billing_addresses_attributes_0_zipcode').val());
+      }
+    });
+    $('#account_billing_addresses_attributes_0_country_id').change(function(){
+      if($('#same-as-address').is(':checked')){
+        $('#account_shipping_addresses_attributes_0_country_id').val($('#account_billing_addresses_attributes_0_country_id').val());
+        $('#account_shipping_addresses_attributes_0_country_id').trigger('change');
+      }
+    });
+    $('#available-states-billing').change(function(){
+      if($('#same-as-address').is(':checked')){
+        $('#available-states-shipping').val($('#available-states-billing').val());
+      }
+    });
+  });
+</script>

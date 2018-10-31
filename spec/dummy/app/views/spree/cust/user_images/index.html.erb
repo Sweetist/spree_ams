@@ -1,0 +1,84 @@
+<%= content_for :head_title do %>
+  <%= @user.name %>
+<% end %>
+
+<%= content_for :page_title do %>
+<%= @user.name %>
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="breadcrumb">
+    <li>
+      <%= link_to "Home", root_path %>
+    </li>
+    <li>
+      Images
+    </li>
+  </ul>
+
+  <div class="page-toolbar">
+    <div class="btn-group pull-right">
+      <%= link_to "Back to My Profile",   edit_my_profile_path(@user), class: "btn green" %>
+    </div>
+  </div>
+
+  <div class="clearfix"></div>
+
+<% end %>
+
+<div class="content">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="table-scrollable">
+
+
+        <% unless @user.images.any? %>
+          <div class="alert alert-warning alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
+            <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::Image)) %>.
+          </div>
+        <% else %>
+          <table class="index sortable table table-hover" data-hook="images_table" data-sortable-link="<%= update_positions_my_profile_user_images_url(@user) %>">
+            <thead>
+              <tr data-hook="images_header">
+                <th colspan="2" style:'padding-left:10px;'>
+                  <%= Spree.t(:thumbnail) %>
+                </th>
+                <th>
+                  <%= Spree.t(:alt_text) %>
+                </th>
+                <th class="actions"></th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <% (@user.images).each do |image| %>
+                <tr id="<%= spree_dom_id image %>" data-hook="images_row">
+                  <td class="move-handle text-center">
+                    <% if can? :edit, image %>
+                      <span class="icon icon-move handle"></span>
+                    <% end %>
+                  </td>
+                  <td class="image">
+                    <%= link_to image_tag(image.attachment.url(:mini)), image.attachment.url(:product) %>
+                  </td>
+                  <td><%= image.alt %></td>
+                  <td class="actions">
+                    <!-- temporarily removing until fixed -->
+                    <%#= link_to 'delete', my_profile_user_image_path(@user, image),
+                        method: :delete,
+                        data: { confirm: 'Are you sure?' } %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        <% end %>
+
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<%= link_to "New",  new_my_profile_user_image_path, class: 'btn btn-primary' %>

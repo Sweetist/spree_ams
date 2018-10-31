@@ -1,0 +1,14 @@
+<% if payment_methods.any? %>
+  <div class="row">
+    <%= fields_for :account_payment do |f| %>
+      <div class="col-md-12">
+        <%= render partial: 'form', locals: { f: f, payment_method: payment_method, payment_methods: payment_methods, account: account } %>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <div class="alert alert-info">
+    <%= Spree.t(:cannot_create_payment_without_payment_methods) %>
+    <%= link_to Spree.t(:please_define_payment_methods), spree.manage_payment_methods_url %>
+  </div>
+<% end %>

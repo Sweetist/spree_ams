@@ -1,0 +1,61 @@
+<%= content_for :head_title do %>
+  Option Types
+<% end %>
+
+<%= content_for :page_title do %>
+	<span class="order-id">
+		Product Option Types
+	</span>
+<% end %>
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+		<li>
+      <%= link_to "Option Types", manage_option_types_path %>
+    </li>
+  </ul>
+	<div class="page-toolbar">
+    <div class="btn-group pull-right">
+      <%= link_to new_manage_option_type_path, class: 'btn green-jungle' do %>
+        <i class='fa fa-plus'></i> New Option Type
+      <% end %>
+    </div>
+  </div>
+<% end %>
+  <table class="table table-striped table-hover basic-table-no-buttons">
+    <thead>
+      <tr>
+        <th width='10px' class='no-sort'></th>
+        <th>
+          Option Type
+        </th>
+        <th>
+          Option Values
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @option_types.each do |option_type| %>
+      <tr>
+        <td>
+          <%= link_to manage_option_type_path(option_type), method: :delete, data:{confirm: 'Are you sure?'}, class: 'btn btn-xs red delete-row-btn' do %>
+            <i class='fa fa-times'></i>
+          <% end %>
+        </td>
+        <td><%= link_to option_type.presentation, edit_manage_option_type_url(option_type.id) %></td>
+        <td>
+          <ul class='no-padding'>
+            <% option_type.option_values.each do |value| %>
+              <li>
+                <%= link_to value.presentation, edit_manage_option_type_url(option_type.id) %>
+              </li>
+            <% end %>
+          </ul>
+        </td>
+      </tr>
+      <% end %>
+    </tbody>
+  </table>

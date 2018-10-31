@@ -1,0 +1,20 @@
+<% if @account.nil? %>
+  $('#account-address-info').replaceWith("<section id='account-address-info' class='alert alert-warning alert-dismissable'> <button type='button' class='close' data-dismiss='alert' aria-hidden='true'></button> Could not find account</section>");
+<% else %>
+  <% if !@account.can_select_delivery? %>
+    $('#delivery_date').empty();
+  <% else %>
+    $('#delivery_date').replaceWith("<%= escape_javascript(render(partial: 'delivery_date_fields')) %>");
+  <% end %>
+  <% if @account.vendor.try(:use_po_number) %>
+    $('#po-number-container').show();
+  <% else %>
+    $('#order_po_number').val('');
+    $('#po-number-container').hide();
+  <% end %>
+  <% if @order.nil? %>
+    $('#account-address-info').replaceWith("<%= escape_javascript(render(partial: 'new_order_addresses')) %>");
+  <% else %>
+    $('#account-address-info').replaceWith("<%= escape_javascript(render(partial: 'account_address_fields')) %>");
+  <% end %>
+<% end %>

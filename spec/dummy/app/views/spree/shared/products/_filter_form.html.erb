@@ -1,0 +1,54 @@
+<div class='form-group'>
+  <label for='name'>Name</label>
+  <input type="text" name='filter[name]' value='<%= @name %>' id='name'>
+
+</div>
+<div class='form-group'>
+  <label for='sku_number'>Sku #</label>
+  <input type="text" name='filter[sku]' value='<%= @sku %>' id='sku'>
+</div>
+
+<div class='form-group'>
+  <label for='category'>Category</label>
+  <input type="text" name='filter[category]' value='<%= @category %>' id='name'>
+</div>
+
+<% if current_vendor_view_settings.variant_lead_time %>
+  <div class='form-group'>
+    <label for='lead_time'>Max Lead Time</label>
+    <input type="text" name='filter[lead_time]' value='<%= @lead_time %>' id='name'>
+  </div>
+<% end %>
+
+<!-- <div class="clear"></div> -->
+<div class='form-group'>
+  <label for='price_from'>Price($) From</label>
+  <input type="text" name="filter[price_from]" value="<%= @price_from %>" id='price_from'>
+</div>
+  <div class='form-group'>
+  <label for='price_to'>Price($) To</label>
+  <input type="text" name="filter[price_to]" value="<%= @price_to %>" id='price_to'>
+</div>
+
+<div class='form-group'>
+    <label for='incomplete'>Include Out of Stock</label>
+    <input type='checkbox' name='filter[out_of_stock]' value='<%= @show_out_of_stock %>' <%='checked' if  @show_out_of_stock %>>
+</div>
+
+<% if @current_order && params[:controller].include?('manage')%>
+  <div class='form-group'>
+      <label for='customer_products'>Only products in customer list</label>
+      <input type='checkbox' name='filter[customer_products]' value='<%= @customer_products_only %>' <%='checked' if  @customer_products_only %>>
+  </div>
+<% end %>
+<div class="clear"></div>
+<div class='form-group'>
+  <button id="filter-button">Search</button>
+</div>
+<div class='form-group'>
+  <a href='' id="clear-filter">Reset Form</a>
+</div>
+
+<div class='form-group'>
+  <a href='' id="basic-search">Close</a>
+</div>

@@ -1,0 +1,36 @@
+<tr class='variant-row' data-variant-id='<%= variant.id %>' data-idx='<%= idx %>'>
+  <% url = variant.is_master? ? manage_product_path(variant.product.slug) : manage_product_variant_path(variant.product.slug, variant) %>
+  <% if category == 'individual' %>
+    <td class='remove-variant'>
+      <!-- Add delete button -->
+      <%= link_to 'void:javascript();',
+        class: 'btn btn-xs red delete-row-btn remove-variant' do %>
+        <i class='fa fa-times'></i>
+      <% end %>
+
+      <input type='hidden' class='destroy' name='price_list[price_list_variants_attributes][<%= idx %>][_destroy]' value='false'>
+    </td>
+  <% end %>
+  <td>
+    <%= link_to variant.fully_qualified_name, url %>
+  </td>
+  <td>
+    <%= link_to variant.sku, url %>
+  </td>
+  <td>
+    <%= link_to display_sweet_price(variant.cost_price, currency), url %>
+  </td>
+  <td>
+    <%= link_to url do %>
+      <span class='currency'><%= currency_symbol(currency) %></span><span class='price'><%= number_with_precision(variant.price, precision: 2) %></span>
+    <% end %>
+  </td>
+  <td class='price-input'>
+    <label class="currency-label"><%= currency_symbol(currency) %></label>
+    <input type='number' name='price_list[price_list_variants_attributes][<%= idx %>][price]'
+      value='<%= number_with_precision(price_list_variant.try(:price) || variant.price, precision: 2) %>'
+      step='0.01' min='0' class='form-control price-field'>
+    <input type='hidden' name='price_list[price_list_variants_attributes][<%= idx %>][variant_id]' value='<%= variant.id %>'>
+    <input type='hidden' name='price_list[price_list_variants_attributes][<%= idx %>][id]' value='<%= price_list_variant.try(:id) %>'>
+  </td>
+</tr>

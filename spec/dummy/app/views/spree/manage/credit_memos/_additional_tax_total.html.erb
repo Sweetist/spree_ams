@@ -1,0 +1,10 @@
+<tbody style='border-top: none;'>
+  <tr id='additional-tax-total-row'>
+    <td colspan='<%= colspan_left %>'></td>
+    <td colspan='<%= colspan_right %>'>
+      <%= credit_memo_form.label :additional_tax_total, Spree.t(:additional_tax_total) %>:
+    </td>
+    <td class='price-input'><label class="currency-label"><%= currency_symbol(currency) %></label>
+      <%= number_field_tag 'credit_memo[additional_tax_total]', number_with_precision(@credit_memo.additional_tax_total, precision: 2), step: 0.01, class: 'form-control price-field line-item-price', id: 'credit_memo_additional_tax' %></td>
+  </tr>
+</tbody>

@@ -1,0 +1,8 @@
+<% if request.path.include?('standing_order') %>
+  <%= render partial: 'spree/manage/products/headers/standing_order_show_header' %>
+<% else %>
+  <%= render partial: 'spree/manage/products/headers/show_header' %>
+<% end %>
+<%= render partial: 'spree/manage/products/page_content/show_body' %>
+<%= render partial: 'spree/manage/variants/modal/variant_modal' %>
+<%= render partial: 'spree/manage/inventories/build_assembly_modal' %>

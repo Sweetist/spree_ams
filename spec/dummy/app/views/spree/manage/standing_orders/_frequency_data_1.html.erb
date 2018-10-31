@@ -1,0 +1,30 @@
+<div id="standing_order_frequency_1" class="standing_order_frequency" style="<%= "display:none;" if @order.frequency_id != 1 %>">
+  <div class="form-group">
+    <%= f.check_box :frequency_data_1_monday, input_html: { checked: @order.frequency_data_1_monday } %>
+    <%= f.label :frequency_data_1_monday, "Mon" %>
+  </div>
+  <div class="form-group">
+    <%= f.check_box :frequency_data_1_tuesday, input_html: { checked: @order.frequency_data_1_tuesday } %>
+    <%= f.label :frequency_data_1_tuesday, "Tues" %>
+  </div>
+  <div class="form-group">
+    <%= f.check_box :frequency_data_1_wednesday, input_html: { checked: @order.frequency_data_1_wednesday } %>
+    <%= f.label :frequency_data_1_wednesday, "Wed" %>
+  </div>
+  <div class="form-group">
+    <%= f.check_box :frequency_data_1_thursday, input_html: { checked: @order.frequency_data_1_thursday } %>
+    <%= f.label :frequency_data_1_thursday, "Thur" %>
+  </div>
+  <div class="form-group">
+    <%= f.check_box :frequency_data_1_friday, input_html: { checked: @order.frequency_data_1_friday } %>
+    <%= f.label :frequency_data_1_friday, "Fri" %>
+  </div>
+  <div class="form-group">
+    <%= f.check_box :frequency_data_1_saturday, input_html: { checked: @order.frequency_data_1_saturday } %>
+    <%= f.label :frequency_data_1_saturday, "Sat" %>
+  </div>
+  <div class="form-group">
+    <%= f.check_box :frequency_data_1_sunday, input_html: { checked: @order.frequency_data_1_sunday } %>
+    <%= f.label :frequency_data_1_sunday, "Sun" %>
+  </div>
+</div>

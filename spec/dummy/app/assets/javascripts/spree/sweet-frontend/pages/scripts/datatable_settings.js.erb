@@ -1,0 +1,83 @@
+function addSettings(settingsObject) {
+  var currentLocationPath = function() {
+    const params = new URL(window.location.href).searchParams;
+    var path_name = window.location.pathname;
+    if (params && params.get('account_id')) {
+      path_name = path_name + '/?account_id=' + params.get('account_id')
+    }
+    return path_name
+  }
+
+  var datatable_settings = {
+    colReorder: true,
+    stateSave: true,
+
+    stateSaveParams: function (settings, data){
+      var form_params = {
+        'form_params': $('#search-form').serialize()
+      }
+      return $.extend(data, form_params)
+    },
+
+    stateLoaded: function (settings, data) {
+      <% if Rails.env.development? %>
+        console.log( 'Loaded state:', data );
+      <% end %>
+
+    },
+
+    stateLoadParams: function ( settings, data ) {
+      //Clear and desetialize form
+      if ($('.ajaxDatatable').size() > 0) {
+        $('#search-form')[0].reset()
+        $('#search-form input:checkbox').prop('checked',false)
+        $('#search-form').deserialize(data.form_params)
+      }
+    },
+
+    stateSaveCallback: function (settings, data) {
+      $.ajax({
+        type: "post",
+        url: '/manage/datatable_settings/save_state',
+        data: {
+          state: JSON.stringify( data ),
+          path_name: currentLocationPath()
+        },
+      }).done(function(msg) {
+        <% if Rails.env.development? %>
+          console.log('Saved state:', data, currentLocationPath())
+        <% end %>
+      });
+    },
+
+    stateLoadCallback: function (settings) {
+      var state;
+      $.ajax( {
+          url: '/manage/datatable_settings/load_state',
+          type: "get",
+          async: false,
+          dataType: 'json',
+          data: {
+            path_name: currentLocationPath()
+          },
+          success: function (json) {
+              state = json
+          }
+      } )
+
+      return state
+    }
+  }
+
+  settingsObject.buttons.push(
+    { extend: 'colvis',
+      className: 'btn green margin-left-5',
+      text: "<i class='fa fa-cog'></i>",
+      columns: ':not(.dt-no-settings-visible)'
+    }
+  )
+
+  $.extend(settingsObject, datatable_settings)
+
+  return settingsObject
+}

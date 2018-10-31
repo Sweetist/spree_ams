@@ -1,0 +1,73 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class='table-scrollable'>
+      <table class="table table-hover table-striped" id="" data-title='Lots <%= display_vendor_date_format(Time.current.in_time_zone(@vendor.time_zone), @vendor.date_format) %>'>
+        <thead>
+          <tr>
+            <th class="table-checkbox sorting_disabled dt-no-settings-visible" width="2%">
+            </th>
+            <th>
+              <%= sort_link @search, :created_at, "Created" %>
+            </th>
+            <th>
+              <%= sort_link @search, :number, "Lot Number" %>
+            </th>
+            <th>
+              <%= sort_link @search, :variant_id, "Product" %>
+            </th>
+            <th>
+              <%= sort_link @search, :qty_on_hand, "Quantity" %>
+            </th>
+            <th>
+              <%= sort_link @search, :available_at, "Available On" %>
+            </th>
+            <th>
+              <%= sort_link @search, :sell_by, "Sell By" %>
+            </th>
+            <th>
+              <%= sort_link @search, :expires_at, "Expires At" %>
+            </th>
+
+          </tr>
+        </thead>
+        <tbody>
+          <% if @lots.present? %>
+            <% @lots.each_with_index do |lot, idx| %>
+              <%#= f.fields_for :lots, lot do |ff|%>
+                <tr class="<%= 'warning' if lot.archived? %>">
+                  <td>
+                    <input type='checkbox' name='company[lots_attributes][<%= idx %>][action]' class='checkboxes noUniform'>
+                    <input name="company[lots_attributes][<%= idx %>][id]" type="hidden"
+                    value="<%= lot.id %>" id="company_lots_attributes_<%= idx %>_id">
+                  </td>
+                  <td>
+                    <%= display_vendor_date_format(lot.created_at, @vendor.date_format) %>
+                  </td>
+                  <td>
+                    <%= link_to lot.number, manage_lot_path(lot) %>
+                  </td>
+                  <td>
+                    <% prod_path = lot.variant.is_master? ? manage_product_path(lot.variant.product) : manage_product_variant_path(lot.variant.product, lot.variant) %>
+                    <%= link_to lot.variant.full_display_name, prod_path %>
+                  </td>
+                  <td>
+                    <%= lot.qty_on_hand %>
+                  </td>
+                  <td>
+                    <%= display_vendor_date_format(lot.available_at, @vendor.date_format) %>
+                  </td>
+                  <td>
+                    <%= display_vendor_date_format(lot.sell_by, @vendor.date_format) %>
+                  </td>
+                  <td>
+                    <%= display_vendor_date_format(lot.expires_at, @vendor.date_format) %>
+                  </td>
+                </tr>
+              <%# end %>
+            <% end %>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

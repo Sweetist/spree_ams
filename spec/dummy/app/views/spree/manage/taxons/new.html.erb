@@ -1,0 +1,69 @@
+<%= content_for :head_title do %>
+  New Product Category
+<% end %>
+
+<%= content_for :page_title do %>
+  New Product Category
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Products", manage_products_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Categories", manage_taxons_path %>
+    </li>
+  </ul>
+  <div class="page-toolbar">
+    <div class="btn-group pull-right">
+      <%= link_to new_manage_taxon_path, class: 'btn green' do %>
+        <i class='fa fa-plus'></i> New Parent Category
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
+<div class='row content'>
+  <div class="portlet light">
+    <div class="portlet-title">
+      <div class="caption">
+        <span class="caption-subject font-blue-madison bold uppercase">
+          New Category
+        </span>
+      </div>
+    </div>
+
+    <div class="portlet-body form">
+      <%= form_for [:manage, @taxon] do |f| %>
+        <div class="form-body">
+          <div class='form-group'>
+            <%= f.label :parent_id, 'Parent', class: 'control-label' %>
+            <%= f.collection_select :parent_id, @vendor.taxons.where.not(parent_id: nil), :id, :pretty_name,{include_blank: true}, {class: 'form-control select2'} %>
+            <span class='help-block-italic'>Leave parent blank to create a top level category</span>
+          </div>
+          <div class='form-group'>
+            <%= f.label :name, Spree.t(:Name), class: 'control-label' %>
+            <%= f.text_field :name, class: 'form-control' %>
+          </div>
+        </div>
+        <div class="form-actions">
+          <div class='pull-right'>
+            <%= link_to manage_taxons_path, class: "btn btn-default" do %>
+              <i class='fa fa-times'></i> <%= Spree.t(:Cancel) %>
+            <% end %>
+            <button class="btn btn-primary">
+              <i class="fa fa-check"></i> <%= Spree.t(:save) %>
+            </button>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+</div>

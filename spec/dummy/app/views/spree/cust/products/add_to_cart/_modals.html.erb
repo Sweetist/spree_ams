@@ -1,0 +1,17 @@
+<%= link_to '#add-to-cart', { data: {
+    toggle: 'modal', target:'#add-to-cart-modal',
+    'variant-id' => "#{variant.id}",
+    'order-id' => "#{@current_order.id}"},
+    class:"btn btn-default add-to-cart-modal-btn #{'active' if carted} #{'multiple' if multi_line}",
+    style: 'width: 100%;'} do %>
+  <% if carted.present? %>
+    <%= carted.sum(:quantity) %>
+    <% if multi_line %>
+      <i class='fa fa-info-circle tooltips'
+      data-original-title='<%= Spree.t('cust.multi_line_warning') %>'
+      data-container='body'></i>
+    <% end %>
+  <% else %>
+    <i class='fa fa-plus'></i>
+  <% end %>
+<% end %>

@@ -1,0 +1,38 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="table-scrollable">
+      <table class="table table-hover table-striped" id="basic-table">
+        <thead data-hook="bulk_variants_header">
+          <tr>
+            <th><%= Spree.t('product') %></th>
+            <th><%= Spree.t('sku') %></th>
+            <th><%= Spree.t('quantity') %></th>
+            <th><%= Spree.t('count_on_hand') %></th>
+            <% if @vendor.lot_tracking && stock_movements.select{|stock_movement| stock_movement.lot_id.present?}.present?%>
+              <th><%= Spree.t('lot_number')%></th>
+            <% end %>
+          </tr>
+        </thead>
+        <tbody id="bulk_variants_tbody">
+          <% stock_movements.each do |movement| %>
+            <tr>
+              <td><%= movement.stock_item.variant.full_display_name %></td>
+              <td><%= movement.stock_item.variant.sku %></td>
+              <td><%= movement.quantity %></td>
+              <td>
+                <% if @vendor.lot_tracking && movement.lot %>
+                  <%= movement.lot.count_at_stock_item(movement.stock_item)%>
+                <% else %>
+                  <%= movement.stock_item.count_on_hand %>
+                <% end %>
+              </td>
+              <% if @vendor.lot_tracking && movement.lot %>
+                <td><%= link_to movement.lot.number, manage_lot_path(movement.lot) %></td>
+              <% end %>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

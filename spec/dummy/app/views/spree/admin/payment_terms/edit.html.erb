@@ -1,0 +1,12 @@
+<% content_for :page_title do %>
+  <%= Spree.t(:payment_terms) %>
+<% end %>
+
+<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @payment_term } %>
+
+<%= form_for @payment_term, url: admin_payment_term_path(@payment_term) do |f| %>
+  <fieldset>
+    <%= render partial: 'form', locals: { f: f } %>
+    <%= render partial: 'spree/admin/shared/edit_resource_links' %>
+  </fieldset>
+<% end %>

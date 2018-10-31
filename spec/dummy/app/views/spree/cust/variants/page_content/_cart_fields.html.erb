@@ -1,0 +1,109 @@
+<div id='variant-cart-fields'>
+  <% if order && !variant.discontinued? && (stock_message != Spree.t(:out_of_stock)) %>
+    <% if current_vendor_view_settings.try(:catalog_add_to_cart) == 'legacy' %>
+      <label>Quantity</label>
+      <%= form_for @current_order, url: order_add_to_cart_path(@current_order),
+        method: 'post', html: {id: 'add-to-order-form'},
+        remote: (@vendor.cva.try(:catalog_after_add_to_cart) == 'products') do |f| %>
+        <input type='hidden' name='reload' value='true'>
+        <%= render partial: "spree/cust/products/add_to_cart/legacy",
+          locals: { variant: variant, avv: avv, carted: line_items, multi_line: multi_line } %>
+        <div class="margin-top-10">
+          <button class="btn btn-lg btn-primary" style="margin-right: 0" id="add-to-cart"> Add To Cart</button>
+        </div>
+      <% end %>
+    <% else %>
+      <%
+      multiplier = [1, variant.step_size].max
+      max = 300
+      options = (0..max).map {|n| [n * multiplier, n * multiplier]}
+      %>
+      <% if line_items.present? %>
+        <%= form_for order, html: {id: "modal-add-to-order-form"} do |f| %>
+          <input type='hidden' name='reload' value='true'>
+          <% all_use_select = true %>
+
+          <%= f.fields_for :line_items, line_items do |ff| %>
+            <% if variant.text_options.present? && current_vendor.try(:use_variant_text_options) %>
+              <div class='form-group'>
+                <%= ff.label :text_option, 'Options', class: 'control-label' %>
+                <%= ff.select :text_option,
+                  options_for_select(variant.text_options_arr.map{|opt| [opt,opt]}, selected: ff.object.text_option),
+                  {include_blank: true}, class: 'form-control', id: 'line_item_text_option', disabled: 'disabled' %>
+              </div>
+            <% end %>
+            <div class="form-group">
+              <label>Quantity</label>
+              <% use_select = (ff.object.quantity % multiplier == 0) && (ff.object.quantity < max * multiplier) %>
+              <% all_use_select = false unless use_select %>
+              <%= select_tag "item_quantity",
+                  options_for_select(options, ff.object.quantity),
+                  disabled: avv.try(:recalculating).to_i < Spree::AccountViewableVariant::RecalculatingStatus['complete'],
+                  class: "form-control product-qty #{use_select ? 'active' : 'hidden'}",
+                  data: { 'line-item-id' => "#{ff.object.id}" } %>
+              <input id="variant_qty_<%= variant.id %>" tabindex="1" type="number" name='item_quantity'
+                class="form-control product-qty <%= use_select ? 'hidden' : 'active' %>" min="0" step='<%= variant.step_size %>'
+                value='<%= ff.object.quantity %>' data-line-item-id='<%= ff.object.id %>'
+                '<%= 'disabled' if avv.try(:recalculating).to_i < Spree::AccountViewableVariant::RecalculatingStatus['complete'] %>'>
+              <%= ff.hidden_field :quantity, id:'item-quantity', data: { 'line-item-id' => "#{ff.object.id}" } %>
+              <a href="void:javascript();" class="pull-right <%= 'hidden' unless all_use_select %>" id='enter-other-qty'>
+                Enter Other Quantity
+              </a>
+              <div class='clearfix'></div>
+            </div>
+          <% end %>
+
+          <div class="form-group">
+            <button class="btn btn-lg btn-primary btn-block"><%= Spree.t(:update_cart) %></button>
+          </div>
+        <% end %>
+      <% else %>
+        <%= form_for order, url: order_add_to_cart_path(order), method: 'post',
+          html: {id: 'modal-add-to-order-form'} do |f| %>
+          <input type='hidden' name='reload' value='true'>
+          <% if variant.text_options.present? && current_vendor.try(:use_variant_text_options) %>
+            <div class='form-group'>
+              <%= f.label :text_option, 'Options', class: 'control-label' %>
+              <%= select_tag "order[products][#{variant.id}][text_option]",
+              options_for_select(variant.text_options_arr.map{|opt| [opt,opt]} + [['','']]),
+              class: 'form-control', id: 'line_item_text_option' %>
+            </div>
+          <% end %>
+          <div class="form-group">
+            <label>Quantity</label>
+            <%= select_tag "item_quantity",
+                options_for_select(options),
+                disabled: avv.try(:recalculating).to_i < Spree::AccountViewableVariant::RecalculatingStatus['complete'],
+                data: { 'line-item-id' => '0' },
+                class: 'form-control product-qty active' %>
+            <input id="variant_qty_<%= variant.id %>" tabindex="1" type="number" name='item_quantity'
+              class="form-control product-qty hidden" min="0" step='<%= variant.step_size %>' data-line-item-id='0'
+              '<%= 'disabled' if avv.try(:recalculating).to_i < Spree::AccountViewableVariant::RecalculatingStatus['complete'] %>'>
+            <input type='hidden' id='item-quantity' value='<%= 1 * multiplier %>'
+              name='<%= "order[products][#{variant.id}][quantity]" %>' data-line-item-id='0'>
+            <a href="void:javascript();" class="" id='enter-other-qty'>Enter Other Quantity</a>
+          </div>
+          <div class="form-group">
+            <button class="btn btn-lg btn-primary btn-block"><%= Spree.t(:add_to_cart) %></button>
+          </div>
+
+        <% end %>
+        <%#= render partial: 'spree/cust/orders/modals/add_new', locals: {avv: avv, variant: variant, order: order} %>
+      <% end %>
+      <%#= render partial: "spree/cust/products/add_to_cart/#{@vendor.cva.try(:catalog_add_to_cart) || 'modals'}",
+        locals: { variant: variant, avv: avv, line_items: line_items, multi_line: multi_line } %>
+    <% end %>
+
+  <% end %>
+</div>
+<script type='text/javascript'>
+  $('#modal-add-to-order-form').off('submit').submit(function(e){
+    // if($('#line_item_text_option').length && $('#line_item_text_option').val() === ''){
+    //   e.preventDefault();
+    //   alert("Please select an option.");
+    // }else{
+      $(this).attr('data-remote', 'true');
+      preventSecondSubmit($(this), e);
+    // }
+  });
+</script>

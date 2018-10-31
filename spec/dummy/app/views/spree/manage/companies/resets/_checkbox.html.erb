@@ -1,0 +1,14 @@
+<div class="form-group">
+  <%= f.check_box "destroy_#{event}", class: "delete-data-checkbox",
+    data: {
+      type: type,
+      dependencies: Spree::Company::Resets::RESET_DEPENDENCIES[event].to_a.join(',')
+    } %>
+  <%= f.label "destroy_#{event}", Spree.t("data_reset.#{event}.label"), class: 'control-label' %>
+  <% dependency_msg = Spree.t("data_reset.#{event}.dependency_msg", default: '') %>
+  <% if dependency_msg.present? %>
+    <div class='help-block-italic dependency_msg alert-danger hidden' data-event-id='<%= "company_destroy_#{event}" %>'>
+      <%= dependency_msg %>
+    </div>
+  <% end %>
+</div>

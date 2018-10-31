@@ -1,0 +1,17 @@
+<div class="row">
+  <div class="form-group">
+    <div class="col-md-12">
+      <%= f.label :name, class: "control-label" %>
+      <%= f.text_field :name, class: "form-control" %>
+    </div>
+  </div>
+</div>
+<br>
+<div class="form-group">
+  <label><%= @vendor.order_date_text.to_s.capitalize %> Days</label>
+  <%= render partial: 'deliverable_days', locals: {f: f} %>
+</div>
+<div class="form-group">
+  <%= f.label :is_default, Spree.t(:default) %>
+  <%= f.check_box :is_default, class: 'noUniform' %>
+</div>

@@ -1,0 +1,14 @@
+<% if @account.nil? %>
+  $('#account-address-info').replaceWith("<section id='account-address-info' class='alert alert-warning alert-dismissable'> <button type='button' class='close' data-dismiss='alert' aria-hidden='true'></button> Could not find account</section>");
+<% else %>
+  $('#account-address-info').replaceWith("<%= escape_javascript(render(partial: 'account_address_fields')) %>");
+  $('#credit-memo').replaceWith("<%= escape_javascript(render partial: 'credit_memos', locals: { vendor: @vendor, account_payment: @account_payment, credit_memos: @credit_memos || [] }) %>")
+  $('#order-body').empty();
+  $('.paginate').html('<%= escape_javascript(paginate(@orders, remote: true).to_s) %>');
+  $('#order-body').html("<%= escape_javascript (render partial: 'account_order', collection: @orders, locals: {inner_payment_method: @inner_payment_method}) %>");
+  $('.payment-buttons').replaceWith("<%= escape_javascript (render partial: 'payment_buttons') %>");
+  $('#account_payment_payment_method_id').prop( "disabled", false );
+  $('#account_available_credit').html('<%= escape_javascript(render(partial: 'account_credit', locals: { account: @account, currency: @vendor.currency }))  %>');
+
+<% end %>
+

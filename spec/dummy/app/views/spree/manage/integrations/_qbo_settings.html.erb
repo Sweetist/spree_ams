@@ -1,0 +1,238 @@
+<div class="portlet-body form">
+  <div class="form-body">
+    <div class="row static-info">
+      <div class="row">
+        <div class="col-md-3 name">
+          <%= I18n.t('integrations.qbo.country.label') %>
+        </div>
+        <div class="col-md-9 value">
+          <%= Spree::Country.find_by_iso(@integration.qbo_country).try(:name) %>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-3 name">Match Product by</div>
+        <div class="col-md-9 value">
+        <%= @integration.qbo_match_with_name ? 'Name' : 'SKU' %>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-3 name">Create Customers & Products</div>
+        <div class="col-md-9 value">
+        <%= @integration.qbo_create_related_objects ? Spree.t(:say_yes) : Spree.t(:say_no) %>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-3 name">Sync Variants as</div>
+        <div class="col-md-9 value">
+        <%= @integration.qbo_use_categories ? 'Product with categories' : 'Sub Item' %>
+        </div>
+      </div>
+      <br>
+      <% %w[variant customer vendor].each do |obj| %>
+        <div class="row">
+          <div class="col-md-3 name">
+            <%= I18n.t("integrations.qbo.#{obj}.overwrite_conflicts_in.label") %>
+          </div>
+          <div class="col-md-9 value">
+            <% method = @integration.send("qbo_#{obj}_overwrite_conflicts_in") %>
+            <%= I18n.t("integrations.qbo.overwrite_conflicts_in.options.#{method}") %>
+          </div>
+        </div>
+        <br>
+      <% end %>
+      <div class="row">
+        <div class="col-md-3 name">
+          <%= I18n.t("integrations.qbo.overwrite_conflicts_in.label") %>
+        </div>
+        <div class="col-md-9 value">
+          <% method = @integration.send("qbo_overwrite_conflicts_in") %>
+          <%= I18n.t("integrations.qbo.overwrite_conflicts_in.options.#{method}") %>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-3 name">Send Order as</div>
+        <div class="col-md-9 value">
+        <%= @integration.qbo_send_as_invoice ? 'Invoice' : 'Sales Receipt' %>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-3 name">
+          <%= I18n.t('integrations.qbo.strip_html.label') %>
+        </div>
+        <div class="col-md-9 value">
+        <%= @integration.qbo_strip_html ? Spree.t(:say_yes) : Spree.t(:say_no) %>
+        </div>
+      </div>
+      <br>
+      <%= render partial: "spree/manage/integrations/shared/settings", locals: { item: @integration } %>
+      <% @vendor.sales_integration_items.pluck(:integration_key).uniq.each do |key| %>
+        <%= render partial: "spree/manage/integrations/shared/#{key}_settings", locals: {item: @integration} %>
+      <% end %>
+      <div class="row">
+        <div class="col-md-3 name">
+          <%= I18n.t('integrations.qbo.multi_currency.label') %>
+        </div>
+        <div class="col-md-9 value">
+        <%= @integration.qbo_multi_currency ? Spree.t(:say_yes) : Spree.t(:say_no) %>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-3 name">
+          Sync Order Sales Dept/Channel
+          <i class='fa fa-info-circle tooltips' data-original-title='Department designates where the order originates from. Sweet will send sales channel to Quickbooks departments which can be used for better reporting.' data-container='body'></i>
+          <br>
+          <span class='help-block-italic'>Not supported by all versions of Quickbooks</span>
+        </div>
+        <div class="col-md-9 value">
+        <%= @integration.qbo_include_department ? Spree.t(:say_yes) : Spree.t(:say_no) %>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-3 name">
+          Require Order Sales Dept. to Match
+          <i class='fa fa-info-circle tooltips' data-original-title='Channel designates where the order originates from. Enabling this will check that the sales channel matches the department in Quickbooks if an Invoice is found with the same number. This will only affect orders that have not already been matched.' data-container='body'></i>
+        </div>
+        <div class="col-md-9 value">
+        <%= @integration.qbo_enforce_channel ? Spree.t(:say_yes) : Spree.t(:say_no) %>
+        </div>
+      </div>
+      <br>
+      <% if @integration.qbo_custom_field_1.present? %>
+        <div class="row">
+          <div class="col-md-3 name">Sales Form Custom Field 1</div>
+          <div class="col-md-9 value">
+            <%= @integration.qbo_custom_field_options_display(@integration.qbo_custom_field_1) %>
+          </div>
+        </div>
+        <br>
+      <% end %>
+      <% if @integration.qbo_custom_field_2.present? %>
+        <div class="row">
+          <div class="col-md-3 name">Sales Form Custom Field 2</div>
+          <div class="col-md-9 value">
+            <%= @integration.qbo_custom_field_options_display(@integration.qbo_custom_field_2) %>
+          </div>
+        </div>
+        <br>
+      <% end %>
+      <% if @integration.qbo_custom_field_3.present? %>
+        <div class="row">
+          <div class="col-md-3 name">Sales Form Custom Field 3</div>
+          <div class="col-md-9 value">
+            <%= @integration.qbo_custom_field_options_display(@integration.qbo_custom_field_3) %>
+          </div>
+        </div>
+        <br>
+      <% end %>
+      <div class="row">
+        <div class="col-md-3 name">Include Discounts</div>
+        <div class="col-md-9 value">
+        <%= @integration.qbo_include_discounts ? Spree.t(:say_yes) : Spree.t(:say_no) %>
+        </div>
+      </div>
+      <br>
+      <% if @integration.qbo_include_discounts %>
+        <div class="row">
+          <div class="col-md-3 name">Discount Account</div>
+          <div class="col-md-9 value">
+          <%= @integration.vendor.chart_accounts.find_by_id(@integration.qbo_discount_account_id).try(:name) %>
+          </div>
+        </div>
+      <% end %>
+      <br>
+      <div class="row">
+        <div class="col-md-3 name">Include Shipping</div>
+        <div class="col-md-9 value">
+        <%= @integration.qbo_include_shipping ? Spree.t(:say_yes) : Spree.t(:say_no) %>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-3 name"><%= I18n.t('integrations.qbo.send_to_line_description.label') %></div>
+        <div class="col-md-9 value">
+          <%= I18n.t("integrations.qbo.send_to_line_description.options.#{@integration.qbo_send_to_line_description}") %>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-3 name">Include Lots in Line Description</div>
+        <div class="col-md-9 value">
+        <%= @integration.qbo_include_lots ? Spree.t(:say_yes) : Spree.t(:say_no) %>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-3 name">Include Assembly Component Lots in Line Description</div>
+        <div class="col-md-9 value">
+        <%= @integration.qbo_include_assembly_lots ? Spree.t(:say_yes) : Spree.t(:say_no) %>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-3 name">
+          <%= raw("Create Bill from Purchase Order <i class='fa fa-info-circle tooltips' data-original-title='QBO API does not yet support linking transactions to bills. Turning this feature on will create a bill once the purchase order has been received in Sweet, but will not be tied to the created Purchase Order in Quickbooks.' data-container='body'></i>") %>
+        </div>
+        <div class="col-md-9 value">
+        <%= @integration.qbo_bill_from_po ? Spree.t(:say_yes) : Spree.t(:say_no) %>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-3 name">
+          <%= raw("Sync Inventory Items as NonInventory <i class='fa fa-info-circle tooltips' data-original-title='This is required for certain Quickbooks subscriptions that do not allow any inventory types' data-container='body'></i>") %>
+        </div>
+        <div class="col-md-9 value">
+        <%= @integration.qbo_send_as_non_inventory ? Spree.t(:say_yes) : Spree.t(:say_no) %>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-3 name">Track Inventory</div>
+        <div class="col-md-9 value">
+        <%= @integration.qbo_track_inventory ? Spree.t(:say_yes) : Spree.t(:say_no) %>
+        </div>
+      </div>
+      <br>
+      <% if @integration.qbo_track_inventory %>
+        <div class="row">
+          <div class="col-md-3 name">Track Inventory from Stock Location</div>
+          <div class="col-md-9 value">
+          <%= @integration.vendor.stock_locations.find_by_id(@integration.qbo_track_inventory_from).try(:name) || Spree.t(:aggregate_stock) %>
+          </div>
+        </div>
+      <% end %>
+      <br>
+      <div class="row">
+        <div class="col-md-3 name">Bundle Adjustment Name</div>
+        <div class="col-md-9 value">
+        <%= @integration.qbo_bundle_adjustment_name %>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-3 name">Bundle Adjustment Account</div>
+        <div class="col-md-9 value">
+        <%= @integration.vendor.chart_accounts.find_by_id(@integration.qbo_bundle_adjustment_account_id).try(:name) %>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-3 name">
+          Deposit to Account (optional)
+          <i class='fa fa-info-circle tooltips' data-original-title="Account that payments will be applied to.  Quickbooks defaults this to &#39;Undeposited Funds&#39; if no account is supplied." data-container='body'></i>
+        </div>
+        <div class="col-md-9 value">
+        <%= @integration.qbo_deposit_to_account %>
+        </div>
+      </div>
+      <br>
+    </div>
+  </div>
+</div>

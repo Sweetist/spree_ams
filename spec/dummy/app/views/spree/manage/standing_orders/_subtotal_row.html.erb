@@ -1,0 +1,9 @@
+<tr id='subtotals-row'>
+  <td colspan="7"></td>
+  <td>
+    Category Count: <b><%= @order.standing_line_items.sum(:quantity) %></b>
+  </td>
+  <td colspan="100%">
+    Subtotal: <b><%= display_sweet_price(order_total, @order.currency) %></b>
+  </td>
+</tr>

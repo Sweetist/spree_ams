@@ -1,0 +1,30 @@
+<!-- not giving access to fulfilment time -->
+<!-- <div class="row static-info">
+  <div class="col-md-5 name"> Fulfillment Time:</div>
+  <div class="input-icon right col-md-7 value">
+    <%#= f.select :sweetist_fulfillment_time, Spree::Order::Channel::Sweetist::FulfillmentTimes, {}, class: 'form-control' %>
+  </div>
+</div> -->
+
+<div class="row static-info">
+  <div class="col-md-5 name"> Delivery Window:</div>
+  <div class="input-icon right col-md-7 value">
+    <%= f.select :sweetist_fulfillment_time_window, Spree::Order::Channel::Sweetist::FulfillmentTimeWindows, {}, class: 'form-control' %>
+  </div>
+</div>
+
+<div class="row static-info">
+  <div class="col-md-5 name"> Is Gift?:</div>
+  <div class="input-icon right col-md-7 value">
+    <%= @order.sweetist_is_gift ? Spree.t(:say_yes) : Spree.t(:say_no) %>
+  </div>
+</div>
+
+<% if @order.sweetist_is_gift %>
+  <div class="row static-info">
+    <div class="col-md-5 name"> Gift Note:</div>
+    <div class="input-icon right col-md-7 value">
+      <%= f.text_area :sweetist_gift_note, disabled: true, class: 'form-control' %>
+    </div>
+  </div>
+<% end %>

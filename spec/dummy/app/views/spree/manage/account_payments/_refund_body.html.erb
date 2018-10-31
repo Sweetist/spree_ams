@@ -1,0 +1,124 @@
+<%= form_for @account_payment, url: create_refund_manage_account_payment_path, method: :put, remote: true do |account_payment_form| %>
+  <div class='form-body'>
+    <div data-hook="admin_refund_form_fields">
+      <div class="form-group">
+        <div class="row static-info">
+          <div class="col-md-5 name"><%= account_payment_form.label :payment_amount, Spree.t(:payment_amount) %>: </div>
+          <div class="col-md-7 value">
+            <%= display_sweet_price(@account_payment.amount, @account_payment.vendor.try(:currency)) %>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="row static-info">
+          <div class="col-md-5 name"> Amount to Refund: </div>
+          <div class="col-md-7 value">
+            <div class="price-input">
+              <%= account_payment_form.hidden_field :amount, class: 'r-amount' %>
+              <span id="amount-to-refund"><%= display_sweet_price(@account_payment.amount_after_refund, @account_payment.vendor.currency) %></span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="row static-info">
+          <div class="col-md-5 name"><%= account_payment_form.label :refund_reason_id, Spree.t(:reason) %>: </div>
+          <div class="col-md-7 value">
+            <%= account_payment_form.collection_select(:refund_reason_id, @refund_reasons, :id, :name, {include_blank: true}, {class: 'form-control', required: true}) %>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="table-scrollable">
+          <table class="table table-striped table-hover table-checkable" id="refund_orders_table">
+            <thead>
+              <tr>
+                <th></th>
+                <th><%= "Description" %></th>
+                <th><%= "Original Amount" %></th>
+                <th><%= "Refund Amount" %></th>
+              </tr>
+            </thead>
+              <tbody id="refund-body">
+                <% @orders.each do |refund_order| %>
+                  <% payment = refund_order.payments.new() %>
+                  <%= fields_for 'account_payment[payments_attributes][]', payment do |ff| %>
+                    <% payment_amount = refund_order.payments.where(account_payment_id: @account_payment.id).last.amount_after_refund %>
+                    <tr>
+                      <td>
+                      <%= ff.hidden_field :order_id %>
+                      <input type='checkbox' class='checkboxes noUniform refund-check' checked>
+                      <% if refund_order.payments.where(account_payment_id: @account_payment.id).present? %>
+                        <input type='checkbox' name='account_payment[payments_attributes][][check]' class='checkboxes noUniform' style="display:none;" checked>
+                      <% else %>
+                        <input type='checkbox' name='account_payment[payments_attributes][][check]' class='checkboxes noUniform'>
+                      <% end %>
+                      </td>
+                      <% order_number_date = "#{refund_order.display_number}(#{@vendor.to_vendor_date(refund_order.created_at)})"%>
+                      <td><%= link_to order_number_date, edit_manage_order_path(refund_order) %></td>
+                      <td class='rp-amount'><%= display_sweet_price(payment_amount, @account_payment.currency) %></td>
+                      <td>
+                        <div class='price-input'>
+                          <label class="currency-label"><%= currency_symbol(refund_order.currency) %></label>
+                            <%= ff.number_field :amount, value: display_sweet_price(payment_amount, @account_payment.vendor.currency).to_s[1..-1].gsub(/\,/,""), step: '0.01', class: 'form-control price-field refund-amount' %>
+                        </div>
+                      </td>
+                    </tr>
+                  <% end %>
+                <% end %>
+              </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="form-group">
+        <button class='btn btn-primary'>
+          <i class='fa fa-check'></i> <%= Spree.t(:refund) %>
+        </button>
+        <%= link_to manage_account_payments_path, class: 'btn btn-default', data: {dismiss: 'modal'} do %>
+          <i class='fa fa-times'></i> <%= Spree.t(:Cancel) %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>
+<script>
+  var currency = '<%= currency_symbol(@account_payment.vendor.try(:currency)) %>';
+  $(document).ready(function(){
+    $('.refund-check').click(function(event){
+      event.stopImmediatePropagation();
+      var amount = $('.amount');
+      var chRow = $('#refund-body tr').filter(':has(.refund-check:checked)');
+      var unchRow = $('#refund-body tr').filter(':has(.refund-check:not(:checked))');
+      var total = 0;
+      unchRow.each(function(){
+        $(this).find('.refund-amount').val(0);
+      });
+      chRow.each(function(index){
+        if ($(this).find('.refund-amount').val() != 0) {
+          total += parseFloat($(this).find('.refund-amount').val());
+        } else {
+          total += parseFloat(this.cells[2].innerText.substring(1).replace(/,/g, ''));
+          $(this).find('.refund-amount').val(parseFloat(chRow[index].cells[2].innerText.substring(1).replace(/,/g, '')));
+        }
+      });
+      $('#amount-to-refund')[0].innerText = currency + parseFloat(total).toFixed(2);
+      $('.r-amount').val(total);
+    });
+    $('.refund-amount').change(function(event){
+      event.stopImmediatePropagation();
+      total = 0;
+      var amount2 = $(".refund-amount");
+      for (var i = 0; i < amount2.length; i++) {
+        var balance = parseFloat($('.rp-amount')[i].innerText.substring(1));
+        if (amount2[i].value > 0) {
+          total += parseFloat(amount2[i].value);
+          $('.refund-check')[i].checked = true;
+        } else {
+          $('.refund-check')[i].checked = false;
+        }
+      }
+      $('#amount-to-refund')[0].innerText = currency + parseFloat(total).toFixed(2);
+      $('.r-amount').val(total);
+    });
+  });
+</script>

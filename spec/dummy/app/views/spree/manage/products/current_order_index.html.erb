@@ -1,0 +1,143 @@
+<%= content_for :head_title do %>
+  <%= @vendor.name %> Product Catalog
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <span>Products</span>
+    </li>
+  </ul>
+  <div class="page-toolbar">
+    <%= link_to new_manage_order_path, class: "btn green-jungle pull-right" do %>
+      <i class="fa fa-plus"></i>&nbsp;<%= Spree.t(:new_sales_order) %>
+    <% end %>
+    <div class="btn-group input-group-sm select2-bootstrap-prepend pull-right" id='view-as-form'>
+      <p><%= Spree.t('manage.viewing_as') %>:</p>
+      <p> <%= @current_order.account.fully_qualified_name %></p>
+      <select name='account_show_all' class="select2" id="account-show-all">
+        <option value="true" <%= 'selected' if session[:account_show_all] =='true' %>>All Products</option>
+        <option value="false" <%= 'selected' if session[:account_show_all] =='false' || session[:account_show_all].blank? %>>Account Only</option>
+      </select>
+    </div>
+  </div>
+<% end %>
+
+<div class='row'>
+  <div class="current-order-block col-sm-8">
+    <%= link_to edit_manage_order_path(@current_order), id: 'current-order-link' do %>
+      <h3>Order #<span id="order-number"><%= @current_order.display_number %></span></h3>
+      <h5>Account: <%= @current_order.account.fully_qualified_name %></h5>
+      <% if @current_order.account.try(:can_select_delivery?) %>
+        <h5><%= "#{@vendor.order_date_text.to_s.capitalize} Date".strip %>: <%= @current_order.delivery_date.to_date.to_formatted_s(:long) %></h5>
+      <% end %>
+    <% end %>
+  </div>
+</div>
+
+<% if @account.account_viewable_variants.count < @vendor.variants_including_master.count %>
+  <div class="alert alert-warning alert-dismissable">
+  <button type='button' class='close' data-dismiss='alert' aria-hidden='true'></button>
+  The customized catalog for <%= @account.try(:fully_qualified_name) %> is still updating. Some of the products may not be available yet.</div>
+<% end %>
+<% unless @account.account_viewable_variants.visible.any? %>
+  <div class="alert alert-warning alert-dismissable">
+  <button type='button' class='close' data-dismiss='alert' aria-hidden='true'></button>
+  You have not made any products visible to <%= @account.try(:fully_qualified_name) %></div>
+<% end %>
+
+<div class="content">
+  <%= search_form_for [:manage, @search], url: manage_products_path, class: "form", id: 'products-search-form' do |f| %>
+    <%= render partial: 'avv_advanced_search', locals: {f: f} %>
+    <input type='hidden' name='account_show_all' value='' id='account-viewing-all'>
+  <% end %>
+
+  <div class="row hidden">
+    <div id="source-dt-buttons">
+      <% if current_spree_user.can_write?('catalog', 'products') %>
+        <%= link_to new_manage_product_path, class: "btn btn-default" do %>
+          <i class="fa fa-plus"></i>&nbsp;New Product
+        <% end %>
+      <% end %>
+    </div><!--/.col-md-12 -->
+  </div><!--/.row -->
+
+  <div class="row">
+    <div class="col-md-12">
+      <%= form_for [:manage, @current_order], url: manage_order_add_to_cart_path(@current_order), method: 'post', html: {id: "add-to-order-form"} do |f| %>
+        <div class="">
+          <table class="table table-hover" id="product-catalog">
+            <thead>
+              <tr>
+                <th class='dt-no-settings-visible'></th>
+                <%# if @user_is_viewing_images %>
+                <%# CHECK WHETHER USER WANTS TO SEE IMAGES IN CATALOG HERE %>
+                <!-- <th class='dt-no-settings-visible'></th> -->
+                <%# end %>
+                <th>
+                  <%= sort_link @search, :variant_full_display_name, "Name" %>
+                </th>
+                <th>
+                  <%= sort_link @search, :variant_variant_type, "Type" %>
+                </th>
+                <th>
+                  <%= sort_link @search, :variant_sku, "SKU" %>
+                </th>
+                <th>
+                  <%= sort_link @search, :variant_pack_size, "Pack Size" %>
+                </th>
+                <th>
+                  <%= sort_link @search, :variant_lead_time, "Lead Time" %>
+                </th>
+                <th>
+                  <%= sort_link @search, :price, "Price" %>
+                </th>
+                <th class='dt-no-settings-visible'>
+                  Quantity
+                </th>
+                <th class='dt-no-settings-visible'></th>
+              </tr>
+              <% if @account_viewable_variants.count > 8 %>
+                <tr>
+                  <th colspan="<%= @user_is_viewing_images ? 7 : 7 %>"></th>
+                  <th class='dt-no-settings-visible'><button class="btn btn-primary pull-right" name="Add to Cart" id="add-to-cart"> Add to Cart</button></th>
+                  <th class='dt-no-settings-visible'></th>
+                </tr>
+              <% end %>
+            </thead>
+            <tfoot>
+              <% unless @account_viewable_variants.blank? %>
+                <tr>
+                  <td colspan="<%= @user_is_viewing_images ? 7 : 7 %>"></td>
+                  <td>
+                    <button class="btn btn-primary pull-right" name="Add to Cart" id="add-to-cart2" tabindex='1'> Add to Cart</button>
+                  </td>
+                  <td></td>
+                </tr>
+              <% end %>
+            </tfoot>
+            <tbody id='all-products'>
+              <%= render partial: 'current_order_products_list', locals: {f: f, order_type: 'order'} %>
+            </tbody>
+          </table>
+        </div>
+      <% end %>
+      <%= paginate @account_viewable_variants %>
+    </div>
+  </div>
+</div>
+
+<%= render partial: 'spree/manage/products/modal/product_modal' %>
+<%= render partial: 'spree/manage/variants/modal/variant_modal' %>
+<%= render partial: 'spree/manage/inventories/build_assembly_modal' %>
+<%= render partial: 'spree/manage/option_types/modal/edit' %>
+
+<script type='text/javascript'>
+  $('form').submit(function(){
+    $('.table-scrollable').append("<section class='loader'></section>");
+  });
+</script>

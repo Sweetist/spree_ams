@@ -1,0 +1,43 @@
+<div class="row" id='transfers-table-container'>
+  <!-- BEGIN PORTLET-->
+  <div class="portlet light">
+    <div class="caption">
+      <span class="caption-subject font-blue-soft bold uppercase">Transfers</span>
+    </div>
+    <div class='table-scrollable'>
+      <table class="table table-hover">
+        <tbody>
+          <tr>
+            <th>Date</th>
+            <th>Transfer #</th>
+            <th>Product</th>
+            <th>Type</th>
+            <th>Quantity</th>
+            <th>Lot</th>
+          </tr>
+          <% @stock_movements.each do |sm| %>
+            <% variant = sm.stock_item.try(:variant) %>
+            <% next unless variant %>
+            <% prod_url = variant.is_master? ? manage_product_path(variant.product) : manage_product_variant_path(variant.product, variant) %>
+            <tr data-transfer-id="<%= sm.originator.id %>">
+              <td><%= display_vendor_date_format(sm.created_at, @vendor.date_format) rescue '' %></td>
+              <td><%= link_to sm.originator.try(:display_number).to_s, manage_stock_transfer_path(sm.originator) %></td>
+              <td><%= link_to variant.full_display_name, prod_url %></td>
+              <td><%= sm.originator.display_transfer_type %></td>
+              <td class="quantity"><%= sm.quantity %></td>
+              <td>
+                <% lot_number = sm.lot.try(:number) %>
+                <% if lot_number && lot_number != @lot.number %>
+                  <%= link_to lot_number, manage_lot_path(sm.lot) %>
+                <% else %>
+                  <%= sm.lot.try(:number) %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+    <%= paginate @stock_movements, param_name: :transfers_page, remote: true %>
+  </div>
+</div>

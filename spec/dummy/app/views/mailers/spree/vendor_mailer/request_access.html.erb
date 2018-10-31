@@ -1,0 +1,26 @@
+<table>
+  <tr>
+    <td>
+      <p class="lede">
+        Dear <%= @vendor.name %>,
+      </p>
+
+      <p>
+        You have a new account request via Sweet.
+      </p>
+      <p>
+        To add a new account, please <%= link_to 'login', manage_accounts_url(host: @vendor.domain, protocol: 'https') %> and add them as a customer.<br>
+      </p>
+
+      <div style='margin-top:40px;'><strong>REQUEST DETAILS</strong></div>
+      <hr>
+      <% @form_results.each do |k,v| %>
+        <div>
+          <%= "#{k.to_s.humanize.upcase}: #{v.to_s}" %>
+        </div>
+      <% end %>
+      <hr>
+    </td>
+    <td class="expander"></td>
+  </tr>
+</table>

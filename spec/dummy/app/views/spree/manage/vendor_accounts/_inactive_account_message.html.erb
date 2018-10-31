@@ -1,0 +1,9 @@
+<div id="account-activity">
+  <div class="alert alert-danger alert-dismissable" id="inactive-account">
+    This account has been deactivated<%= " because of #{@account.inactive_reason}" unless @account.inactive_reason.blank? %>.
+    <div class="pull-right">
+      <%= link_to 'Reactivate', activate_manage_vendor_vendor_account_path(@account.vendor, @account), class: 'btn btn-primary' %>
+    </div>
+    <div class="clearfix"></div>
+  </div>
+</div>

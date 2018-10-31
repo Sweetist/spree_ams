@@ -1,0 +1,17 @@
+<% if current_spree_user.can_write?('basic_options', 'customers') %>
+  <%= link_to "Deactivate Account", 'javascript:;', class: "btn red #{'disabled' if f.object.try(:sub_accounts).try(:active).present?}", id: 'deactivate-account-btn' %>
+  <% if f.object.try(:sub_accounts).try(:active).present? %>
+    <i class='fa fa-info-circle tooltips' data-original-title='Must deactivate all sub accounts before deactivating the parent account' data-container='body'></i>
+  <% end %>
+<% end %>
+<div class='form-group'>
+  <div id="account-activity" class='hidden'>
+    <%= f.label :inactive_reason, 'Reason for deactivating' %>
+    <div class='input-group'>
+      <%= f.text_field :inactive_reason, class: 'form-control' %>
+      <span class="input-group-btn">
+        <%= f.submit 'Confirm', class: 'btn red', id: 'confirm-deactivate' %>
+      </span>
+    </div>
+  </div>
+</div>

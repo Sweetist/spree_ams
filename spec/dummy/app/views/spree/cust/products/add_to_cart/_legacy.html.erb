@@ -1,0 +1,5 @@
+<input tabindex="1" type="number" name='order[products][<%= variant.id %>]'
+          class="form-control product-qty" min="0" step='<%= variant.step_size %>',
+          placeholder="<%= "#{carted.sum(:quantity)} in cart" unless carted.blank? %>"
+          data-variant-id="<%= variant.id %>"
+          <%= 'disabled' if avv.try(:recalculating).to_i < Spree::AccountViewableVariant::RecalculatingStatus['complete'] %>>

@@ -1,0 +1,5 @@
+$('#zone-members').html('<%= j (render(partial: "spree/manage/zones/kinds/#{@kind}")) %>');
+$(document).ready(function(){
+  $('#zone_country_filter_id').change(loadZoneMembers);
+  $('#zone_state_filter_id').change(loadZoneMembers);
+});

@@ -1,0 +1,7 @@
+<% if flash[:success] %>
+  $('#account-activity').replaceWith("<%= escape_javascript(render(:partial => 'active_account_message')) %>");
+	$('#alert').html("<div class='alert alert-success alert-auto-dissapear'><%= flash[:success] %></div>");
+	setTimeout(function() {
+			$(".alert-auto-dissapear").fadeOut(1500);
+	},2000);
+<% end %>

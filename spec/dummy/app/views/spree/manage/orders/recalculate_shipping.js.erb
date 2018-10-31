@@ -1,0 +1,10 @@
+<% if flash[:errors] %>
+  $('#shipping-alert').html("<div class='alert alert-danger alert-dismissable'><button type='button' class='close' data-dismiss='alert' aria-hidden='true'></button><%= flash[:errors].join(", ") %></div>");
+<% end %> 
+<% colspan_left = 6 %>
+$('#recalculate_shipping').replaceWith('');
+$('#loading-gif').replaceWith("<%= currency_symbol(@order.currency) %>");
+$('#order_shipment_total').replaceWith("<input type='number' name='order[shipment_total]'' id='order_shipment_total' value=<%= @order.shipment_total %> step='0.01' class='form-control price-field line-item-price' />");
+$('.total-price').replaceWith("<span class='total-price'><%= display_sweet_price(@order.total, @order.currency) %></span>");
+$('#totals-row').replaceWith("<%= j (render(partial: 'total_row.html.erb', locals: {colspan_left: colspan_left})) %>");
+$('#edit-order-buttons').replaceWith("<%= j (render(partial: 'order_edit_buttons.html.erb', locals: {colspan_left: colspan_left})) %>");

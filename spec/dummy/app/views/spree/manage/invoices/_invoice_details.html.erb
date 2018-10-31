@@ -1,0 +1,93 @@
+<div class="col-md-6 col-sm-12">
+  <div class="portlet blue-hoki box">
+    <div class="portlet-title">
+      <div class="caption">
+        <i class="fa fa-cogs"></i><%= @invoice.vendor.name %>
+      </div>
+    </div>
+      <div class="portlet-body">
+        <div class="row static-info">
+          <div class="col-md-5 name"> Invoice #:</div>
+          <div class="col-md-7 value">
+            <%= link_to manage_invoice_path(@invoice, format: :pdf), target: "_blank" do %>
+              <%= @invoice.number %> <i class="fa fa-file-pdf-o"></i>
+            <% end %>
+          </div>
+        </div>
+
+        <% unless @invoice.po_number.blank? %>
+          <div class="row static-info">
+            <div class="col-md-5 name">
+              Purchase Order #:
+            </div>
+            <div class="col-md-7 value">
+              <%= @invoice.po_number %>
+            </div>
+          </div>
+        <% end %>
+
+        <div class="row static-info">
+          <div class="col-md-5 name"> <%= "#{@invoice.vendor.try(:order_date_text).to_s.capitalize} Date:".strip %></div>
+          <div class="col-md-7 value">
+            <%= @invoice.display_date %>
+          </div>
+        </div>
+        <div class="row static-info">
+          <div class="col-md-5 name"> Invoice Date:</div>
+          <div class="input-icon right col-md-5 value">
+            <% if current_spree_user.can_write?('invoice')%>
+              <% if @invoice.multi_order %>
+                <i style = "margin-right: 12px;" class="fa fa-info-circle tooltips" data-original-title= "Only editable if vendor is not using weekly invoices" data-container="body"></i>
+                <input disabled='disabled' data-provide = "datepicker" type="text" name="invoice[invoice_date]" value="<%= display_vendor_date_format(@invoice.invoice_date, @invoice.vendor.date_format) unless @invoice.invoice_date.blank? %>"
+                  class="form-control date-picker" data-date-format="<%= @invoice.vendor.date_format %>" id="invoice-invoice-date">
+              <% else %>
+                <input data-provide = "datepicker" type="text" name="invoice[invoice_date]" value="<%= display_vendor_date_format(@invoice.invoice_date, @invoice.vendor.date_format) unless @invoice.invoice_date.blank? %>"
+                  class="form-control date-picker" data-date-format="<%= @invoice.vendor.date_format %>" id="invoice-invoice-date">
+              <% end %>
+            <% else %>
+              <i style = "margin-right: 12px;" class="fa fa-info-circle tooltips" data-original-title= "You do not have permission to edit invoices" data-container="body"></i>
+              <input disabled='disabled' data-provide = "datepicker" type="text" name="invoice[invoice_date]" value="<%= display_vendor_date_format(@invoice.invoice_date, @invoice.vendor.date_format) unless @invoice.invoice_date.blank? %>"
+                class="form-control date-picker" data-date-format="<%= @invoice.vendor.date_format %>" id="invoice-invoice-date">
+            <% end %>
+          </div>
+        </div>
+        <div class="row static-info">
+          <div class="col-md-5 name"> Due Date:</div>
+          <div class="input-icon right col-md-5 value">
+            <% if current_spree_user.can_write?('invoice')%>
+              <input data-provide = "datepicker" type="text" name="invoice[due_date]" value="<%= display_vendor_date_format(@invoice.due_date, @invoice.vendor.date_format) unless @invoice.due_date.blank? %>"
+                class="form-control date-picker" data-date-format="<%= @invoice.vendor.date_format %>" id="invoice-due-date">
+            <% else %>
+              <i style = "margin-right: 12px;" class="fa fa-info-circle tooltips" data-original-title= "You do not have permission to edit invoices" data-container="body"></i>
+              <input disabled='disabled' data-provide = "datepicker" type="text" name="invoice[due_date]" value="<%= display_vendor_date_format(@invoice.due_date, @invoice.vendor.date_format) unless @invoice.due_date.blank? %>"
+                class="form-control date-picker" data-date-format="<%= @invoice.vendor.date_format %>" id="invoice-due-date">
+            <% end %>
+          </div>
+        </div>
+        <% unless @invoice.multi_order %>
+          <div class="row static-info">
+            <div class="col-md-5 name"> Order State: </div>
+            <div class="col-md-7 value">
+              <%= @invoice.state == 'complete' ? 'Submitted' : @invoice.state.to_s.capitalize %>
+            </div>
+          </div>
+        <% end %>
+        <div class="row static-info">
+          <div class="col-md-5 name"> Payment Status: </div>
+          <div class="col-md-7 value" id='invoice_payment_state'>
+            <%= render partial: 'payment_state' %>
+          </div>
+        </div>
+        <div class="row static-info">
+          <div class="col-md-5 name"> Total: </div>
+          <div class="col-md-7 value"> <span class='total-price'><%= display_sweet_price(@invoice.total, @invoice.currency) %></span> </div>
+        </div>
+        <div class="row static-info">
+          <div class="col-md-5 name"> <%= pluralize(@invoice.orders.count, 'Order') %>: </div>
+          <div class="col-md-7 value">
+            <%= safe_join(@invoice.orders.map { |order| link_to(order.state == 'void' ? raw("<strike>#{order.display_number} (void)</strike>") : order.display_number, edit_manage_order_path(order)) }, ", ".html_safe) %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

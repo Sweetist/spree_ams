@@ -1,0 +1,23 @@
+<% if @payment_methods.present? %>
+  <div class='row'>
+    <%= form_for @payment, url: order_payments_path(@order), method: :post, html:{class: 'prevent-double-submission', id: 'payment-form'} do |f| %>
+      <div class='col-md-12'>
+        <%= render partial: 'form', locals: { f: f } %>
+        <div class="form-actions pull-right" data-hook="buttons">
+          <%= link_to edit_order_path(@order), class: "btn btn-default", data: {dismiss: 'modal'} do %>
+            <%= Spree.t(:Cancel) %>
+          <% end %>
+          <% btn_msg = States[@order.state] < States['complete'] ? Spree.t(:submit_order) : Spree.t(:apply_payment) %>
+          <%= hidden_field_tag :commit, btn_msg %>
+          <button class='btn btn-primary apply-payment'>
+            <i class='fa fa-check'></i> <%= btn_msg %>
+          </button>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <div class="alert alert-info">
+    <%= @order.vendor.name %> is not accepting payments online at this time.
+  </div>
+<% end %>

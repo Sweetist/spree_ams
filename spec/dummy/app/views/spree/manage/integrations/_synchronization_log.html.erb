@@ -1,0 +1,188 @@
+<div class="row">
+  <div class="col-md-12">
+    <h5>
+      <span class="caption-subject font-blue-madison bold uppercase">Latest synchronizations:</span>
+      <% if params[:action_type] %>
+        <%= link_to 'Show all', manage_integration_path(integration.id), class: 'btn btn-sm btn-info' %>
+      <% else %>
+        <%= link_to "Show failed only (#{integration.integration_actions.where('status < ?', 0).count})",
+          manage_integration_path(integration.id, action_type: 'failed'), class: 'btn btn-sm btn-danger' %>
+      <% end %>
+      <%#= link_to destroy_all_manage_integration_integration_actions_path(integration.id), method: :delete, class: 'btn btn-sm btn-danger pull-right margin-left-5', data: {confirm: "This action is permanent and cannot be undone. Are you sure you want to clear log?"} do %>
+        <!-- <i class='fa fa-exclamation-triangle'></i> Clear All Completed -->
+      <%# end %>
+      <%#= link_to destroy_successful_manage_integration_integration_actions_path(integration.id), method: :delete, class: 'btn btn-sm btn-success pull-right',data: {confirm: "Are you sure?"} do %>
+        <!-- <i class='fa fa-trash'></i> Clear Successful -->
+      <%# end %>
+      <div class="btn-group pull-right">
+        <% if current_spree_user.is_admin? %>
+          <%= link_to manage_integration_kill_path(integration.id), method: :post, class: 'btn btn-sm btn-danger margin-right-5' do %>
+            <i class='fa fa-exclamation-triangle'></i> Kill sync
+          <% end %>
+        <% end %>
+        <button type="button" class="btn btn-sm green dropdown-toggle" data-toggle="dropdown"> Actions
+          <i class="fa fa-angle-down"></i>
+        </button>
+        <ul class="dropdown-menu pull-right" role="menu">
+          <% if integration.try(:can_fetch_products?) %>
+            <li>
+              <%= link_to manage_integration_fetch_products_path(integration.id) do %>
+                <i class='fa fa-refresh'></i>
+                <% if integration.integration_key == 'qbd' && integration.qbd_export_list_to_csv %>
+                  Export QBD items to CSV
+                <% else %>
+                  Pull Products from <%= @item.fetch(:name, '') %>
+                <% end %>
+              <% end %>
+            </li>
+          <% end %>
+          <% if integration.try(:can_fetch_customers?) %>
+            <li>
+              <%= link_to manage_integration_fetch_customers_path(integration.id) do %>
+                <i class='fa fa-refresh'></i> Pull Customers from <%= @item.fetch(:name, '') %>
+              <% end %>
+            </li>
+          <% end %>
+          <% if integration.try(:can_fetch_orders?) %>
+            <li>
+              <%= link_to manage_integration_fetch_orders_path(integration.id) do %>
+                <i class='fa fa-refresh'></i> Pull Orders from <%= @item.fetch(:name, '') %>
+              <% end %>
+            </li>
+          <% end %>
+          <% if integration.try(:can_fetch_credit_memos?) %>
+            <li>
+              <%= link_to manage_integration_fetch_credit_memos_path(integration.id) do %>
+                <i class='fa fa-refresh'></i> Pull Credit Memos from <%= @item.fetch(:name, '') %>
+              <% end %>
+            </li>
+          <% end %>
+          <% if integration.try(:can_fetch_account_payments?) %>
+            <li>
+              <%= link_to manage_integration_fetch_account_payments_path(integration.id) do %>
+                <i class='fa fa-refresh'></i> Pull Payments from <%= @item.fetch(:name, '') %>
+              <% end %>
+            </li>
+          <% end %>
+          <li>
+            <%= link_to manage_integration_enqueue_variants_path(integration.id, all_variants: false), data: {confirm: "Are you sure?"}  do %>
+              <i class='fa fa-th-large'></i> Enqueue unsynced products
+            <% end %>
+          </li>
+          <li>
+            <%= link_to manage_integration_enqueue_variants_path(integration.id, all_variants: true), data: {confirm: "Are you sure?"}  do %>
+              <i class='fa fa-th'></i> Enqueue all products
+            <% end %>
+          </li>
+          <li>
+            <%= link_to destroy_successful_manage_integration_integration_actions_path(integration.id), method: :delete, data: {confirm: "Are you sure?"} do %>
+              <i class='fa fa-trash'></i> Clear Successful
+            <% end %>
+          </li>
+          <% if Rails.env.development? || Rails.env.heroku_dev? %>
+            <% if session[:show_skipped_action].present? %>
+              <li>
+                <%= link_to manage_integration_toggle_skipped_actions_path(integration.id) do %>
+                  <i class='fa fa-eye-slash'></i> Not show skipped actions
+                <% end %>
+              </li>
+            <% else %>
+              <li>
+                <%= link_to manage_integration_toggle_skipped_actions_path(integration.id) do %>
+                  <i class='fa fa-eye'></i> Show skipped actions
+                <% end %>
+              </li>
+            <% end %>
+          <% end %>
+          <li>
+            <%= link_to destroy_all_manage_integration_integration_actions_path(integration.id), method: :delete, data: {confirm: "This action is permanent and cannot be undone. Are you sure you want to clear log?"} do %>
+              <i class='fa fa-exclamation-triangle'></i> Clear All Completed
+            <% end %>
+          </li>
+        </ul>
+      </div>
+    </h5>
+    <div class="table-scrollable">
+      <table class="table table-hover">
+        <thead>
+          <th>Status</th>
+          <th>Name</th>
+          <th>Enqueued At</th>
+          <th>Tries</th>
+          <th>Processed At</th>
+          <th></th>
+          <th></th>
+        </thead>
+        <tbody>
+          <% actions = integration.integration_actions.order('enqueued_at desc') %>
+          <% actions = actions.where('status < ?', 0) if params[:action_type] %>
+          <% actions = actions.where.not('status = ?', 11) if session[:show_skipped_action].blank? %>
+          <% actions = actions.page(params[:page]).per(15) %>
+          <% actions.each do |action| %>
+            <%
+              case action.integrationable.try(:class).try(:name)
+              when 'Spree::Variant'
+                url = action.integrationable.is_master ? manage_product_path(action.integrationable.product) : manage_product_variant_path(action.integrationable.product, action.integrationable)
+              when 'Spree::Product'
+                url = manage_product_path(action.integrationable)
+              when 'Spree::Order'
+                order = action.integrationable
+                if order.sales_order?(current_spree_user.company_id)
+                  url = edit_manage_order_path(order)
+                else
+                  url = edit_manage_purchase_order_path(order)
+                end
+              when 'Spree::StockTransfer'
+                url = manage_stock_transfer_path(action.integrationable)
+              when 'Spree::Account'
+                account = action.integrationable
+                url = manage_customer_account_path(account.try(:customer), account)
+              when 'Spree::Payment'
+                order = action.integrationable.try(:order)
+                url = order.present? ? edit_manage_order_path(order, anchor: 'payments') : nil
+              when 'Spree::CreditMemo'
+                credit_memo = action.integrationable
+                url = credit_memo.present? ? edit_manage_credit_memo_path(credit_memo) : nil
+              when 'Spree::AccountPayment'
+                account_payment = action.integrationable
+                url = account_payment.present? ? edit_manage_account_payment_path(account_payment) : nil
+              else
+                url = nil
+              end
+            %>
+            <% if action.status != 11 || session[:show_skipped_action].present? %>
+              <tr class='action_<%= action.id %>'>
+                <td><div class="label <%= "label-#{action.status_color}"%>" id="action-status-<%= action.id %>"><%= action.status_text %></div></td>
+                <% if url %>
+                  <td><%= link_to action.name_for_log, url %></td>
+                  <td><%= link_to sweet_time(action.enqueued_at, integration.vendor.time_zone), url %></td>
+                  <td><%= link_to action.execution_count, url %></td>
+                  <td><%= link_to sweet_time(action.processed_at, integration.vendor.time_zone), url %></td>
+                <% else %>
+                  <td><%= action.name_for_log %></td>
+                  <td><%= sweet_time(action.enqueued_at, integration.vendor.time_zone) %></td>
+                  <td><%= action.execution_count %></td>
+                  <td><%= sweet_time(action.processed_at, integration.vendor.time_zone) %></td>
+                <% end %>
+                <td><% if action.status == -1 || action.status == 3 %><%= link_to "Restart", manage_integration_enqueue_path(integration.id, id: action.id), class: 'btn btn-xs btn-info', id: "action-restart-#{action.id}", remote: true %><% end %></td>
+                <td>
+                  <%= link_to manage_integration_integration_action_path(integration, action), method: :delete, remote: true, class: 'btn btn-xs red delete-row-btn pull-right close-button' do %>
+                    <i class='fa fa-times'></i>
+                  <% end %>
+                </td>
+              </tr>
+
+              <% unless action.execution_log.blank? || action.status > 3 || action.status == 0 %>
+                <tr class='action_<%= action.id %>'>
+                  <td style='border-top: none;'></td>
+                  <td colspan="100%" style='border-top: none;'><%= debug action.execution_log %></td>
+                </tr>
+              <% end %>
+            <% end %>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+    <%= paginate actions %>
+  </div>
+</div>

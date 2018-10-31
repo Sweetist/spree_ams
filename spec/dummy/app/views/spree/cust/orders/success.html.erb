@@ -1,0 +1,58 @@
+<%= content_for :head_title do %>
+  Order - Success
+<% end %>
+
+<%= content_for :page_title do %>
+	<span class="order-id">
+		Order #<%= @order.display_number %>
+	</span>
+<% end %>
+<%= content_for :page_bar do %>
+  <ul class="breadcrumb">
+    <li>
+      <%= link_to "Home", root_path %>
+    </li>
+		<li>
+      <%= link_to "Orders", orders_path %>
+    </li>
+    <li>
+      <%= link_to "Order #{@order.display_number}", order_path(@order) %>
+    </li>
+  </ul>
+	<div class="page-toolbar">
+    <div class="btn-group pull-right">
+			<%= link_to "View All Orders", orders_path, class: "btn btn-primary" %>
+    </div>
+  </div>
+<% end %>
+
+<div class="portlet light">
+  <div class="portlet-title">
+    <div class="caption">
+    </div>
+  </div>
+  <div class="portlet-body">
+    <div class="row">
+      <div class="col-md-12">
+        <% vendor = @order.vendor %>
+        <h3>Your Order <strong>#<%= @order.display_number %></strong> has been placed!</h3>
+        <% if (vendor.send_confirm_email && !vendor.auto_approve_orders) || (vendor.auto_approve_orders && vendor.send_approved_email) %>
+          <p>You will receive a confirmation email shortly.</p>
+        <% end %>
+        <% if vendor.cva.pages_order_success.fetch('text', nil).present? %>
+          <%= raw(vendor.cva.pages_order_success.fetch('text')) %>
+        <% elsif @order.account.can_select_delivery? %>
+          <p>
+            The cutoff time for this order is <%= "#{vendor.order_cutoff_time} #{vendor.time_zone}" %> on
+            <%= (@order.delivery_date.to_date - vendor.min_lead_days.days).to_formatted_s(:long)%>. Any changes after that are at the discretion of <%= vendor.name %>.
+          </p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class="pull-right">
+  <%= link_to "Edit Order", edit_order_path(@order), class: "btn btn-default" %>
+  <%= link_to "Start a New Order", new_order_path, class: "btn btn-primary" %>
+</section>

@@ -1,0 +1,37 @@
+<div class="variant-title">
+  <div class="caption">
+    <span class="caption-subject font-blue-madison bold uppercase pull-left">
+      <%= @variant.persisted? ? "#{@variant.full_display_name}" : 'New Variant' %>
+    </span>
+  </div>
+</div>
+<%= form_for [:manage, @variant], url: manage_product_variants_path(@product), method: :post, html: {class: 'product_form'}, remote: true do |f| %>
+  <div class="portlet-body form">
+    <% if @warn_product_ordered %>
+      <div class="alert alert-warning alert-dismissable">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
+        The master variant has already been ordered. It is not recommended to create variants for this product.
+        <% if @warn_qbo_categories %>
+          Creating a new variant will deactivate the item in Quickbooks and create
+          a category with the same name.
+        <% end %>
+      </div>
+    <% end %>
+    <div class="form-body">
+      <%= render partial: 'spree/manage/variants/form', locals: {f: f} %>
+    </div>
+    <!-- TODO transfer attributes from products to variants  -->
+    <%#= render partial: 'spree/manage/products/chart_accounts_form', locals: {f: f} %>
+    <div class="form-actions">
+      <div class="links pull-right">
+        <%= link_to manage_products_path, class: 'btn btn-default', 'data-dismiss'=>"modal", 'aria-hidden'=>"true" do %>
+          <i class='fa fa-times'></i> Cancel
+        <% end %>
+        <button class="btn btn-primary">
+          <i class='fa fa-check'></i> Save
+        </button>
+        <%#= hidden_field_tag("product[sub_list]", "", id: "sub_list") %>
+      </div>
+    </div>
+  </div>
+<% end %>

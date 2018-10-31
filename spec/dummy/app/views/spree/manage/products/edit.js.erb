@@ -1,0 +1,13 @@
+$('.portlet', '#product-modal').html("<%= j render(partial: 'spree/manage/products/page_content/edit_body.html.erb') %>");
+$('#product-name', '#product-modal').text('<%= @product.name %>');
+$('.product-title', '#product-modal').first().append("<div class='actions'><button type='button' class='close modal-close' data-dismiss='modal' aria-hidden='true'></button></div>")
+$('.portlet-body', '#product-modal').first().prepend("<%= j render(partial: 'spree/shared/errors.html.erb') %>");
+$('.make-switch', '#product-modal').bootstrapSwitch();
+$('.select2', '#product-modal').select2({width: '100%'});
+$('.select2-multiple', '#product-modal').select2({width: '100%'});
+$("form#edit_product_<%= @product.id %>").data('remote', true);
+$(document).ready(function(){
+  $.fn.modal.Constructor.prototype.enforceFocus = function() {};
+  initLoadAssemblyForm();
+  initVariantModal();
+});

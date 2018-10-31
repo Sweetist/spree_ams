@@ -1,0 +1,167 @@
+<% include_total_weight = current_vendor.try(:include_total_weight) %>
+<% colspan = 1 %>
+<% colspan += 1 if current_vendor.try(:include_unit_weight) %>
+<% colspan += 1 if current_vendor_view_settings.line_item_lot_number && !@invoice.multi_order %>
+<% colspan += 1 if current_vendor_view_settings.variant_pack_size %>
+<% colspan += 1 if current_vendor_view_settings.variant_sku %>
+<tr class="totals">
+  <td colspan="<%= colspan %>"></td>
+  <td><strong>Subtotal:</strong></td>
+  <td><%= @invoice.item_count %></td>
+  <% if include_total_weight %>
+    <td></td>
+  <% end %>
+  <td><%= display_sweet_price(@invoice.item_total, @invoice.currency) %></td>
+</tr>
+
+<!-- Adjustments -->
+<% unless @invoice.adjustment_total == 0 && @invoice.promo_total == 0 %>
+  <tr class="adjustment">
+    <td colspan="<%= colspan %>"></td>
+    <td class='adj-click'>
+      <i class="fa fa-chevron-right adj-arrow"></i>
+      Adjustments:
+    </td>
+    <td></td>
+    <% if include_total_weight %>
+      <td></td>
+    <% end %>
+    <td class="adj-hide"><%= display_sweet_price(@invoice.promo_total + @invoice.adjustment_total, @invoice.currency) %></td>
+  </tr>
+  <% @invoice.line_item_adjustments.promotion.eligible.group_by(&:label).each do |label, adjustments| %>
+    <tr class="adjustment adj-show" style="display: none;">
+      <td colspan="<%= colspan %>"></td>
+      <td>
+        <% if @invoice.multi_order %>
+          &nbsp;&nbsp;&nbsp;&nbsp;<%= "#{adjustments.first.source.try(:promotion).try(:name)} (Order ##{adjustments.first.order.display_number})" %>
+        <% else %>
+          &nbsp;&nbsp;&nbsp;&nbsp;<%= adjustments.first.source.try(:promotion).try(:name) || label %>
+        <% end %>
+      </td>
+      <td></td>
+      <% if include_total_weight %>
+        <td></td>
+      <% end %>
+      <td>
+        <%= display_sweet_price(adjustments.sum(&:amount), @invoice.currency) %>
+      </td>
+    </tr>
+  <% end %>
+  <% @invoice.adjustments.eligible.each do |adjustment| %>
+    <tr class="adjustment adj-show" style="display: none;">
+      <td colspan="<%= colspan %>"></td>
+      <td>
+        <% if @invoice.multi_order %>
+          &nbsp;&nbsp;&nbsp;&nbsp;<%= "#{adjustment.source.try(:promotion).try(:name) || adjustment.label} (Order ##{adjustment.order.display_number})" %>
+        <% else %>
+          &nbsp;&nbsp;&nbsp;&nbsp;<%= "#{adjustment.source.try(:promotion).try(:name) || adjustment.label}" %>
+        <% end %>
+      </td>
+      <td></td>
+      <% if include_total_weight %>
+        <td></td>
+      <% end %>
+      <td>
+        <div class="right"><%= display_sweet_price(adjustment.amount, @invoice.currency) %></div>
+      </td>
+    </tr>
+  <% end %>
+  <% @invoice.shipment_adjustments.promotion.eligible.each do |adjustment| %>
+    <tr class="adjustment adj-show" style="display: none;">
+      <td colspan="<%= colspan %>"></td>
+      <td>
+        <% if @invoice.multi_order %>
+          &nbsp;&nbsp;&nbsp;&nbsp;<%= "#{adjustment.source.try(:promotion).try(:name)} (Order ##{adjustment.order.display_number})" %>
+        <% else %>
+          &nbsp;&nbsp;&nbsp;&nbsp;<%= "#{adjustment.source.try(:promotion).try(:name)}" %>
+        <% end %>
+      </td>
+      <td></td>
+      <% if include_total_weight %>
+        <td></td>
+      <% end %>
+      <td>
+        <div class="right"><%= display_sweet_price(adjustment.amount, @invoice.currency) %></div>
+      </td>
+    </tr>
+  <% end %>
+<% end %>
+  <!-- End Adjustments -->
+
+<!-- Begin Taxes -->
+<% unless @invoice.additional_tax_total == 0 %>
+  <tr class="adjustment">
+    <td colspan="<%= colspan %>"></td>
+    <td>
+      Tax:
+    </td>
+    <td></td>
+    <% if include_total_weight %>
+      <td></td>
+    <% end %>
+    <td>
+      <%= display_sweet_price(@invoice.additional_tax_total, @invoice.currency) %>
+    </td>
+  </tr>
+<% end %>
+
+<% unless @invoice.included_tax_total == 0 %>
+  <tr class="adjustment">
+    <td colspan="<%= colspan %>"></td>
+    <td>
+      Included Tax:
+    </td>
+    <td></td>
+    <% if include_total_weight %>
+      <td></td>
+    <% end %>
+    <td>
+      <%= display_sweet_price(@invoice.included_tax_total, @invoice.currency) %>
+    </td>
+  </tr>
+<% end %>
+  <!-- End Taxes -->
+
+<!-- Begin Shipment -->
+<%# unless @invoice.shipment_total == 0 %>
+  <tr class="adjustment">
+    <td colspan="<%= colspan %>"></td>
+    <td>
+      Shipping:
+    </td>
+    <td></td>
+    <% if include_total_weight %>
+      <td></td>
+    <% end %>
+    <td>
+      <% if @invoice.orders.any?{|order| order.shipping_method.try(:rate_tbd) && !order.override_shipment_cost} %>
+        TBD
+      <% else %>
+        <%= display_sweet_price(@invoice.shipment_total, @invoice.currency) %>
+      <% end %>
+    </td>
+  </tr>
+<%# end %>
+<!-- End Shipments -->
+
+<tr class="totals">
+  <td colspan="<%= colspan %>"></td>
+  <td><strong>Total:</strong></td>
+  <td><strong> <%= @invoice.item_count %></strong></td>
+  <% if include_total_weight %>
+    <td></td>
+  <% end %>
+  <td><strong><%= display_sweet_price(@invoice.total, @invoice.currency) %></strong></td>
+</tr>
+
+<script type="text/javascript">
+  $(".adj-click").click(function () {
+    $(".adj-arrow").toggleClass("down");
+    $content = $(".adj-show");
+    $content.slideToggle(function () {
+      $(".adj-hide").text(function () {
+        return $content.is(":visible") ? "" : "<%= display_sweet_price(@invoice.promo_total + @invoice.adjustment_total, @invoice.currency) %>";
+      });
+    });
+  });
+</script>

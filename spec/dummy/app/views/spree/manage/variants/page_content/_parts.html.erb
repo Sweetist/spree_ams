@@ -1,0 +1,71 @@
+<% if f %>
+  <div class="row">
+    <div class="col-md-9 row">
+      <% if variant.persisted? %>
+        <div class="col-md-7">
+          <div class="form-group">
+            <%= f.label :add_sub_product, "Add Component:", class: "control-label" %>
+            <% sub_parts = @vendor.showable_variants.active.where('spree_products.can_be_part = ? AND spree_products.id != ?', true, variant.product_id) %>
+            <%= collection_select :variant, :product_id, sub_parts, :id, :full_context, {include_blank: true}, {id: "sub_product_id_#{variant.id}", class: "form-control select2"} %>
+          </div>
+        </div>
+        <div class="col-md-5">
+          <div class="form-group">
+            <%= f.label :count, "Count", class: 'control-label' %>
+            <div class="input-group">
+              <%= number_field_tag "qty_to_add_#{variant.try(:id)}", 1, min: 0, step: 'any', class: "form-control", data: {'form-index' => f.index}%>
+              <div class="input-group-btn">
+                <button data-variant-id='<%= variant.try(:id) %>', class="btn btn-primary update_part_id"> Add </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% else %>
+        <div class='col-md-12'>
+          <p class='help-block-italic'><strong>You must save the product before adding parts</strong></p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
+<div id="existing_sub_parts_<%= variant.try(:id) %>">
+  <% if variant.try(:persisted?) %>
+    <div class="table-scrollable">
+      <table class="table">
+        <thead>
+          <tr>
+            <th><%= Spree.t(:sku) %></th>
+            <th><%= Spree.t(:name) %></th>
+            <th><%= Spree.t(:unit_weight) %></th>
+            <th><%= Spree.t(:unit_cost) %></th>
+            <th><%= Spree.t(:qty) %></th>
+            <th><%= Spree.t(:total_weight) %></th>
+            <th><%= Spree.t(:total_cost) %></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id='sub-parts-table-body-<%= variant.try(:id) %>'>
+          <% if variant.present? %>
+            <% variant.parts_variants.sort_by{|part_variant, part1| part_variant.name}.each_with_index do |part_variant, idx| %>
+              <%= render partial: 'spree/manage/variants/part_row', locals: {variant: variant, part_variant: part_variant, idx: idx, variant_idx: f.try(:index)} %>
+            <% end %>
+            <tr id='component-totals'>
+              <td colspan="5"></td>
+
+              <td></td>
+              <td colspan='2'>
+                <strong>
+                  <span><%= currency_symbol(@vendor.currency) %></span><span id='sum_parts_cost'><%= number_with_precision(variant.sum_component_costs, precision: 2) %></span>
+                </strong>
+              </td>
+
+            </tr>
+          <% else %>
+           <tr><td colspan="100%">No components selected</td></tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% end %>
+</div>

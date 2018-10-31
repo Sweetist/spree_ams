@@ -1,0 +1,36 @@
+<section id='account-address-info'>
+  <% @account ||= @order.try(:account) %>
+  <% @company ||= @order.try(:account).try(:customer) %>
+  <% @stock_location ||= @order.try(:po_stock_location) %>
+  <% bill_address = @account.try(:bill_address) || @account.try(:billing_addresses).try(:last) %>
+  <div class="row static-info">
+    <div class="col-md-5 name">Email:</div>
+    <div class="col-md-7 value" id='vendor-email'><%= @account.try(:email) %></div>
+  </div>
+  <div class="row static-info">
+    <div class="col-md-5 name"> Phone: </div>
+    <div class="col-md-7 value order-email" id='vendor-phone'> <%= bill_address.try(:phone) %> </div>
+  </div>
+  <hr>
+  <div class="row static-info">
+    <div class="col-md-5 name">Receive At:</div>
+    <div class="col-md-7 value">
+      <% if States[@order.try(:state)].to_i < States['shipped'] %>
+        <%= collection_select(:order, :po_stock_location_id, @company.stock_locations.active, :id, :name, {}, class: 'form-control') %>
+      <% else %>
+        <% location = @order.try(:po_stock_location) %>
+        <% if location %>
+          <%= link_to location.name, manage_stock_location_path(location) %>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+  <div class="row static-info">
+    <div class="col-md-5 name">Shipping Address:</div>
+    <div class="col-md-7 value" id='stock-location-address'>
+      <% if @stock_location %>
+        <%= render partial: 'spree/shared/addresses/street_city_zip', locals: {address: @stock_location} %>
+      <% end %>
+    </div>
+  </div>
+</section>

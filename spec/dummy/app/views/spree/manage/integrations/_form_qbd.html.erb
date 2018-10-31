@@ -1,0 +1,293 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="row">
+      <%= simple_form_for integration, url: path, method: method, wrapper: :horizontal_form do |f| %>
+        <div class="portlet light">
+          <div class="portlet-title">
+            <div class="caption">
+              <span class="caption-subject font-blue-madison bold uppercase">
+                <%= image_tag(item.fetch(:image, ''), width: '32') %>
+                <%= item.fetch(:name, '') %>
+              </span>
+            </div>
+          </div>
+          <div class="portlet-body form">
+            <div class="form-body">
+              <%= f.input :integration_key, as: :hidden, input_html: { value: item.fetch(:integration_key, '') } %>
+              <%= f.input :qbd_password, disabled: true, as: :string, label: 'Password' %>
+              <%= f.input :qbd_match_with_name, as: :radio_buttons, collection: [[true, 'Product Name in Sweet'], [false, 'Product SKU in Sweet']], label: 'Match Quickbooks Item Name to', label_method: :last, value_method: :first, wrapper: :horizontal_radio_and_checkboxes %>
+              <%= f.input :qbd_send_order_as, as: :select,
+                collection: [
+                  ['invoice', I18n.t('integrations.qbd.send_order_as.options.invoice')],
+                  ['sales_order', I18n.t('integrations.qbd.send_order_as.options.sales_order')],
+                  ['sales_receipt', I18n.t('integrations.qbd.send_order_as.options.sales_receipt')]
+                ],
+                label: 'Send Order as', label_method: :last, value_method: :first,
+                include_blank: false %>
+              <%= f.input :qbd_invoice_template, as: :string,
+                  label: I18n.t('integrations.qbd.invoice_template.label'),
+                  wrapper_html: { class: 'order-template' } %>
+              <%= f.input :qbd_sales_receipt_template, as: :string,
+                  label: I18n.t('integrations.qbd.sales_receipt_template.label'),
+                  wrapper_html: { class: 'order-template' } %>
+              <%= f.input :qbd_sales_order_template, as: :string,
+                  label: I18n.t('integrations.qbd.sales_order_template.label'),
+                  wrapper_html: { class: 'order-template' } %>
+              <%= f.input :qbd_credit_memo_template, as: :string,
+                  label: I18n.t('integrations.qbd.credit_memo_template.label') %>
+              <%= f.input :qbd_auto_apply_payment, as: :radio_buttons,
+                  collection: [[true, Spree.t(:say_yes)], [false, Spree.t(:say_no)]],
+                  label: raw("#{I18n.t('integrations.qbd.auto_apply_payment.label')}
+                  <i class='fa fa-info-circle tooltips' data-container='body'
+                  data-original-title='#{I18n.t('integrations.qbd.auto_apply_payment.helper')}'></i>"),
+                  label_method: :last, value_method: :first,
+                  wrapper: :horizontal_radio_and_checkboxes %>
+
+              <%= f.input :qbd_create_related_objects, as: :radio_buttons, collection: [[true, 'Yes (recommended)'], [false, Spree.t(:say_no)]], label: 'Create Customers, Products and others in Quickbooks', label_method: :last, value_method: :first, wrapper: :horizontal_radio_and_checkboxes %>
+              <%= f.input :qbd_update_related_objects, as: :radio_buttons, collection: [[true, 'Yes'], [false, Spree.t(:say_no)]], label: I18n.t('integrations.qbd.update_related_objects.label'), label_method: :last, value_method: :first, wrapper: :horizontal_radio_and_checkboxes %>
+              <%= f.input :qbd_overwrite_conflicts_in, as: :radio_buttons, collection: [['none', 'No resolution'], ['quickbooks', 'Quickbooks (recommended)'], ['sweet', 'Sweet']], label: 'Overwrite conflicts in', label_method: :last, value_method: :first, wrapper: :horizontal_radio_and_checkboxes %>
+              <%= f.input :qbd_overwrite_orders_in, as: :radio_buttons,
+                  collection: [['none', 'No resolution'], ['quickbooks', 'Quickbooks (recommended)'], ['sweet', 'Sweet (Not yet implemented)']],
+                  label: I18n.t('integrations.qbd.overwrite_orders_in.label'),
+                  label_method: :last, value_method: :first, wrapper: :horizontal_radio_and_checkboxes %>
+              <%= f.input :qbd_use_external_balance, as: :radio_buttons, collection: [[true, Spree.t(:say_yes)], [false, Spree.t(:say_no)]], label: I18n.t('integrations.qbd.use_external_balance.label'), label_method: :last, value_method: :first, wrapper: :horizontal_radio_and_checkboxes %>
+              <%= f.input :qbd_is_to_be_printed, as: :radio_buttons, collection: [[true, Spree.t(:say_yes)], [false, Spree.t(:say_no)]], label: 'Is To Be Printed', label_method: :last, value_method: :first, wrapper: :horizontal_radio_and_checkboxes %>
+
+              <% if @vendor.subscription_includes?('assemblies') %>
+                <%= f.input :qbd_use_assemblies, as: :radio_buttons, collection: [[true, 'Yes (Not supported by all version of Quickbooks)'], [false, Spree.t(:say_no)]], label: 'Use Assemblies', label_method: :last, value_method: :first, wrapper: :horizontal_radio_and_checkboxes %>
+                <div class="form-group select optional integration_item_qbd_build_assembly_account_id">
+                  <%= f.label :qbd_build_assembly_account_id, 'Build Assemblies Account', class: "select optional col-sm-3 control-label"%>
+                  <div class="col-sm-9">
+                    <%= f.grouped_collection_select(:qbd_build_assembly_account_id, Spree::ChartAccountCategory.all.map{|c| c.filter_vendor_id = spree_current_user.company_id; c}, :vendors_chart_accounts, :name, :id, :fully_qualified_name, {include_blank: true}, { class: "select optional form-control" }) %>
+                    <span class='help-block-italic'>Account used for Quickbooks inventory adjustments when building assemblies in Sweet</span>
+                  </div>
+                </div>
+              <% else %>
+                <%= f.input :qbd_build_assembly_account_id, as: :hidden, input_html: {value: nil} %>
+                <%= f.input :qbd_use_assemblies, as: :hidden, input_html: {value: false} %>
+              <% end %>
+              <% if @vendor.subscription_includes?('inventory') %>
+                <%= f.input :qbd_track_inventory, as: :radio_buttons, collection: [[true, Spree.t(:say_yes)], [false, Spree.t(:say_no)]], label: 'Track Inventory', label_method: :last, value_method: :first, wrapper: :horizontal_radio_and_checkboxes %>
+                <%= f.input :qbd_use_multi_site_inventory, as: :radio_buttons, collection: [[true, 'Yes (Not supported by all version of Quickbooks)'], [false, Spree.t(:say_no)]], label: 'Use Multi-Site Inventory', label_method: :last, value_method: :first, wrapper: :horizontal_radio_and_checkboxes %>
+              <% else %>
+                <%= f.input :qbd_track_inventory, as: :hidden, input_html: {value: false} %>
+                <%= f.input :qbd_use_multi_site_inventory, as: :hidden, input_html: {value: false} %>
+              <% end %>
+              <% if @vendor.try(:track_order_class?) %>
+                <%= f.input :qbd_use_order_class_on_lines, as: :radio_buttons, collection: [[true, Spree.t(:say_yes)], [false, Spree.t(:say_no)]], label: 'Include Order Class on Line Items', label_method: :last, value_method: :first, wrapper: :horizontal_radio_and_checkboxes %>
+              <% end %>
+              <% if @vendor.try(:track_order_class?) || @vendor.try(:track_line_item_class?) %>
+                <%= f.input :qbd_sync_class_on_items_and_customers, as: :radio_buttons,
+                  collection: [[true, "#{Spree.t(:say_yes)} (#{I18n.t('integrations.qbd.must_enable')})"], [false, "#{Spree.t(:say_no)}"]],
+                  label: I18n.t("integrations.qbd.#{@vendor.track_order_class? ? 'sync_customer_class' : 'sync_item_class'}"),
+                  label_method: :last, value_method: :first, wrapper: :horizontal_radio_and_checkboxes %>
+              <% end %>
+              <% line_sort_text = "Custom (#{Spree::LineItem.company_sort(@vendor).titleize.gsub('.',' ').gsub('Spree ','')})" %>
+              <%= f.input :qbd_line_item_sort, as: :select,
+                collection: [['spree_line_items.created_at asc', 'Created At (recommended)'], [Spree::LineItem.company_sort(@vendor), line_sort_text]],
+                label: 'Line Item Sort By', label_method: :last, value_method: :first, include_blank: true %>
+                <div class='row' id='line-sort-warning'>
+                  <div class='col-sm-3'></div>
+                  <div class='col-sm-9'>
+                    <span class='help-block-italic'>
+                      <b>Important:</b> Editing an order with custom line sorting may
+                      result in errors if the line item sequencing is changed after syncing to
+                      Quickbooks. Please contact
+                      <%= mail_to 'help@getsweet.com', 'help@getsweet.com',
+                        subject: 'Quickbooks Desktop Line Item Sequencing' %>
+                      if you have any problems with this.
+                    </span>
+                  </div>
+                </div>
+              <% if current_spree_user.is_admin? %>
+                <div class='alert alert-warning row'>
+                  <%= f.input :qbd_force_line_position, as: :radio_buttons, collection: [[true, Spree.t(:say_yes)], [false, Spree.t(:say_no)]], label: raw('Force Line Positions<br>(This setting can only be changed by Sweet admin and does not support syncing bundles)'), label_method: :last, value_method: :first, wrapper: :horizontal_radio_and_checkboxes %>
+                </div>
+              <% end %>
+              <%= f.input :qbd_track_lots, as: :radio_buttons, collection: [[true, Spree.t(:say_yes)], [false, Spree.t(:say_no)]], label: 'Include Lots in Line Description', label_method: :last, value_method: :first, wrapper: :horizontal_radio_and_checkboxes %>
+              <%= f.input :qbd_include_assembly_lots, as: :radio_buttons, collection: [[true, Spree.t(:say_yes)], [false, Spree.t(:say_no)]], label: 'Include Assembly Component Lots in Line Description', label_method: :last, value_method: :first, wrapper: :horizontal_radio_and_checkboxes %>
+
+
+              <%#= f.input :qbd_group_discounts, as: :radio_buttons, collection: [[true, 'Grouped as one line item'], [false, 'As individual line for each discount (not yet supported)']], label: raw('Include Discounts<br/>(grouped as one)'), label_method: :last, value_method: :first, wrapper: :horizontal_radio_and_checkboxes %>
+              <%= f.input :qbd_collect_taxes, as: :radio_buttons, collection: [[true, Spree.t(:say_yes)], [false, Spree.t(:say_no)]], label: I18n.t('integrations.qbd.collect_taxes'), label_method: :last, value_method: :first, wrapper: :horizontal_radio_and_checkboxes %>
+
+              <%= f.input :qbd_group_discounts, as: :radio_buttons, collection: [[true, 'Grouped as one line item']], label: raw('Include Discounts'), label_method: :last, value_method: :first, wrapper: :horizontal_radio_and_checkboxes %>
+              <%= f.input :qbd_send_special_instructions_as, as: :select,
+                collection: @integration.qbd_send_special_instructions_options,
+                label: I18n.t('integrations.qbd.send_special_instructions_as.label'),
+                include_blank: false %>
+              <%= f.input :qbd_special_instructions_item, as: :string,
+                label: I18n.t('integrations.qbd.special_instructions_item.label') %>
+
+              <%= render partial: "spree/manage/integrations/shared/form", locals: { item: @integration, f: f } %>
+              <% @vendor.sales_integration_items.pluck(:integration_key).uniq.each do |key| %>
+                <%= render partial: "spree/manage/integrations/shared/#{key}_fields", locals: {f: f} %>
+              <% end %>
+              <section class='important-clarifier'>
+                <%= f.input :qbd_discount_item_name, as: :string, label: 'Discount Item Name' %>
+                <div class="form-group select optional integration_item_qbd_discount_account_id">
+                  <%= f.label :qbd_discount_account_id, 'Discount Account', class: "select optional col-sm-3 control-label"%>
+                  <div class="col-sm-9">
+                    <%= f.grouped_collection_select(:qbd_discount_account_id, Spree::ChartAccountCategory.all.map{|c| c.filter_vendor_id = spree_current_user.company_id; c}, :vendors_chart_accounts, :name, :id, :fully_qualified_name, {include_blank: true}, { class: "select optional form-control" }) %>
+                  </div>
+                </div>
+                <%= f.input :qbd_default_shipping_category_id, as: :select, collection: @vendor.shipping_categories, label: raw("Default Shipping Category <i class='fa fa-info-circle tooltips' data-original-title='Used for creating products in Sweet' data-container='body'></i>"), include_blank: false %>
+                <%= f.input :qbd_shipping_item_name, as: :string, label: 'Shipping Item Name' %>
+                <%= f.input :qbd_bundle_adjustment_name, as: :string, label: 'Bundle Adjustment Item Name' %>
+                <%= f.input :qbd_bundle_adjustment_account_id, as: :select, collection: @vendor.chart_accounts.where(chart_account_category_id: Spree::ChartAccountCategory.find_by_name('Income Account').try(:id)).order('fully_qualified_name asc'), label_method: :fully_qualified_name, value_method: :id, label: 'Bundle Adjustment Account', include_blank: false %>
+                <%= f.input :qbd_accounts_receivable_account, as: :string, label: raw("Accounts Receivable Account <i class='fa fa-info-circle tooltips' data-original-title='Receivable Account in Quickbooks that will be used for all Invoices and Payments. This is required if you have multiple Receivable Accounts in Quickbooks' data-container='body'></i>") %>
+                <%= f.input :qbd_deposit_to_account, as: :string, label: raw("Deposit to Account (optional) <i class='fa fa-info-circle tooltips' data-original-title='Account that payments will be applied to.  Quickbooks defaults this to &#39;Undeposited Funds&#39; if no account is supplied.' data-container='body'></i>") %>
+                <br>
+                <div class='col-sm-3'></div>
+                <div class='col-sm-9'>
+                  <p class='help-block-italic'>
+                    NOTE: To successfully sync Sweet orders to QuickBooks Desktop, please create a discount item, shipping item, and bundle adjustment item named as you've specified above in your Quickbooks Desktop file. Sweet will then match those items and adjust discounts, shipping, and bundle price adjustment values as needed.
+                  </p>
+                </div>
+                <div class='clearfix'></div>
+              </section>
+
+              <section class='important-clarifier margin-top-20'>
+                <%= f.input :qbd_pull_item_types, label: I18n.t('integrations.qbd.pull_item_types.label'),
+                  as: :select, collection: PRODUCT_TYPES.dup.to_a, label_method: :last, value_method: :first,
+                  input_html: {multiple: true, class: 'form-control select2 select2-multiple select2-hidden-accessible'} %>
+
+                <%= f.input :qbd_initial_order_state, as: :select,
+                  collection: ApprovedStates.map {|state| [state, state.titleize]},
+                  label_method: :last, value_method: :first, include_blank: false,
+                  label: 'Initital Order State'
+                 %>
+                <%= f.input :qbd_ungroup_grouped_lines, as: :radio_buttons,
+                    collection: [[true, Spree.t(:say_yes)], [false, "#{Spree.t(:say_no)} (Not yet Implemented)"]],
+                    label: "Ungroup Grouped Lines", label_method: :last, value_method: :first,
+                    wrapper: :horizontal_radio_and_checkboxes %>
+                <div class="form-group string optional">
+                  <%= f.label :qbd_ignore_items,'Ignore Items with these names/skus' , class: 'string optional col-sm-3 control-label'%>
+                  <div class="col-sm-9">
+                    <% integration.qbd_ignore_items.each do |item_to_ignore| %>
+                      <%= text_field_tag 'integration_item[qbd_ignore_items][]', item_to_ignore,
+                          class: 'form-control' %>
+                    <% end %>
+                  </div>
+                </div>
+                <%= render partial: "spree/manage/integrations/shared/last_pulled_at_fields", locals: { item: @integration, f: f } %>
+                <% if current_spree_user.is_admin? %>
+                  <div class='alert alert-warning'>
+                    <%= f.input :qbd_export_list_to_csv, as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No (this will create new object jobs)']], label: "Export List to CSV", label_method: :last, value_method: :first, wrapper: :horizontal_radio_and_checkboxes %>
+                  </div>
+                <% end %>
+              </section>
+
+              <div class='form-actions'>
+                <% if integration.created_at %>
+                  <%= link_to manage_integration_execute_path(integration.id, name: "download_qwc"), class: "btn btn-info", data: { turbolinks: false } do %>
+                    <i class='fa fa-download'></i> Download QWC
+                  <% end %>
+                <% end %>
+                <%= link_to manage_integration_execute_path(integration.id, name: "reset_password"), class: "btn btn-danger", data: {confirm: "Are you sure?"} do %>
+                  <i class='fa fa-undo'></i> Reset Password
+                <% end %>
+                <div class='pull-right'>
+                  <%= link_to manage_integration_path(integration.id), class: 'btn btn-default' do %>
+                    <i class='fa fa-times'></i> Cancel
+                  <% end %>
+                  <button class='btn btn-primary'>
+                    <i class='fa fa-check'></i> Save
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+  $(function() {
+    var hideShowElements = function(){
+
+      if ($('#integration_item_qbd_group_discounts_true:checked').length) {
+        $('.integration_item_qbd_discount_account_id').show();
+        $('.integration_item_qbd_discount_item_name').show();
+      } else {
+        $('.integration_item_qbd_discount_account_id').hide();
+        $('.integration_item_qbd_discount_item_name').hide();
+      }
+
+      if ($('#integration_item_qbd_use_assemblies_false:checked').length) {
+        $('.integration_item_qbd_build_assembly_account_id').show();
+      } else {
+        $('.integration_item_qbd_build_assembly_account_id').hide();
+      }
+
+      if ($('#integration_item_qbd_track_lots_false:checked').length) {
+        $('#integration_item_qbd_include_assembly_lots_false').prop('checked', true);
+        $('#integration_item_qbd_include_assembly_lots_true').prop('disabled', 'disabled');
+        $('#integration_item_qbd_include_assembly_lots_true').removeAttr('checked');
+      }else {
+        $('#integration_item_qbd_include_assembly_lots_true').removeAttr('disabled');
+      }
+
+      if ($('#integration_item_qbd_overwrite_conflicts_in_sweet:checked').length){
+        $('#integration_item_qbd_use_external_balance_true').removeAttr('disabled');
+      }else{
+        $('#integration_item_qbd_use_external_balance_false').prop('checked', true);
+        $('#integration_item_qbd_use_external_balance_true').prop('disabled', 'disabled');
+      }
+    };
+
+    var showLineSortWarning = function(){
+      if($('#integration_item_qbd_line_item_sort').val() !== 'spree_line_items.created_at asc'){
+        $('#line-sort-warning').show();
+      }else{
+        $('#line-sort-warning').hide();
+      }
+    }
+
+    var specialInstructionOptions = function(){
+      if($('#integration_item_qbd_send_special_instructions_as').val() === 'line_item'){
+        $('.integration_item_qbd_special_instructions_item').show();
+      }else{
+        $('.integration_item_qbd_special_instructions_item').hide();
+      }
+    }
+
+    var toggleTemplateFields = function(){
+      var template_type = $('#integration_item_qbd_send_order_as').val();
+      $('.order-template').each(function(){
+        if($(this).hasClass('integration_item_qbd_' + template_type + '_template')){
+          $(this).show();
+        }else{
+          $(this).hide();
+        }
+      });
+    }
+
+    var toggleAutoApplyPayment = function(){
+      if($('#integration_item_qbd_send_order_as').val() == 'sales_order'){
+        $('#integration_item_qbd_auto_apply_payment_true').removeAttr('disabled');
+      }else{
+        $('#integration_item_qbd_auto_apply_payment_true').prop('checked', false);
+        $('#integration_item_qbd_auto_apply_payment_true').prop('disabled', 'disabled');
+        $('#integration_item_qbd_auto_apply_payment_false').prop('checked', true);
+      }
+    }
+
+    $(document).ready(function(){
+      hideShowElements();
+      showLineSortWarning();
+      specialInstructionOptions();
+      toggleTemplateFields();
+      toggleAutoApplyPayment();
+    });
+    $('input[type=radio]').change(hideShowElements);
+    $('#integration_item_qbd_line_item_sort').change(showLineSortWarning);
+    $('#integration_item_qbd_send_special_instructions_as').change(specialInstructionOptions);
+    $('#integration_item_qbd_send_order_as').change(function(){
+      toggleTemplateFields();
+      toggleAutoApplyPayment();
+    });
+  });
+</script>

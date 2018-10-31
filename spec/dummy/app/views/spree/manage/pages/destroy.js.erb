@@ -1,0 +1,10 @@
+<% if @page %>
+  $("#<%= spree_dom_id @page %>").remove();
+  $('#alert').html("<div class='alert alert-success alert-auto-dissapear'><%= flash[:success] %></div>");
+<% else %>
+  $('#alert').html("<div class='alert alert-danger alert-auto-dissapear'><%= flash[:error] %></div>");
+<% end %>
+
+setTimeout(function() {
+  $(".alert-auto-dissapear").fadeOut(1500);
+},2000);

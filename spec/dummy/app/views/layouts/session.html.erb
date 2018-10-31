@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<!--[if IE 8]> <html lang="en" class="ie8 no-js"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9 no-js"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en"><!--<![endif]-->
+  <!-- BEGIN HEAD -->
+  <head>
+    <meta charset="utf-8" />
+    <title>Sweet - Login</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <meta content="" name="description" />
+    <meta content="" name="author" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1" name="viewport"/>
+    <meta content="" name="description"/>
+    <meta content="" name="author"/>
+    <!-- BEGIN GLOBAL MANDATORY STYLES -->
+    <link href="//fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet" type="text/css"/>
+    <%= stylesheet_link_tag 'sweet-session' %>
+    <%= stylesheet_link_tag 'sweet-frontend/layouts/layout/themes/darkblue'%>
+    <!-- END THEME STYLES -->
+    <link rel="shortcut icon" href="/favicon/favicon.ico"/>
+    <link rel="apple-touch-icon" sizes="57x57" href="/favicon/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/favicon/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/favicon/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/favicon/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/favicon/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/favicon/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/favicon/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/favicon/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192"  href="/favicon/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/favicon/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="/favicon/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+
+    <%= javascript_include_tag "spree/sweet-frontend/frontend" %>
+
+    <%= csrf_meta_tags %>
+    <% # include google analytics partial %>
+    <%= render 'layouts/ga' %>
+  </head>
+  <!-- END HEAD -->
+  <%
+    if current_vendor.present?
+      theme_name = current_vendor.customer_viewable_attribute.theme_name
+      if theme_name == "custom"
+        body_bg_color = current_vendor.customer_viewable_attribute.theme_colors["header_background"] || "#364150"
+        body_text_color = current_vendor.customer_viewable_attribute.theme_colors["header_text"] || "#8290a3"
+      end
+    end
+   %>
+  <body class="login <%= Rails.env.test? ? 'disable-animations' : '' %>" style="background-color:<%= body_bg_color %>">
+    <!-- BEGIN LOGO -->
+    <div class="logo">
+      <div class="row">
+        <div class="col-sm-4 col-sm-offset-4">
+          <%= link_to root_path, style: "color:#{body_text_color};" do %>
+            <% if current_vendor && current_vendor.logo.nil? %>
+              <h2 style="color:<%= body_text_color %>;"><%= current_vendor.name %></h2>
+            <% else %>
+              <%= image_tag(current_vendor_large_logo, class: 'splash-logo img-responsive')%>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+    <h3 style="color:<%= body_text_color %>;">Wholesale Ordering Platform</h3>
+    <!-- END LOGO -->
+    <!-- BEGIN LOGIN -->
+    <div class="content">
+      <%= yield %>
+    </div>
+    <% if current_vendor.nil? || current_vendor.cva.footer_powered_by_sweet %>
+      <div class="copyright" style="color:<%= body_text_color %>;">
+        <%= link_to getsweet_path, target: '_blank' do %>
+          <%= render partial: 'spree/shared/copyright_text' %>
+        <% end %>
+      </div>
+    <% end %>
+  </body>
+</html>

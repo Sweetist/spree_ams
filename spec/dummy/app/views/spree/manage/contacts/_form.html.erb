@@ -1,0 +1,59 @@
+<div class="row">
+  <div class="col-md-6">
+    <div class="form-group">
+      <%= f.label :first_name, 'First Name', class: "control-label" %>
+      <%= f.text_field :first_name, class: "form-control" %>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="form-group">
+      <%= f.label :last_name, 'Last Name', class: "control-label" %>
+      <%= f.text_field :last_name, class: "form-control" %>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-6">
+    <div class="form-group">
+      <%= f.label :email, class: "control-label" %>
+      <%= f.email_field :email, class: "form-control" %>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="form-group">
+      <%= f.label :phone, class: "control-label" %>
+      <%= f.text_field :phone, class: "form-control" %>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-6">
+    <div class='form-group'>
+      <%= f.label :contact_accounts, 'Accounts', class: 'control-label' %>
+      <%= f.collection_select :account_ids, @customer_accounts, :id, :fully_qualified_name, {selected: @contact_account_ids, name: 'contact[account_ids][]'}, { class: 'form-control select2-multiple select2-hidden-accessible', multiple: true} %>
+      <% if f.object.try(:user) %>
+        <span class='help-block-italic'>
+          <% accounts_count = f.object.accessible_accounts.count %>
+          User has access to <%= pluralize(accounts_count, 'account') %>
+        </span>
+      <% end %>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="form-group">
+      <%= f.label :position, class: "control-label" %>
+      <%= f.text_field :position, class: "form-control" %>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-6">
+    <div class="form-group">
+      <%= f.label :notes, class: "control-label" %>
+      <%= f.text_area :notes, class: "form-control" %>
+    </div>
+  </div>
+</div>

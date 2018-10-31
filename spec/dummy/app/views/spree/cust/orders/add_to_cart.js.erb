@@ -1,0 +1,39 @@
+<% if @reload_page %>
+  window.location.reload();
+<% else %>
+  reEnableForm();
+  <% if @order %>
+    <% if flash[:success] %>
+    	$('#alert').html("<div class='alert alert-success alert-auto-dissapear'><%= flash[:success] %></div>");
+    	setTimeout(function() {
+    			$(".alert-auto-dissapear").fadeOut(1500);
+    	},2000);
+    <% end %>
+    $('.top-cart-block').html("<%= j render(partial: 'spree/cust/orders/cart_actions', locals: {current_order: @order}) %>");
+    $('.scroller').slimScroll({height: '250px'}); //reinitialize checkout cart scroller
+    <% if @variant %>
+      <% line_qty = @order.line_items.where(variant_id: @variant.id).sum(:quantity) %>
+      $('.add-to-cart-modal-btn[data-variant-id="<%= @variant.id %>"]').text('<%= line_qty %>');
+      $('.add-to-cart-modal-btn[data-variant-id="<%= @variant.id %>"]').addClass('active');
+      $('.product-qty[data-variant-id="<%= @variant.id %>"]').val('');
+      $('.product-qty[data-variant-id="<%= @variant.id %>"]').attr('placeholder', '<%= line_qty %> in cart');
+    <% else %>
+      $('.add-to-cart-modal-btn').html("<i class='fa fa-plus'></i>");
+      $('.add-to-cart-modal-btn').removeClass('active');
+      <% @order.variant_ids.uniq.each do |v_id| %>
+        <% line_qty = @order.line_items.where(variant_id: v_id).sum(:quantity) %>
+        $('.add-to-cart-modal-btn[data-variant-id="<%= v_id %>"]').text('<%= line_qty %>');
+        $('.add-to-cart-modal-btn[data-variant-id="<%= v_id %>"]').addClass('active');
+        $('.product-qty[data-variant-id="<%= v_id %>"]').val('');
+        $('.product-qty[data-variant-id="<%= v_id %>"]').attr('placeholder', '<%= line_qty %> in cart');
+    	<% end %>
+    <% end %>
+  <% end %>
+
+  <% if flash[:errors] %>
+    $('.error-container', '#add-to-cart-modal').html("<%= j render(partial: 'spree/shared/errors.html.erb') %>");
+  <% else %>
+    $('.error-container', '#add-to-cart-modal').empty();
+    $('#add-to-cart-modal').modal('hide');
+  <% end %>
+<% end %>

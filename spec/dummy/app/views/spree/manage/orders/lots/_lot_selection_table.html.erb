@@ -1,0 +1,133 @@
+<table class="table">
+  <!-- <col width="70%">
+  <col width="30%"> -->
+  <!-- <thead> -->
+  <% unassigned_count = @line_item.variant.unassigned_inventory_at(@order.shipments.first.try(:stock_location)) %>
+
+    <tr>
+      <th><%= Spree.t(:lot_number) %></th>
+      <th><%= Spree.t(:available) %></th>
+      <th><%= Spree.t(:sell_by) %></th>
+      <th style='width:90px;'><%= Spree.t(:qty) %> (<%= @line_item.quantity %>)</th>
+      <th></th>
+    </tr>
+  <!-- </thead> -->
+    <!-- if have been updated before -->
+  <% line_item_lots = @line_item.line_item_lots.includes(lot: [stock_item_lots: :stock_item]).order(:id) %>
+  <% if line_item_lots.present? %>
+    <tbody id='existing-line-item-lots'>
+      <% line_item_lots.each do |line_item_lot| %>
+        <% lot = line_item_lot.lot %>
+        <%= render partial: 'spree/manage/orders/lots/lot_selection_row',
+            locals: {order: @order, line_item: @line_item, lot: lot, qty: line_item_lot.count, hidden: false, unsellable: false } %>
+      <% end %>
+
+      <% other_lots = @line_item.possible_lots.where.not(id: line_item_lots.pluck(:lot_id)).order(:sell_by) %>
+      <% if other_lots.present? %>
+        <% other_lots.each do |lot| %>
+          <%= render partial: 'spree/manage/orders/lots/lot_selection_row',
+              locals: {order: @order, line_item: @line_item, lot: lot, qty: 0, hidden: true, unsellable: false } %>
+        <% end %>
+      <% end %>
+      <% if unassigned_count > 0 %>
+        <%= render partial: 'spree/manage/orders/lots/unassigned_row', locals: {unassigned_count: unassigned_count, line_item_lots: line_item_lots} %>
+      <% end %>
+      <% if other_lots.present? %>
+        <tr>
+          <td colspan="100%">
+            <a id='more-lot-options' class='pull-right'>More Options</a>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  <% else %>
+    <tbody id='possible-line-item-lots'>
+      <% possible_lots = @line_item.possible_lots.order(:sell_by) %>
+      <% if possible_lots.empty? %>
+        <tr id='no-possible-lots'>
+          <td colspan="100%"><%= Spree.t(:no_lots) %>.</td>
+        </tr>
+      <% end %>
+      <% possible_lots.each do |lot| %>
+      <%= render partial: 'spree/manage/orders/lots/lot_selection_row',
+          locals: {order: @order, line_item: @line_item, lot: lot, qty: 0, hidden: false, unsellable: false }%>
+      <% end %>
+      <% if unassigned_count > 0 %>
+        <%= render partial: 'spree/manage/orders/lots/unassigned_row', locals: {unassigned_count: unassigned_count, line_item_lots: line_item_lots} %>
+      <% end %>
+    </tbody>
+  <% end %><!-- end   -->
+  <tbody id='unsellable-for-date-lots'>
+    <% other_lots = @line_item.all_lots.unarchived.unsellable_for_date(@order.delivery_date)
+                              .where.not(id: line_item_lots.pluck(:lot_id)).order(:sell_by) %>
+    <% if other_lots.present? %>
+      <tr class='hidden'>
+        <th colspan="100%">Unavailable / Expired Lots</th>
+      </tr>
+      <% other_lots.each do |lot| %>
+        <%= render partial: 'spree/manage/orders/lots/lot_selection_row',
+            locals: {order: @order, line_item: @line_item, lot: lot, qty: 0, hidden: true, unsellable: true } %>
+      <% end %>
+      <tr>
+        <td colspan="100%">
+          <a id='unsellable-lot-options' class='pull-right'>Show Unavailable / Expired Lots</a>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<script type='text/javascript'>
+  $('#assign-lots-btn').click(function(e){
+    e.preventDefault();
+
+    var lotId = $('#add_to_lot_id').val();
+    var unassignedQty = parseFloat($('#unassigned-count').text());
+    var qtyToAdd = parseFloat($('#add_to_lot_qty').val());
+    if(lotId === ''){
+      alert('You must select a lot to assign quantity to.');
+      return;
+    }
+    if (isNaN(qtyToAdd) || qtyToAdd <= 0){
+      alert('You must supply a quantity to add greater than zero.');
+      return
+    }
+    if (qtyToAdd > unassignedQty){
+      alert('The quantity to add must be less than or equal to the unassigned quantity.');
+      return;
+    }
+    if (lotId === 'new') {
+      alert('Not yet implemented');
+    }else{
+      assignQtyToLot(lotId, qtyToAdd)
+      $(this).addClass('disabled');
+    }
+  });
+
+  var assignQtyToLot = function(lotId, qtyToAdd){
+    var orderNum = $('#unassigned').data('order-number');
+    $.ajax({
+      method: 'POST',
+      url: '/manage/orders/' + orderNum + '/add_to_lot.js',
+      data: {
+        line_item_id: '<%= @line_item.id %>',
+        add_to_lot: [
+          { id: lotId, qty: qtyToAdd }
+        ]
+      }
+    });
+  }
+
+  var toggleNewOrUpdateLot = function(){
+    if($('#add_to_lot_id').val() === ''){
+      $('.new-lot-fields').show()
+      $('button#create-lot').text('Create');
+    }else{
+      $('.new-lot-fields').hide();
+      $('button#create-lot').text('Update');
+    }
+  }
+
+  $('#add_to_lot_id').change(toggleNewOrUpdateLot);
+
+</script>

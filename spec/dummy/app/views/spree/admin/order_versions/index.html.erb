@@ -1,0 +1,70 @@
+<%= render partial: 'spree/admin/shared/order_tabs',
+  locals: { current: params[:with_associations] ? :versions_with_associations : :versions } %>
+
+<% content_for :page_title do %>
+  Version History
+<% end %>
+<div style='overflow-x:auto;'>
+  <% if @versions.any? %>
+    <table class="table" id="listing_order_state_changes" data-hook>
+      <thead>
+        <tr data-hook="admin_orders_state_changes_headers">
+          <th>Blame</th>
+          <th>Type / ID</th>
+          <th>Event</th>
+          <th>Time</th>
+          <th>Changed</th>
+          <th>Before</th>
+          <th>After</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <% bg_color = '#FFFFFF' %>
+        <% version_group_ctr = 0 %>
+        <% version_group = '' %>
+        <% new_grouping = false %>
+        <% @versions.each do |version| %>
+          <% if version_group.present? && version.transaction_group_id != version_group %>
+            <% version_group_ctr += 1 %>
+            <% new_grouping = true %>
+          <% elsif version_group.blank? %>
+            <% new_grouping = true %>
+          <% else %>
+            <% new_grouping = false %>
+          <% end %>
+          <% version_group = version.transaction_group_id %>
+          <% include_blame = true %>
+          <% version.object_changes.each do |key, change| %>
+            <% style = "background-color:#{darken_color('#FFFFFF', (1 - (version_group_ctr * 0.01)), 0.5)};" %>
+            <% style += " border-top: 3px solid #000000;" if new_grouping %>
+            <tr style="<%= style %>">
+              <% if include_blame %>
+                <td><%= version.whodunnit %></td>
+                <td><%= "#{version.item_type} / #{version.item_id}" %></td>
+                <td>
+                  <%= link_to admin_order_order_version_url(@order, version, format: :json), target: '_blank' do %>
+                    <%= version.html_event_array %>
+                  <% end %>
+                </td>
+                <td><%= version.created_at %></td>
+              <% else %>
+                <td colspan='4' style="border-top: none;"></td>
+              <% end %>
+
+              <td><%= key %></td>
+              <td><%= change.first %></td>
+              <td><%= change.last %></td>
+            </tr>
+            <% new_grouping = false %>
+            <% include_blame = false %>
+          <% end %>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <div class="alert alert-info no-objects-found">
+      No version history yet
+    </div>
+  <% end %>
+</div>

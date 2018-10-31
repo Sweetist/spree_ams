@@ -1,0 +1,26 @@
+<% if @order.ship_address.presence %>
+  <tr>
+    <td>
+      Delivery address:<br>
+      <% if @order.ship_address.full_name.present? %>
+        <%= @order.ship_address.full_name %><br>
+      <% end %>
+      <% if @order.ship_address.company.present? %>
+        <%= @order.ship_address.company %><br>
+      <% end %>
+      <%= @order.ship_address.address1 %><br>
+      <% unless @order.ship_address.address2.blank? %>
+        <%= @order.ship_address.address2 %><br>
+      <% end %>
+      <%= @order.ship_address.city %>, <%= @order.ship_address.state_text %> <%= @order.ship_address.zipcode %><br>
+      <%= @order.ship_address.phone %>
+    </td>
+  </tr>
+<% end %>
+<% if @order.special_instructions.present? %>
+  <tr>
+    <td>Delivery instructions:
+      <%= @order.special_instructions %>
+    </td>
+  </tr>
+<% end %>

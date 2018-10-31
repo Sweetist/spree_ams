@@ -1,0 +1,14 @@
+<% if @order.shipments.first.try(:stock_location).try(:name) %>
+  <% if params[:controller].include?('manage') %>
+    <% if States[@order.state].between?(States['cart'], States['approved']) %>
+      <%= link_to manage_order_shipments_path(@order), class: 'ships-from' do %>
+        <%= @order.shipments.first.try(:stock_location).try(:name) %>
+        <i class='fa fa-pencil'></i>
+      <% end %>
+    <% else %>
+      <%= @order.shipments.first.try(:stock_location).try(:name) %>
+    <% end %>
+  <% else %>
+    <%= @order.shipments.first.try(:stock_location).try(:name) %>
+  <% end %>
+<% end %>

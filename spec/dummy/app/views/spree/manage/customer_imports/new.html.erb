@@ -1,0 +1,65 @@
+<%= content_for :head_title do %>
+  New Customer Import
+<% end %>
+
+<%= content_for :page_title do %>
+  New Customer Import
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Customer Imports", manage_customer_imports_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <span>New</span>
+    </li>
+  </ul>
+<% end %>
+
+<div class="content">
+  <div class="row">
+    <div class="col-md-9">
+      <div class="portlet blue-hoki box">
+        <div class="portlet-title">
+          <div class="caption">
+            <i class="fa fa-cogs"></i>Customer Import
+          </div>
+        </div>
+        <div class="portlet-body form">
+          <%= simple_form_for @customer_import, url: manage_customer_imports_path, html: { multipart: true }, method: :post, wrapper: :horizontal_form do |f| %>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="form-body">
+                  <%= f.input :file, as: :file, wrapper: :horizontal_form %>
+                  <%= f.input :encoding, collection: ["ISO-8859-2", "UTF-8"], include_blank: false %>
+                  <%= f.input :delimer, :label => 'Delimiter', collection: [["Comma", ","], ["Semicolon", ";"], ["Tabulator", "\t"]], include_blank: false %>
+                  <%= f.input :proceed, as: :boolean, label: 'Import after successful verification', wrapper: :horizontal_radio_and_checkboxes %>
+                  <%= f.input :proceed_verified, as: :boolean, label: 'Import valid customers after failed verification', wrapper: :horizontal_radio_and_checkboxes %>
+                </div>
+              </div>
+            </div>
+            <div class="form-actions">
+              <div class="row">
+                <div class="col-md-offset-3 col-md-9">
+                  <%= f.submit "Verify", class: "btn btn-md btn-success" %>
+                  <%= link_to "Cancel", manage_customer_imports_path, class: "btn btn-md blue btn-outline" %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <%= link_to asset_path('/import_customers_sample_v5.csv'), class: "btn blue btn-md" do %>
+        <i class="fa fa-cloud-download"></i> <%= I18n.t(:download_sample_import_file, type: 'Customer') %>
+      <% end %>
+    </div>
+  </div>
+</div>

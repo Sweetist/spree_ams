@@ -1,0 +1,15 @@
+<% if flash[:errors].present? %>
+  <div class="alert alert-danger alert-dismissable">
+  <button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
+    <% if flash[:errors].is_a? Array %>
+      <p> <%= pluralize(flash[:errors].count, 'error') %> occured processing your request</p>
+      <ul>
+        <% flash[:errors].each do |error| %>
+          <li> <%= error %></li>
+        <% end %>
+      </ul>
+    <% elsif flash[:errors].is_a? String %>
+      <p> <%= flash[:errors] %></p>
+    <% end %>
+  </div>
+<% end %>

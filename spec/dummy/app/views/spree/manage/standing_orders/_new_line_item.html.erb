@@ -1,0 +1,49 @@
+<% product = variant.product %>
+<% url = manage_standing_order_product_path(@order, product) %>
+<tr id="line_item_<%= @line_item.id %>" data-formlineid="<%= item_form_idx %>"
+  data-id="<%= @line_item.id %>" data-pos="<%= @line_item.position %>" class="line-item-row">
+  <td style='width: 20px; padding-right: 0px;'><i class="fa fa-reorder"></i></td>
+  <td>
+    <div class="cel">
+      <%= link_to raw("<i class='fa fa-times'></i>"), unpopulate_manage_standing_order_path(@order, line_item_id: @line_item.id, item_form_idx: item_form_idx),
+        class: 'btn btn-xs red delete-input-row-btn close-button disable-after-click', id: "delete-item-button-#{@line_item.id}", remote: true %>
+    </div>
+  </td>
+  <td>
+    <%= link_to variant.full_display_name.to_s, url %>
+  </td>
+  <td>
+    <%= link_to variant.sku.to_s, url %>
+  </td>
+  <td>
+    <input class="form-control line-item-area" type="text" value='<%= @line_item.lot_number %>'
+      name="standing_order[standing_line_items_attributes][<%= item_form_idx %>][lot_number]"
+      id="standing_order_standing_line_items_attributes_<%= item_form_idx %>_lot_number"
+      <%= 'disabled' if @line_item.variant.should_track_lots? %>>
+  </td>
+  <td>
+    <input class="form-control line-item-area" type="text" value='<%= @line_item.pack_size %>'
+      name="standing_order[standing_line_items_attributes][<%= item_form_idx %>][pack_size]"
+      id="standing_order_standing_line_items_attributes_<%= item_form_idx %>_pack_size">
+  </td>
+  <td>
+      <%= link_to display_sweet_price(avv.price, product.currency), url %>
+  </td>
+  <td>
+    <!-- <input min="0" class="form-control" tabindex="1" data-id="<%#= item_form_idx %>" type="number" value="<%#= @line_item.quantity %>" name="standing_order[products][<%#= @line_item.id %>]" id="standing_order_products_<%#= @line_item.id %>"> -->
+    <input min="0" class="form-control ordered-qty line-item-qty line-item-number"
+      step='<%= variant.step_size %>' data-line-id="<%= @line_item.id %>"
+      tabindex="1" data-id="<%= item_form_idx %>" type="number" value="<%= @line_item.quantity %>"
+      name="standing_order[standing_line_items_attributes][<%= item_form_idx %>][quantity]"
+      id="standing_order_standing_line_items_attributes_<%= item_form_idx %>_quantity">
+  </td>
+  <td>
+    <%= link_to display_sweet_price(avv.price.to_f * @line_item.quantity.to_f, @order.currency), url %>
+  </td>
+  <% if @vendor.track_line_item_class? %>
+    <td>
+      <%= collection_select(:line_item, :txn_class_id, @vendor.transaction_classes, :id, :fully_qualified_name, {include_blank: true}, class: 'form-control', name:"standing_order[standing_line_items_attributes][#{item_form_idx}][txn_class_id]") %>
+    </td>
+  <% end %>
+  <input type="hidden" value="<%= @line_item.id %>" name="standing_order[standing_line_items_attributes][<%= item_form_idx %>][id]" id="standing_order_standing_line_items_attributes_<%= item_form_idx %>_id">
+</tr>

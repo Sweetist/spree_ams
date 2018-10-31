@@ -1,0 +1,60 @@
+<h3>Filter by Categories</h3>
+<% @taxonomies.each do |taxonomy| %>
+  <div class="panel-group accordion" id="root_<%= taxonomy.root.id %>"> <!-- closed -->
+    <% output = %>
+    <% path = [nil] %>
+    <% taxonomy.root.children.order('lft ASC, name ASC').each_with_index do |taxon, idx| %>
+      <%
+        if taxon.depth == 1
+          output << "<div class='panel panel-default no-border' id='taxon_#{taxon.id}'>" #open div
+        else
+          output << "<div class='panel sub-panel no-border' id='taxon_#{taxon.id}'>"
+          # output << "<div class='panel-body no-border' id='taxon_#{taxon.id}'>"
+          # output << "<div class='panel panel-default sub-panel no-border'>"
+        end
+      %>
+      <%
+        # this section handles one taxon line
+        if taxon.depth == 1
+          output << "<div class='panel-heading bottom-border'>" #closed div
+        else
+          output << "<div class='panel-heading'>"
+        end
+
+        if params[:q].present? && params[:q][:variant_product_taxons_id_or_variant_taxons_id_in].present?
+          if params[:q][:variant_product_taxons_id_or_variant_taxons_id_in].include? taxon.id.to_s
+             check_flag = true
+          else
+            check_flag = false
+          end
+        else
+          check_flag = false
+        end
+        output << "<h4 class='panel-title' data-id='#{taxon.id}'>"
+        if check_flag
+          output << "<input type='checkbox' class='cb-sidebar' checked data-taxon-id='#{taxon.id}'>"
+        else
+          output << "<input type='checkbox' class='cb-sidebar' data-taxon-id='#{taxon.id}'>"
+        end
+        output << "<a class='link-to-checkbox'>#{taxon.name}</a>"
+        output << "</h4></div>"
+      %>
+
+      <% if taxon.parent_id != path.last %>
+        <% if path.include?(taxon.parent_id) %>
+          <% while path.last != taxon.parent_id %>
+            <% path.pop %>
+          <% end %>
+        <% else %>
+
+        <% end %>
+      <% elsif idx != 0 %>
+
+      <% end %>
+     <% end %>
+   </div>
+ <% end %>
+<button id = "search-btn" class="btn btn-primary margin-left-20"><i class="fa fa-search" aria-hidden="true"></i> Update</button>
+<%= link_to vendor_products_path(@vendor), class: "btn btn-primary margin-left-20", id: "clear-all-btn" do %>
+  <i class='fa fa-times'></i> Clear All
+<% end %>

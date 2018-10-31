@@ -1,0 +1,68 @@
+<%= content_for :head_title do %>
+  Forms
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Forms", manage_forms_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= @form.name %>
+    </li>
+  </ul>
+<% end %>
+
+<div class='row'>
+  <div class='portlet light'>
+    <div class="portlet-title">
+      <div class="caption">
+        <span class="caption-subject font-blue-madison bold uppercase">
+          <%= @form.name %>
+        </span>
+      </div>
+    </div>
+    <div class='portlet-body'>
+      <%= form_for [:manage, @form], html: {id: 'custom_form_form', class: 'prevent-double-submit form'} do |f| %>
+        <div class='form-body'>
+          <%= render partial: 'form', locals: {f: f} %>
+        </div>
+        <div class='form-actions'>
+          <%= link_to manage_form_path(@form), method: :delete,
+            data: {confirm: 'Are you sure?'},
+            class: 'btn red' do %>
+            <i class='fa fa-trash'></i> <%= Spree.t(:delete) %>
+          <% end %>
+          <div class='pull-right'>
+            <%= link_to manage_forms_path, class: "btn btn-default" do %>
+              <i class='fa fa-times'></i> <%= Spree.t(:Cancel) %>
+            <% end %>
+            <button class='btn btn-primary'>
+              <i class='fa fa-check'></i> <%= Spree.t(:update) %>
+            </button>
+            <%= link_to preview_manage_forms_path, id: 'preview-btn', class: 'btn btn-primary', target: '_blank' do %>
+              <i class='fa fa-search'></i> Preview
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<script type='text/javascript'>
+  $(document).ready(function(){
+    $('#preview-btn').click(function(e){
+      // debugger
+      var previewHref = '/manage/forms/preview';
+      var formParams = $('#custom_form_form').serialize();
+
+      $(this).attr('href', previewHref + '?' + formParams);
+    });
+  });
+</script>

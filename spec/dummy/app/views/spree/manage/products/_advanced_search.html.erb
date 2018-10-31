@@ -1,0 +1,119 @@
+<div class="portlet box blue-hoki" id="search">
+  <div class="portlet-title">
+    <div class="col-xs-12 col-sm-6 col-lg-4">
+      <%= f.text_field :full_display_name_or_sku_cont, class: 'form-control', placeholder: 'Enter search term' %>
+      <div class="visible-xs-block" style="min-height:10px;">
+      </div>
+    </div>
+    <div class="col-xs-8 col-sm-4" id="basic-search-buttons">
+      <button type="submit" class="btn green"><i class="fa fa-search" aria-hidden="true"></i> Search</button>
+      <% if params[:controller] == "spree/manage/inventories" %>
+        <%= link_to manage_inventory_path, class: "btn default" do %>
+          <i class='fa fa-times'></i> Reset
+        <% end %>
+      <% else %>
+        <%= link_to manage_products_path, class: "btn default" do %>
+          <i class='fa fa-times'></i> Reset
+        <% end %>
+      <% end %>
+    </div>
+    <div class="tools">
+      <a href="javascript:;" id='toggle-advanced-search'>Advanced <i class="fa fa-angle-down"></i></a>
+    </div>
+  </div>
+  <div class="portlet-body form hidden" id='advanced-search-form'>
+    <div class="form-body">
+      <input type="hidden" name='account_id' value="<%= session[:account_id] %>" id="view-as-account-id">
+      <div class='row'>
+        <div class='col-md-4'>
+          <div class='form-group' data-open="<%= params[:q] && !params[:q].fetch(:full_display_name_cont, nil).blank? %>">
+            <%= f.label :full_display_name_cont, 'Product Name', class: 'control-label' %>
+            <%= f.text_field :full_display_name_cont, class: 'form-control' %>
+          </div>
+        </div>
+        <div class='col-md-4'>
+          <div class='form-group' data-open="<%= params[:q] && !params[:q].fetch(:sku_cont, nil).blank? %>">
+            <%= f.label :sku_cont, 'Sku', class: 'control-label' %>
+            <%= f.text_field :sku_cont, class: 'form-control' %>
+          </div>
+        </div>
+        <div class='col-md-4'>
+          <div class='form-group' data-open="<%= params[:q] && !params[:q].fetch(:taxons_id_or_product_taxons_id_in, nil).blank? %>">
+            <%= f.label :taxons_id_or_product_taxons_id_in, 'Category', class: 'control-label' %>
+            <%= f.collection_select :taxons_id_or_product_taxons_id_in, @vendor.taxons.where.not(parent_id: nil).order('name ASC'), :id, :pretty_name, {include_blank: true}, {selected: @categories.pluck(:id), multiple: true, name: 'q[taxons_id_or_product_taxons_id_in][]', class: 'form-control select2 select2-multiple select2-hidden-accessible'} %>
+          </div>
+        </div>
+      </div>
+      <div class='row'>
+        <div class='col-md-4'>
+          <div class='form-group' data-open="<%= params[:q] && !params[:q].fetch(:variant_type_eq, nil).blank? %>">
+            <%= f.label :variant_type_eq, 'Product Type' %>
+            <% if params[:controller] == "spree/manage/inventories" %>
+              <%= f.select :variant_type_eq, INVENTORY_TYPES.map{|k,v|[v,k]}, {include_blank: true}, {class: 'form-control'} %>
+            <% else %>
+              <%= f.select :variant_type_eq, PRODUCT_TYPES.map{|k,v|[v,k]}, {include_blank: true}, {class: 'form-control'} %>
+            <% end %>
+          </div>
+        </div>
+        <div class='col-md-4'>
+          <div class='row'>
+            <div class='col-xs-6'>
+              <div class='form-group' data-open="<%= params.fetch(:q, {}).fetch(:product_can_be_part_true, false) == '1' %>">
+                <%= f.label :product_can_be_part_true, 'Parts Only', class: 'control-label' %><br>
+                <%= f.check_box :product_can_be_part_true, class: 'form-control make-switch',
+                'data-size' => 'mini', include_hidden: false %>
+              </div>
+            </div>
+            <div class='col-xs-6'>
+              <% if current_controller?(['inventories']) %>
+                <div class='form-group' data-open="<%= params.fetch(:q, {}).fetch(:low_stock, false).to_bool %>">
+                  <%= f.label :low_stock, 'Low Stock', class: 'control-label' %><br>
+                  <%= f.check_box :low_stock, class: 'form-control make-switch',
+                      'data-size' => 'mini', checked: params.fetch(:q, {}).fetch(:low_stock, false).to_bool %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+        <div class='col-md-4'>
+          <div class='row'>
+            <div class='col-xs-6'>
+              <div class='form-group' data-open="<%= !params.fetch(:q, {}).fetch(:include_unavailable, true) %>">
+                <%= f.label :include_unavailable, 'Include Unavailable', class: 'control-label' %><br>
+                <%= f.check_box :include_unavailable, class: 'form-control make-switch',
+                    'data-size' => 'mini', checked: params.fetch(:q, {}).fetch(:include_unavailable, false) %>
+              </div>
+            </div>
+            <div class='col-xs-6'>
+              <div class='form-group' data-open="<%= params.fetch(:q, {}).fetch(:include_inactive, false).to_bool %>">
+                <%= f.label :include_inactive, "Include #{Spree.t('variant.inactive')}", class: 'control-label' %><br>
+                <%= f.check_box :include_inactive, class: 'form-control make-switch',
+                'data-size' => 'mini', checked: params.fetch(:q, {}).fetch(:include_inactive, false).to_bool %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <div class="row">
+        <div class="col-md-12">
+          <div class='btn-set pull-right'>
+            <button type="submit" class="btn green"><i class="fa fa-search" aria-hidden="true"></i> Search</button>
+            <% if params[:controller] == "spree/manage/inventories" %>
+              <%= link_to manage_inventory_path, class: "btn default" do %>
+                <i class='fa fa-times'></i> Reset
+              <% end %>
+            <% else %>
+              <%= link_to manage_products_path, class: "btn default" do %>
+                <i class='fa fa-times'></i> Reset
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

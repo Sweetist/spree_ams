@@ -1,0 +1,14 @@
+      <!-- Order Summary -->
+      <table>
+        <tr><td><strong><%= Spree.t('order_mailer.confirm_email.order_summary') %></strong></td></tr>
+        <tr>
+          <td>
+            Order from <%= "#{@order.account.fully_qualified_name}." %><br>
+            <% if @order.account.try(:can_select_delivery?) %>
+              <%= "#{@order.vendor.order_date_text.to_s.capitalize} Date".strip %>: <%= "#{display_vendor_date_format(@order.delivery_date, @order.vendor.date_format)}" %>.
+            <% else %>
+              Order date: <%= "#{display_vendor_date_format(@order.delivery_date, @order.vendor.date_format)}" %>.
+            <% end %>
+            </td>
+        <%= render partial: 'mailers/spree/shared/mailer_ship_address' %>
+      </table>

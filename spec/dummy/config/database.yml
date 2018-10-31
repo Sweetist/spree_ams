@@ -1,0 +1,95 @@
+# config/database.yml.example here because config/database.yml is not in source control and sometimes gets removed when switching between branches
+# so this example file is here in case a new config/database.yml file needs to be created
+
+#
+default: &default
+  adapter: postgresql
+  database: sweet_dev
+  # host: localhost
+  # For details on connection pooling, see rails configuration guide
+  # http://guides.rubyonrails.org/configuring.html#database-pooling
+  pool: 50
+
+heroku: &heroku
+  url:  <%= ENV["DATABASE_URL"] %>
+  pool: 50
+
+development:
+  <<: *default
+  # username: <%= ENV["DATABASE_USERNAME"] %>
+  # password: <%= ENV["DATABASE_PASSWORD"] %>
+
+
+# Warning: The database defined as "test" will be erased and
+# re-generated from your development database when you run "rake".
+# Do not set this db to the same as development or production.
+heroku_dev:
+  <<: *heroku
+  pool: <%= ENV["POOL_SIZE"] %>
+
+test:
+  <<: *default
+  database: sweet_test
+
+staging:
+  <<: *heroku
+  pool: <%= ENV["POOL_SIZE"] %>
+
+demo:
+  <<: *heroku
+  pool: <%= ENV["POOL_SIZE"] %>
+
+production:
+  <<: *heroku
+  pool: <%= ENV["POOL_SIZE"] %>
+
+
+secondbase:
+  development:
+    adapter: postgresql
+    database: sweet_dev_second
+    # host: localhost
+    # adapter: redshift
+    # port: 5439
+    # encoding: utf8
+    # pool: 3
+    # timeout: 15000
+    # host:
+    # database: dev
+    # username:
+    # password:
+
+  test:
+    adapter: postgresql
+    database: sweet_test
+    # host: localhost
+
+  heroku_dev:
+    <<: *heroku
+    pool: <%= ENV["POOL_SIZE"] %>
+
+  demo:
+    <<: *heroku
+    pool: <%= ENV["POOL_SIZE"] %>
+
+  staging:
+    adapter: redshift
+    host: <%= ENV["REDSHIFT_HOST"] %>
+    port: 5439
+    database: <%= ENV["REDSHIFT_DB"] %>
+    username: <%= ENV["REDSHIFT_USER"] %>
+    password: <%= ENV["REDSHIFT_PASSWORD"] %>
+    encoding: utf8
+    pool: 3
+    timeout: 5000
+
+  production:
+    adapter: redshift
+    host: <%= ENV["REDSHIFT_HOST"] %>
+    port: 5439
+    database: <%= ENV["REDSHIFT_DB"] %>
+    username: <%= ENV["REDSHIFT_USER"] %>
+    password: <%= ENV["REDSHIFT_PASSWORD"] %>
+    encoding: utf8
+    pool: 3
+    timeout: 5000

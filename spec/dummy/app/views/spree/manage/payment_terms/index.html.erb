@@ -1,0 +1,47 @@
+<%= content_for :head_title do %>
+  Payment Terms
+<% end %>
+
+<%= content_for :page_title do %>
+  Payment Terms
+<% end %>
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+		<li>
+      <span>Payment Terms</span>
+    </li>
+  </ul>
+	<div class="page-toolbar">
+		<%= link_to new_manage_message_path(subject: 'Request New Payment Term'), class: "btn green pull-right" do%>
+      Request New Payment Term
+    <% end %>
+  </div>
+<% end %>
+
+
+<div class="table-scrollable">
+  <table class="table table-striped table-hover">
+    <thead>
+      <tr>
+        <th width="10px"></th>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Require Payment Before Order Submit</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @payment_terms.each do |payment_term| %>
+        <tr id="payment_term_<%= payment_term.id %>">
+          <td></td>
+          <td><%= payment_term.name %></td>
+          <td><%= payment_term.description %></td>
+          <td><%= payment_term.pay_before_submit ? Spree.t(:say_yes) : Spree.t(:say_no) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

@@ -1,0 +1,107 @@
+<% @order.shipments.group_by { |s| s.selected_shipping_rate.try(:name) }.each do |name, shipments| %>
+<tr class="adjustment <%= 'alert-danger' if @order.ship_address.blank? %>">
+  <td></td>
+  <td colspan='<%= @order.vendor.try(:include_unit_weight) ? 6 : 5 %>'>
+    <label id="special-instructions-checkbox" value="false">
+      <a style='text-decoration: underline;'>
+        <i class="fa fa-plus <%= 'hidden' if @order.special_instructions.present? %>"></i>
+        <i class="fa fa-minus <%= 'hidden' if @order.special_instructions.blank? %>"></i>
+        Special Instructions (shown on packing list)
+      </a>
+    </label>
+    <div class="row hidden" id="special-instructions-div">
+      <div class="col-md-12">
+        <div class="form-group">
+          <textarea rows="5" placeholder="Write Instructions Here" id="special-instructions"
+            class="form-control" name=order[special_instructions] maxlength="1000"
+            <%= 'readonly' if !@order.is_editable? %>><%= @order.special_instructions %>
+          </textarea>
+          <span class='pull-right help-block'>(1,000 char limit)</span>
+        </div>
+      </div>
+    </div>
+  </td>
+
+  <td colspan="<%= colspan %>">
+    <% if @order.ship_address.blank? %>
+      Must set up ship address to apply shipping methods
+    <% elsif @order.shipments.first.blank? %>
+      Shipping has not been set up yet and may not reflect the final cost.<br>
+      Please <%= submit_tag "Update" %>.
+    <% else %>
+      <% if available_methods.present? %>
+        Shipment via:
+        <% if !@order.is_editable? || (@order.approved? && !@approve_ship_receive) || order_is_void? %>
+          <%= @order.shipping_method.try(:name) %>
+        <% else %>
+          <%= collection_select :order, :shipping_method_id, available_methods, :id, :name, {include_blank: true}, {class: 'form-control'} %>
+        <% end %>
+        <% if @order.recalculate_shipping && @order.active_shipping_calculator %>
+          <%= link_to 'Recalculate Shipping', recalculate_shipping_manage_order_path(@order), method: :post,
+              remote: true, id: 'recalculate_shipping', class: 'font-red', data: { disable_with: 'Recalculate Shipping' } %>
+        <% end %>
+        <a id='recalculate_shipping_update' class='font-red' data-remote='true' data-disable-with='Recalculate Shipping' rel='nofollow' style='display: none;' href='#'>Recalculate Shipping</a>
+      <% else %>
+        Shipping:
+      <% end %>
+    <% end %>
+  </td>
+  <% if @manual_adjustment && @order.is_editable? && !order_is_void? %>
+    <%= hidden_field :order, :override_shipment_cost %>
+    <%
+      shipspan = 1
+      shipspan += 1 if @order.vendor.track_line_item_class?
+      shipspan += 1 if @order.vendor.line_item_tax_categories
+    %>
+      <td colspan="<%= shipspan %>">
+        <i class="fa fa-info-circle tooltips" data-original-title="Applying a price change here will override any dynamically calculated shipping rates. Selecting a different shipping method will revert this change" data-container="body"></i>
+        <div class='price-input'>
+          <% if @order.shipping_method.try(:rate_tbd) && !@order.override_shipment_cost %>
+            <label class="currency-label shipment-currency"><%= currency_symbol(@order.currency) %></label>
+            <input type='number' step='0.01' name='order[shipment_total]' class='form-control price-field line-item-price' placeholder="TBD" id='order_shipment_total'>
+            <%#= order_form.number_field :shipment_total, step: 0.01, placeholder: '-- --', class: 'form-control price-field' %>
+          <% elsif @order.recalculate_shipping && @order.active_shipping_calculator %>
+            <label class="currency-label shipment-currency"><%= currency_symbol(@order.currency) %></label>
+            <input type='number' step='0.01' name='order[shipment_total]' class='form-control price-field line-item-price font-red' value='<%= number_with_precision(@order.shipment_total, precision: 2) %>' id='order_shipment_total'>
+          <% else %>
+            <label class="currency-label shipment-currency"><%= currency_symbol(@order.currency) %></label>
+            <%= number_field_tag 'order[shipment_total]', number_with_precision(@order.shipment_total, precision: 2), step: 0.01, class: 'form-control price-field line-item-price', id: 'order_shipment_total' %>
+          <% end %>
+        </div>
+        <span class='input-group-btn'></span>
+          <button class='btn btn-primary' id='apply-shipment-cost'>Apply</button>
+        </span>
+      </td>
+  <% else %>
+    <td><%= display_sweet_price(@order.shipment_total, @order.currency) %></td>
+  <% end %>
+</tr>
+<% end %>
+
+<script>
+  $(document).ready(function(){
+    $('#recalculate_shipping').click(function(){
+      $('#recalculate_shipping').replaceWith("<a id='recalculate_shipping' class='font-red' data-remote='true' data-disable-with='Recalculate Shipping' rel='nofollow' data-method='post' href='#'>Recalculating Shipping</a>");
+      $('.shipment-currency').replaceWith("<label class='currency-label shipment-currency'><img src='/assets/frontend/loading.gif' alt='Loading' id='loading-gif' /></label>");
+      $('#order_shipment_total').attr('value','');
+    });
+    var shippingMethod = <%= @order.active_shipping_calculator %>;
+    $('.line-item-qty').change(function(){
+      if(shippingMethod){
+        $('#recalculate_shipping_update').attr('style','');
+        $('#order_shipment_total').attr('class','form-control price-field line-item-price font-red');
+      };
+    });
+    $('#recalculate_shipping_update').click(function(e){
+      e.preventDefault();
+      $('#recalculate_shipping_update').text('Recalculating shipping');
+      $('#recalculate_shipping_update').attr('style','pointer-events:none; opacity: 0.65;');
+      $('#update-button').click();
+    });
+  });
+  $(window).load(function(){
+    <% if @recalculate_shipping || @order.recalculate_shipping? %>
+      $('#recalculate_shipping').click();
+    <% end %>
+  });
+</script>

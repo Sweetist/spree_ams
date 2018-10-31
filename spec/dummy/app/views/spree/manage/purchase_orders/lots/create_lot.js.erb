@@ -1,0 +1,15 @@
+<% if flash[:errors].present? %>
+  $('.modal-body','#lot_modal').prepend(" <%= j render(partial: 'spree/shared/errors.html.erb') %>");
+<% else %>
+  $('#lot_modal').modal('hide');
+  if($('#no-possible-lots').length){
+    $('#no-possible-lots').replaceWith("<%= j render(partial: 'spree/manage/purchase_orders/lots/lot_selection_row', locals: {order: @order, line_item: @line_item, lot: @lot, qty: 0, hidden: false, unsellable: false }) %>");
+  }else{
+    $('.lot-selection-row:last').after("<%= j render(partial: 'spree/manage/purchase_orders/lots/lot_selection_row', locals: {order: @order, line_item: @line_item, lot: @lot, qty: 0, hidden: false, unsellable: false }) %>");
+  }
+  let $el = $('tr.lot-selection-row[data-lot-id="<%= @lot.id %>"]');
+  let highlightColor = '#FAEAA9';
+  let ogColor = '#FFFFFF';
+  $el.css('backgroundColor',highlightColor);
+  $el.animate({backgroundColor: ogColor}, 2000);
+<% end %>

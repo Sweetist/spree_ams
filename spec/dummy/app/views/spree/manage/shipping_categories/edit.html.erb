@@ -1,0 +1,98 @@
+<%= content_for :head_title do %>
+  Shipping Categories
+<% end %>
+
+<%= content_for :page_title do %>
+  Edit Shipping Category
+<% end %>
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+		<li>
+      <%= link_to "Shipping Categories", manage_shipping_categories_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <span>Edit Shipping Category</span>
+    </li>
+  </ul>
+	<div class="page-toolbar">
+    <div class="btn-group pull-right">
+      <%= link_to 'Back to Shipping Categories', manage_shipping_categories_path, class:'btn green' %>
+    </div>
+  </div>
+<% end %>
+
+<div class='row'>
+  <div class="portlet light">
+    <div class="portlet-title">
+      <div class="caption">
+        <span class="caption-subject font-blue-madison bold uppercase">
+          Edit Shipping Category: <%= @shipping_category.name %>
+        </span>
+      </div>
+    </div>
+    <div class="portlet-body form">
+      <%= form_for [:manage, @shipping_category] do |f| %>
+        <div class="form-body">
+          <%= render partial: 'form', locals: {f:f} %>
+        </div>
+        <div class="form-actions">
+          <div class="pull-right">
+            <button class="btn btn-primary">
+              <i class='fa fa-check'></i> <%= Spree.t(:update) %>
+            </button>
+            <% if @vendor.tax_categories.count > 1 %>
+              <% if @reattach_category_delete %>
+                <button type="button" class="btn red delete-button" id="<%= @shipping_category.id %>">
+                <i class='fa fa-times'></i> Delete
+              </button>
+                <% else %>
+                <button type="button" class="btn red delete-simple" id="<%= @shipping_category.id %>">
+                <i class='fa fa-times'></i> Delete
+              </button>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+  (function($) {
+    $(document).ready(function(){
+      $('.delete-button').click(function(){
+        var modalId = this.id;
+        $.ajax({
+          type: "GET",
+          url: "/manage/configuration/shipping_categories/"+modalId+".js",
+          dataType: 'script',
+          complete: function() {
+            $('#myModal'+modalId).modal('show');
+          }
+        })
+      })
+      $('.delete-simple').click(function(){
+        var simpleId = $(this)[0].id;
+        var result = window.confirm('Are you sure you want to delete this shipping category?');
+        if (result == false) {
+          e.preventDefault();
+        }else{
+          $.ajax({
+          type: "DELETE",
+          url: "/manage/configuration/shipping_categories/" + simpleId,
+          dataType: 'script',
+          complete: function() {
+              window.location.href = "/manage/configuration/shipping_categories/"
+            }
+          })
+        }
+      })
+    });
+  })(jQuery);
+</script>

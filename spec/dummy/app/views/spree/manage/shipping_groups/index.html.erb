@@ -1,0 +1,53 @@
+<%= content_for :head_title do %>
+  <%= "#{current_vendor.display_shipping_group_class}s" %>
+<% end %>
+
+<%= content_for :page_title do %>
+  <%= "#{current_vendor.display_shipping_group_class}s" %>
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+		<li>
+      <span><%= "#{current_vendor.display_shipping_group_class}s" %><span>
+    </li>
+  </ul>
+	<div class="page-toolbar">
+    <% if @can_edit %>
+      <%= link_to new_manage_shipping_group_path, class: "btn green pull-right" do%>
+        <i class="fa fa-plus"></i>&nbsp;New <%= "#{current_vendor.display_shipping_group_class}" %>
+      <% end %>
+    <% end %>
+  </div>
+<% end %>
+
+<div class="table-scrollable">
+  <table class="table table-striped table-hover table-checkable" id="sample_1">
+    <thead>
+      <tr>
+        <th width="10px"></th>
+        <th>
+          Name
+        </th>
+        <th>
+          <%= "#{current_vendor.order_date_text.to_s.capitalize} Days".strip %>
+        </th>
+        <th>
+          Default
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if @can_edit %>
+        <%= render partial: 'can_edit_rows', collection: @shipping_groups, as: :group %>
+      <% else %>
+        <%= render partial: 'no_edit_rows', collection: @shipping_groups, as: :group %>
+      <% end %>
+    </tbody>
+  </table>
+
+</div>

@@ -1,0 +1,6 @@
+$('.portlet', '#variant-modal').html("<%= j render(partial: 'spree/manage/variants/page_content/new_body.html.erb') %>");
+$('#variant-full-context', '#variant-modal').text('New Variant for <%= @product.name %>');
+$('.variant-title', '#variant-modal').append("<div class='actions'><button type='button' class='close modal-close' data-dismiss='modal' aria-hidden='true'></button></div>")
+$('.portlet-body', '#variant-modal').first().prepend("<%= j render(partial: 'spree/shared/errors.html.erb') %>");
+$('.make-switch', '#variant-modal').bootstrapSwitch();
+$('.select2','#variant-modal').select2({width: '100%'});

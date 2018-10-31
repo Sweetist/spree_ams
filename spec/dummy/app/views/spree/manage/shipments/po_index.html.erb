@@ -1,0 +1,41 @@
+<%= content_for :head_title do %>
+  Shipments
+<% end %>
+
+<%= content_for :page_title do %>
+  Shipments for Purchase Order #<%= @order.po_display_number %>
+<% end %>
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Orders", manage_purchase_orders_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Order ##{@order.po_display_number}", edit_manage_purchase_order_path(@order) %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>Shipments</li>
+  </ul>
+  <div class="page-toolbar">
+    <div class="btn-group pull-right">
+      <%= link_to 'Back to Order', edit_manage_purchase_order_path(@order), class: 'btn green btn-sm' %>
+    </div>
+  </div>
+<% end %>
+
+<div class='content'>
+  <% @shipments.each do |shipment| %>
+    <% next unless shipment.stock_location %>
+    <div class='row'>
+      <div class='col-xs-12'>
+        <strong>Ships From:</strong><br>
+        <%= render partial: 'spree/shared/addresses/street_city_zip', locals: {address: shipment.stock_location} %>
+      </div>
+    </div>
+  <% end %>
+</div>

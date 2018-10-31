@@ -1,0 +1,16 @@
+<section id='order-details-expanded'>
+  <div class="clearfix"></div>
+  <div class='row margin-bottom-40'>
+    <%= render partial: 'spree/cust/orders/order_details', locals: {f: f} %>
+    <div id="account_addresses">
+      <%= render partial: 'spree/cust/orders/account_address_fields' %>
+    </div>
+  </div>
+  <div class='col-md-8 payments-table hidden'>
+    <div class='row margin-bottom-40'>
+      <%= render partial: 'spree/cust/payments/body_content/table',
+                 locals: {payments: @payments, url_prefix: ''} %>
+    </div>
+  </div>
+  <div class="clearfix"></div>
+</section>

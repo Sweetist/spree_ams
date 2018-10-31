@@ -1,0 +1,3 @@
+$('.modal-content', '#city-modal').html("<%= j render(partial: 'spree/manage/cities/page_content/new_body.html.erb') %>");
+$('#modal-errors').html("<%= j render(partial: 'spree/shared/errors') %>");
+$('#city-form').attr('data-remote', true);

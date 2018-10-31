@@ -1,0 +1,5 @@
+var state_id_shipping = $('#available-states-shipping').val();
+$('<%= "#available-states-#{params[:address_type]}"%>').empty().append("<option><option>");
+<% @available_states.each do |state| %>
+  $('<%= "#available-states-#{params[:address_type]}"%>').append("<option value='<%= state.id %>'><%= state.name %></option>");
+<% end %>

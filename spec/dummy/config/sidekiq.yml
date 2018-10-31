@@ -1,0 +1,22 @@
+---
+development:
+  :concurrency: 2
+heroku_dev:
+  :concurrency: 2
+staging:
+  :concurrency: 4
+demo:
+  :concurrency: 2
+production:
+  :concurrency: 4
+:queues:
+  - [critical, 4]
+  - [mailers, 4]
+  - [default, 2]
+  - [integrations, 1]
+  - [products, 1]
+  - [imports, 1]
+  - [warehouse_consistency, 1]
+  - [data_integrity, 1]
+  - [wombat, 2]
+:dynamic: true

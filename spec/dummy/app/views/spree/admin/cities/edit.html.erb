@@ -1,0 +1,9 @@
+
+<h1><%= t("editing_state") %></h1>
+
+<%= render 'spree/admin/shared/error_messages', :target => @state %>
+
+<%= form_for([:admin, @country, @state, @city], :html => { :method => :put }) do |f| %>
+  <%= render :partial => "form", :locals => { :f => f } %>
+  <%= render :partial => "spree/admin/shared/cities_edit_resource_links" %>
+<% end %>

@@ -1,0 +1,70 @@
+<%= content_for :head_title do %>
+  Users
+<% end %>
+
+<% within_user_limit = @vendor.within_subscription_limit?('user_limit', @users.count) %>
+<% user_has_permission = current_spree_user.can_write?('basic_options', 'users') %>
+<% can_add_user = within_user_limit && user_has_permission %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <span>Users</span>
+    </li>
+  </ul>
+  <div class="page-toolbar">
+		<%= link_to new_manage_account_user_path,
+      class: "btn green #{'disabled' unless can_add_user} pull-right" do %>
+      <i class="fa fa-plus"></i>&nbsp;New User
+    <% end %>
+  </div>
+<% end %>
+
+<% unless within_user_limit %>
+  <div class="alert alert-warning">
+  	<%= link_to new_manage_message_path(subject: 'Request New User'), class: "alert-link" do%>
+      Contact Sweet
+    <% end %>
+    &nbsp;to add an additional User
+  </div>
+<% end %>
+
+
+<div class="portlet-body">
+  <table class="table table-hover table-sortable basic-table-no-buttons">
+    <thead>
+      <tr>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Position</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <% @user_can_edit_users = current_spree_user.can_write?('basic_options', 'users') %>
+        <% if @user_can_edit_users %>
+          <th class='no-sort'>Actions</th>
+        <% end %>
+      </tr>
+    </thead>
+    <tbody>
+      <% @users.each do |u| %>
+        <% url = manage_account_user_path(u) %>
+        <tr>
+          <td><%= link_to u.firstname, url %></td>
+          <td><%= link_to u.lastname, url %></td>
+          <td><%= link_to u.position.to_s, url %></td>
+          <td><%= link_to u.email, url %></td>
+          <td><%= link_to u.phone.to_s, url %></td>
+          <% if @user_can_edit_users %>
+            <td>
+              <%= link_to raw("<i class='fa fa-pencil'></i>"), edit_manage_account_user_path(u), class: "btn btn-primary btn-sm", style: 'width:32px;' %>
+            </td>
+          <% end %>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

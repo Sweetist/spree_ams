@@ -1,0 +1,31 @@
+<% if @account.sub_accounts.present? %>
+  <div class="row portlet-row">
+    <div id="sales-history-chart-div" class="col-md-6 hidden">
+      <div id="sales-history-chart" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+    </div>
+    <div id="sales-history-chart-div-sa" class="col-md-6">
+      <div id="sales-history-chart-sa" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+    </div>
+    <div class="col-md-6">
+      <div class="chart chart-tabbed" style="min-height:400px;fbordered">
+        <div id="revenue-product-chart-div" class="chart-block hidden">
+          <div id="revenue-product-chart" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+        </div>
+        <div id="revenue-product-chart-div-sa" class="chart-block">
+          <div id="revenue-product-chart-sa" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+<% else %>
+  <div class="row portlet-row">
+    <div class="col-md-6">
+      <div id="sales-history-chart" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+    </div>
+    <div class="col-md-6">
+      <div class="chart chart-tabbed" style="min-height:400px;fbordered">
+        <div id="revenue-product-chart" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+      </div>
+    </div>
+  </div>
+<% end %>

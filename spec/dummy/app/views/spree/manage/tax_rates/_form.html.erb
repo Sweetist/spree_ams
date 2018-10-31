@@ -1,0 +1,45 @@
+<div class="row">
+  <div class="col-md-6">
+    <div class="form-group">
+      <%= f.label :name, Spree.t(:name), class: 'control-label' %>
+      <%= f.text_field :name, class: 'form-control' %>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="form-group">
+      <%= f.label :amount, Spree.t(:rate), class: 'control-label' %>
+      <%= f.text_field :amount, class: 'form-control' %>
+      <span class='help-block-italic'>
+        <%= Spree.t(:tax_rate_amount_explanation) %>
+      </span>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-6">
+    <div class="form-group">
+      <%= f.label :zone, Spree.t(:zone), class: 'control-label' %>
+      <%= f.collection_select(:zone_id, @available_zones, :id, :name, {}, {class: 'select2'}) %>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="form-group">
+      <%= f.label :tax_category_id, Spree.t(:tax_category), class: 'control-label' %>
+      <%= f.collection_select(:tax_category_id, @available_categories,:id, :name, {}, {class: 'select2'}) %>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-6">
+    <div class="form-group">
+      <%= f.label :included_in_price, Spree.t(:included_in_price), class: 'control-label' %><br>
+      <%= f.check_box :included_in_price, class: 'make-switch', 'data-size' => 'mini' %>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="form-group">
+      <%= f.label :show_rate_in_label, Spree.t(:show_rate_in_label), class: 'control-label' %><br>
+      <%= f.check_box :show_rate_in_label, class: 'make-switch', 'data-size' => 'mini' %>
+    </div>
+  </div>
+</div>

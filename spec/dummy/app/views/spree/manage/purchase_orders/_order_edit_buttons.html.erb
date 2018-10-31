@@ -1,0 +1,68 @@
+<div class="single-order-buttons" id='edit-order-buttons'>
+  <% if @approve_ship_receive %>
+    <% if States[@order.state] < States['shipped'] %>
+      <%= link_to 'Cancel Order',  { action: :destroy, id: @order.id },
+        method: :delete, data: { confirm: 'Are you sure you want to cancel this order?' },
+        class: 'btn btn-default'%>
+    <% end %>
+    <% if !@order.is_editable? %>
+      <p>This order can no longer be edited</p>
+    <% else %>
+      <%= submit_tag "Update", class: 'btn btn-primary warn-before-action', id: 'update-button', tabindex: 1 %>
+      <% if States[@order.state] < States['approved'] %>
+        <%= submit_tag Spree.t(:approve_order), class: 'btn btn-primary add-to-order warn-before-action', id: 'approve-button', tabindex: 1 %>
+      <% end %>
+      <% if @order.state == 'approved' && @company.last_editable_order_state >= States['approved'] %>
+        <%= submit_tag "Ship", class: 'btn btn-primary warn-before-action', id: 'ship-button', tabindex: 1, disabled: (@backordered_variants.present? || @order.shipments.none?) %>
+      <% end %>
+      <% if @order.state == 'shipped' && @company.last_editable_order_state >= States['shipped']%>
+        <%= submit_tag "Confirm Delivered", class: 'btn btn-primary', id: 'delivered-button', tabindex: 1 %>
+      <% end %>
+    <% end %>
+  <% else %>
+    <% if States[@order.state].between?(States['cart'], States['complete']) %>
+      <%= link_to 'Cancel Order',  { action: :destroy, id: @order.id },
+        method: :delete, data: { confirm: 'Are you sure you want to cancel this order?' },
+        class: 'btn btn-default'%>
+      <% if @order.state == 'cart' %>
+        <%= submit_tag "Update", class: 'btn btn-primary warn-before-action', id: 'update-button', tabindex: 1 %>
+        <%= submit_tag Spree.t(:submit), class: 'btn btn-primary warn-before-action', id: 'update-button', tabindex: 1 %>
+      <% end %>
+      <% if @order.state == 'complete' %>
+        <%= submit_tag Spree.t(:resubmit_order), class: 'btn btn-primary warn-before-action', id: 'update-button', tabindex: 1 %>
+        <%= submit_tag Spree.t(:receive_order), class: 'btn btn-primary warn-before-action check-lots', id: 'receive-button', tabindex: 1 %>
+      <% end %>
+    <% else %>
+      <% if @order.state == 'invoice' %>
+        <%= submit_tag "Update", class: 'btn btn-primary check-lots', id: 'update-received-order', tabindex: 1 %>
+        <%= link_to void_manage_purchase_order_path(@order), method: :post,
+          data: {confirm: "Warning: voiding this order can't be undone. Are you sure you want to proceed?"} do %>
+            <button class='btn btn-primary'>Void Transaction</button>
+        <% end %>
+        <%#= submit_tag Spree.t(:void_order), class: 'btn btn-primary warn-before-action', id: 'void-button',
+          data: { confirm: "Are you sure you would like to void this purchase order?" }, tabindex: 1 %>
+      <% end %>
+    <% end %>
+  <% end %>
+</div>
+
+<script type='text/javascript'>
+  $('.warn-before-action').click(function(e){
+    if($('#new-line-item-select').val() === '' && $('#new-line-item-select').val() === ''){
+      // break;
+    }else{
+      e.preventDefault();
+      var commit = e.currentTarget.value
+      if (confirm('You have selected products that have not yet been added. Are you sure you want to leave?')){
+        $('#single-order-form').append("<input type='hidden' name='commit' value='" + commit + "'>");
+        $('#single-order-form').submit();
+      }
+    }
+  });
+
+  $('#approve-button').click(function(e){
+    var deliveryDate = new Date($('#order-delivery-date').val());
+    var today = new Date();
+  });
+
+</script>

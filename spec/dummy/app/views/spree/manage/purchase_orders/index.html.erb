@@ -1,0 +1,156 @@
+<%= content_for :head_title do %>
+  Purchase Orders
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Purchase Orders", manage_purchase_orders_path %>
+    </li>
+  </ul>
+  <div class="page-toolbar">
+    <%= link_to new_manage_purchase_order_path, class: "btn green-jungle pull-right" do %>
+      <i class="fa fa-plus"></i>&nbsp;New Purchase Order
+    <% end %>
+  </div>
+<% end %>
+
+<div class="content">
+
+<%= search_form_for [:manage, @search], class: "form", id: "search-form" do |f| %>
+  <%= render partial: 'advanced_search', locals: {f: f} %>
+<% end %>
+
+  <% if (@order_limit) && (@company.purchase_orders.count > @order_limit) %>
+    <div class ="alert alert-warning alert-dismissable">
+      <button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
+      <strong>You've exceeded <%= @order_limit %>  orders!</strong> Though you have more orders, you only have access to the last <%= @order_limit %>.
+      <%= link_to new_manage_message_path(subject: 'Upgrade Plan'), class: "alert-link" do %>
+        Upgrade
+      <% end %>
+      &nbsp;to search for older orders.
+    </div>
+  <% end %>
+
+<% if nil %>
+  <!-- No bulk actions currently for Purchase Orders -->
+  <div class="row">
+    <div class="col-md-12">
+      <div class="btn-group margin-right-10">
+        <div class="btn btn-default">
+          <input type="checkbox" class="group-checkable" data-set="#sample_1 .checkboxes">
+        </div>
+        <%if @approve_ship_receive %>
+          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"> Actions
+            <i class="fa fa-angle-down"></i>
+          </button>
+          <ul class="dropdown-menu" role="menu">
+            <li>
+              <%= submit_tag 'Approve Selected Orders', form: 'orders-list-form', class: 'show-loader' %>
+            </li>
+            <% if @company.last_editable_order_state >= States['approved'] %>
+              <li>
+                <%= submit_tag 'Ship Selected Orders', form: 'orders-list-form', class: 'show-loader' %>
+              </li>
+            <% end %>
+            <% if @company.last_editable_order_state >= States['shipped'] %>
+              <li>
+                <%= submit_tag 'Receive Selected Orders', form: 'orders-list-form', class: 'show-loader' %>
+              </li>
+            <% end %>
+            <li>
+              <%= submit_tag 'Collate Selected as Packing Slips', form: 'orders-list-form' %>
+            </li>
+          </ul>
+        <% end %>
+      </div>
+
+      <div class="btn-group">
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+          <i class="fa fa-download"></i>&nbsp;Today's Orders <i class="fa fa-angle-down"></i>
+        </button>
+        <ul class="dropdown-menu pull-right" role="menu">
+          <li>
+            <%= link_to "Invoices", daily_manage_invoices_path(format: :pdf) %>
+          </li>
+          <li>
+            <%= link_to "Packing Slips (All)", daily_packing_slips_manage_orders_path(format: :pdf) %>
+          </li>
+          <li>
+            <%= link_to "Packing Slips (Approved Only)", daily_packing_slips_manage_orders_path(format: :pdf, approved_only: true) %>
+          </li>
+        </ul>
+      </div>
+    </div><!--/.col-md-12 -->
+  </div><!--/.row -->
+<% end %>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="">
+        <%= form_for @company, html: {id: "orders-list-form"}, url: actions_router_manage_purchase_orders_path, method: :patch do |ff|%>
+          <table class="table table-striped table-hover ajaxDatatable" data-source="<%= manage_dt_po_orders_path(format: :json) %>" data-dt-order="0, 'desc'">
+            <thead>
+              <tr>
+                <!-- TODO add class 'table-checkable' to table when adding checkboxes back -->
+                <!-- <th data-source='checkbox' class="table-checkbox dt-no-settings-visible dt-no-sort" width="2%"></th> -->
+                <th data-source='invoice_date'>Purchase Order Date</th>
+                <th data-source='number'>Order #</th>
+                <th data-source='account_fully_qualified_name'>Account</th>
+                <th data-source='item_count'>Total Items</th>
+                <th data-source='total'>Total</th>
+                <th class='dt-no-sort' data-source='status'>Status</th>
+                <th class='dt-no-sort dt-no-settings-visible' data-source='pdf_invoice'></th>
+              </tr>
+            </thead>
+            <tbody id='all-orders'>
+            </tbody>
+          </table>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type='text/javascript'>
+  $('.group-checkable').click(function(event) {
+    if(this.checked === true){
+      $('.checkboxes:checkbox').each(function() {
+        this.checked = true;
+      });
+    }else{
+      $('.checkboxes:checkbox').each(function() {
+        this.checked = false;
+      });
+    }
+  });
+  $('.show-loader').click(function(e){
+    $('.table-scrollable').append("<section class='loader'></section>");
+  });
+  $('.collate-pdf, .collate-invoice-order-pdf').click(function(e){
+    if($('.checkboxes:checked').length){
+      $('#orders-list-form').attr('target', '_blank');
+    }else{
+      e.preventDefault();
+      alert('You must select invoices to collate.');
+    }
+  });
+  $('.open-pdf').click(function(e){
+    var anyApprovedOrdersToday = <%= @any_approved_orders_today %>
+    var anyOrdersToday = <%= @any_orders_today %>
+    if ($(this).data('approved-only')){
+      if(!anyApprovedOrdersToday){
+        e.preventDefault();
+        alert('There are no approved orders for today.');
+      }
+    }else{
+      if(!anyOrdersToday){
+        e.preventDefault();
+        alert('There are no orders for today.');
+      }
+    }
+  });
+</script>

@@ -1,0 +1,42 @@
+<%= content_for :head_title do %>
+  Standing Order: <%= @current_order.name %> - <%= @vendor.name %>: <%= @product.name %>
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", root_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Orders", orders_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Standing Orders", standing_orders_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to @current_order.name, standing_order_path(@current_order) %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Products", standing_order_products_path(@current_order) %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to @product.default_display_name, standing_order_product_path(@current_order, @product) %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <span><%= @variant.default_display_name %></span>
+    </li>
+  </ul>
+
+  <div class="page-toolbar">
+    <div class="pull-right">
+
+    </div>
+  </div>
+
+<% end %>

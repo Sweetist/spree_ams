@@ -1,0 +1,12 @@
+<option></option>
+<% if values = @vendor.option_values.where('option_type_id = ?', option_type.id).presence %>
+<% ov_ids = variant.try(:option_value_ids) || [] %>
+  <% values.each do |ov| %>
+    <option value='<%= ov.id %>'
+      <%= 'selected' if ov_ids.include?(ov.id)%>>
+      <%= ov.presentation %>
+    </option>
+  <% end %>
+<% end %>
+<option disabled>&#9472&#9472&#9472&#9472&#9472&#9472</option>
+<option value='new' data-option-type-id='<%= option_type.id %>'><%= "< Add New / Edit >" %></option>

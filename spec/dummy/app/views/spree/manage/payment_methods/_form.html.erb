@@ -1,0 +1,90 @@
+<div data-hook="admin_payment_method_form_fields">
+
+  <div data-hook="payment_method" class="row">
+
+    <div class="col-md-6">
+
+      <div id="preference-settings" data-hook class="form-group">
+        <%= label_tag :payment_method_type, Spree.t(:provider) %>
+        <%= select(:payment_method, :type, @providers, {}, {id: 'gtwy-type', class: 'form-control'}) %>
+      </div>
+      <% unless @payment_method.new_record? %>
+        <%= preference_fields(@payment_method, f) %>
+        <% if @payment_method.respond_to?(:preferences) %>
+          <div id="gateway-settings-warning" class="info warning"><%= Spree.t(:provider_settings_warning) %></div>
+          <br>
+        <% end %>
+      <% end %>
+      <div class='row'>
+        <div class='col-sm-12'>
+          <div class='form-group'>
+            <%= f.label :display_on, Spree.t(:display_on) %>
+            <%= f.select :display_on, display_on_opts, {}, {class: 'form-control'} %>
+          </div>
+        </div>
+      </div>
+      <div class='row'>
+        <div class='col-sm-6'>
+          <div data-hook="auto_capture" class="form-group">
+            <%= label_tag :payment_method_auto_capture, Spree.t(:auto_capture) %><br>
+            <%= check_box(:payment_method, :auto_capture,
+              class: 'make-switch', 'data-size'=>'mini',
+              readonly: (!@payment_method.try(:credit_card?) && @payment_method.auto_capture)) %>
+          </div>
+        </div>
+        <div class='col-sm-6'>
+          <div data-hook="active" class="form-group">
+            <%= label_tag :payment_method_active, Spree.t(:active) %><br>
+            <%= check_box(:payment_method, :active,
+              class: 'make-switch', 'data-size'=>'mini',
+              disabled: (@payment_method.id && @payment_method.try(:credit_card?) && !current_company.subscription_includes?('payments'))) %>
+          </div>
+        </div>
+      </div>
+      <div class='row'>
+        <div class='col-sm-6'>
+          <div data-hook="auto_capture" class="form-group mark-paid-container">
+            <%= label_tag :payment_method_mark_paid, Spree.t('use_for_mark_paid.label') %><br>
+            <%= check_box(:payment_method, :mark_paid,
+              class: 'make-switch', 'data-size'=>'mini',
+              disabled: @payment_method.try(:credit_card?)) %>
+              <span class='help-block-italic'>
+                <%= Spree.t('use_for_mark_paid.helper') %>
+              </span>
+          </div>
+        </div>
+        <div class='col-sm-6'>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div data-hook="name" class="form-group">
+        <%= label_tag :payment_method_name, Spree.t(:name) %>
+        <%= text_field :payment_method, :name, :class => 'form-control' %>
+      </div>
+      <div data-hook="description" class="form-group">
+        <%= label_tag :payment_method_description, Spree.t(:description) %>
+        <%= text_area :payment_method, :description, { :cols => 60, :rows => 6, :class => 'form-control' } %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type='text/javascript'>
+  var nonCreditGateways = ['Spree::PaymentMethod::Cash', 'Spree::PaymentMethod::Check', 'Spree::PaymentMethod::Other']
+  $('#gtwy-type').change(function(){
+    if(nonCreditGateways.indexOf($(this).val()) !== -1){ //this is a non-creditcard method
+      $('#payment_method_auto_capture').bootstrapSwitch('state', true);
+      $('#payment_method_auto_capture').bootstrapSwitch('readonly', true);
+      $('#payment_method_mark_paid').bootstrapSwitch('disabled', false);
+      $('#mark-paid-container').show();
+    }else{
+      $('#payment_method_auto_capture').bootstrapSwitch('readonly', false);
+      $('#payment_method_mark_paid').bootstrapSwitch('state', false);
+      $('#payment_method_mark_paid').bootstrapSwitch('disabled', true);
+      $('#mark-paid-container').hide();
+    }
+  });
+</script>

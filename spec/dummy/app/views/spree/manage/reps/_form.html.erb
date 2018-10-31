@@ -1,0 +1,15 @@
+<div class='form-group'>
+  <%= f.label :name, 'Name *', class: 'control-label' %>
+  <%= f.text_field :name, class: 'form-control' %>
+</div>
+<div class='form-group'>
+  <%= f.label :initials, 'Initials *', class: 'control-label' %>
+  <%= f.text_field :initials, class: 'form-control', maxlength: 5 %>
+</div>
+
+<% if false %>
+<!-- <div class='form-group'>
+  <%#= f.label :account_select, 'Customers', class: 'control-label' %>
+  <%#= f.collection_select :account_ids, @vendor.customer_accounts.joins(:customer).select('spree_accounts.id, spree_companies.name'), :id, :name, {include_blank: true}, {selected: @rep.account_ids, multiple: true, name: 'rep[account_ids][]', class: 'form-control select2-multiple select2-hidden-accessible'} %>
+</div> -->
+<% end %>

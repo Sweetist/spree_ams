@@ -1,0 +1,16 @@
+<div class='row nested-fields'>
+  <div class="form-group"> <!-- use class: "has-error to highlight field with error" -->
+    <!-- <div class='col-md-2'></div> -->
+    <div class='col-sm-1 col-xs-2 padding-left-20 form-group'>
+      <%= link_to_remove_association f, class: 'btn btn-xs red delete-input-row-btn margin-top-30' do %>
+        <i class="fa fa-times"></i>
+      <% end %>
+    </div>
+    <div class='col-sm-4 col-xs-10 form-group'>
+      <%= f.label :name, Spree.t(:name), class: 'control-label' %>
+      <%= f.text_field :name, class: 'form-control' %>
+      <span class='help-block-italic'><%= pluralize(f.object.try(:variants).try(:count).to_i, 'variant') %></span>
+      <%= f.hidden_field :vendor_id, value: @vendor.id %>
+    </div>
+  </div>
+</div>

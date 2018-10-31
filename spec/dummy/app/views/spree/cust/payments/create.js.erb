@@ -1,0 +1,7 @@
+<% if flash[:errors] %>
+  $('#payment-form-container','#payment-modal').prepend("<%= j(render(partial: 'spree/shared/errors')) %>");
+<% end %>
+reEnableForm();
+<% if @order.account.try(:payment_terms).try(:pay_before_submit) %>
+  $('#submit-button').prop('disabled', 'disabled')
+<% end %>

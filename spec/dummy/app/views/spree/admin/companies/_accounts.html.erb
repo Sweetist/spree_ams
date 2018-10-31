@@ -1,0 +1,39 @@
+<div class='panel-body' id='<%= type %>-accounts-container'>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>
+          Company ID
+        </th>
+        <th>
+          Company Name
+        </th>
+        <th>
+          Account ID
+        </th>
+        <th>
+          Account Fully Name
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @accounts.each do |account| %>
+        <% company = account.try(type) %>
+        <tr>
+          <td>
+            <%= company.try(:id) %>
+          </td>
+          <td>
+            <%= link_to company.try(:name), edit_admin_company_path(company) %>
+          </td>
+          <td>
+            <%= account.id %>
+          </td>
+          <td>
+            <%= link_to account.fully_qualified_name, edit_admin_account_path(account) %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

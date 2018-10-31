@@ -1,0 +1,11 @@
+<% if @user%>
+	<% unless @existing_user %>
+		$('#spree_user_company').val("<%= raw @user.try(:company).try(:name)%>");
+		$('#spree_user_firstname').val("<%=raw @user.try(:firstname)%>");
+		$('#spree_user_lastname').val("<%=raw @user.try(:lastname)%>");
+		$('#spree_user_phone').val("<%=@user.try(:phone)%>")
+	<% else %>
+  	$('#user_form').replaceWith("<section id='user_form' class='alert alert-warning'> User already has access. Please contact your vendor or reset your password</section>");
+  	$('#user_submit').replaceWith('<%= link_to "Back", root_path, class: "btn btn-default", id: "back-btn"%>');
+	<% end %>
+<% end %>

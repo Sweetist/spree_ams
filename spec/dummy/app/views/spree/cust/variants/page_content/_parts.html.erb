@@ -1,0 +1,29 @@
+<div id="existing_sub_parts_<%= variant.try(:id) %>">
+  <% if variant.try(:persisted?) %>
+    <table class="table">
+      <thead>
+        <tr>
+          <% if current_vendor_view_settings.try(:variant_sku) %>
+            <th><%= Spree.t(:sku) %></th>
+          <% end %>
+          <th><%= Spree.t(:name) %></th>
+          <th><%= Spree.t(:qty) %></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id='sub-parts-table-body-<%= variant.try(:id) %>'>
+
+        <% variant.parts_variants.sort_by{|part_variant, part1| part_variant.name}.each_with_index do |part_variant, idx| %>
+          <% part = part_variant.part %>
+          <% part_url = vendor_product_variant_path(@vendor, part.product, part) %>
+          <% if current_vendor_view_settings.try(:variant_sku) %>
+            <td><%= link_to part.sku.to_s, part_url, target: '_blank' %></td>
+          <% end %>
+          <td><%= link_to part.full_display_name, part_url, target: '_blank' %></td>
+          <td><%= link_to part_variant.count, part_url, target: '_blank' %></td>
+        <% end %>
+
+      </tbody>
+    </table>
+  <% end %>
+</div>

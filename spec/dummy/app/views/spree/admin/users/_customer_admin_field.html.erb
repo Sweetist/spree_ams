@@ -1,0 +1,8 @@
+<%= f.field_container :customer_admin, class: ['form-group'] do %>
+  <%= f.label :customer_admin, "Customer Admin" %>
+  <%= f.check_box :customer_admin %>
+  <p>
+    Enabling this allows the user of a customer company to manage account access
+    as well as other users within their own company
+  </p>
+<% end %>

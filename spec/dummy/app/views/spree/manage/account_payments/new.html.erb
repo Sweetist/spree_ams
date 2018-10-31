@@ -1,0 +1,144 @@
+<%= content_for :head_title do %>
+  Payments
+<% end %>
+
+<%= content_for :page_title do %>
+	<span class="account-payment-id">
+		Payment
+	</span>
+<% end %>
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+		<li>
+      <%= link_to "Payments", manage_account_payments_path %>
+			<!--<i class="fa fa-circle"></i>-->
+    </li>
+  </ul>
+	<div class="page-toolbar">
+    <div class="btn-group pull-right">
+      <%= link_to "Back to All Payments", manage_account_payments_path, class: "btn green" %>
+    </div>
+  </div>
+<% end %>
+
+<div class="content">
+  <div class="row">
+    <%= render partial: 'account_payment', locals: { account_payment: @account_payment } %>
+  </div>
+</div>
+
+
+<script type="text/javascript">
+  var currency = '<%= currency_symbol(@account_payment.vendor.try(:currency)) %>';
+  var getAccountDetails = function(account_id){
+    $.ajax({
+      url: '/manage/account_payments/vendor_accounts' ,
+      type: 'GET',
+      dataType: 'script',
+      data: {
+        account_id: account_id
+      }
+    });
+    // $('#order-customer-id').select2('enable', false);
+  };
+
+  $(document).ready(function(){
+    top.amountToApply = 0;
+    var formatNumber = function(num) {
+      return '$' + num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
+    }
+    var checkNegativeAtc = function(amount, credit_to_apply, total) {
+      atc = parseFloat(amount) + parseFloat(credit_to_apply) - total.toFixed(2);
+      if (atc > 0) {
+        $('.amount-to-credit')[0].innerText = '$'+ parseFloat(atc).toFixed(2);
+      } else {
+        $('.amount-to-credit')[0].innerText = '$'+ parseFloat(0).toFixed(2);
+      };
+    };
+    $('#order-customer-id').change(function(){
+      var account_id = $('#order-customer-id option:selected').val();
+      if (typeof account_id !== "undefined") {
+        getAccountDetails(account_id);
+      }
+    });
+    $('#account_payment_amount').change(function(){
+      top.amountToApply += 1;
+      var amount = $('#account_payment_amount').val();
+      var credit_to_apply = $('#account_payment_credit_to_apply').val();
+      if (top.countCheck > 0) {
+        total = 0;
+        var amount2 = $(".payment-amount");
+        for (var i = 0; i < amount2.length; i++) {
+          if (amount2[i].value > 0) {
+            total += parseFloat(amount2[i].value);
+          };
+        };
+        checkNegativeAtc(amount, credit_to_apply, total);
+        $('.amount-to-apply')[0].innerText = formatNumber((parseFloat(amount)+parseFloat(credit_to_apply)).toFixed(2));
+        return;
+      }
+      $('.amount-to-apply')[0].innerText = formatNumber((parseFloat(amount)+parseFloat(credit_to_apply)).toFixed(2));
+      total = 0;
+      var amount2 = $(".payment-amount");
+      for (var i = 0; i < amount2.length; i++) {
+        if (amount2[i].value > 0) {
+          total += parseFloat(amount2[i].value);
+        };
+        if (amount == 0) {
+          amount2[i].value = parseFloat(0).toFixed(2);
+          $("[name='payments_attributes[][check]']")[i].checked = false;
+          continue;
+        };
+        var balance = parseFloat($('#order-body tr')[i].cells[5].innerText.substring(1).replace(/,/g, ''));
+        if (amount < balance) {
+          amount2[i].value = parseFloat(amount).toFixed(2);
+          $("[name='payments_attributes[][check]']")[i].checked = true;
+          amount = 0;
+        } else {
+          amount2[i].value = parseFloat(balance).toFixed(2);
+          amount = amount - balance;
+          $("[name='payments_attributes[][check]']")[i].checked = true;
+        };
+      };
+    });
+    $('#account_payment_credit_to_apply').change(function(){
+      var amount = $('#account_payment_amount').val();
+      var credit_to_apply = $('#account_payment_credit_to_apply').val();
+      $('.amount-to-apply')[0].innerText = formatNumber((parseFloat(amount)+parseFloat(credit_to_apply)).toFixed(2));
+      total = 0;
+      var amount2 = $(".payment-amount");
+      for (var i = 0; i < amount2.length; i++) {
+        if (amount2[i].value > 0) {
+          total += parseFloat(amount2[i].value);
+        };
+      };
+      checkNegativeAtc(amount, credit_to_apply, total);
+    });
+  });
+
+  $('#new_account_payment').keypress(function(e) {
+    return e.which !== 13;
+  });
+
+  $(document).ready(function(){
+    $('#account_payment_payment_method_id').change(function(){
+      var payment_method = $('#account_payment_payment_method_id option:selected').val();
+      var account_id = $('#order-customer-id option:selected').val();
+      if (typeof payment_method !== "undefined") {
+        $.ajax({
+          url: '/manage/account_payments/new_payment',
+          type: 'GET',
+          dataType: 'script',
+          data: {
+            account_id: account_id,
+            payment_method_id: payment_method
+          }
+        });
+      }
+    });
+  });
+</script>

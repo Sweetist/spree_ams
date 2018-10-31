@@ -1,0 +1,45 @@
+<table class="table">
+  <thead>
+     <!-- <tr><td colspan="1"><%#= Spree.t(:no_lots) %>.</td></tr> -->
+    <tr>
+      <th><%= Spree.t(:part) %></th>
+      <th><%= Spree.t(:lot_number) %></th>
+      <th><%= Spree.t(:part_quantity) %></th>
+      <th><%= Spree.t(:total) %></th>
+      <th><%= Spree.t(:available) %></th>
+      <th><%= Spree.t(:qty) %></th>
+    </tr>
+  </thead>
+  <tbody>
+      <!-- if have been updated before -->
+    <% if @line_item.line_item_lots.present?%>
+      <% @line_item.line_item_lots.sort_by{|part, part_comparison| part.lot.variant.name}.each do |line_item_lot| %>
+        <tr>
+          <% parts_qty = @line_item.variant.parts_variants.find_by(part_id: line_item_lot.lot.variant).try(:count)%>
+          <td><%=line_item_lot.lot.variant.full_context%></td>
+          <td class="number_lot" data-row=<%=@order.line_items.find_index(@line_item)%> data-lot-id=<%= line_item_lot.lot.id %> style="text-align: left;"><%= line_item_lot.lot.number%></td>
+          <td class="qty_part" data-assembly= <%=@line_item.id%> data-lot-id=<%=line_item_lot.lot.id%> data-variant-id=<%=line_item_lot.lot.variant.id%> style="text-align: left;"><%= parts_qty %></td>
+          <td><%= @line_item.ordered_qty * parts_qty %></td>
+          <td class='qty_available' data-lot-id=<%= line_item_lot.lot.id %>><%= line_item_lot.lot.stock_item_lots.detect{|item_lot| item_lot.stock_item.try(:stock_location_id) == @line_item.order.shipments.first.try(:stock_location_id)}.try(:count) %></td>
+          <td><%= number_field_tag "", line_item_lot.count, class: "submit_lot_count form-control", data:{id: line_item_lot.lot.id, variant_id: line_item_lot.lot.variant.id, line_item: @line_item.id, row: @order.line_items.find_index(@line_item)} %></td>
+        </tr>
+      <% end %>
+    <% else %>
+      <% @line_item.variant.parts.each do |part| %>
+        <% part.lots.each do |lot| %>
+          <% if lot.stock_item_lots.select{|stock_item_lot| stock_item_lot.stock_location == @order.shipments.first.try(:stock_location)}.present? && lot.available%>
+            <% parts_qty = @line_item.variant.parts_variants.find_by(part_id: lot.variant).try(:count)%>
+            <tr>
+               <td><%=part.full_context%></td>
+              <td class="number_lot" data-total= <%=@line_item.ordered_qty%> data-lot-id=<%= lot.id %> style="text-align: left;"><%= lot.number%></td>
+              <td class="qty_part" data-assembly= <%=@line_item.id%> data-lot-id=<%=lot.id%> data-variant-id=<%=lot.variant.id%> style="text-align: left;"><%= parts_qty %></td>
+              <td> <%= @line_item.ordered_qty * parts_qty%></td>
+              <td class='qty_available' data-lot-id=<%= lot.id %>><%= lot.stock_item_lots.detect{|item_lot| item_lot.stock_item.try(:stock_location_id) == @line_item.order.shipments.first.try(:stock_location_id)}.try(:count) %></td>
+              <td><%= number_field_tag "", 0 , class: "submit_lot_count form-control", data:{id: lot.id, variant_id: lot.variant, line_item: @line_item.id, row: @order.line_items.find_index(@line_item)} %></td>
+            </tr>
+          <% end %>
+        <% end %>
+      <% end %>
+    <% end %>
+  </tbody>
+</table>

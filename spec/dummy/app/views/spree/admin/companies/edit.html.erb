@@ -1,0 +1,66 @@
+<% content_for :page_title do %>
+
+<% end %>
+
+<%= render partial: 'spree/admin/shared/company_tabs', locals: {current: :details} %>
+<%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @company } %>
+
+<%= form_for [:admin, @company], method: :put, html: { multipart: true }  do |f| %>
+ <fieldset>
+  <%= render :partial => 'form', :locals => { :f => f } %>
+  <%= render :partial => 'spree/admin/shared/edit_resource_links' %>
+ </fieldset>
+<% end %>
+<div class="panel panel-default" data-hook="company-users" style="margin-top:20px;">
+  <div class="panel-heading">
+    <h1 class="panel-title">
+      <%= "Users" %>
+    </h1>
+  </div>
+  <div class='panel-body' id='users-container'>
+    Loading Users <%= image_tag 'frontend/loading.gif' %>
+  </div>
+</div>
+
+<div class="panel panel-default" data-hook="company-vendor-accounts" style="margin-top:20px;">
+  <div class="panel-heading">
+    <h1 class="panel-title">
+      <%= "Vendor Accounts" %>
+    </h1>
+  </div>
+  <div class='panel-body' id='vendor-accounts-container'>
+    Loading Vendors <%= image_tag 'frontend/loading.gif' %>
+  </div>
+</div>
+
+<div class="panel panel-default" data-hook="company-customer-accounts" style="margin-top:20px;">
+  <div class="panel-heading">
+    <h1 class="panel-title">
+      <%= "Customer Accounts" %>
+    </h1>
+  </div>
+  <div class='panel-body' id='customer-accounts-container'>
+    Loading Customers <%= image_tag 'frontend/loading.gif' %>
+  </div>
+</div>
+
+<script type='text/javascript'>
+  $(document).ready(function(){
+    var companyId = '<%= @company.id %>';
+    $.ajax({
+      url: '/admin/companies/' + companyId + '/users.js',
+      method: 'GET',
+      dataType: 'script'
+    });
+    $.ajax({
+      url: '/admin/companies/' + companyId + '/vendor_accounts.js',
+      method: 'GET',
+      dataType: 'script'
+    });
+    $.ajax({
+      url: '/admin/companies/' + companyId + '/customer_accounts.js',
+      method: 'GET',
+      dataType: 'script'
+    });
+  });
+</script>

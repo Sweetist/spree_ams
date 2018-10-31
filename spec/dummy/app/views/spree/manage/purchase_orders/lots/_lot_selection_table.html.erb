@@ -1,0 +1,70 @@
+<table class="table">
+  <!-- <col width="70%">
+  <col width="30%"> -->
+  <!-- <thead> -->
+    <tr>
+      <th><%= Spree.t(:lot_number) %></th>
+      <th><%= Spree.t(:available) %></th>
+      <th><%= Spree.t(:sell_by) %></th>
+      <th style='width:90px;'><%= Spree.t(:qty) %> (<%= @line_item.quantity %>)</th>
+      <th></th>
+    </tr>
+  <!-- </thead> -->
+    <!-- if have been updated before -->
+  <% line_item_lots = @line_item.line_item_lots.includes(lot: [stock_item_lots: :stock_item]).order(:id) %>
+  <% if line_item_lots.present? %>
+    <tbody id='existing-line-item-lots'>
+      <% line_item_lots.each do |line_item_lot| %>
+        <% lot = line_item_lot.lot %>
+        <%= render partial: 'spree/manage/orders/lots/lot_selection_row',
+            locals: {order: @order, line_item: @line_item, lot: lot, qty: line_item_lot.count, hidden: false, unsellable: false } %>
+      <% end %>
+
+      <% other_lots = @line_item.possible_lots.where.not(id: line_item_lots.pluck(:lot_id)).order(:sell_by) %>
+      <% if other_lots.present? %>
+        <% other_lots.each do |lot| %>
+          <%= render partial: 'spree/manage/orders/lots/lot_selection_row',
+              locals: {order: @order, line_item: @line_item, lot: lot, qty: 0, hidden: true, unsellable: false } %>
+        <% end %>
+      <% end %>
+      <% if other_lots.present? %>
+        <tr>
+          <td colspan="100%">
+            <a id='more-lot-options' class='pull-right'>More Options</a>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  <% else %>
+    <tbody id='possible-line-item-lots'>
+      <% possible_lots = @line_item.possible_lots.order(:sell_by) %>
+      <% if possible_lots.empty? %>
+        <tr id='no-possible-lots'>
+          <td colspan="100%"><%= Spree.t(:no_lots) %>.</td>
+        </tr>
+      <% end %>
+      <% possible_lots.each do |lot| %>
+      <%= render partial: 'spree/manage/orders/lots/lot_selection_row',
+          locals: {order: @order, line_item: @line_item, lot: lot, qty: 0, hidden: false, unsellable: false }%>
+      <% end %>
+    </tbody>
+  <% end %><!-- end   -->
+  <tbody id='unsellable-for-date-lots'>
+    <% other_lots = @line_item.all_lots.unarchived.unsellable_for_date(@order.delivery_date)
+                              .where.not(id: line_item_lots.pluck(:lot_id)).order(:sell_by) %>
+    <% if other_lots.present? %>
+      <tr class='hidden'>
+        <th colspan="100%">Unavailable / Expired Lots</th>
+      </tr>
+      <% other_lots.each do |lot| %>
+        <%= render partial: 'spree/manage/orders/lots/lot_selection_row',
+            locals: {order: @order, line_item: @line_item, lot: lot, qty: 0, hidden: true, unsellable: true } %>
+      <% end %>
+      <tr>
+        <td colspan="100%">
+          <a id='unsellable-lot-options' class='pull-right'>Show Unavailable / Expired Lots</a>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

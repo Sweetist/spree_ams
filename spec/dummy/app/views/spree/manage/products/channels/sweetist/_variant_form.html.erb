@@ -1,0 +1,25 @@
+<div class='col-md-6'>
+  <div class='form-group'>
+    <%= f.label :sweetist_lead_time_hours, 'Lead Time (hrs)', class: 'control-label' %>
+    <%= f.number_field :sweetist_lead_time_hours, class: 'form-control' %>
+    <!-- {"fragile"=>false, "dietary_info"=>nil, "num_servings"=>"", "max_order_qty"=>nil}} -->
+  </div>
+  <div class='form-group'>
+    <%= f.label :sweetist_max_order_qty, 'Max. Order Qty', class: 'control-label' %>
+    <%= f.number_field :sweetist_max_order_qty, class: 'form-control' %>
+  </div>
+  <div class='form-group'>
+    <%= f.label :sweetist_fragile, 'Fragile', class: 'control-label' %><br>
+    <%= f.check_box :sweetist_fragile, class: 'make-switch form-control' %>
+  </div>
+</div>
+<div class='col-md-6'>
+  <div class='form-group'>
+    <%= f.label :sweetist_num_servings, "Number of Servings", class: 'control-label' %>
+    <%= f.number_field :sweetist_num_servings, class: 'form-control' %>
+  </div>
+  <div class='form-group'>
+    <%= f.label :sweetist_dietary_info, 'Dietary Info', class: 'control-label' %>
+    <%= f.text_area :sweetist_dietary_info, class: 'form-control' %>
+  </div>
+</div>

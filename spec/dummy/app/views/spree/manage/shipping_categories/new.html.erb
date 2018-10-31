@@ -1,0 +1,55 @@
+<%= content_for :head_title do %>
+  Shipping Categories
+<% end %>
+
+<%= content_for :page_title do %>
+  New Shipping Category
+<% end %>
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+		<li>
+      <%= link_to "Shipping Categories", manage_shipping_categories_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <span>New Shipping Category</span>
+    </li>
+  </ul>
+	<div class="page-toolbar">
+    <div class="btn-group pull-right">
+    </div>
+  </div>
+<% end %>
+
+<div class='row'>
+  <div class="portlet light">
+    <div class="portlet-title">
+      <div class="caption">
+        <span class="caption-subject font-blue-madison bold uppercase">
+          New Shipping Category
+        </span>
+      </div>
+    </div>
+    <div class="portlet-body form">
+      <%= form_for [:manage, @shipping_category] do |f| %>
+        <div class="form-body">
+          <%= render partial: 'form', locals: {f:f} %>
+        </div>
+        <div class="form-actions">
+          <div class="pull-right">
+            <%= link_to manage_shipping_categories_path, class: "btn btn-default" do %>
+              <i class='fa fa-times'></i> <%= Spree.t(:Cancel) %>
+            <% end %>
+            <button class="btn btn-primary">
+              <i class='fa fa-check'></i> <%= Spree.t(:save) %>
+            </button>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

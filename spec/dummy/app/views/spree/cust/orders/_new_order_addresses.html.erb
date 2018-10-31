@@ -1,0 +1,113 @@
+<section class="col-md-6 col-sm-12" id='account-address-info'>
+  <% if params[:address] || params[:controller] == "spree/cust/accounts" %>
+    <% @account_address_ship = set_order_ship_address %>
+    <% @account_address_bill = set_order_bill_address %>
+  <% end %>
+  <% if current_spree_user.user_accounts.count > 1 %>
+    <div class="row static-info">
+      <div class="col-sm-3 name">Account:</div>
+      <div class="col-sm-9 value" id='order-number'><%= @account.try(:vendor_account_name) %></div>
+    </div>
+  <% end %>
+
+  <% if @account_address_ship %>
+    <div class="row static-info">
+      <div class="col-sm-3 name">
+        Ship To:
+        <% if @account %>
+          <%= link_to '#address-select-modal', class: 'edit-address-link nowrap',
+            data: { toggle: 'modal', addr_type: 'shipping' } do %>
+            <i class='fa fa-pencil'></i> Edit
+          <% end %>
+        <% end %>
+      </div>
+      <div class="col-sm-9 value">
+        <%= @account_address_ship.try(:company) || @account.try(:fully_qualified_name) %>
+      </div>
+
+      <% unless @account_address_ship.try(:address1).blank? %>
+        <div class="col-sm-3 name"> </div>
+        <div class="col-sm-9 value"> <%= @account_address_ship.address1 %> </div>
+      <% end %>
+      <% unless @account_address_ship.try(:address2).blank? %>
+        <div class="col-sm-3 name"> </div>
+        <div class="col-sm-9 value"> <%= @account_address_ship.address2 %> </div>
+      <% end %>
+      <div class="col-sm-3 name"> </div>
+      <div class="col-sm-9 value">
+        <% if @account_address_ship.try(:city).present? && @account_address_ship.try(:state).present? %>
+          <%= @account_address_ship.try(:city) %>, <%= @account_address_ship.try(:state).try(:abbr) %> <%= @account_address_ship.try(:zipcode) %>
+        <% elsif @account_address_ship.try(:city).present? && @account_address_ship.try(:state).blank? %>
+          <%= @account_address_ship.try(:city) %> <%= @account_address_ship.try(:zipcode) %>
+        <% else %>
+          <%= @account_address_ship.try(:state).try(:abbr) %> <%= @account_address_ship.try(:zipcode) %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+    <% if @account_address_bill %>
+    <div class="row static-info">
+      <div class="col-sm-3 name">
+        Bill To:
+        <% if @account.bill_address.try(:persisted?) %>
+          <%= link_to edit_account_address_path(@account, @account.bill_address, addr_type: "billing"), remote: true, data: {'data-toggle' =>  "modal", 'data-target' => '#address_modal'}, class: '' do %>
+            <i class='fa fa-pencil'></i> Edit
+          <% end %>
+        <% else %>
+          <%= link_to new_account_address_path(@account, addr_type: "billing"), remote: true, data: {'data-toggle' =>  "modal", 'data-target' => '#address_modal'}, class: '' do %>
+            <i class='fa fa-pencil'></i> Edit
+          <% end %>
+        <% end %>
+      </div>
+      <div class="col-sm-9 value">
+        <%= @account_address_bill.try(:company) || @account.try(:fully_qualified_name) %>
+      </div>
+      <% unless @account_address_bill.try(:address1).blank? %>
+        <div class="col-sm-3 name"> </div>
+        <div class="col-sm-9 value"> <%= @account_address_bill.try(:address1) %> </div>
+      <% end %>
+      <% unless @account_address_bill.try(:address2).blank? %>
+        <div class="col-sm-3 name"> </div>
+        <div class="col-sm-9 value"> <%= @account_address_bill.try(:address2) %> </div>
+      <% end %>
+      <div class="col-sm-3 name"> </div>
+      <div class="col-sm-9 value">
+        <% if @account_address_bill.try(:city).present? && @account_address_bill.try(:state).present? %>
+          <%= @account_address_bill.try(:city) %>, <%= @account_address_bill.try(:state).try(:abbr) %> <%= @account_address_bill.try(:zipcode) %>
+        <% elsif @account_address_bill.try(:city).present? && @account_address_bill.try(:state).blank? %>
+          <%= @account_address_bill.try(:city) %> <%= @account_address_bill.try(:zipcode) %>
+        <% else %>
+          <%= @account_address_bill.try(:state).try(:abbr) %> <%= @account_address_bill.try(:zipcode) %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</section>
+<% ship_addresses = @account.ship_addresses - [@account.default_ship_address] %>
+<% @ship_addresses = ship_addresses.unshift(@account.default_ship_address) %>
+
+<div id="address-select-modal-div">
+  <%= render partial: 'spree/cust/orders/addresses/address_select_modal', locals: {} %>
+</div>
+
+<script>
+  $(document).ready(function(){
+    addressWasSelected = '<%= params[:address_id] %>';
+    userAccounts = ('<%= params[:action] != "user_accounts" %>' == 'true');
+    if(($('#order_ship_address_id').val().length > 0) && (addressWasSelected.length == 0) && userAccounts){
+      address_id = $('#order_ship_address_id').val()
+      account_id = '<%= @account.id %>';
+      $.ajax({
+        url: '/orders/set_ship_address_on_new',
+        type: 'GET',
+        dataType: 'script',
+        data: {
+          address_id: address_id,
+          account_id: account_id,
+          not_flash: true
+        }
+      });
+    };
+  });
+</script>

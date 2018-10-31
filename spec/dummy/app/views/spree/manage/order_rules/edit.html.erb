@@ -1,0 +1,48 @@
+<%= content_for :head_title do %>
+  Order Rule
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li><li>
+      <%= link_to "Order Rules", manage_order_rules_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <span>Order Rule</span>
+    </li>
+  </ul>
+<% end %>
+
+<%= form_for [:manage, @order_rule] do |f| %>
+
+  <div class="row">
+    <div class="col-md-12">
+      <div class="portlet light ">
+        <div class="portlet-title">
+          <div class="caption caption-md">
+          <span class="caption-subject font-blue-madison bold uppercase">Order Rule: <%= @order_rule.name %></span>
+          </div>
+        </div>
+        <div class="portlet-body form">
+          <div class='form-body'>
+            <%= render partial: 'form', locals: { f: f } %>
+          </div>
+          <div class="form-actions">
+            <div class='pull-right'>
+              <button class='btn btn-primary'>
+                <i class='fa fa-check'></i> <%= Spree.t(:Save) %>
+              </button>
+              <%= link_to manage_order_rules_path, class: 'btn btn-default' do %>
+                <i class='fa fa-times'></i> <%= Spree.t(:Cancel) %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>

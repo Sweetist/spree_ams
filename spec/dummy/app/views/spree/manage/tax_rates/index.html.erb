@@ -1,0 +1,77 @@
+<%= content_for :head_title do %>
+  Tax Rates
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <span>Tax Rates</span>
+    </li>
+  </ul>
+  <div class="page-toolbar">
+    <% if current_spree_user.can_write?('tax_categories', 'settings') %>
+      <%= link_to new_manage_tax_rate_path, class: "btn green pull-right" do %>
+        <i class="fa fa-plus"></i>&nbsp;New Tax Rate
+      <% end %>
+    <% end %>
+  </div>
+<% end %>
+
+<%= search_form_for [:manage, @search] do |f| %>
+  <%= render partial: 'advanced_search', locals: {f: f} %>
+<% end %>
+
+<!-- ZONE	NAME	CATEGORY	AMOUNT	INCLUDED IN PRICE	SHOW RATE IN LABEL	CALCULATOR -->
+<div class="table-scrollable">
+  <table class="table table-striped table-hover" id="tax_rates_table">
+    <thead>
+      <tr>
+        <th class='delete-column'></th>
+        <th><%= sort_link @search, 'zone_name', "Zone" %></th>
+        <th>
+          <%= sort_link @search, :name, "Name" %>
+        </th>
+        <th>
+          <%= sort_link @search, 'tax_category_name', "Category" %>
+        </th>
+        <th><%= sort_link @search, :amount, "Amount" %></th>
+        <th><%= sort_link @search, :included_in_price, "Included in Price" %></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if current_spree_user.can_write?('tax_categories', 'settings') %>
+        <% @all_tax_rates.each do |tax_rate| %>
+          <% url = edit_manage_tax_rate_path(tax_rate) %>
+          <tr id="tax_rate_<%= tax_rate.id %>">
+            <td class='delete-column'><%= link_to raw("<i class='fa fa-times'></i>"), manage_tax_rate_path(format: 'js', id:tax_rate.id),
+                  data: {:confirm => "Are you sure you want to delete this tax rate?"},
+                  :method => :delete, remote: true, class: 'btn btn-xs red delete-row-btn' %>
+            </td>
+            <td><%= link_to tax_rate.zone.try(:name).to_s, url %></td>
+            <td><%= link_to tax_rate.name, url %></td>
+            <td><%= link_to tax_rate.tax_category.try(:name).to_s, url %></td>
+            <td><%= link_to "#{tax_rate.amount * 100} %" , url %> </td>
+            <td><%= link_to tax_rate.included_in_price ? 'Yes' : 'No', url %></td>
+          </tr>
+        <% end %>
+      <% else %>
+        <% @all_tax_rates.each do |tax_rate| %>
+          <tr id="tax_rate_<%= tax_rate.id %>">
+            <td class='delete-column'>
+            </td>
+            <td><%= tax_rate.zone.try(:name) %></td>
+            <td><%= tax_rate.name %></td>
+            <td><%= tax_rate.tax_category.try(:name) %></td>
+            <td><%= "#{tax_rate.amount * 100} %" %> </td>
+            <td><%= tax_rate.included_in_price ? 'Yes' : 'No' %></td>
+          </tr>
+        <% end %>
+      <% end %>
+    </tbody>
+  </table>
+
+</div>

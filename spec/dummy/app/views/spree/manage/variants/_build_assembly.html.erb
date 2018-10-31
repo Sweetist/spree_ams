@@ -1,0 +1,271 @@
+<div class="col-md-12 form-group">
+  <div id='build-assembly-errors'></div>
+  <div class="row">
+    <div class="col-md-5">
+      <div class="form-group">
+        <label class='control-label' for='build_assembly_product_qty'>Quantity to Build</label>
+        <div class="input-group">
+          <%= number_field :build_assembly, "product_qty", min: 0.00001, value: 1, id: "qty", class: "form-control", step: 'any' %>
+          <div class="input-group-btn">
+            <button id="max_qty", class="btn btn-primary"> Max </button>
+          </div>
+        </div>
+      </div>
+      <%= hidden_field :build_assembly, :assembly_id, value: @variant.id %>
+    </div>
+
+    <div class="col-md-5">
+      <% if @variant.should_track_lots? %>
+        <div id="lot_location_select">
+          <%= label_tag "send_lot", "Lot", {class: 'control-label'} %>
+          <div class="lot-select">
+            <%= render partial: '/spree/manage/variants/lot_select', locals: { variant: @variant } %>
+          </div>
+        </div>
+      <% else %>
+        <label class='control-label' for='build_product_assembly_stock_location'>Send to Stock Location</label>
+        <% only_one_location = @vendor.has_integration?('qbd') %>
+        <%= hidden_field :build_assembly, :only_one_location, value: only_one_location %>
+        <% @first_location_id = @vendor.stock_locations.first.try(:id) %>
+        <%= collection_select(:build_assembly, "assembly_stock_location", @vendor.stock_locations, :id, :name, {}, {class:"form-control"}) %>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<div class="col-md-12">
+  <% if @variant.should_track_lots? %>
+    <div class="create-lot-body hidden">
+      <%
+        variants_with_lots = @product.variants_including_master.where(lot_tracking: true)
+        stock_item_lot = Spree::StockItemLots.new
+      %>
+       <%= render partial: '/spree/manage/stock_item_lots/new_stock_item_lots_form', locals: {stock_item_lot: stock_item_lot, variants: variants_with_lots} %>
+    </div>
+  <% end %>
+</div>
+
+<div class="col-md-12">
+  <div class='table-scrollable'>
+    <table class="table">
+      <thead>
+        <tr>
+          <th><%= Spree.t(:sku) %></th>
+          <th><%= Spree.t(:name) %></th>
+          <th><%= Spree.t(:quantity_needed)%></th>
+          <th><%= Spree.t(:quantity_available)%></th>
+          <th><%= Spree.t(:from_stock_location)%>/ Lot</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @parts_variants.sort_by{|part_variant, part_variant_comparison| part_variant.name}.each do |part_variant| %>
+          <tr>
+            <td><%= part_variant.sku %></td>
+            <td><%= part_variant.part.full_context %></td>
+            <td>
+              <%= text_field :build_assembly, "variant_count[#{part_variant.part.id}]", min: 1, value: part_variant.count, class: "total_qty form-control", readonly: true, data: {id: part_variant.part.id, count: part_variant.count}%>
+            </td>
+            <% if part_variant.part.track_inventory? %>
+              <td>
+                <%= text_field :build_assembly, "quantity_avail", value: part_variant.count, class: "qty_avail form-control", disabled: true, data: {id: part_variant.part.id, count: part_variant.count }%>
+              </td>
+              <td>
+                 <% if part_variant.part.should_track_lots? %>
+                    <select name="build_assembly[variant_location[<%=part_variant.part.id%>]]" class="form-control from_stock_location" data-id='<%= part_variant.part.id%>'>
+                      <% lot_ids = part_variant.part.lots.sellable.in_stock.ids %>
+                      <% stock_locations_with_lot = part_variant.part.stock_item_lots.map(&:stock_location).distinct%>
+                      <% stock_locations_with_lot.each do |location| %>
+                        <optgroup label='<%=location.name%>'>
+                          <% location.stock_item_lots.includes(:lot).where(lot_id: lot_ids).each do |stock_item_lot| %>
+                            <option data-total='<%=stock_item_lot.count%>' value='<%=stock_item_lot.id%>'><%=stock_item_lot.lot.number%></option>
+                          <% end %>
+                        </optgroup>
+                      <% end %>
+                    </select>
+                 <% else %>
+                  <%= collection_select(:build_assembly, "variant_location[#{part_variant.part.id}]", @vendor.stock_locations, :id, :name, {}, {class:"form-control from_stock_location ", disabled: only_one_location, data: {id: part_variant.part.id} }) %>
+                  <% if only_one_location %>
+                    <%= hidden_field :build_assembly, "variant_location[#{part_variant.part.id}]", value: @first_location_id, class:'hidden_from_stock_location', data: {id: part_variant.part.id} %>
+                  <% end %>
+                 <% end %>
+              </td>
+            <% else %>
+              <td colspan="2">
+                <span class='help-block-italic pull-right'>This item does not track inventory</span>
+              </td>
+            <% end %>
+          </tr>
+        <% end %>
+        <% if @parts_variants.empty? %>
+         <tr><td colspan="5"><%= Spree.t(:none) %>.</td></tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
+<div class='col-md-12'>
+  <div class='form-group margin-top-20'>
+    <%= label_tag :note, 'Notes', class: 'control-label' %>
+    <%= text_area_tag 'build_assembly[note]', @stock_transfer.try(:note) %>
+  </div>
+</div>
+
+<script>
+var prev_value;
+var prev_location;
+var valid_increase = true;
+var stock_location_variant_count = <%= @stock_location_variant_count %>;
+var has_unsynced_parts = <%= @vendor.has_integration?('qbd') && @product.has_unsynced_inventory?('qbd') %>;
+
+
+(function ($) {
+    $.fn.selected = function (fn) {
+        return this.each(function () {
+            $(this).focus(function () {
+                this.dataChanged = false;
+            }).change(function () {
+                this.dataChanged = true;
+                fn(this);
+            }).blur(function (e) {
+                if (!this.dataChanged) {
+                    fn(this);
+                }
+            });
+        });
+    };
+})(jQuery);
+
+$(".lot-location-select").selected(function (e) {
+    // alert('You selected ' + $(e).val());
+    if ($(e).val() == 'New Lot') {
+      $('.create-lot-body').removeClass('hidden')
+    }
+});
+
+$('.date-picker').datepicker({
+    rtl: App.isRTL(),
+    orientation: "left",
+    autoclose: true
+});
+
+$('#qty').focus(function(){
+  prev_value = this.value;
+});
+
+$('.from_stock_location').focus(function(){
+  prev_location = this.value;
+});
+
+$('.qty_avail').each(function(){
+  var variant_id = $(this).data('id');
+  var stock_location_id = $('.from_stock_location[data-id='+variant_id+'] ').val();
+  var qty_avail = parseFloat(stock_location_variant_count[variant_id][stock_location_id]);
+  this.value = qty_avail;
+  var qty_needed = parseFloat($('.total_qty[data-id='+variant_id+']').val());
+  if (qty_avail < qty_needed) {
+    $('.from_stock_location[data-id=' + variant_id + ']').addClass('unavailable');
+    $('#build-assembly-btn').prop('disabled', true);
+  }else{
+    $('.from_stock_location[data-id=' + variant_id + ']').removeClass('unavailable');
+  }
+});
+
+  $('#qty').change(function(){
+    var qty = parseFloat(this.value);
+    if (qty >= 0.00001) {
+      $('#build-assembly-btn').prop('disabled', false);
+      $('.total_qty').each(function() {
+        var value = qty * $(this).data('count');
+        var variant_id = $(this).data('id');
+        var qty_avail = parseFloat($('.qty_avail[data-id='+variant_id+']').val());
+        if (value > qty_avail) {
+          valid_increase = false;
+        }
+      });
+      if (valid_increase) {
+        $('.total_qty').each(function() {
+          this.value = qty * $(this).data('count');
+        })
+      } else {
+        this.value = prev_value;
+        alert("There is not enough stock available at this location");
+      }
+    } else {
+      $('#build-assembly-btn').prop('disabled', true);
+    }
+    valid_increase = true;
+  });
+
+  $('.from_stock_location').change(function(){
+    checkValidQtyAtLocation(this)
+    raiseInsufficientStock();
+  });
+
+  var raiseInsufficientStock = function () {
+    if($('.from_stock_location.unavailable').length){
+      $('#build-assembly-btn').prop('disabled', true);
+      alert("There is not enough stock available at this location");
+    }else {
+      $('#build-assembly-btn').prop('disabled', false);
+    }
+  }
+
+  var checkValidQtyAtLocation = function(location) {
+    var valid_increase = true;
+    var current_choice = location.value;
+    var variant_id = $(location).data('id');
+    var qty_avail = parseFloat(stock_location_variant_count[variant_id][current_choice]);
+    var current_val = parseFloat($(".total_qty[data-id="+variant_id+"]").val());
+    if (current_val > qty_avail) {
+      valid_increase = false;
+    }
+    $(".hidden_from_stock_location[data-id="+variant_id+"]").val(current_choice);
+    $(".qty_avail[data-id="+variant_id+"]").val(qty_avail);
+    if (valid_increase) {
+      $(location).removeClass('unavailable');
+    }else{
+      $(location).addClass('unavailable');
+    }
+  }
+
+  $('#max_qty').click(function(e) {
+    e.preventDefault();
+    var max = Number.POSITIVE_INFINITY;
+    $('.total_qty').each(function() {
+      var variant_id = $(this).data('id');
+      var qty_avail = parseFloat($(".qty_avail[data-id="+variant_id+"]").val());
+      var count = parseFloat($(this).data('count'));
+      var current_max = parseFloat(qty_avail / count);
+      if (current_max < max) {
+        max = current_max;
+      }
+    });
+    $('#qty').val(max);
+    $('.total_qty').each(function() {
+      this.value = $(this).data('count') * max;
+    });
+  });
+
+  $('#build_assembly_assembly_stock_location').change(function(e){
+    var location_id = this.value;
+    $('.from_stock_location').each(function(){
+      $(this).val(location_id);
+      checkValidQtyAtLocation(this);
+    })
+    raiseInsufficientStock();
+  });
+
+  $('#build-assembly-form').off('submit').submit(function(e){
+    $('#build-assembly-btn').prop('disabled', true);
+    if($('.from_stock_location.unavailable').length){
+      e.preventDefault();
+      $('#build-assembly-btn').prop('disabled', false);
+      alert('Some of the parts do not meet the minimum stock required to complete this build.');
+    }else if(has_unsynced_parts){
+      if(!confirm("Some parts or the assembly have not been synce to Quickbooks yet. Proceeding with this build will cause a mismatch in the inventory levels between Sweet and Quickbooks. Click 'cancel' to go back")){
+        e.preventDefault();
+        $('#build-assembly-btn').prop('disabled', false);
+      }
+    }
+  });
+</script>

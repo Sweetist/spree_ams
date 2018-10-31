@@ -1,0 +1,17 @@
+<% unless address.nil? %>
+  <% unless address.address1.blank? %>
+    <%= address.address1 %><br>
+  <% end %>
+  <% unless address.address2.blank? %>
+    <%= address.address2 %><br>
+  <% end %>
+  <%
+    csz = address.city.to_s
+    state = address.state.try(:abbr).to_s
+    csz += ', ' unless csz.blank? || state.blank?
+    csz += state
+    csz += " #{address.zipcode}"
+    csz = csz.strip
+  %>
+  <%= csz %>
+<% end %>

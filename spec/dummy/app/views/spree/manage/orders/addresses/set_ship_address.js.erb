@@ -1,0 +1,58 @@
+<% if @order.try(:persisted?) %>
+  <% colspan_left = 6 %>
+  <% colspan_left += 1 if current_vendor.try(:include_unit_weight) %>
+
+  $('#address-select-modal').modal('hide');
+
+  $('#alert').html("<div class='alert alert-success alert-auto-dissapear'><%= flash[:success] %></div>");
+  <% if request.referer.split('/').last == 'new' %>
+    $("#account-address-info").replaceWith("<%= j(render(partial: 'spree/manage/orders/account_address_info')) %>");
+  <% else %>
+    $("div#account-details-section").html("<%= escape_javascript(render(partial: 'spree/shared/orders/account_details')) %>");
+  <% end %>
+
+  $("div#address-select-modal-div").html("<%= escape_javascript(render(partial: 'spree/manage/orders/addresses/address_select_modal')) %>");
+
+  <% if @order.line_items.present? %>
+    $('#all-adjustments').html("<%= j (render(partial: 'adjustments.html.erb', locals: {colspan_left: colspan_left})) %>");
+  <% end %>
+  $('#order_shipment_total').replaceWith("<input type='number' class='form-control price-field line-item-price' name='order[shipment_total]'' id='order_shipment_total' value=<%= @order.shipment_total %> step='0.01' />");
+  $('#subtotals-row').replaceWith("<%= j (render(partial: 'subtotal_row.html.erb', locals: {colspan_left: colspan_left})) %>");
+  $('.all_adjustments').html("<%= j (render(partial: 'adjustments.html.erb', locals: {colspan_left: colspan_left})) %>");
+  $('.total-price').replaceWith("<span class='total-price'><%= display_sweet_price(@order.total, @order.currency) %></span>");
+  $('#totals-row').replaceWith("<%= j (render(partial: 'total_row.html.erb', locals: {colspan_left: colspan_left})) %>");
+
+  <% if @order.recalculate_shipping && @order.active_shipping_calculator %>
+    $('#order_shipment_total').replaceWith("<input type='number' name='order[shipment_total]'' id='order_shipment_total' value='<%= number_with_precision(@order.shipment_total, precision: 2) %>' step='0.01' class='form-control price-field line-item-price font-red' />");
+    if($('#recalculate_shipping').length === 0){
+      $('#order_shipping_method_id').after("<a id='recalculate_shipping' class='font-red' data-remote='true' data-disable-with='Recalculate Shipping' rel='nofollow' data-method='post' href='/manage/orders/<%= @order.number %>/recalculate_shipping'>Recalculate Shipping</a>");
+    }
+  <% end %>
+  $('.approve-button').click(function(e){
+    var recalculateShipping = <%= @order.recalculate_shipping %>;
+    var commit = e.currentTarget.value;
+    if (recalculateShipping){
+      e.preventDefault();
+      if (confirm('Shipping has not been updated. Are you sure you want to approve this order?')){
+        $('#single-order-form').append("<input type='hidden' name='commit' value='" + commit + "'>");
+        $('#single-order-form').submit();
+      }
+    }
+  });
+  $('#recalculate_shipping').click(function(){
+    $('.shipment-currency').replaceWith("<label class='currency-label shipment-currency'><img src='/assets/frontend/loading.gif' alt='Loading' id='loading-gif' /></label>");
+    $('#order_shipment_total').attr('value','');
+    $('#recalculate_shipping').replaceWith("<a id='recalculate_shipping' class='font-red' data-remote='true' data-disable-with='Recalculate Shipping' rel='nofollow' data-method='post' href='#'>Recalculating Shipping</a>");
+  });
+
+  $('.modal-backdrop').remove();
+
+  setTimeout(function() {
+   $(".alert-auto-dissapear").fadeOut(1500);
+  },2000);
+
+<% else %>
+
+  $("#alert").html("<%= escape_javascript(render(partial: 'spree/shared/errors')) %>");
+
+<% end %>

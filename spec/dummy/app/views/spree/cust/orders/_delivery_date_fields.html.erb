@@ -1,0 +1,95 @@
+<div class="row static-info" id="delivery_date">
+  <div class="col-sm-4 name"> <%= "#{@account.try(:order_date_text)} Date:".strip %></div>
+  <section >
+  	<div class="input-icon right col-sm-8 value">
+  		<i id="date_icon" style="margin-right: 12px;" class="fa fa-info-circle tooltips" data-original-title="<%=@days_available[1] if @days_available%>" data-container="body"></i>
+  	  	<input readonly="true" data-provide="datepicker" type="text" name="order[delivery_date]"
+          value="<%= get_delivery_date %>" style='background: #ffffff;'
+  	  	  class="form-control date-picker" data-date-format="<%= @customer.date_format %>" id="delivery-date">
+          <div id="warning_delivery" class = "hidden note note-danger">
+  	    	<p class="block">This is not a scheduled <%= "#{@account.try(:order_date_text)} day".strip %> <p>
+  	    </div>
+  	</div>
+  </section>
+</div>
+
+<script type = "text/javascript">
+
+// checks if any items in the order are past the cutoff
+var updateOrderDate = function(date){
+  var orderExists = <%= @order.present? %>;
+  var orderNumber = '<%= @order.try(:number) %>';
+  if(orderExists){
+    $.ajax({
+      method: 'GET',
+      url: '/orders/' + orderNumber + '/update_delivery_date.js',
+      data: {
+        delivery_date: date
+      }
+    });
+  }
+};
+$('#delivery-date').datepicker({
+
+  daysOfWeekDisabled: "<%=@days_available[0] if @days_available%>",
+	todayHighlight: true,
+	autoclose: true,
+	changeMonth: true,
+  orientation: "bottom auto",
+  startDate: '<%= "+#{@next_available_day || '0d'}" %>'
+      //todo global disable dates
+});
+
+//if there is an ajax call, there will be a @next_available_day,
+//otherwise we'll set the date to just tomorrow
+<% if @date_selected == "true" && !@next_available_day %>
+  if (typeof date != 'undefined') {
+    $('#delivery-date').datepicker('setDate', date)
+  } else {
+    date = "<%= DateHelper.display_vendor_date_format(@order.delivery_date, @customer.date_format) %>"
+    $('#delivery-date').datepicker('setDate', date)
+  }
+<% elsif @date_selected == "false" && @next_available_day %>
+  $('#delivery-date').datepicker('setDate', "+<%=@next_available_day%>");
+  //reset
+  date_selected = false;
+<% elsif !@next_available_day && !@date_selected %>
+  //set it to tomorrow if no date has been selected and no vendor has been chosen
+  $('#delivery-date').datepicker('setDate', "+1d");
+<% end %>
+
+<% if @days_available && @account.try(:can_select_delivery?) && (@order.nil? || (@order.is_editable? && @order.is_submitable?)) %>
+ 	var origin_date = $('#delivery-date').datepicker('getDate');
+  if (origin_date != null) {
+    var origin_dayOfWeek = origin_date.getUTCDay();
+    $('#date_icon').tooltip();
+   	if ("<%=@days_available[0]%>".indexOf(origin_dayOfWeek.toString()) > -1) {
+      $("#warning_delivery").removeClass("hidden");
+      $('#delivery-date').val("");
+    } else {
+      $("#warning_delivery").addClass("hidden");
+    }
+  }
+  $("#delivery-date").on("change",function(){
+    date_selected = true;
+    date = $(this).datepicker('getDate');
+    unformattedDate = $(this).val();
+    if (date != null) {
+      var dayOfWeek = date.getUTCDay();
+      if ("<%=@days_available[0]%>".indexOf(dayOfWeek.toString()) > -1) {
+        $("#warning_delivery").removeClass("hidden");
+        $('#delivery-date').val("");
+      } else {
+        $("#warning_delivery").addClass("hidden");
+      }
+    }
+    updateOrderDate(unformattedDate);
+  });
+
+<%else%>
+  $("#delivery-date").on("change",function(){
+    date_selected = true;
+    date = $(this).datepicker('getDate');
+  });
+<% end %>
+</script>

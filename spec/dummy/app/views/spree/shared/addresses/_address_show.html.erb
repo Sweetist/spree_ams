@@ -1,0 +1,27 @@
+<div class="row static-info">
+  <ul class="address-listing">
+    <% if address.try(:persisted?) %>
+      <li class="font-weight-bold">
+        <%= "#{address.try(:firstname)} #{address.try(:lastname)}" %>
+      </li>
+      <% unless address.company.blank? %>
+        <li>
+          <%= address.company %>
+        </li>
+      <% end %>
+      <li>
+        <%= render partial: 'spree/shared/addresses/street_city_zip', locals: {address: address} %>
+      </li>
+      <% unless address.country.blank? %>
+        <li>
+          <%= address.country %>
+        </li>
+      <% end %>
+      <% unless address.phone.blank? %>
+        <li>
+          Phone: <%= address.phone %>
+        </li>
+      <% end %>
+    <% end %>
+  </ul>
+</div>

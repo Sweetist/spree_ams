@@ -1,0 +1,54 @@
+<% if order_focused? %>
+  <%#= render partial: 'spree/admin/shared/order_tabs', locals: { current: :documents } %>
+
+  <% content_for :page_title do %>
+    <%= t(:documents_for_order, scope: [:spree, :print_invoice], order_number: @order.display_number) %>
+  <% end %>
+<% elsif invoice_focused? %>
+  <% content_for :page_title do %>
+    <%= t(:documents_for_invoice, scope: [:spree, :print_invoice], invoice_number: @invoice.number) %>
+  <% end %>
+<% else %>
+  <% content_for :page_title do %>
+    <%= t(:documents, scope: [:spree, :print_invoice]) %>
+  <% end %>
+
+  <%#= render partial: 'spree/admin/shared/index_table_options', locals: { collection: @bookkeeping_documents } %>
+<% end %>
+
+<% if @bookkeeping_documents.any? %>
+  <table class="table" id="listing_orders" data-hook>
+    <thead>
+      <tr data-hook="printables_index_headers">
+        <th><%= sort_link @search, :created_at, I18n.t(:date, scope: [:spree, :print_invoice]) %></th>
+        <th><%= sort_link @search, :template, I18n.t(:document_type, scope: [:spree, :print_invoice]) %></th>
+        <th><%= sort_link @search, :number, I18n.t(:number, scope: [:spree, :print_invoice]) %></th>
+        <th><%= sort_link @search, :customer, I18n.t(:customer, scope: [:spree, :print_invoice]) %></th>
+        <th><%= sort_link @search, :total, I18n.t(:total, scope: [:spree, :print_invoice]) %></th>
+        <th data-hook="admin_orders_index_header_actions" class="actions"></th>
+      </tr>
+    </thead>
+    <tbody>
+    <% @bookkeeping_documents.each do |bookkeeping_document| %>
+      <tr data-hook="admin_printables_index_rows" class="<%= cycle('odd', 'even') %>">
+        <td><%= l bookkeeping_document.created_at.to_date %></td>
+        <td><%= I18n.t(bookkeeping_document.document_type, scope: [:spree, :print_invoice]) %></td>
+        <td><%= bookkeeping_document.number %></td>
+        <td><%= bookkeeping_document.printable.customer.name %></td>
+        <td><%= bookkeeping_document.display_total.to_html %></td>
+        <td class='actions actions-1' data-hook="admin_orders_index_row_actions">
+          <%= link_to_with_icon "file", "", manage_bookkeeping_document_path(bookkeeping_document, format: :pdf), title: "show_bookkeeping_document_#{bookkeeping_document.id}", no_text: true %>
+        </td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <div class="alert alert-info no-objects-found">
+    <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::BookkeepingDocument)) %>,
+  </div>
+<% end %>
+
+<% unless order_focused? %>
+  <%#= render partial: 'spree/admin/shared/index_table_options', locals: { collection: @bookkeeping_documents, simple: true } %>
+<% end %>

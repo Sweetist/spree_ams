@@ -1,0 +1,107 @@
+<%= content_for :head_title do %>
+  Standing Orders
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", root_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Orders", orders_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <span>Standing Orders</span>
+    </li>
+  </ul>
+  <div class="page-toolbar">
+    <%= link_to new_standing_order_path, class: "btn green-jungle btn-info" do%>
+      <i class = "fa fa-plus"></i>&nbsp;New Standing Order
+    <% end %>
+  </div>
+<% end %>
+
+<div class="content">
+  <%= search_form_for @search, class: "form" do |f| %>
+    <%= render partial: 'advanced_search', locals: {f: f} %>
+  <% end %>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="table-scrollable">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>
+                <%= sort_link @search, :name, "Name" %>
+              </th>
+              <th>
+                <%= sort_link @search, :vendor_name, "Vendor" %>
+              </th>
+              <th>
+                <%= sort_link @search, :account_name, "Account" %>
+              </th>
+              <th>
+                <%= sort_link @search, :frequency_id, "Frequency" %>
+              </th>
+              <th>
+                Actions
+              </th>
+              <th>
+                Next Date
+              </th>
+              <th>
+                Total
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @orders.each do |order| %>
+              <% next_at = order.standing_order_schedules.where("visible = true and deliver_at > ?", Date.current.in_time_zone(order.vendor.time_zone)).order(:deliver_at).first %>
+              <tr>
+                <td>
+                  <%= link_to edit_standing_order_path(order), class: "orders-list-order-link cel" do %>
+                    <%= order.name %>
+                  <% end %>
+                </td>
+                <td>
+                  <%= link_to edit_standing_order_path(order), class: "orders-list-order-link cel" do %>
+                    <%= order.vendor.try(:name).to_s %>
+                  <% end %>
+                </td>
+                <td>
+                  <%= link_to edit_standing_order_path(order), class: "orders-list-order-link cel" do %>
+                    <%= order.account.try(:name).to_s %>
+                  <% end %>
+                </td>
+                <td>
+                  <%= link_to edit_standing_order_path(order), class: "orders-list-order-link cel" do %>
+                  <%= order.frequency_string %>
+                  <% end %>
+                </td>
+                <td>
+                  <%= link_to edit_standing_order_path(order), class: "orders-list-order-link cel" do %>
+                  <%= order.timing_string %>
+                  <% end %>
+                </td>
+                <td>
+                  <%= link_to edit_standing_order_path(order), class: "orders-list-order-link cel" do %>
+                    <%= sweet_date(next_at.try(:deliver_at), order.vendor.time_zone) %>
+                  <% end %>
+                </td>
+                <td>
+                  <%= link_to edit_standing_order_path(order), class: "orders-list-order-link cel" do %>
+                    <%= display_sweet_price(order.calculated_total.to_f, order.currency) %>
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%= paginate @orders %>

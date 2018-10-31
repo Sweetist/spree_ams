@@ -1,0 +1,94 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="row">
+      <%= simple_form_for integration, url: path, method: method, wrapper: :horizontal_form do |f| %>
+        <div class="portlet light">
+          <div class="portlet-title">
+            <div class="caption">
+              <span class="caption-subject font-blue-madison bold uppercase">
+                <%=image_tag(item.fetch(:image, ''), width: '32')%>
+                <%= item.fetch(:name, '') %>
+              </span>
+            </div>
+          </div>
+          <div class="portlet-body form">
+            <% Spree::ShopifyIntegration::Item::SHOPIFY_SWITCHER_FIELDS.each do |field|%>
+              <% label_true = I18n.t("integrations.shopify.#{field}.is_true.label", default: '')
+                 label_true = Spree.t(:say_yes) if label_true.blank?
+                 label_false = I18n.t("integrations.shopify.#{field}.is_false.label", default: '')
+                 label_false = Spree.t(:say_no) if label_false.blank?
+                 label_true_helper = I18n.t("integrations.shopify.#{field}.is_true.helper", default: '')
+                 label_false_helper = I18n.t("integrations.shopify.#{field}.is_false.helper", default: '')
+                 if label_true_helper.present?
+                   label_true += "&nbsp;<i class='fa fa-info-circle tooltips' data-container='body' data-original-title='#{label_true_helper}'></i>"
+                 end
+                 if label_false_helper.present?
+                   label_false += "&nbsp;<i class='fa fa-info-circle tooltips' data-container='body' data-original-title='#{label_false_helper}'></i>"
+                 end
+              %>
+              <%= f.input "shopify_#{field}".to_sym, as: :radio_buttons,
+                collection: [[true, raw(label_true)], [false, raw(label_false)]],
+                label: I18n.t("integrations.shopify.#{field}.label"),
+                label_method: :last, value_method: :first,
+                wrapper: :horizontal_radio_and_checkboxes %>
+            <% end %>
+            <div class="form-body">
+              <%= f.input :integration_key, as: :hidden, input_html: { value: item.fetch(:integration_key, '') } %>
+            <% Spree::ShopifyIntegration::Item::SHOPIFY_FORM_FIELDS.each do |field|%>
+                <%= f.input "shopify_#{field}".to_sym, as: :string, label: "Shopify #{field.titleize}" %>
+            <% end %>
+            <%= f.input :shopify_stock_location, collection: @vendor.stock_locations, label: I18n.t('integrations.shopify.default_stock_location'), include_blank: false %>
+
+            <%#= f.input :shopify_parent_account, collection: @vendor.customer_accounts,
+              label: I18n.t('integrations.shopify.parent_account'), include_blank: true %>
+            <div class="form-group string optional">
+              <% opts_for_customer = @vendor.parent_customer_accounts.pluck(:fully_qualified_name, :id) %>
+              <%= f.label :shopify_parent_account,
+                I18n.t('integrations.shopify.parent_account'),
+                class: 'string optional col-sm-3 control-label' %>
+              <div class="col-sm-9">
+                <%= f.select :shopify_parent_account, opts_for_customer,
+                  {include_blank: true}, {class: 'form-control select2 select2-allow-clear'} %>
+              </div>
+            </div>
+
+            <%= f.input :shopify_shipping_category, collection: @vendor.shipping_categories, label: I18n.t('integrations.shopify.shipping_category'), include_blank: false %>
+
+            <%= f.input :shopify_shipping_method, collection: @vendor.shipping_methods, label: I18n.t('integrations.shopify.shipping_method'), include_blank: false %>
+
+            <%= f.input :shopify_tax_zone, collection: @vendor.zones, label: I18n.t('integrations.shopify.tax_zone'), include_blank: false %>
+
+            <%= f.input :shopify_tax_category, collection: @vendor.tax_categories, label: I18n.t('integrations.shopify.tax_category'), include_blank: false %>
+
+            <% if f.object.shopify_last_sync_order %>
+              <% date_for_picker = @vendor.to_vendor_date(f.object.shopify_last_sync_order)%>
+            <% else %>
+              <% date_for_picker = @vendor.to_vendor_date(Date.current)%>
+            <% end %>
+            <div class="form-group string optional integration_item_shopify_last_sync_order">
+              <label class="string optional col-sm-3 control-label">Last sync time</label>
+              <div class="col-sm-9">
+                  <input data-provide="datepicker" type="text" name="integration_item[shopify_last_sync_order_date]"
+                    value='<%= date_for_picker %>'
+                    class="form-control date-picker" data-date-format="<%= @vendor.date_format %>" id="integration_item_shopify_last_sync_order_date">
+
+              </div>
+            </div>
+            <%= render partial: "spree/manage/integrations/shared/form", locals: { item: @integration, f: f } %>
+
+            <div class='form-actions'>
+
+              <div class='pull-right'>
+                <%= link_to manage_integration_path(integration.id), class: 'btn btn-default' do %>
+                  <i class='fa fa-times'></i> Cancel
+                <% end %>
+                <button class='btn btn-primary'>
+                  <i class='fa fa-check'></i> Save
+                </button>
+              </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

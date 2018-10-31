@@ -1,0 +1,11 @@
+Hello!<br><br>
+
+<p><%= @contact.try(:name) %> is no longer a member of <%= @company_name %>. They've been removed by an admin of the account.</p>
+
+<p><%= @contact.try(:first_name) %> will continue to exist as a record in your contact list, however has no access to your wholesale B2B portal on Sweet.</p>
+
+<p>If this is news to you, or if you have questions, please contact <%= @contact.try(:first_name) %> or <%= @company_name %> directly.</p>
+
+<p><br>
+	Thanks!
+<h6>The Sweet Team.</h6>

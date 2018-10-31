@@ -1,0 +1,160 @@
+<%= content_for :head_title do %>
+My Company
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <span>My Company<span>
+    </li>
+  </ul>
+<% end %>
+
+<div class="content">
+  <div class="row">
+    <div class="col-md-12">
+        <!-- BEGIN PROFILE SIDEBAR -->
+      <div class="profile-sidebar">
+        <!-- PORTLET MAIN -->
+        <div class="portlet light profile-sidebar-portlet ">
+          <%= link_to manage_account_account_images_path do %>
+            <!-- SIDEBAR USERPIC -->
+            <div class="profile-userpic">
+              <% if @account.images.present? %>
+                <% image = @account.images.first %>
+                <%= image_tag image.attachment.url(:product), :class => "img-responsive", alt: image.alt %>
+              <% else %>
+                <%= image_tag "spree/manage/img/multi-user.png", :class => "img-responsive", alt: "account image" %>
+              <% end %>
+
+              <div class="img-block-overlay">
+                <div class="btn btn-primary btn-xs">
+                  <i class='fa fa-pencil'></i> Edit Image
+                </div>
+              </div>
+              <!--<img src="../assets/pages/media/profile/profile_user.jpg" class="img-responsive" alt="">-->
+            </div>
+          <% end %>
+            <!-- END SIDEBAR USERPIC -->
+            <!-- SIDEBAR USER TITLE -->
+            <div class="profile-usertitle">
+              <div class="profile-usertitle-name">
+                <%= @account.name %>
+              </div>
+            </div>
+            <!-- END SIDEBAR USER TITLE -->
+        </div>
+        <!-- END PORTLET MAIN -->
+      </div>
+
+      <div class="profile-content">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="portlet light ">
+              <div class="portlet-title tabbable-line">
+                <div class="caption caption-md">
+                  <i class="icon-globe theme-font hide"></i>
+                  <span class="caption-subject font-blue-madison bold uppercase">Account Details</span>
+                </div>
+                <div class="btn-group pull-left hidden-md hidden-lg" style = "width:100%">
+                  <button type="button" class="btn green dropdown-toggle dropdown-btn-text" data-toggle="dropdown" style = "width:100%">
+                    <label>Information</label>&nbsp;
+                    <i class="fa fa-angle-down"></i>
+                  </button>
+                  <ul class="dropdown-menu pull-left" style="width:100%" role="menu">
+                    <li class="tab-link">
+                      <a href="#information_tab" data-toggle="tab" >Information</a>
+                    </li>
+                    <li class="tab-link">
+                      <a href="#notifications_tab" data-toggle="tab">Notifications</a>
+                    </li>
+                    <li class="tab-link">
+                      <a href="#address_tab" data-toggle="tab" >Address</a>
+                    </li>
+                    <li class="tab-link">
+                       <a href="#colors_tab" data-toggle="tab" >Colors</a>
+                    </li>
+                    <% if current_spree_user.is_admin? %>
+                      <li class="tab-link">
+                         <a href="#data-management" data-toggle="tab">Data Management (admin only)</a>
+                      </li>
+                    <% end %>
+                  </ul>
+                </div>
+                <ul class="nav nav-tabs hidden-xs hidden-sm">
+                  <li class="active long-tabs-link">
+                    <a href="#information_tab" data-toggle="tab">Information</a>
+                  </li>
+                  <li class="long-tabs-link">
+                    <a href="#notifications_tab" data-toggle="tab">Notifications</a>
+                  </li>
+                  <li class="long-tabs-link">
+                    <a href="#address_tab" data-toggle="tab">Address</a>
+                  </li>
+                  <li class="long-tabs-link">
+                    <a href="#colors_tab" data-toggle="tab">Colors</a>
+                  </li>
+                  <% if current_spree_user.is_admin? %>
+                    <li class="long-tabs-link">
+                      <a href="#data-management" data-toggle="tab">Data Management (admin only)</a>
+                    </li>
+                  <% end %>
+                </ul>
+              </div>
+              <div class="portlet-body">
+                <div class="tab-content">
+                  <!-- PERSONAL INFO TAB -->
+                  <div class="tab-pane active" id="information_tab">
+                    <%= render partial: 'information_tab' %>
+                  </div>
+                  <!-- END PERSONAL INFO TAB -->
+                  <div class="tab-pane" id="notifications_tab">
+                    <%= render partial: 'notifications_tab' %>
+                  </div>
+                  <!-- ADDRESS TAB -->
+                  <div class="tab-pane" id="address_tab">
+                    <%= render partial: 'address_tab' %>
+                  </div>
+
+                  <div class="tab-pane" id="colors_tab">
+                    <%= render partial: "colors_tab" %>
+                  </div>
+                  <% if current_spree_user.is_admin? %>
+                    <div class="tab-pane" id="data-management">
+                      <%= render partial: "data_management" %>
+                    </div>
+                  <% end %>
+                  <!-- END USERS TABLE TAB -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script type="text/javascript">
+  $(document).on('ready', function(){
+
+    $('.country-select').change(function(){
+      $.ajax({
+         url: '/manage/account/update_states',
+        type: 'GET',
+        dataType: 'script',
+        data: {
+          address_type: $(this).data('type'),
+          country_id: this.value
+        }
+      });
+    });
+
+  });
+
+</script>

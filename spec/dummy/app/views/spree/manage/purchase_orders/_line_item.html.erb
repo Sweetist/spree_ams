@@ -1,0 +1,99 @@
+<% variant = line_item.variant %>
+<% track_lots = variant.should_track_lots? %>
+<%= order_form.fields_for :line_items, line_item do |item_form| %>
+  <% url = variant.is_master ? manage_product_path(variant.product) : manage_product_variant_path(variant.product, variant) %>
+    <!-- <div class="order-item"> -->
+    <tr id="line_item_<%= line_item.id %>" data-formlineid="<%= item_form.index %>"
+      class="line-item-row <%= 'warning' if line_item.backordered? %> <%= 'lot-tracked' if track_lots %>">
+      <td>
+        <% unless controller_name.include?('shipping')|| @order.shipments.any? {|s| s.state == 'shipped' || s.state == 'received'} %>
+        <div class="cel">
+          <%= link_to raw("<i class='fa fa-times'></i>"), {format: :js, action: :unpopulate, order_id: @order.id, line_item_id: line_item.id, item_form_idx: item_form.index},
+            class: 'btn btn-xs red delete-input-row-btn close-button', id: "delete-item-button-#{line_item.id}", remote: true %>
+        </div>
+        <% end %>
+      </td>
+      <!-- ITEM NAME -->
+      <td>
+        <%= link_to line_item.item_name, 'void:javascript();', class: 'edit-link inline' %>
+        <div class='edit-field hidden'>
+          <%= item_form.text_area :item_name, value: line_item.item_name, rows: '1', class: 'form-control-inline-textarea autoresize' %>
+        </div>
+      </td>
+      <td>
+        <a href="<%= url %>" class="cel"><%= line_item.sku %></a>
+      </td>
+      <% if track_lots %>
+        <%= render partial: 'spree/manage/purchase_orders/line_item_lots', locals: {line_item: line_item, url: url} %>
+      <% else %>
+        <td>
+          <%= link_to 'void:javascript();', class: 'edit-link inline' do %>
+            <i class='fa fa-pencil'></i>
+          <% end %>
+          <div class='edit-field hidden'>
+            <%= item_form.text_field :lot_number, class: 'form-control line-item-area' %>
+          </div>
+        </td>
+      <% end %>
+      <td>
+        <a href="<%= url %>" class="cel"><%= variant.pack_size %></a>
+      </td>
+      <% if @order.customer.try(:po_include_unit_weight) %>
+        <td class='unit-weight'>
+          <%= link_to variant.display_weight, url, class: 'nowrap' %>
+        </td>
+      <% end %>
+      <!-- ITEM PRICE -->
+      <td class='price-input'>
+        <% displayed_price = line_item.price %>
+        <%= link_to display_sweet_price(displayed_price, line_item.currency), 'void:javascript();', class: 'edit-link inline' %>
+        <div class='edit-field hidden'>
+          <label class="currency-label"><%= currency_symbol(@vendor.currency) %></label>
+          <%= item_form.number_field :price, value: number_with_precision(displayed_price, precision: 2), class: "form-control price-field", tabindex: 1, step: 0.01 %>
+        </div>
+      </td>
+      <!-- QUANTITY -->
+      <td>
+        <% if States[@order.state] >= States['complete'] %>
+          <%= link_to line_item.ordered_qty, 'void:javascript();', class: 'edit-link inline' %>
+          <div class='edit-field hidden'>
+            <%= item_form.number_field :ordered_qty, min: 0, step: 'any', class: "form-control ordered-qty", tabindex: 1, data:{id: item_form.options[:child_index]} %>
+          </div>
+        <% else %>
+          <%= link_to line_item.quantity, 'void:javascript();', class: 'edit-link quantity inline' %>
+          <div class='edit-field hidden'>
+            <%= item_form.number_field :quantity, min: 0, step: 'any',
+              class: "form-control line-item-qty", tabindex: 1,
+              data:{id: item_form.options[:child_index], 'line-id' => line_item.id} %>
+          </div>
+        <% end %>
+      </td>
+      <% if States[@order.state] >= States['complete'] %>
+        <td>
+          <% if variant.should_track_lots? %>
+            <%= link_to '#lot', data: {toggle: 'modal', target: '#lot_selection_modal', 'order-id' => "#{@order.id}"}, name: "#{line_item.id}", class: 'lot_qty_btn quantity edit-link edit-link-to-modal inline' do %>
+              <span class='line-item-qty received-qty'><%= line_item.quantity %></span>
+            <% end %>
+
+          <% else %>
+            <%= link_to line_item.quantity, 'void:javascript();', class: 'edit-link inline quantity' %>
+            <div class='edit-field hidden'>
+              <%= item_form.number_field :quantity, min: 0, step: 'any',
+                class: "form-control line-item-qty received-qty", tabindex: 1,
+                data:{id: item_form.options[:child_index], 'line-id' => line_item.id} %>
+            </div>
+
+          <% end %>
+        </td>
+      <% end %>
+      <% if @order.customer.try(:po_include_total_weight) %>
+        <td>
+          <%= link_to line_item.display_weight, url, class: 'total-weight nowrap' %>
+        </td>
+      <% end %>
+      <td>
+        <%= link_to display_sweet_price(line_item.amount, line_item.currency), url, class: 'line-total' %>
+      </td>
+    </tr>
+
+<% end %>

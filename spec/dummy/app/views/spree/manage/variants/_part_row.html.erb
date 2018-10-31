@@ -1,0 +1,60 @@
+<% is_master = variant.try(:is_master?) %>
+<% part = part_variant.part %>
+<% part_url = part.is_master? ? edit_manage_product_path(part.product) : edit_manage_product_variant_path(part.product, part) %>
+<tr class='part-row' id="variant_<%= variant.try(:id) %>_part_<%= part.try(:id) %>_row" data-index="<%= idx %>">
+  <td><%= link_to part.sku.to_s, part_url, target: '_blank' %></td>
+  <td><%= link_to part.full_display_name, part_url, target: '_blank' %></td>
+  <td>
+    <span class='part-unit-weight'><%= part.weight.to_d %></span>
+    <span class='weight-units'><%= part.wunits %></span>
+  </td>
+  <td>
+    <span> <%= currency_symbol(part.currency) %></span><span class='part-unit-cost'><%= part.current_cost_price.to_d %></span>
+  </td>
+  <% if action_name == 'show'%>
+    <td><%= link_to part_variant.count, part_url %></td>
+    <td>
+      <span class='part-total-weight'><%= part.weight.to_d * part_variant.count.to_d %></span>
+      <span class='weight-units'><%= part.wunits %></span>
+    </td>
+    <td colspan="2">
+      <span><%= currency_symbol(part.currency) %></span><span class='part-total-cost'><%= number_with_precision(part.current_cost_price.to_d * part_variant.count.to_d, precision: 2) %></span>
+    </td>
+  <% else %>
+    <% if part_variant.id %>
+    <!-- don't add this hidden field for new parts, only saved parts -->
+      <% if is_master %>
+        <%= hidden_field_tag "product[master_attributes][parts_variants_attributes][#{idx}][id]", part_variant.id %>
+      <% else %>
+        <%= hidden_field_tag "variant[parts_variants_attributes][#{idx}][id]", part_variant.id %>
+      <% end %>
+    <% end %>
+    <td>
+      <% if is_master %>
+        <%= number_field_tag "product[master_attributes][parts_variants_attributes][#{idx}][count]",
+          part_variant.count, class: "count form-control", data:{ part_id: part.id }, step: 'any' %>
+        <%= hidden_field_tag "product[master_attributes][parts_variants_attributes][#{idx}][part_id]", part.id %>
+        <%= hidden_field_tag "product[master_attributes][parts_variants_attributes][#{idx}][_destroy]", false, class: 'hidden_destroy' %>
+
+      <% else %>
+        <%= number_field_tag "variant[parts_variants_attributes][#{idx}][count]",
+          part_variant.count, class: "count form-control", data:{ part_id: part.id }, step: 'any' %>
+        <%= hidden_field_tag "variant[parts_variants_attributes][#{idx}][part_id]", part.id %>
+        <%= hidden_field_tag "variant[parts_variants_attributes][#{idx}][_destroy]", false, class: 'hidden_destroy' %>
+      <% end %>
+    </td>
+    <td>
+      <span class='part-total-weight'><%= part.weight.to_d * part_variant.count.to_d %></span>
+      <span class='weight-units'><%= part.wunits %></span>
+    </td>
+    <td>
+      <span><%= currency_symbol(part.currency) %></span><span class='part-total-cost'><%= number_with_precision(part.current_cost_price.to_d * part_variant.count.to_d, precision: 2) %></span>
+    </td>
+    <td>
+      <button id='delete_variant_part' class="delete_part_id btn btn-xs delete-input-row-btn red"
+        data-variant-id='<%= variant.id %>' data-part-id='<%= part.id %>' data-part-variant-id='<%= part_variant.id %>'>
+        <i class='fa fa-times'></i>
+      </button>
+    </td>
+  <% end %>
+</tr>

@@ -1,0 +1,223 @@
+<%= content_for :head_title do %>
+  Invoices
+<% end %>
+
+<%= content_for :page_title do %>
+  Invoices
+<% end %>
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Invoices", manage_invoices_path %>
+    </li>
+  </ul>
+  <div class="page-toolbar">
+    <div class="btn-group pull-right">
+      <%= link_to new_manage_order_path, class: "btn green-jungle" do %>
+        <i class="fa fa-plus"></i>&nbsp;<%= Spree.t(:new_sales_order) %>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+<%= search_form_for [:manage, @search], url: manage_invoices_path, class: "form" do |f| %>
+  <%= render partial: 'spree/manage/shared/invoices/advanced_search', locals: {f: f} %>
+<% end %>
+
+<% unless current_company.within_subscription_limit?('orders_per_month', current_company.month_to_date_orders_count) %>
+  <div class="alert alert-warning alert-dismissable">
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
+    <%= Spree.t('subscription_limit.orders_per_month.exceeded', limit: current_company.subscription_limit('orders_per_month')) %>
+  </div>
+<% end %>
+
+<div class="row hidden">
+  <div id="source-dt-buttons">
+    <div class="btn-group margin-right-10">
+      <div class="btn btn-default">
+        <input type="checkbox" class="group-checkable" data-set="#sample_1 .checkboxes">
+      </div>
+      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"> Actions
+        <i class="fa fa-angle-down"></i>
+      </button>
+      <ul class="dropdown-menu" role="menu">
+        <li>
+          <%= submit_tag 'Collate Selected Invoices', class: 'collate-pdf', form: 'invoices-list-form' %>
+        </li>
+        <li>
+          <%= submit_tag Spree.t('payment_actions.mark.paid'), form: 'invoices-list-form' %>
+        </li>
+        <li>
+          <%= submit_tag Spree.t(:send_invoice), form: 'invoices-list-form' %>
+        </li>
+        <li>
+          <%= submit_tag Spree.t(:send_invoice_reminder), form: 'invoices-list-form' %>
+        </li>
+      </ul>
+    </div>
+    <div class="btn-group">
+      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+        <i class="fa fa-folder-open-o"></i>&nbsp;Today's Invoices <i class="fa fa-angle-down"></i>
+      </button>
+      <ul class="dropdown-menu pull-right" role="menu">
+        <li>
+          <%= link_to "Invoices", daily_manage_invoices_path(format: :pdf), target: 'blank', class: 'open-pdf' %>
+        </li>
+      </ul>
+    </div>
+  </div><!--/.col-md-12 -->
+</div><!--/.row -->
+
+<div class="">
+  <%= form_for @vendor, html: {id: "invoices-list-form"}, url: actions_router_manage_invoices_path, method: :patch do |ff|%>
+    <input type='hidden' name='sort' value='' id='invoices-list-sort'>
+    <table class="table table-striped table-hover table-checkable basic-table-no-buttons" data-paging="false" id="sample_1">
+      <thead>
+        <tr>
+          <th class="table-checkbox sorting_disabled dt-no-settings-visible" width="2%" data-source=''></th>
+          <th data-source='end_date'>
+            <%= sort_link @search, :end_date, "Invoice Date" %>
+          </th>
+          <th data-source='due_date'>
+            <%= sort_link @search, :due_date, "Due Date" %>
+          </th>
+          <th data-source='number'>
+            <%= sort_link @search, :number, "Invoice #" %>
+          </th>
+          <th data-source='spree_accounts.fully_qualified_name'>
+            <%= sort_link @search, :account_fully_qualified_name, "Account" %>
+          </th>
+          <th data-source='item_count'>
+            <%= sort_link @search, :item_count, "Total Items" %>
+          </th>
+          <th data-source='total'>
+            <%= sort_link @search, :total, "Total" %>
+          </th>
+          <th data-source='payment_state'>
+            <%= sort_link @search, :payment_state, "Payment Status" %>
+          </th>
+          <th class="dt-no-settings-visible" data-source=''></th>
+        </tr>
+
+      </thead>
+      <tbody>
+
+        <% @invoices.each do |invoice| %>
+          <tr class="<%= invoice.state %> <%= 'alert-danger' if invoice.state == 'review' %>">
+            <td>
+              <div class="checker">
+                <span>
+                  <%= ff.fields_for :sales_invoices, invoice do |invoice_form|%>
+                    <%= invoice_form.check_box 'action', class: 'checkboxes' %>
+                  <% end %>
+                </span>
+              </div>
+            </td>
+            <td>
+              <%= display_vendor_date_format(invoice.end_date, @vendor.date_format) %>
+            </td>
+            <td>
+              <%= display_vendor_date_format(invoice.due_date, @vendor.date_format) %>
+            </td>
+            <td>
+              <%= link_to edit_manage_invoice_path(invoice), class: "invoices-list-invoice-link cel" do %>
+                <%= invoice.number %>
+              <% end %>
+            </td>
+            <td>
+              <%= link_to manage_customer_account_path(invoice.account.customer, invoice.account), class: "invoices-list-invoice-link cel" do %>
+                <%= invoice.account.fully_qualified_name %>
+              <% end %>
+            </td>
+            <td>
+              <%= invoice.item_count %>
+            </td>
+            <td>
+              <%= display_sweet_price(invoice.total, invoice.currency) %>
+            </td>
+            <td>
+              <% status = invoice.payment_status(true) %>
+              <label class="btn btn-xs circle invoices-list-invoice-link cel payment_status <%= status %>" data-invoice-id='<%= invoice.id %>'>
+                <%= Spree.t(status, scope: :payment_statuses, default: [:missing, '']).to_s.titleize %>
+              </label>
+            </td>
+            <td>
+              <%= link_to manage_invoice_path(invoice,format: :pdf), target: "_blank" do %>
+                <i class="fa fa-file-pdf-o"></i>
+              <% end %>
+            </td>
+
+          </tr>
+        <% end %>
+
+      </tbody>
+    </table>
+  <% end %>
+
+</div>
+
+<script type='text/javascript'>
+  var setInvoiceSort = function(){
+  var $form = $('#invoices-list-form');
+  var $sortInput = $('#invoices-list-sort');
+  var col = '';
+  var dir = '';
+  $('th', '#invoices-list-form').each(function(){
+    var $th = $(this);
+    var $sortLink = $(this).find('a');
+    if($sortLink.length){
+      if($sortLink.hasClass('asc')){
+        col = $th.data('source');
+        dir = 'asc';
+      }else if($sortLink.hasClass('desc')){
+        col = $th.data('source');
+        dir = 'desc';
+      }
+    }
+  });
+
+  $sortInput.val(col + ' ' + dir);
+}
+  $('.group-checkable').click(function(event) {
+    if(this.checked === true){
+      $('.checkboxes:checkbox').each(function() {
+        this.checked = true;
+      });
+    }else{
+      $('.checkboxes:checkbox').each(function() {
+        this.checked = false;
+      });
+    }
+  });
+  $('.collate-pdf').click(function(e){
+    setInvoiceSort();
+    $('#invoices-list-form').attr('target', '_blank');
+  });
+  $('.open-pdf').click(function(e){
+    setInvoiceSort();
+    $(this).attr('href', function() {
+        return this.href.split('?')[0] + '?sort=' + $('#invoices-list-sort').val();
+    });
+    var anyInvoicesToday = <%= @any_invoices_today %>
+    if(!anyInvoicesToday){
+      e.preventDefault();
+      alert('There are no invoices for today.');
+    }
+  });
+
+  $(document).ready(function(){
+    setInterval(function() {
+      $.ajax({
+        dataType: 'script',
+        url: '/manage/invoices/payment_states.js',
+        type: 'get',
+        global: false
+      });
+    }, 3000);
+  });
+</script>
+
+<%= paginate @invoices %>

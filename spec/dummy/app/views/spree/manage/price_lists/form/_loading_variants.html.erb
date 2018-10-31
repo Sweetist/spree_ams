@@ -1,0 +1,7 @@
+<tbody id='loading-variants' class="<%= 'hidden' if %w[new create update].include? params[:action] %>">
+  <tr>
+    <td colspan="100%">
+      Loading Products <%= image_tag 'frontend/loading.gif' %>
+    </td>
+  </tr>
+</tbody>

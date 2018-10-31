@@ -1,0 +1,123 @@
+<%= form_for @account, url: manage_account_path, method: 'patch',remote: true, html: {class: 'form'} do |f| %>
+  <div class='form-body'>
+    <div class="form-group">
+      <%= f.label :name, class: "control-label" %><br />
+      <%= f.text_field :name, class: "form-control", placeholder: "Johnny Appleseed"  %>
+    </div>
+    <div class="form-group">
+      <%= f.label :email, class: "control-label" %><br />
+      <%= f.text_field :email, class: "form-control", placeholder: "johnny@appleseed.com"  %>
+    </div>
+    <div class="form-group">
+      <%= f.label :order_cutoff_time, class: "control-label" %><br />
+      <div class="input-group">
+        <%= f.text_field :order_cutoff_time, class: "form-control timepicker timepicker-no-seconds", placeholder: "2:00PM" %>
+        <span class="input-group-btn">
+            <button class="btn default" type="button">
+                <i class="fa fa-clock-o"></i>
+            </button>
+        </span>
+      </div>
+    </div>
+    <div class="form-group">
+      <%= f.label :time_zone, class: "control-label" %><br />
+      <%= f.time_zone_select(:time_zone, ActiveSupport::TimeZone.us_zones, {include_blank: true}, {class: "form-control"}) %>
+    </div>
+    <div class="form-group">
+      <%= f.label :currency, "Currency" %>
+      <select name='company[currency]' class="form-control">
+        <% ::Money::Currency.each do |currency| %>
+          <option value="<%= currency.iso_code %>" disabled <%= 'selected' if @account.currency == currency.iso_code %>>
+            <%= "#{currency.name} (#{currency.iso_code})" %>
+          </option>
+        <% end %>
+      </select>
+      <span class="help-block help-block-italic">Contact SWEET if you need to change your currency.</span>
+    </div>
+    <div class="form-group">
+      <%= f.label :date_format, "Date Format" %>
+      <%= f.select :date_format, Sweet::Application.config.x.date_formats, {}, {class: 'form-control'} %>
+    </div>
+    <div class="form-group">
+      <%= f.label :week_starts_on, "Week Starts On", class: 'control-label' %>
+      <%= f.select :week_starts_on, [['Monday', 0],['Tuesday', 1], ['Wednesday', 2], ['Thursday', 3], ['Friday', 4], ['Saturday', 5], ['Sunday', 6]], {}, class: 'form-control' %>
+    </div>
+    <div class="form-group">
+      <%= f.label :show_suggested_price, "Show suggested retail price" %>
+      <br>
+      <%= f.check_box :show_suggested_price, class: 'make-switch', 'data-size' => 'mini' %>
+    </div>
+    <div class="form-group">
+      <%= f.label :line_item_tax_categories, "Select tax categories on line items" %>
+      <br>
+      <%= f.check_box :line_item_tax_categories, class: 'make-switch', 'data-size' => 'mini' %>
+    </div>
+    <% unless f.object.subscription_includes?('inventory') %>
+      <div class='alert alert-warning'>
+        Inventory and lot tracking are not supported by your current subscription.
+      </div>
+    <% end %>
+    <div class="form-group">
+      <%= f.label :track_inventory, "Track Inventory" %>
+      <br>
+      <%= f.check_box :track_inventory, class: 'make-switch inventory-switch', 'data-size' => 'mini', id: 'company_track_inventory' %>
+    </div>
+    <% if f.object.subscription_includes?('inventory') && !f.object.subscription_includes?('lot_tracking') %>
+      <div class='alert alert-warning'>
+        Lot tracking is not supported by your current subscription.
+      </div>
+    <% end %>
+    <div class="form-group">
+      <%= f.label :lot_tracking, "Advanced Lot Tracking (must track inventory to use advanced lot tracking)" %>
+      <br>
+      <%= f.check_box :lot_tracking, class: 'make-switch inventory-switch', 'data-size' => 'mini', id: 'company_lot_tracking' %>
+    </div>
+
+    <div class="form-group">
+      <%= f.label :auto_assign_lots, "Auto Assign Lots (must use advanced lot tracking)" %>
+      <br>
+      <%= f.check_box :auto_assign_lots, class: 'make-switch', 'data-size' => 'mini', id: 'company_auto_assign_lots' %>
+    </div>
+    <% if current_spree_user.try(:is_admin?) %>
+      <div class="form-group alert-warning">
+        <%= f.label :show_account_balance, "Show Account Balance (admin only)" %>
+        <br>
+        <%= f.check_box :show_account_balance, class: 'make-switch', 'data-size' => 'mini', id: 'company_show_account_balance' %>
+      </div>
+    <% end %>
+  </div>
+  <div class='form-actions'>
+    <div class="pull-right">
+      <button class='btn btn-primary'>
+        <i class='fa fa-check'></i> Update
+      </button>
+    </div>
+  </div>
+<% end %>
+
+<script type='text/javascript'>
+  var toggleLotSwitch = function(){
+    if (<%= !current_company.subscription_includes?('inventory') %>){
+      $('#company_track_inventory').bootstrapSwitch('state', false);
+      $('#company_track_inventory').bootstrapSwitch('disabled', true);
+    }
+    if($('#company_track_inventory').bootstrapSwitch('state') && <%= current_company.subscription_includes?('lot_tracking') %>){
+      $('#company_lot_tracking').bootstrapSwitch('disabled',false);
+    }else{
+      $('#company_lot_tracking').bootstrapSwitch('state',false);
+      $('#company_lot_tracking').bootstrapSwitch('disabled',true);
+    }
+
+    if($('#company_lot_tracking').bootstrapSwitch('state')){
+      $('#company_auto_assign_lots').bootstrapSwitch('disabled',false);
+    }else{
+      $('#company_auto_assign_lots').bootstrapSwitch('state',false);
+      $('#company_auto_assign_lots').bootstrapSwitch('disabled',true);
+    }
+  }
+  $('.inventory-switch').on('switchChange.bootstrapSwitch', function (event, state) {
+    toggleLotSwitch();
+  });
+
+  $(document).ready(toggleLotSwitch);
+</script>

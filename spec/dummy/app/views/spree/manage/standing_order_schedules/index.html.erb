@@ -1,0 +1,81 @@
+<% start_at = Time.zone.now.beginning_of_hour %>
+<%= content_for :head_title do %>
+  Standing Order Schedules
+<% end %>
+
+<%= content_for :page_title do %>
+  Standing Order Schedules
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Orders", manage_orders_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Standing Order Schedules", manage_standing_order_schedules_path %>
+    </li>
+  </ul>
+  <div class="page-toolbar">
+    Current vendors time: <%= sweet_full_date_time(Time.current, @vendor.time_zone) %>
+  </div>
+<% end %>
+
+<%= search_form_for [:manage, @search], class: "form" do |f| %>
+  <%= render partial: 'advanced_search', locals: {f: f} %>
+<% end %>
+
+<div class="content">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="table-scrollable">
+        <%= search_form_for [:manage, @search], class: "form" do |f| %>
+          <table class="table table-striped table-hover">
+            <thead>
+              <tr>
+                <th>
+                  <%= sort_link @search, :standing_order_name, "Standing Order" %>
+                </th>
+                <th>
+                  <%= sort_link @search, :order_number, "Order" %>
+                </th>
+                <th>
+                  <%= sort_link @search, :deliver_at, "#{@vendor.order_date_text.to_s.capitalize} Date".strip %>
+                </th>
+                <th>
+                  <%= sort_link @search, :create_at, "Create At" %>
+                </th>
+                <th>
+                  <%= sort_link @search, :process_at, "Submit At" %>
+                </th>
+                <th>
+                  <%= sort_link @search, :remind_at, "Remind At" %>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @schedules.each do |schedule| %>
+                <%= render partial: 'schedule_row_1', locals: {schedule: schedule, start_at: start_at} %>
+                <%= render partial: 'schedule_row_2', locals: {schedule: schedule} %>
+              <% end %>
+            </tbody>
+          </table>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%= paginate @schedules %>
+
+<script type='text/javascript'>
+$('.schedule_action').click(function(){
+  var scheduleId = $(this).data('schedule-id');
+  $(".schedule_action[data-schedule-id='" + scheduleId + "']").attr('disabled', true);
+});
+</script>

@@ -1,0 +1,92 @@
+<% show_sales = current_spree_user.can_read?('basic_options', 'reports') %>
+<% show_balance = @vendor.show_account_balance? %>
+<div>
+<table class="table table-striped table-hover">
+  <thead>
+    <tr>
+      <th>
+        Account #
+      </th>
+      <th>
+        Name
+      </th>
+      <th>
+        Created On
+      </th>
+      <th>
+        Active
+      </th>
+      <th>
+        Last Delivery
+      </th>
+      <th>
+        Payment Terms
+      </th>
+      <% if show_sales %>
+        <th>
+          30 Day Spend
+        </th>
+        <% if show_balance %>
+          <th>
+            Balance
+          </th>
+        <% end %>
+      <% end %>
+      <th>
+        Primary Contact
+      </th>
+      <th>
+        Phone
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <% balance_source = @vendor.use_external_balance %>
+    <% accounts.each do |account|%>
+      <tr class="<%= 'past-due' if account.past_due? %>">
+        <td>
+          <%= account.number %>
+        </td>
+        <td>
+          <%= link_to account.name, manage_customer_account_path(account.customer, account), class: "accounts-list-account-link cel" %>
+        </td>
+        <td>
+          <%= display_vendor_date_format(account.created_at, @vendor.date_format)%>
+        </td>
+        <td>
+          <% if account.active? %>
+            <i class="fa fa-check"></i>
+          <% end %>
+        </td>
+        <td>
+          <% last_delivery_date = account.orders.select(:delivery_date).where("delivery_date < ?", Time.current).approved.order('delivery_date DESC').first.try(:delivery_date) %>
+          <%= display_vendor_date_format(last_delivery_date, @vendor.date_format) if last_delivery_date %>
+        </td>
+        <td>
+          <%= account.payment_terms.try(:name_with_required_short) %>
+        </td>
+        <% if show_sales %>
+          <td>
+            <%= display_sweet_price(account.orders.where('delivery_date BETWEEN ? AND ?', Time.current - 30.days, Time.current).approved.sum(:total), @vendor.currency) %>
+          </td>
+          <% if show_balance %>
+            <td>
+              <%= account.display_account_balance(balance_source) %>
+            </td>
+          <% end %>
+        <% end %>
+        <td>
+          <% if account.primary_cust_contact %>
+            <%= link_to manage_account_contact_path(account.primary_cust_contact), class: "accounts-list-account-link cel" do %>
+              <%= account.primary_cust_contact.try(:name) %>
+            <% end %>
+          <% end %>
+        </td>
+        <td>
+          <%= account.primary_cust_contact.try(:phone) %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+</div>

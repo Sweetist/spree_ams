@@ -1,0 +1,29 @@
+<div class="table-scrollable" id='mail_to_settings'>
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th>Account MailTo Setting</th>
+        <th>Number of Accounts</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% Spree::Account.mail_to_settings.each do |setting| %>
+        <tr>
+          <td> <%= setting[0] %></td>
+          <td> <%= @account.customer_accounts.where(send_mail: setting[1]).count %></td>
+          <td>
+            <%= link_to 'Set all to this',
+              update_mail_to_settings_manage_outgoing_communications_path(mail_to_setting: setting[1]),
+              method: :post,
+              remote: true,
+              class: 'btn btn-xs btn-info pull-right' %>
+          </td>
+        </tr>
+
+      <% end %>
+
+    </tbody>
+  </table>
+
+</div>

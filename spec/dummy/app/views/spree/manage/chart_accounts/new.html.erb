@@ -1,0 +1,47 @@
+<%= content_for :head_title do %>
+  New Account
+<% end %>
+
+<%= content_for :page_title do %>
+  New Account
+<% end %>
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+		<li>
+      <%= link_to "Chart of Accounts", manage_chart_accounts_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      New Account
+    </li>
+  </ul>
+<% end %>
+
+<div class="portlet light">
+  <div class="portlet-title">
+    <div class="caption">
+      <span class="caption-subject font-blue-madison bold uppercase">
+        New Account
+      </span>
+    </div>
+  </div>
+  <div class="portlet-body form">
+    <%= form_for @account, url: manage_chart_accounts_path, method: "post" do |f| %>
+      <div class="form-body">
+        <%= render partial: 'form', locals: {f:f} %>
+      </div>
+      <div class="form-actions">
+        <div class="pull-right">
+          <%= link_to manage_chart_accounts_path, class: "btn btn-default" do %>
+            <i class='fa fa-times'></i> Cancel
+          <% end %>
+          <button class="btn btn-primary"><i class='fa fa-check'></i> Save</button>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

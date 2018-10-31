@@ -1,0 +1,54 @@
+<!-- BEGIN CHARTS -->
+<div class='row'>
+  <% image = @customer.images.first %>
+  <% show_left_column = image.present? || (current_spree_user.can_read?('basic_options', 'reports') && @account.vendor.show_account_balance) %>
+  <% if show_left_column %>
+    <div class='col-md-2 col-sm-2'>
+      <div class='row'>
+        <div class="col-xs-12 profile-userpic margin-bottom-10">
+
+          <% if image.present? %>
+            <%= image_tag image.attachment.url(:product), :class => "img-thumbnail img-responsive", alt: image.alt %>
+          <%# else %>
+            <%#= image_tag "spree/manage/img/multi-user.png", :class => "img-thumbnail img-responsive", alt: "account image" %>
+          <% end %>
+        </div>
+      </div>
+      <%= render partial: 'spree/manage/accounts/form/balance' %>
+      <% if @account.sub_accounts.present? %>
+        <div class="row static-info margin-top-20">
+          <div class="col-xs-12">
+            <div class='form-group'>
+              <label for="include_sub_accounts">Aggregate Sub Accounts:</label>
+              <input id='include_sub_accounts' type="checkbox" class="make-switch" data-size="mini">
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+    <div class='col-md-10 col-sm-10'>
+      <% if current_spree_user.can_read?('basic_options', 'reports') %>
+        <%= render partial: "charts" %>
+      <% end %>
+    </div>
+  <% else %>
+    <div class='col-md-12'>
+      <% if current_spree_user.can_read?('basic_options', 'reports') %>
+        <%= render partial: "charts" %>
+      <% end %>
+    </div>
+  <% end %>
+</div>
+<!-- END CHARTS -->
+<% if @account.sub_accounts.present? %>
+  <div id="all-orders-table" class="row portlet-row hidden">
+    <%= render partial: "all_orders_table"%>
+  </div>
+  <div id="all-orders-table-sa" class="row portlet-row">
+    <%= render partial: "all_orders_table_sa"%>
+  </div>
+<% else %>
+  <div class="row portlet-row">
+    <%= render partial: "all_orders_table"%>
+  </div>
+<% end %>

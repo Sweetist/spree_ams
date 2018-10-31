@@ -1,0 +1,42 @@
+<% if @account.errors.any? %>
+  <div id="error_explanation">
+    <h2><%= pluralize(@account.errors.count, "error") %> prohibited this account from being saved:</h2>
+
+    <ul>
+    <% @account.errors.full_messages.each do |msg| %>
+      <li><%= msg %></li>
+    <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<div class="field">
+  <%= f.label :name %><br />
+  <%= f.text_field :name %>
+</div>
+
+<div class="field">
+  <%= f.label :email %><br />
+  <%= f.text_field :email %>
+</div>
+
+<div class="field">
+  <%= f.label :order_cutoff_time, class: "control-label" %><br />
+  <div class="input-group">
+    <%= f.text_field :order_cutoff_time, class: "form-control timepicker timepicker-no-seconds", placeholder: "2:00PM" %>
+    <span class="input-group-btn">
+        <button class="btn default" type="button">
+            <i class="fa fa-clock-o"></i>
+        </button>
+    </span>
+  </div>
+</div>
+
+<div class="field">
+  <%= f.label :time_zone %><br />
+  <%= f.time_zone_select(:time_zone, ActiveSupport::TimeZone.us_zones, include_blank: true) %>
+</div>
+
+<div class="actions">
+  <%= f.submit "Update account", class: "update-customer"  %>
+</div>

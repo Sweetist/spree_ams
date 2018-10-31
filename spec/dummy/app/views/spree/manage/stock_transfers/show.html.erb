@@ -1,0 +1,186 @@
+<%= content_for :head_title do %>
+  Stock Transfer - <%= @stock_transfer.number %>
+<% end %>
+
+<%= content_for :page_title do %>
+  Stock Transfer - <%= @stock_transfer.number %>
+<% end %>
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Stock Transfers", manage_stock_transfers_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+		<li>
+      Stock Transfer - <%= @stock_transfer.number %>
+    </li>
+  </ul>
+	<div class="page-toolbar">
+    <div class="btn-group pull-right">
+      <% if current_spree_user.can_write?('basic_options', 'inventory') %>
+        <%= link_to new_manage_stock_transfer_path, class: "btn green pull-right #{'disabled' unless @vendor.track_inventory}", disabled: !@vendor.track_inventory do%>
+          <i class="fa fa-plus"></i>&nbsp;New Stock Transfer
+        <% end %>
+      <% end %>
+
+    </div>
+  </div>
+<% end %>
+
+<div class='content'>
+  <%= render partial: 'spree/manage/shared/not_tracking_inventory', locals: {vendor: @vendor} %>
+  <div class='row'>
+    <div class='col-md-12'>
+      <div class='portlet light'>
+        <div class='portlet-title'>
+          <div class="caption caption-md">
+            <% if @stock_transfer.transfer_type == 'build'%>
+              <span class="caption-subject font-blue-madison bold uppercase">Assembly Details</span>
+            <% else %>
+              <span class="caption-subject font-blue-madison bold uppercase">Stock Transfer Details</span>
+            <% end %>
+          </div>
+        </div>
+        <div class='portlet-body'>
+          <div class="table-scrollable">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th width="30%"><%= Spree.t(:created_at)%></th>
+                  <th><%= Spree.t(:reference) %></th>
+                  <!-- <th><%#= Spree.t(:chart_account) %></th> -->
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><%= sweet_full_date_time(@stock_transfer.created_at, @vendor.time_zone) %></td>
+                  <td><%= @stock_transfer.reference %></td>
+                  <!-- <td><%#= Spree::ChartAccount.find_by(id: @stock_transfer.general_account_id).try(:name) %></td> -->
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <% if @stock_transfer.transfer_type == 'build' %>
+    <% @split_movements.keys.each do |location| %>
+      <div class='row'>
+        <div class='col-md-12'>
+          <div class='portlet light'>
+            <div class='portlet-title'>
+              <div class="caption caption-md">
+                <span class="caption-subject font-blue-madison bold uppercase">
+                  <%= location %>
+                </span>
+              </div>
+            </div>
+            <div class='portlet-body'>
+              <%= render partial: 'build_stock_movement', locals: { stock_movements: @split_movements[location]}%>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  <% else %>
+    <% if @stock_transfer.source_location_id.present? %>
+      <div class='row'>
+        <div class='col-md-12'>
+          <div class='portlet light'>
+            <div class='portlet-title'>
+              <div class="caption caption-md">
+                <span class="caption-subject font-blue-madison bold uppercase">
+                  <%= Spree.t(:source) %> / <%= @stock_transfer.source_location.try(:name) || '(Deleted)' %>
+                </span>
+              </div>
+            </div>
+            <div class='portlet-body'>
+              <%= render partial: 'stock_movements', object: @stock_transfer.source_movements.includes(stock_item: [variant: :product]) %>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <% if @stock_transfer.destination_location_id.present? && @stock_transfer.source_location_id != @stock_transfer.destination_location_id %>
+      <div class='row'>
+        <div class='col-md-12'>
+          <div class='portlet light'>
+            <div class='portlet-title'>
+              <div class="caption caption-md">
+                <span class="caption-subject font-blue-madison bold uppercase">
+                  <%= Spree.t(:destination) %> / <%= @stock_transfer.destination_location.try(:name) || '(Deleted)' %>
+                </span>
+              </div>
+            </div>
+            <div class='portlet-body'>
+              <%= render partial: 'stock_movements', object: @stock_transfer.destination_movements.includes(stock_item: [variant: :product]) %>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+  <div class='row'>
+    <div class='col-md-12'>
+      <div class='portlet light'>
+        <div class='portlet-title'>
+          <div class="caption caption-md">
+            <span class="caption-subject font-blue-madison bold uppercase">
+              Notes
+            </span>
+            <a id='toggle-note' class='btn btn-sm btn-primary margin-left-10'>
+              <i class='fa fa-pencil'></i>
+              <%= Spree.t(:edit) %>
+            </a>
+          </div>
+        </div>
+        <div class='portlet-body'>
+          <%= render partial: 'show_note', locals: {stock_transfer: @stock_transfer} %>
+          <div class='note-container hidden'>
+            <%= form_for [:manage, @stock_transfer], html: {class: 'form prevent-double-submission'}, remote: true do |f| %>
+              <div class='form-body'>
+                <%= f.text_area :note, class: 'autoresize' %>
+              </div>
+              <div class='form-actions'>
+                <div class='pull-right'>
+                  <%= link_to manage_stock_transfer_path(@stock_transfer), id: 'cancel-note', class: 'btn btn-default' do %>
+                    <i class='fa fa-times'></i>
+                    <%= Spree.t(:Cancel) %>
+                  <% end %>
+                  <button class='btn btn-primary'>
+                    <i class='fa fa-check'></i>
+                    <%= Spree.t(:update) %>
+                  </button>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script type='text/javascript'>
+  $(document).ready(function(){
+    $('#toggle-note').click(function(e){
+      e.preventDefault();
+      $('.note-container').toggleClass('hidden');
+      $('#toggle-note').hide();
+      resizeTextArea();
+    });
+    $('#cancel-note').click(function(e){
+      e.preventDefault();
+      $('.note-container').toggleClass('hidden');
+      $('#toggle-note').show();
+    });
+  });
+</script>

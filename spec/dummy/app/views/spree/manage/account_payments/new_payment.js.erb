@@ -1,0 +1,1 @@
+$('#payment-source').html("<%= j(render(partial: 'payment_source', locals: {payment_method: @payment_method, payment_methods: @payment_methods, account: @account})) %>");

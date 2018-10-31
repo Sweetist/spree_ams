@@ -1,0 +1,104 @@
+<%= content_for :head_title do %>
+  Orders
+<% end %>
+
+<%= content_for :page_title do %>
+  <span class="order-id">
+    Order #<%= @order.display_number %>
+  </span>
+<% end %>
+<%= content_for :page_bar do %>
+  <%= render partial: 'spree/cust/orders/page_bar/edit' %>
+<% end %>
+
+<%= render partial: 'spree/cust/orders/edit_overview', locals: { payments: @order } %>
+<%= render partial: 'spree/cust/payments/modal/index' %>
+<%= render partial: 'spree/shared/payments/modal/show' %>
+<%= render partial: 'spree/shared/payments/modal/new' %>
+<%= render 'update_confirmation_modal' %>
+<!-- BEGIN ADDRESS MODALS -->
+<%# if States[@order.state] < States['complete'] %>
+  <div id="address-select-modal-div">
+    <%= render partial: 'spree/cust/orders/addresses/address_select_modal', locals: {} %>
+  </div>
+  <div id="edit-bill-address-modal-div">
+    <% if @order.bill_address %>
+      <%= render partial: 'spree/cust/orders/addresses/edit_bill_address_modal', locals: {} %>
+    <% end %>
+  </div>
+  <div class="modal fade" id="address_modal" tabindex="-1" role="basic" aria-labelledby="myModalLabel" aria-hidden="true"></div>
+  <!-- END ADDRESS MODALS -->
+<%# end %>
+
+<%= commontator_thread(@order) %>
+
+<style media="screen">
+  #payment-method-box{
+    margin-left: 45%;
+    width: 55%;
+    margin-top: 10px;
+    height: 100%;
+  }
+</style>
+
+<script type="text/javascript">
+
+  $('#receive-all').click(function(event) {
+    if(this.checked) {
+        // Iterate each checkbox
+        $(':checkbox').each(function() {
+            this.checked = true;
+        });
+    }else{
+      $(':checkbox').each(function() {
+          this.checked = false;
+      });
+    }
+  });
+  $('#update-button').click(function(e){
+    var orderSubmit = <%= @order.state == 'complete' %>
+    var orderChanged = ($('#update-notification').length > 0) || ($('#recalculate_shipping').length > 0);
+    if (orderChanged && orderSubmit){
+      e.preventDefault();
+      $("#update-confirmation").modal();
+    }
+  });
+  $('#dismiss-update').click(function(e){
+    $('#update-confirmation').modal('hide');
+    $('#single-order-form').append("<input type='hidden' name='commit' value='Update Order'>")
+    $('#single-order-form').submit();
+  });
+  $('#confirm-update').click(function(e){
+    $('#update-confirmation').modal('hide');
+    $('#single-order-form').append("<input type='hidden' name='commit' value='Resubmit Order'>")
+    $('#single-order-form').submit();
+  });
+  $('#submit-button').click(function(e){
+    var dateText = '<%= "#{@order.vendor.try(:order_date_text)} date".strip %>.'
+    if ($('#any_variant_past_cutoff').val() === 'true'){
+      e.preventDefault();
+      if (confirm('Some products selected are past the order cutoff time. You may submit this order, but fulfillment is not guaranteed.  Or click cancel to return and change the ' + dateText)){
+        $('#single-order-form').append("<input type='hidden' name='commit' value='<%= Spree.t(:submit_order) %>'>")
+        $('#single-order-form').submit();
+      }
+    }
+  });
+  $('#resubmit-button').click(function(e){
+    var dateText = '<%= "#{@order.vendor.try(:order_date_text)} date".strip %>.'
+    if ($('#any_variant_past_cutoff').val() === 'true'){
+      e.preventDefault();
+      if (confirm('Some products selected are past the order cutoff time. You may submit this order, but fulfillment is not guaranteed.  Or click cancel to return and change the ' + dateText)){
+        $('#single-order-form').append("<input type='hidden' name='commit' value='Resubmit Order'>")
+        $('#single-order-form').submit();
+      }
+    }
+  });
+  $('.payment-link').click(function(){
+    var orderNumber = '<%= @order.number %>'
+    var paymentId = $(this).closest('tr').data('payment-id');
+    $.ajax({
+      method: 'GET',
+      url: '/orders/'+ orderNumber + '/payments/' + paymentId +'.js',
+    });
+  });
+</script>

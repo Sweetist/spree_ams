@@ -1,0 +1,6 @@
+<% if @account.nil? %>
+  $('#account-address-info').replaceWith("<section id='contact-user-section' class='alert alert-warning alert-dismissable'> <button type='button' class='close' data-dismiss='alert' aria-hidden='true'></button> Could not find account</section>");
+<% else %>
+  $('#contact-user-section').replaceWith("<%= escape_javascript(render partial: 'account_contact') %>");
+  $('#standing_order_txn_class_id').val("<%= @account.try(:default_txn_class_id) if @account.vendor.track_order_class? %>");
+<% end %>

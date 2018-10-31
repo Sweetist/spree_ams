@@ -1,0 +1,28 @@
+<div class="panel-heading <%= add_bottom_border if defined?(add_bottom_border)%>">
+  <%
+    if params[:q].present? && params[:q][:variant_product_taxons_id_or_variant_taxons_id_in].present?
+      if params[:q][:variant_product_taxons_id_or_variant_taxons_id_in].include? taxon.id.to_s
+         check_flag = true
+      else
+        check_flag = false
+      end
+    else
+      check_flag = false
+    end
+  %>
+  <h4 class="panel-title" data-id="<%= taxon.id %>">
+    <% if check_flag %>
+      <input type="checkbox" class="cb-sidebar" checked data-taxon-id="<%= taxon.id %>">
+    <% else %>
+      <input type="checkbox" class="cb-sidebar" data-taxon-id="<%= taxon.id %>">
+    <% end %>
+    <a class="link-to-checkbox">
+      <%= taxon.name %>
+    </a>
+    <% if taxon.children.present? %>
+      <a class="accordion-toggle pull-right" data-toggle="collapse" data-parent="#accordion1" data-id="<%= taxon.id %>" href="#parent_taxon_<%= taxon.id %>">
+        <i class="fa fa-chevron-down" aria-hidden="true"></i>
+      </a>
+    <% end %>
+  </h4>
+</div>

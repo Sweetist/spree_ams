@@ -1,0 +1,77 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="row">
+      <%= simple_form_for integration, url: path, method: method, wrapper: :horizontal_form do |f| %>
+        <div class="portlet light">
+          <div class="portlet-title">
+            <div class="caption">
+              <span class="caption-subject font-blue-madison bold uppercase">
+                <%=image_tag(item.fetch(:image, ''), width: '32')%>
+                <%= item.fetch(:name, '') %>
+              </span>
+            </div>
+          </div>
+          <div class="portlet-body form">
+            <div class="form-body">
+              <%= f.input :shipstation_overwrite_shipping_cost, as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']], label: 'Overwrite shipping cost in Sweet', label_method: :last, value_method: :first, wrapper: :horizontal_radio_and_checkboxes %>
+              <%= f.input :shipstation_weight_units, as: :select, collection: Sweet::Application.config.x.weight_units, label: 'Default Weight Units', include_blank: false %>
+              <%= f.input :shipstation_round, as: :select, collection: [[Spree.t('round_method.round'), 'round'],[Spree.t('round_method.floor'), 'floor'],[Spree.t('round_method.ceil'), 'ceil']], label: 'Fractional Line Quantity', include_blank: false %>
+              <%= f.input :shipstation_include_lots, as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']], label: 'Include Lots in Line Description', label_method: :last, value_method: :first, wrapper: :horizontal_radio_and_checkboxes %>
+              <%= f.input :shipstation_include_assembly_lots, as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']], label: 'Include Assembly Component Lots in Line Description', label_method: :last, value_method: :first, wrapper: :horizontal_radio_and_checkboxes %>
+              <%= render partial: "spree/manage/integrations/shared/form", locals: { item: @integration, f: f } %>
+              <%= f.input :shipstation_email_type, as: :select, collection: integration.shipstation_email_type_options.to_a, label: 'Buyer / Recipient Email', label_method: :first, value_method: :last, include_blank: false %>
+              <%= f.input :shipstation_custom_field_1, as: :select, collection: integration.shipstation_custom_field_options, label: 'CustomField1', include_blank: true %>
+              <%= f.input :shipstation_custom_field_2, as: :select, collection: integration.shipstation_custom_field_options, label: 'CustomField2', include_blank: true %>
+              <%= f.input :shipstation_custom_field_3, as: :select, collection: integration.shipstation_custom_field_options, label: 'CustomField3', include_blank: true %>
+              
+              <section class='important-clarifier'>
+                <div class='alert alert-info'>
+                  <h4 class='text-center'><strong>Copy the below fields into your ShipStation Custom Store connection</strong></h4>
+                </div>
+                <%= f.input :integration_key, as: :hidden, input_html: { value: item.fetch(:integration_key, '') } %>
+                <%= f.input :shipstation_url, disabled: true, as: :string, label: 'URL to Custom XML Page' %>
+                <%= f.input :shipstation_username, disabled: true, as: :string, label: 'User Name' %>
+                <%= f.input :shipstation_password, disabled: true, as: :string, label: 'Password' %>
+                <%= f.input :shipstation_unpaid_status, disabled: true, as: :string, label: 'Unpaid Status' %>
+                <%= f.input :shipstation_paid_status, disabled: true, as: :string, label: 'Paid Status' %>
+                <%= f.input :shipstation_shipped_status, disabled: true, as: :string, label: 'Shipped Status' %>
+                <%= f.input :shipstation_canceled_status, disabled: true, as: :string, label: 'Cancelled Status' %>
+                <%= f.input :shipstation_on_hold_status, disabled: true, as: :string, label: 'On-Hold Status' %>
+              </section>
+            </div>
+            <div class='form-actions'>
+              <%= link_to manage_integration_execute_path(integration.id, name: "reset_password"), class: "btn btn-danger", data: {confirm: "Are you sure?"} do %>
+                <i class='fa fa-undo'></i> Reset Password
+              <% end %>
+              <div class='pull-right'>
+                <%= link_to manage_integration_path(integration.id), class: 'btn btn-default' do %>
+                  <i class='fa fa-times'></i> Cancel
+                <% end %>
+                <button class='btn btn-primary'>
+                  <i class='fa fa-check'></i> Save
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+  $(function() {
+    var hideShowElements = function(){
+      if ($('#integration_item_shipstation_include_lots_false:checked').length) {
+        $('#integration_item_shipstation_include_assembly_lots_false').prop('checked', true);
+        $('#integration_item_shipstation_include_assembly_lots_true').prop('disabled', 'disabled');
+        $('#integration_item_shipstation_include_assembly_lots_true').removeAttr('checked');
+      }else {
+        $('#integration_item_shipstation_include_assembly_lots_true').removeAttr('disabled');
+      }
+    };
+
+    $(document).ready(hideShowElements);
+    $('input[type=radio]').change(hideShowElements);
+  });
+</script>

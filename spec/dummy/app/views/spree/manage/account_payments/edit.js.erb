@@ -1,0 +1,2 @@
+$('#order-body').append("<%= escape_javascript(render partial: 'edit_order', collection: @orders, locals: {inner_payment_method: @inner_payment_method}) %>");
+$('#load_more_link').replaceWith("<%= escape_javascript(link_to_next_page(@orders, 'Load More', :remote => true, :id=>'load_more_link'))%>");

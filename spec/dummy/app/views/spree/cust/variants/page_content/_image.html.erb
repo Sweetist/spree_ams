@@ -1,0 +1,45 @@
+<script type="text/javascript" src="//code.jquery.com/jquery-1.11.0.js"></script>
+<script type="text/javascript" src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/fancybox/1.3.4/jquery.fancybox-1.3.4.pack.js"></script>
+<div class='margin-auto main-img-container'>
+  <% if defined?(image) && image %>
+    <%= image_tag image.attachment.url(:large), itemprop: "image", class: "img-w100" %>
+  <% else %>
+    <%= large_image(@variant, itemprop: "image", class: "img-w100 fancybox", id: 'mainImage', style: 'height: 100%; width: 100%; object-fit: contain') %>
+  <% end %>
+</div>
+<ul id="img-gallery">
+  <% @variant.all_images.each do |image| %>
+    <li>
+      <div class="img-container">
+        <%= create_product_image_tag(image, @variant.product, {alt: @variant.product.name}, 'large') %>
+      </div>
+    </li>
+  <% end %>
+</ul>
+<script type='text/javascript'>
+  var mainImage = $("#mainImage");
+  $(".img-container img").hover(function(){
+    var src = $(this).attr("src");
+    $("#mainImage").attr("src",src);
+    $(".fancybox").attr("href",src);
+  });
+  $(function($){
+    var addToAll = false;
+    var gallery = false;
+    var titlePosition = 'inside';
+    $(addToAll ? 'img' : 'img.fancybox').each(function(){
+      var $this = $(this);
+      var title = $this.attr('title');
+      var src = $this.attr('data-big') || $this.attr('src');
+      var a = $('<a href="#" class="fancybox"></a>').attr('href', src).attr('title', title);
+      $this.wrap(a);
+    });
+    if (gallery)
+      $('a.fancybox').attr('rel', 'fancyboxgallery');
+    $('a.fancybox').fancybox({
+      titlePosition: titlePosition
+    });
+  });
+  $.noConflict();
+</script>

@@ -1,0 +1,5 @@
+$('#alert').replaceWith("<%= j render(partial: 'layouts/shared/alert_box.html.erb') %>");
+$('#mail_to_settings').replaceWith("<%= j render(partial: 'spree/manage/outgoing_communications/mail_to_settings') %>");
+setTimeout(function() {
+    $(".alert-auto-dissapear").fadeOut(1500);
+},2000);

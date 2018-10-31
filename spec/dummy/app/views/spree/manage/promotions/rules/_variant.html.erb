@@ -1,0 +1,30 @@
+<div class="portlet-title">
+    <div class="caption">
+      <i class="fa fa-cogs"></i>
+      Add Variants
+    </div>
+    <div class="actions">
+      <%= link_to raw("<i class='fa fa-times' aria-hidden='true'></i>"), '#', class: 'btn red btn-sm close-button' %>
+    </div>
+</div>
+<div class="portlet-body">
+  <div id="variant_select_container">
+    <% variant_ids = rule.nil? ? [] : rule.variant_ids %>
+    <select name='' id='variant_select' multiple="multiple" class="form-control select2-multiple select2-hidden-accessible">
+      <% @vendor.variants.active.each do |variant| %>
+        <option value="<%= variant.id %>" data-id='<%= variant.id %>'
+          <%= 'selected' if variant_ids.include?(variant.id) %>>
+          <%= variant.full_context %></option>
+      <% end %>
+    </select>
+  </div>
+  <br>
+  <div id="variant_qty_requirements">
+    <label class="control-label">Order must contain 'x' amount of these variants</label>
+    <select id='variant_qty_select' name='promotion[rules][variant][match_policy]' class="form-control">
+      <option <%= 'selected' if !rule.nil? && rule.preferences[:match_policy] == 'any' %> value="any">At least one</option>
+      <option <%= 'selected' if !rule.nil? && rule.preferences[:match_policy] == 'all' %> value="all">All</option>
+      <option <%= 'selected' if !rule.nil? && rule.preferences[:match_policy] == 'none' %> value="none">None</option>
+    </select>
+  </div>
+</div>

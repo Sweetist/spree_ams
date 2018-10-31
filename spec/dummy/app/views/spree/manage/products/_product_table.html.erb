@@ -1,0 +1,85 @@
+<div class="table-scrollable <%= 'toggle-variants hidden' unless @product.has_variants? || @product.option_types.present?%>">
+  <table class="table table-hover" id='variants-table' data-paging='false'>
+    <% use_display_name = @product.any_variants_has_display_name? %>
+    <thead>
+      <tr>
+        <th>SKU</th>
+        <% if use_display_name %>
+          <th>Disp. Name</th>
+        <% end %>
+        <% if @vendor.allow_variants %>
+          <!-- <div id="option-types-container"> -->
+          <% if ['edit', 'update', 'new', 'create'].include?(params[:action]) %>
+            <% pot_idx = 0 %>
+            <% @product.product_option_types.order('position ASC').each do |product_option_type| %>
+              <th>
+                <%= render partial: 'option_type_select', locals: {idx: pot_idx, product_option_type: product_option_type} %>
+              </th>
+              <% pot_idx += 1 %>
+            <% end %>
+            <% until pot_idx >= Sweet::Application.config.x.max_option_types %>
+              <th><%= render partial: 'option_type_select', locals: {idx: pot_idx, product_option_type: nil} %></th>
+              <% pot_idx += 1 %>
+            <% end %>
+          <% else %>
+            <% @product.product_option_types.order('position ASC').each_with_index do |product_option_type, idx| %>
+              <th>
+                Option Type <%= idx + 1 %><br>
+                <%= product_option_type.option_type.try(:presentation) %>
+              </th>
+            <% end %>
+          <% end %>
+          <!-- </div> -->
+
+        <% end %>
+        <%# @product.product_option_types.includes(:option_type).order('spree_product_option_types.position ASC').each do |pot| %>
+          <!-- <th><%#= pot.option_type.try(:presentation) %></th> -->
+        <%# end %>
+        <th>Pack/Size</th>
+        <% if inventory_on %>
+          <th>On Hand</th>
+          <th>Available</th>
+          <th>Committed</th>
+        <% end %>
+        <th>Price</th>
+        <th>Min. Order Qty</th>
+        <% if @vendor.lot_tracking %>
+          <th class='track-lot-container'>Lot Tracking</th>
+        <% end %>
+        <% if @current_order %>
+          <th class='no-sort modal-hide'>
+            Quantity
+          </th>
+        <% end %>
+        <th class='no-sort'></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if @avvs.present? %>
+        <% @avvs.each do |avv| %>
+          <%= render partial: 'spree/manage/products/variant_table', locals: {f: f, avv: avv, variant: avv.variant, inventory_on: inventory_on, order_type: order_type, use_display_name: use_display_name } %>
+        <% end %>
+      <% else %>
+        <% @product.variants.active.each do |variant| %>
+          <%= render partial: 'spree/manage/products/variant_table', locals: {f: f, avv: @avv, variant: variant, inventory_on: inventory_on, order_type: order_type, use_display_name: use_display_name } %>
+        <% end %>
+      <% end %>
+          <!-- TODO UX for custom attributes -->
+          <%# unless params[:action] == 'edit' %>
+            <%# variant.custom_attrs.keys.each do |channel| %>
+              <%#= render partial: "spree/manage/products/channels/#{channel}/variant_show", locals: {variant: variant} %>
+            <%# end %>
+          <%# end %>
+
+      <%# else %>
+        <%#= render partial: 'spree/manage/products/variant_table', locals: {f: f, variant: @product.master, inventory_on: inventory_on, order_type: order_type } %>
+        <%# @product.master.custom_attrs.keys.each do |channel| %>
+          <%#= render partial: "spree/manage/products/channels/#{channel}/variant_show", locals: {variant: @product.master} %>
+        <%# end %>
+      <%# end %>
+    </tbody>
+  </table>
+  <% unless @product.persisted? %>
+    <span class='help-block-italic'>Must save product before adding variants</span>
+  <% end %>
+</div>

@@ -1,0 +1,119 @@
+<% colspan = 2 %>
+<% if States[@order.state] >= States['shipped'] %>
+  <% colspan += 1 %>
+  <% colspan += 1 if @order.vendor.try(:receive_orders) %>
+<% end %>
+<% colspan += 1 if @order.vendor.try(:include_total_weight) %>
+<% if @order.line_item_adjustments.exists? %>
+  <% @order.line_item_adjustments.promotion.eligible.group_by(&:label).each do |label, adjustments| %>
+  <tr class="adjustment">
+    <td colspan="<%= colspan_left %>"></td>
+    <td colspan="<%= colspan %>">
+      <%= adjustments.first.source.try(:promotion).try(:name) || label %>:
+    </td>
+    <td>
+      <%= display_sweet_price(adjustments.sum(&:amount), @order.currency) %>
+    </td>
+  </tr>
+  <% end %>
+<% end %>
+<!-- END LINE ITEM ADUSTMENTS -->
+<!-- BEGIN ORDER LEVEL ADJUSTMENTS -->
+<% @order.adjustments.eligible.each do |adjustment| %>
+  <% next if (adjustment.source_type == 'Spree::TaxRate') and (adjustment.amount == 0) %>
+  <tr class="adjustment">
+    <td colspan="<%= colspan_left %>"></td>
+    <td colspan="<%= colspan %>">
+      <%= adjustment.source.try(:promotion).try(:name) || adjustment.label %>:
+    </td>
+    <td>
+      <div class="right"><%= display_sweet_price(adjustment.amount, @order.currency) %></div>
+    </td>
+  </tr>
+<% end %>
+<!-- END ORDER LEVEL ADJUSTMENTS -->
+<!-- BEGIN TAX ADJUSTMENTS -->
+<% if @order.all_adjustments.eligible.tax.exists? %>
+  <% @order.all_adjustments.eligible.tax.group_by(&:label).each do |label, adjustments| %>
+  <tr class="adjustment">
+    <td colspan="<%= colspan_left %>"></td>
+    <td colspan="<%= colspan %>">
+      <%= Spree.t(:tax) %> <%= label %>:
+    </td>
+    <td>
+      <%= display_sweet_price(adjustments.sum(&:amount), @order.currency) %>
+    </td>
+  </tr>
+  <% end %>
+<% end %>
+<!-- END TAX ADJUSTMENTS -->
+<!-- BEGIN SHIPPING METHODS -->
+<% no_ship_products = @order.no_shipping_method_products %>
+<% available_methods = @order.available_shipping_methods %>
+<%= render partial: 'shipping', locals: {colspan: colspan, colspan_left: colspan_left, available_methods: available_methods} %>
+<% unless available_methods.present? || @order.line_items.none? || States[@order.state] >= States['shipped']%>
+  <% if no_ship_products.present? %>
+    <tr>
+      <td class="alert alert-warning" colspan='100%'>Some products in this order do not have a shipping method set.
+        <ul>
+          <% no_ship_products.each do |product| %>
+            <li><%= product.name %></li>
+          <% end %>
+        </ul>
+      </td>
+    </tr>
+  <% elsif @order.vendor.shipping_methods.none? {|sm| sm.include?(@order.ship_address)} %>
+    <tr>
+      <td class="alert alert-warning" colspan='100%'>
+        There are no valid shipping methods for the given shipping address.  Please edit your account shipping address or contact <%= @order.vendor.name %>.
+      </td>
+    </tr>
+  <% else %>
+    <tr>
+      <td class="alert alert-warning" colspan='100%'>
+        There are no shipping methods defined that cover all of the products in this order.  Please contact <%= @order.vendor.name %>.
+      </td>
+    </tr>
+  <% end %>
+<% end %>
+<!-- END SHIPPING METHODS -->
+
+<!-- BEGIN SHIPPING ADJUSTMENTS -->
+<% @order.shipment_adjustments.promotion.eligible.group_by(&:label).each do |label, adjustments| %>
+  <tr class="adjustment">
+    <td colspan="<%= colspan_left %>"></td>
+    <td colspan="<%= colspan %>">
+      <%= adjustments.first.source.try(:promotion).try(:name) || label %>:
+    </td>
+    <td>
+      <div class="right"><%= display_sweet_price(adjustments.sum(&:amount), @order.currency) %></div>
+    </td>
+  </tr>
+<% end %>
+<script type='text/javascript'>
+  $('#order_shipping_method_id').change(function(){
+    $(this).parents('form')[0].submit();
+  });
+
+  //takes care of the special instructions
+  var stored_text = "";
+  if (!!$.trim($("#special-instructions").val())) {
+    $('#special-instructions-div').removeClass('hidden');
+    $('#special-instructions-checkbox').val("true");
+  }
+
+  $('#special-instructions-checkbox').click(function(){
+    $('i', '#special-instructions-checkbox').toggleClass('hidden');
+    if ($('#special-instructions-checkbox').val() == "true") {
+      stored_text = $('#special-instructions').val();
+      $('#special-instructions-div').addClass('hidden');
+      $('#special-instructions').val(null);
+      $('#special-instructions-checkbox').val("false");
+    } else {
+      $('#special-instructions-div').removeClass('hidden');
+      $('#special-instructions').val(stored_text);
+      $('#special-instructions-checkbox').val("true");
+    }
+  });
+</script>
+<!-- END SHIPPING ADJUSTMENTS -->

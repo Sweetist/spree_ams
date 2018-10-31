@@ -1,0 +1,67 @@
+<% if edit %>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="form-group">
+        <%= f.label :name, "Company", class: "control-label" %>
+        <%= f.text_field :name, class: 'form-control' %>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="form-group">
+        <%= f.label :number, "Account #", class: "control-label" %>
+        <%= f.text_field :number, class: 'form-control' %>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="form-group">
+        <%= f.label :email, "Email", class: "control-label" %>
+        <%= f.text_field :email, class: 'form-control' %>
+      </div>
+      <div class="form-group">
+        <%= f.label :send_purchase_orders_emails, "Submit Purchase Order by Email" %><br>
+        <%= f.check_box :send_purchase_orders_emails, class: 'make-switch', 'data-size' => 'mini' %>
+      </div>
+    </div>
+
+    <div class='col-md-6'>
+      <div class='form-group'>
+        <%= f.label :tax_exempt_id, 'Tax ID Number', class: 'control-label' %>
+        <%= f.text_field :tax_exempt_id, class: 'form-control' %>
+      </div>
+      <div class="form-group">
+        <%= f.label :payment_terms_id, "Payment Terms", class: "control-label" %>
+        <%= f.collection_select :payment_terms_id, Spree::PaymentTerm.all, :id, :name, {include_blank: true}, {class: "form-control"} %>
+      </div>
+    </div>
+  </div>
+
+
+  <h4 class="form-section">Billing Address</h4>
+  <div id='bill-address-container' class= "<%= 'hidden' if @ship_address && @ship_address.same_address?(@bill_address) && @ship_address.persisted? && @bill_address.persisted? %>">
+    <%= f.fields_for :billing_addresses, @bill_address do |ba_form| %>
+      <%= render partial: 'spree/shared/forms/address_form', locals: { f: ba_form, type: 'billing' } %>
+    <% end %>
+  </div>
+  <br>
+
+<% end %>
+
+<script type="text/javascript">
+  $(document).ready(function(){
+    $('.country-select').change(function(){
+      $.ajax({
+        url: '/manage/vendors/update_states',
+        type: 'GET',
+        dataType: 'script',
+        data: {
+          address_type: $(this).data('type'),
+          country_id: this.value
+        }
+      });
+    });
+
+  });
+</script>

@@ -1,0 +1,23 @@
+<% @vendor = current_company %>
+<% start_at = Time.current.beginning_of_hour %>
+<% if @schedule %>
+  $('#<%= "#{@schedule.id}_row_1" %>').replaceWith("<%= j render(partial: 'spree/manage/standing_order_schedules/schedule_row_1', locals: {schedule: @schedule, start_at: start_at}) %>");
+  $('#<%= "#{@schedule.id}_row_2" %>').replaceWith("<%= j render(partial: 'spree/manage/standing_order_schedules/schedule_row_2', locals: {schedule: @schedule}) %>");
+<% end %>
+$('.schedule_action').click(function(){
+  var scheduleId = $(this).data('schedule-id');
+  $(".schedule_action[data-schedule-id='" + scheduleId + "']").attr('disabled', true);
+});
+var rowSpan = parseInt($('#<%= "#{@schedule.id}_row_1 td:first-child" %>').attr('rowspan'));
+<% if flash[:error].present? %>
+  rowSpan += 1;
+  $('#<%= "#{@schedule.id}_row_1 td:first-child" %>').attr('rowspan', rowSpan);
+  $('#<%= "#{@schedule.id}_row_1 td:nth-child(2)" %>').attr('rowspan', rowSpan);
+  $('#<%= "#{@schedule.id}_row_2" %>').after("<tr><td colspan='100%'><div class='alert alert-danger alert-auto-dissapear'><%= flash[:error] %></div></td></tr>");
+<% end %>
+<% if flash[:errors].present? %>
+  rowSpan += 1;
+  $('#<%= "#{@schedule.id}_row_1 td:first-child" %>').attr('rowspan', rowSpan);
+  $('#<%= "#{@schedule.id}_row_1 td:nth-child(2)" %>').attr('rowspan', rowSpan);
+  $('#<%= "#{@schedule.id}_row_2" %>').after("<tr><td colspan='100%'> <%= j render(partial: 'spree/shared/errors') %></td></tr>");
+<% end %>

@@ -1,0 +1,15 @@
+<div class="title-wrapper" style='background-color: <%= @vendor.customer_viewable_attribute.banner_color %>'>
+  <% bg_img_url = @vendor.banner_image_url %>
+  <% banner_style = "background-color: #{@vendor.customer_viewable_attribute.banner_color};" %>
+  <% banner_style += " background-image: url(#{@vendor.banner_image_url});" if bg_img_url %>
+  <div class="container title-bg-container" style="<%= banner_style %>">
+    <div class="container-inner">
+      <h1 style="<%= @vendor.cva.inline_banner_text_style %>">
+        <span><%= @vendor.cva.pages_catalog.fetch('banner_text', {}).fetch('content', '') %></span>
+      </h1>
+    </div>
+  </div>
+</div>
+<% if @vendor.customer_viewable_attribute.announcement_state && !@vendor.customer_viewable_attribute.announcement.empty? %>
+  <div class="announcement" ><%= auto_link(@vendor.customer_viewable_attribute.announcement) %></div>
+<% end %>

@@ -1,0 +1,39 @@
+      <!-- Order Items Summary -->
+      <table>
+        <tr><td colspan=4><strong>Order Details</strong></td></tr>
+        <tr>
+          <th class="order-table item-name">Item Name</th>
+          <!-- <th class="order-table price">Price</th> -->
+          <th class="order-table qty">Quantity</th>
+          <th class="order-table subtotal"></th>
+        </tr>
+        <% @order.line_items.includes(:variant).each do |item| %>
+          <tr>
+            <!--<td><%#= item.variant.sku %></td>-->
+            <td>
+              <%= item.item_name %>
+            </td>
+            <!-- <td class="center"><%#= display_sweet_price(item.discount_price, item.currency) %></td> -->
+            <td class="center"><%= item.quantity %></td>
+            <td class="center"><%#= item.display_amount %></td>
+          </tr>
+        <% end %>
+
+        <% if @order.line_item_adjustments.exists? %>
+          <% @order.line_item_adjustments.promotion.eligible.group_by(&:label).each do |label, adjustments| %>
+            <tr>
+              <td class="right" colspan=3><%= adjustments.first.source.try(:promotion).try(:name) || label %>:</td>
+              <td class="center"><%= display_sweet_price(adjustments.sum(&:amount), @order.currency) %></td>
+            </tr>
+          <% end %>
+        <% end %>
+
+        <tr>
+          <td class="right">
+            <strong><%= Spree.t('order_mailer.confirm_email.total') %></strong>
+          </td>
+          <td class="center">
+            <strong><%= @order.item_count %></strong>
+          </td>
+        </tr>
+      </table>

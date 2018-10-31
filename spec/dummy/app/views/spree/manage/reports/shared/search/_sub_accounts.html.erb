@@ -1,0 +1,19 @@
+<div class='form-group'>
+  <label class="control-label">Aggregate Sub Accounts</label>
+  <input id='sub_accounts' type="checkbox" name="sub_accounts" class="make-switch" data-size="mini">
+</div>
+
+<script>
+if (localStorage['customer-reports-sub-accounts']) {
+  if(localStorage['customer-reports-sub-accounts'] === 'true') {
+    $('#sub_accounts').bootstrapSwitch('state', true);
+    document.cookie = "sub_accounts = true";
+  } else {
+    $('#sub_accounts').bootstrapSwitch('state', false)
+    document.cookie = "sub_accounts = false";
+  }
+} else {
+  $('#sub_accounts').bootstrapSwitch('state', false)
+  document.cookie = "sub_accounts = false";
+}
+</script>

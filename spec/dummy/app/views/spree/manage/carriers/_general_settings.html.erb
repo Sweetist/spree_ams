@@ -1,0 +1,24 @@
+<h4 class='form-section'>General Settings</h4>
+<div class='row'>
+  <div class='col-md-6'>
+    <div class='col-md-12'>
+      <div class="form-group">
+        <%= f.label :default_weight, Spree.t('active_shipping.default_weight'), class: "control-label" %><br>
+        <%= f.number_field :default_weight, class: 'form-control' %>
+      </div>
+    </div>
+    <div class='col-md-12'>
+      <div class="price-input">
+        <%= f.label :handling_fee, Spree.t('active_shipping.handling_fee'), class: "control-label" %>
+        <label class="currency-label shipment-currency" style='top:34px'><%= currency_symbol(@vendor.currency) %></label>
+        <%= number_field_tag 'company[handling_fee]', (@vendor.handling_fee.to_f/100), step: 0.01, class: 'form-control price-field line-item-price', id: 'company_handling_fee' %>
+      </div>
+    </div>
+    <div class='col-md-12'>
+      <div class="form-group">
+        <%= f.label :max_weight_per_package, Spree.t('active_shipping.max_weight_per_package'), class: "control-label" %><br>
+        <%= f.number_field :max_weight_per_package, class: 'form-control' %>
+      </div>
+    </div>
+  </div>
+</div>

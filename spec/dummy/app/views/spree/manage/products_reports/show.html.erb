@@ -1,0 +1,180 @@
+<%= content_for :head_title do %>
+  Reports
+<% end %>
+
+<%= content_for :page_title do %>
+  Product Sales Report
+<% end %>
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <span>Products Report</span>
+    </li>
+  </ul>
+  <div class="page-toolbar">
+    <div class="btn-group pull-right">
+
+    </div>
+  </div>
+<% end %>
+
+<%= form_for :q, url: manage_products_report_path, method: :get, html:{ class: "form", id: "production-filter"} do |f| %>
+
+  <div class="portlet light bordered">
+    <div class="portlet-body">
+
+      <div class='col-md-4'>
+        <%= render partial: 'spree/manage/reports/shared/search/order_status' %>
+      </div>
+      <div class='col-md-8'>
+        <div class='row'>
+          <div class='col-xs-12'>
+            <%= render partial: 'spree/manage/reports/shared/search/customer_accounts' %>
+          </div>
+          <div class='col-xs-12'>
+            <%= render partial: 'spree/manage/reports/shared/search/variants' %>
+          </div>
+        </div>
+        <div class='row'>
+          <div class='col-sm-6'>
+            <div class='form-group'>
+              <label class='control-label'><%= "#{@vendor.order_date_text.to_s.capitalize} Date".strip %></label>
+              <%= render partial: 'spree/shared/forms/fields/date_range', locals: {f: f, date_key: :delivery_date, company: @vendor} %>
+            </div>
+          </div>
+          <div class='col-sm-6'>
+            <div class='form-group'>
+              <label class='control-label'>Submitted On</label>
+              <%= render partial: 'spree/shared/forms/fields/date_range', locals: {f: f, date_key: :completed_at, company: @vendor} %>
+            </div>
+          </div>
+          <div class='col-sm-6'>
+            <div class='form-group'>
+              <label class='control-label'>Approved On</label>
+              <%= render partial: 'spree/shared/forms/fields/date_range', locals: {f: f, date_key: :approved_at, company: @vendor} %>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class='form-group'>
+              <label for="product_show_count">Products shown in graph</label>
+              <select name="product_show_count" class="form-control" id="product_show_count">
+                <option value="10" <%= 'selected' if params[:product_show_count] == '10' %>>10</option>
+                <option value="20" <%= 'selected' if params[:product_show_count] == '20' || params[:product_show_count].blank? %>>20</option>
+                <option value="30" <%= 'selected' if params[:product_show_count] == '30' %>>30</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-xs-12">
+            <div class='pull-right margin-top-25'>
+              <button class="btn btn-primary">Update Report</button>
+              <%= link_to "Reset", manage_products_report_path, class: "btn btn-default" %>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- END col-md-8 -->
+      <div class="clearfix"></div>
+
+    </div>
+  </div>
+
+  <div class="clearfix"></div>
+  <div class="portlet light bordered">
+    <div class="portlet-title">
+      <div class="caption">
+        <select class="form-control" name="chart_content" id="chart-select">
+          <% @content_options.each do |co| %>
+            <option value="<%= co.fetch(:slug) %>"><%= co.fetch(:name) %></option>
+          <% end %>
+        </select>
+      </div>
+      <div style="padding-left: 160px; padding-top: 15px;">
+        <% if @total_revenue > 0 %>
+          <div class="chart-total" id="chart-total-revenue">Total: <%= display_sweet_price(@total_revenue, @vendor.currency) %></div>
+        <% end %>
+        <% if @total_uniq_purchases > 0 %>
+          <div class="chart-total hidden" id="chart-total-unique-purchases">Total: <%= @total_uniq_purchases %></div>
+        <% end %>
+        <% if @total_quantity > 0 %>
+          <div class="chart-total hidden" id="chart-total-quantity">Total: <%= @total_quantity %></div>
+        <% end %>
+      </div>
+    </div>
+    <div class="portlet-body">
+      <div class="chart-block">
+        <div id="revenue-product-chart" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+      </div>
+      <div class="chart-block hidden">
+        <div id="unique-purchases-product-chart" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+      </div>
+      <div class="chart-block hidden">
+        <div id="quantity-product-chart" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<div class="table">
+  <table class="table table-hover table-striped" id="production" data-title='Product Sales Report <%= display_vendor_date_format(@dates[:start], @vendor.date_format) %> - <%= display_vendor_date_format(@dates[:end], @vendor.date_format) %>'>
+    <thead>
+      <tr>
+        <th>Product Name</th>
+        <th>Pack / Size</th>
+        <th>Sku</th>
+        <th>Product Revenue</th>
+        <th>Unique Purchases</th>
+        <th>Quantity</th>
+        <th>Avg Price</th>
+        <th>Total Weight</th>
+      </tr>
+
+    </thead>
+    <tbody class="product-products-report-row">
+      <% @line_items.each do |li| %>
+        <tr>
+          <td><%= li.variant.full_display_name %></td>
+          <td><%= li.variant.pack_size %></td>
+          <td><%= li.sku %></td>
+          <td><%= display_sweet_price(li.revenue, li.currency) %></td>
+          <td><%= li.uniq_purchases %></td>
+          <td><%= li.quantity %></td>
+          <td><%= display_sweet_price(li.avg_price, li.currency) %></td>
+          <td><%= "#{li.total_weight} #{li.variant.weight_units}" %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+</div>
+
+<script type="text/javascript">
+  $(function() {
+
+    $('#revenue-product-chart').highcharts(<%= raw @revenue_chart_data.to_json %>);
+    $('#unique-purchases-product-chart').highcharts(<%= raw @uniq_purchases_chart_data.to_json %>);
+    $('#quantity-product-chart').highcharts(<%= raw @quantity_chart_data.to_json %>);
+
+    $('#chart-select').change(function(){
+
+      id = $(this.selectedOptions).val();
+      $('.chart-block').each(function(){
+        if (!$(this).hasClass('hidden')){
+          $(this).addClass('hidden');
+        }
+      });
+      $('.chart-total').each(function(){
+        if (!$(this).hasClass('hidden')){
+          $(this).addClass('hidden');
+        }
+      });
+
+      $("#chart-total-" + id).removeClass('hidden');
+      $("#" + id + "-product-chart").parent().removeClass('hidden');
+      $("#" + id + "-product-chart").highcharts().reflow();
+    });
+  });
+</script>

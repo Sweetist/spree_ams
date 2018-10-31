@@ -1,0 +1,89 @@
+<%= content_for :head_title do %>
+  Overview
+<% end %>
+
+<%= content_for :page_title do %>
+  Overview
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+    </li>
+  </ul>
+  <div class="page-toolbar">
+    <div class="btn-group pull-right">
+      <%= link_to new_manage_order_path, class: 'btn green-jungle' do %>
+        <i class='fa fa-plus'></i> <%= Spree.t(:new_sales_order) %>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
+<div class="row">
+  <div class="col-lg-3 col-md-3 hidden-sm hidden-xs">
+    <div class="dashboard-stat blue">
+      <div class="visual">
+        <i class="fa fa-comments"></i>
+      </div>
+      <div class="details">
+        <div class="number"><%= @company.showable_variants.active.count %></div>
+        <div class="desc"> Products </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-3 col-md-3 hidden-sm hidden-xs">
+    <div class="dashboard-stat red">
+      <div class="visual">
+        <i class="fa fa-bar-chart-o"></i>
+      </div>
+      <div class="details">
+        <div class="number"><%= @company.active_customer_accounts.count %></div>
+        <div class="desc"> Active Accounts </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-3 col-md-3 hidden-sm hidden-xs">
+    <div class="dashboard-stat green">
+      <div class="visual">
+        <i class="fa fa-shopping-cart"></i>
+      </div>
+      <div class="details">
+        <div class="number"><%= @company.monthly_orders_count %></div>
+        <div class="desc"> 30 Day Sales Orders </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+    <div class="dashboard-stat purple">
+      <div class="visual">
+        <i class="fa fa-globe"></i>
+      </div>
+      <div class="details">
+        <% if current_spree_user.can_read?('basic_options', 'reports') %>
+          <div class="number"><%= display_sweet_price(@company.monthly_orders, @company.currency) %></div>
+          <div class="desc"> 30 Day Sales </div>
+        <% else %>
+          <div class="number"><%= @company.showable_variants.active.low_stock.count %></div>
+          <div class="desc"> Low Stock Products </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="clearfix"></div>
+<!-- END DASHBOARD STATS 1-->
+
+<% if current_spree_user.can_read?('basic_options', 'reports') %>
+  <% unless current_company.within_subscription_limit?('orders_per_month', current_company.month_to_date_orders_count) %>
+    <div class="alert alert-warning alert-dismissable">
+      <button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
+      <%= Spree.t('subscription_limit.orders_per_month.exceeded', limit: current_company.subscription_limit('orders_per_month')) %>
+    </div>
+  <% end %>
+  <%= render partial: 'spree/manage/root/sales_dashboard' %>
+<% else %>
+  <%= render partial: 'spree/manage/root/operations_dashboard' %>
+<% end %>

@@ -1,0 +1,59 @@
+<% override_rule_names = {'taxon' => 'category', 'item_total' => 'order_subtotal'} %>
+
+<div class="rule-selector">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="form-group">
+        <%= label_tag :promotion_rule_type, Spree.t(:add_rule_of_type), class:"control-label" %>
+        <select class="form-control">
+          <% Rails.application.config.spree.promotions.rules.each do |rule_type| %>
+          <%= type_name = rule_type.name.demodulize.underscore %>
+          <% next if type_name.include?('user') || type_name.include?("option") || (type_name.include?('variant') && !@vendor.allow_variants)%>
+            <option><%= override_rule_names.key?(type_name) ? override_rule_names[type_name].titleize : type_name.titleize %></option>
+          <% end %>
+        </select>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="form-group">
+        <a class="promo-add btn btn-primary form-control" id="add-rule">Add Rule</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="promotion-policy-select">
+  <div class="row">
+   <% Spree::Promotion::MATCH_POLICIES.each do |policy| %>
+     <div class="col-md-6">
+       <div class="form-group">
+         <div class="radio">
+           <%= f.label "match_policy_#{policy}" do %>
+             <%= f.radio_button :match_policy, policy %>
+             <%= Spree.t "promotion_form.match_policies.#{policy}" %>
+           <% end %>
+         </div>
+       </div>
+     </div>
+   <% end %>
+ </div>
+ <br>
+</div>
+
+<div class="rule_types">
+  <% Rails.application.config.spree.promotions.rules.each do |rule_type| %>
+    <% type_name = rule_type.name.demodulize.underscore %>
+    <% next if type_name.downcase.include?("user") || type_name.downcase.include?("option")%>
+    <% rule = @promotion_rules.detect{|rule| rule.type == rule_type.name} %>
+    <div class="rule_type <%= 'hidden' if rule.nil? %>">
+      <div id="rule_type_<%= override_rule_names.key?(type_name) ? override_rule_names[type_name] : type_name %>">
+        <div class="portlet blue-hoki box rule_options">
+          <!-- <a class="close-button" href=''><i class="fa fa-times"></i></a> -->
+          <%= render partial: "spree/manage/promotions/rules/#{type_name}", locals: {rule: rule} %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>

@@ -1,0 +1,9 @@
+<div class="input-group input-daterange">
+  <input type="text" class="form-control date-picker" name="start_date"
+    value="<%= params[:start_date].present? ? params[:start_date] :  "" %>"
+    data-date-format="<%= @vendor.date_format %>">
+  <span class="input-group-addon"> to </span>
+  <input type="text" class="form-control date-picker" name="end_date"
+    value="<%= params[:end_date].present? ? params[:end_date] :  "" %>"
+    data-date-format="<%= @vendor.date_format %>">
+</div>

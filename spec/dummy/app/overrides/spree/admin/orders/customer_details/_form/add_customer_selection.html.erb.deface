@@ -1,0 +1,2 @@
+<!-- insert_after 'div[data-hook="customer_guest"]' -->
+<%= render partial: 'spree/admin/customers/customer_select' %>

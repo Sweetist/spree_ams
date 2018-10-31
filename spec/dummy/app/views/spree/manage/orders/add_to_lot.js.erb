@@ -1,0 +1,35 @@
+<% @line_item.possible_lots.includes(:stock_item_lots).each do |lot| %>
+  if($('.lot-selection-row[data-lot-id="<%= lot.id %>"]').length){
+    $('.qty_available', '.lot-selection-row[data-lot-id="<%= lot.id %>"]').text('<%= lot.stock_item_lots.detect {|item_lot| item_lot.stock_item.try(:stock_location_id) == @line_item.order.shipments.first.try(:stock_location_id)}.try(:count) %>');
+  }else{
+    $('#existing-line-item-lots').append("<%= j render(partial: 'spree/manage/orders/lots/lot_selection_row', locals: { order: @order, line_item: @line_item, lot: lot, qty: 0, hidden: false, unsellable: false } ) %>");
+  }
+  <% if @lots_hash.has_key?(lot.id.to_s) %>
+    let lot_qty = parseFloat($('.submit_lot_count', '.lot-selection-row[data-lot-id="<%= lot.id %>"]').val()) + parseFloat('<%= @lots_hash[lot.id.to_s] %>');
+    $('.submit_lot_count', '.lot-selection-row[data-lot-id="<%= lot.id %>"]').val(lot_qty);
+    let $el = $('tr.lot-selection-row[data-lot-id="<%= lot.id %>"]');
+    let highlightColor = '#FAEAA9';
+    let ogColor = '#FFFFFF';
+    $el.css('backgroundColor',highlightColor);
+    $el.animate({backgroundColor: ogColor}, 2000);
+  <% end %>
+<% end %>
+<% unassigned_count = @line_item.variant.unassigned_inventory_at(@order.shipments.first.try(:stock_location)) %>;
+$('.error-row', 'tbody#unassigned').remove();
+<% if flash[:errors].present? %>
+  $('tbody#unassigned').append("<tr class='error-row'><td colspan='100%'><%= j render(partial: 'spree/shared/errors') %></td></tr>");
+<% else %>
+  $('#add_to_lot_id').val('');
+  $('#unassigned-count').text('<%= unassigned_count %>');
+  let newQtyToAdd = 0;
+  $('.submit_lot_count').each(function(){
+    newQtyToAdd = newQtyToAdd + parseFloat($(this).val());
+  });
+  $('#add_to_lot_qty').val(Math.max(parseFloat('<%= @line_item.quantity %>') - newQtyToAdd, 0));
+<% end %>
+
+<% if unassigned_count > 0 %>
+  $('#assign-lots-btn').removeClass('disabled');
+<% else %>
+  $('tbody#unassigned').remove();
+<% end %>

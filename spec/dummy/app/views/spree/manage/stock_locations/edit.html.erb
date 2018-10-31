@@ -1,0 +1,44 @@
+<%= content_for :head_title do %>
+  Stock Location
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li><li>
+      <%= link_to "Stock Locations", manage_stock_locations_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= @stock_location.name %>
+    </li>
+  </ul>
+  <div class="page-toolbar">
+    <div class="btn-group pull-right">
+
+    </div>
+  </div>
+<% end %>
+<div class="row">
+  <div class="portlet light ">
+    <div class="portlet-title">
+      <div class="caption caption-md">
+        <span class="caption-subject font-blue-madison bold uppercase">Stock Location: <%= @stock_location.name %></span>
+      </div>
+    </div>
+    <div class="portlet-body">
+
+      <%= form_for [:manage, @stock_location], html: {class: 'form'} do |f| %>
+        <div class='form-body'>
+          <%= render partial: 'form', locals: {f: f, edit: true} %>
+        </div>
+        <div class="form-actions">
+          <%= f.submit Spree.t(:update), class: 'btn btn-primary pull-right' %>
+          <%= link_to Spree.t(:Cancel), manage_stock_location_path(@stock_location), class: 'btn btn-default pull-right margin-right-10' %>
+        </div>
+      <% end %>
+    </div>
+  </div><!-- /.portlet-body -->
+</div>

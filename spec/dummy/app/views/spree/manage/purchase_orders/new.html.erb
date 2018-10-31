@@ -1,0 +1,229 @@
+<%= content_for :head_title do %>
+  Purchase Orders
+<% end %>
+
+<%= content_for :page_title do %>
+	<span class="order-id">
+		Purchase Orders
+	</span>
+<% end %>
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+		<li>
+      <%= link_to "Purchase Orders", manage_purchase_orders_path %>
+			<!--<i class="fa fa-circle"></i>-->
+    </li>
+  </ul>
+	<div class="page-toolbar">
+    <div class="btn-group pull-right">
+      <%= link_to "Back to All Purchase Orders", manage_purchase_orders_path, class: "btn green" %>
+    </div>
+  </div>
+<% end %>
+
+<div class="content">
+  <div class="row">
+    <!-- <div class="col-md-12"> -->
+      <%#= form_for [:manage, @order], html: {id: "single-order-form"}, remote: true do |order_form|%>
+      <%= form_for @order, url: manage_purchase_orders_path, html: {method: :post, id: "single-order-form"}, remote: true do |order_form| %>
+      <%= render partial: 'spree/shared/purchase_orders/order_details' %>
+      <div class="col-md-6 col-sm-12" id='account-details'>
+        <div class="portlet blue-hoki box">
+          <div class="portlet-title">
+            <div class="caption">
+              <i class="fa fa-cogs"></i>Order Information
+            </div>
+          </div>
+          <div class="portlet-body">
+            <div class="row static-info">
+              <div class="col-md-5 name"> Vendor Name: </div>
+              <div class="col-md-7 value">
+                <%= order_form.collection_select(:account_id, @company.vendor_accounts.active.order('fully_qualified_name ASC'), :id, :fully_qualified_name, {include_blank: true}, {id: 'order-customer-id', class: "form-control select2 select2-hidden-accessible", placeholder: "Choose Supplier"}) %>
+              </div>
+            </div>
+
+            <%= render partial: 'account_address_fields' %>
+            <button id='save-account' class='btn pull-right btn-primary hidden'>
+              <i class='fa fa-check'></i>Save
+            </button>
+            <div class='clearfix'></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="clearfix"></div>
+
+      <div class='col-md-12'>
+        <div class="table-scrollable">
+          <table class="table table-striped table-hover table-checkable" id="sample_1">
+            <thead>
+              <%#= search_form_for [:manage, @search], class: "form" do |f| %>
+              <tr>
+                <th></th>
+                <th>
+                  <%= sort_link @search, :name, "Name" %>
+                </th>
+                <th>
+                  <%= sort_link @search, :sku, "Sku" %>
+                </th>
+                <th>
+                  <%= sort_link @search, :lot_number, 'Lot Number' %>
+                </th>
+                <th>
+                  <%= sort_link @search, :pack_size, "Pack/Size" %>
+                </th>
+                <% if @company.try(:po_include_unit_weight) %>
+                  <th>Weight</th>
+                <% end %>
+                <th>
+                  <%= sort_link @search, :price, "Price" %>
+                </th>
+                <th>
+                  <%= sort_link @search, :quantity, "Quantity" %>
+                </th>
+                <% if @company.try(:po_include_total_weight) %>
+                  <th>Tot Wt</th>
+                <% end %>
+                <th>
+                  <%= sort_link @search, :total, "Total" %>
+                </th>
+              </tr>
+              <tr role="row" class="filter">
+
+              </tr>
+            </thead>
+            <tbody>
+              <tbody>
+                <%= render partial: 'line_item', collection: @line_items, locals: { order_form: order_form } %>
+                <% if order_can_add_products? %>
+                <tr id='variant-search-row'>
+                  <td>
+                    <%= link_to '#', class: 'btn btn-xs red delete-input-row-btn', id: 'clear-new-line-item' do %>
+                      <i class='fa fa-times'></i>
+                    <% end %>
+                  </td>
+                  <td id='variant-select-cell' colspan="5">Loading Products <%= image_tag 'frontend/loading.gif' %></td>
+                  <td colspan="1" class='form-group'>
+                    <input name='line_item_variant_qty' type='number' min='0' step='any' id='new-line-item-qty' class='form-control new-item-required'>
+                  </td>
+                  <td colspan="100%">
+                    <button id='add-new-line-item-button' class='btn green-jungle'>
+                      <i class='fa fa-plus'></i> Add
+                    </button>
+                  </td>
+                </tr>
+                <%#= render partial: 'variant_search_row' %>
+                <% end %>
+                <tr id='subtotals-row'></tr>
+              </tbody>
+              <tbody id='all-adjustments' style='border-top: none;'>
+                <%#= render partial: 'adjustments' %>
+              </tbody>
+              <tbody>
+                <%= render partial: 'total_row' %>
+              </tbody>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="single-order-buttons" id='edit-order-buttons'>
+        <%#= submit_tag "Add Items to Order", class: 'btn btn-primary', id: 'update-button' %>
+      </div>
+
+    <% end %>
+
+    <!-- </div> -->
+  </div>
+</div>
+
+<% if current_company.lot_tracking %>
+  <%= render partial: 'spree/manage/purchase_orders/handle_lots' %>
+  <%= render partial: 'spree/manage/lots/modal/new' %>
+<% end %>
+
+<script type="text/javascript">
+  var date_selected = false;
+  var date = null;
+
+  var getAccountDetails = function(accountId, order_number){
+    if(order_number === ''){
+      $('#single-order-form').submit();
+    }else{
+      $.ajax({
+        url: '/manage/purchase_orders/vendor_accounts.js' ,
+        type: 'GET',
+        dataType: 'script',
+        data: {
+          account_id: accountId,
+          order_number: order_number,
+          date_selected: date_selected
+        }
+      });
+    }
+    // $('#order-customer-id').select2('enable', false);
+    $('#save-account').addClass('disabled');
+  };
+
+  var loadVariantSearchRow = function(){
+    $.ajax({
+      url: '/manage/purchase_orders/variant_search.js',
+      type: 'GET',
+      dataType: 'script'
+    });
+  }
+
+  var updateReceiveAt = function(stockLocationId){
+    $.ajax({
+      url: '/manage/purchase_orders/receive_at',
+      type: 'GET',
+      dataType: 'script',
+      data: {
+        stock_location_id: stockLocationId
+      }
+    });
+  }
+
+  $(document).ready(function(){
+    loadVariantSearchRow();
+    $('#clear-new-line-item').click(function(e){
+      e.preventDefault();
+      $('#new-line-item-select').select2('val', '');
+      $('#new-line-item-qty').val('');
+    });
+    $('#order-customer-id').change(function(){
+      var order_number = $('#full-order-number').text();
+      var accountId = $('#order-customer-id option:selected').val();
+      if(typeof accountId !== "undefined"){
+        getAccountDetails(accountId, order_number);
+      }
+      $('#order-user-id').empty();
+      $('.value', '#customer-address-info').each(function(){
+        if(!$(this).hasClass('hidden')){
+          $(this).addClass('hidden');
+        }
+      });
+    });
+    $('#save-account').click(function(e){
+      e.preventDefault();
+      $('#single-order-form').submit();
+      $('#order-customer-id').select2('enable', false);
+      $('#save-account').addClass('disabled');
+    });
+
+    $('#order_po_stock_location_id').change(function(){
+      updateReceiveAt(this.value)
+    });
+    $(document).on('click', '.edit-link', function(e){
+      var $this = $(e.currentTarget);
+      $this.hide();
+      $this.parent().find('.edit-field').removeClass('hidden');
+    });
+  });
+  // if($('#order-customer-id option:selected').val() !== ''){
+  //   getAccountDetails($('#order-customer-id option:selected').val());
+  // }
+</script>

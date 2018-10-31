@@ -1,0 +1,85 @@
+<%= content_for :head_title do %>
+  Price Lists
+<% end %>
+
+<%= content_for :page_title do %>
+  Price Lists
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+		<li>
+      <%= link_to 'Price Lists', manage_price_lists_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= @price_list.try(:name) %>
+    </li>
+  </ul>
+  <div class="page-toolbar">
+    <%= link_to clone_manage_price_list_path(@price_list), method: :post, class: 'btn green-jungle' do %>
+      <i class="fa fa-copy"></i>&nbsp;Clone
+    <% end %>
+  </div>
+<% end %>
+
+<div class='row'>
+  <div class="portlet light">
+    <div class="portlet-title">
+      <div class="caption">
+        <span class="caption-subject font-blue-madison bold uppercase">
+          Price List: <%= @price_list.try(:name) %>
+        </span>
+      </div>
+    </div>
+
+    <div class="portlet-body form">
+        <!-- BEGIN FORM-->
+      <%= form_for [:manage, @price_list], remote: true,
+        html: {class: 'horizontal-form', id: 'price-list-form'} do |f| %>
+        <%= render partial: 'form', locals: {f: f} %>
+        <div class="form-actions">
+          <%= link_to manage_price_list_path(@price_list),
+            data: {:confirm => "Are you sure you want to delete this price list?"},
+            :method => :delete, class: 'btn red' do %>
+            <i class='fa fa-trash'></i>&nbsp;<%= Spree.t(:delete) %>
+          <% end %>
+          <div class='pull-right'>
+            <button class="btn btn-primary">
+              <i class="fa fa-check"></i>
+              <%= Spree.t(:update) %>
+            </button>
+            <%= link_to manage_price_lists_path, class: "btn btn-default" do %>
+              <i class="fa fa-times"></i>
+              <%= Spree.t(:Cancel) %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+        <!-- END FORM-->
+    </div>
+  </div>
+</div>
+
+<script type='text/javascript'>
+$(document).on('submit', '#price-list-form', function(e){
+  var selectVariantBy = $('#select-variants-by').val();
+  $('tbody', '#variants').each(function(){
+    if($(this).attr('id') !== 'variants_by_' + String(selectVariantBy)){
+      $(this).remove();
+    }
+  });
+
+  var selectCustomerBy = $('#select-customers-by').val();
+  $('tbody', '#accounts').each(function(){
+    if($(this).attr('id') !== 'customers_by_' + String(selectCustomerBy)){
+      $(this).remove();
+    }
+  });
+  preventSecondSubmit($(e.currentTarget), e);
+});
+</script>

@@ -1,0 +1,40 @@
+
+<body class='mailer'>
+  <div class='mailer'>
+    <table class="body mailer">
+      <tr>
+        <td class="center" align="center" valign="top">
+          <center>
+            <%= render partial: 'spree/shared/base_mailer_header' %>
+            <table class="container">
+              <tr>
+                <td>
+                  <table class="row">
+                    <tr>
+                      <td class="wrapper last">
+                        <table class="twelve columns">
+                          <tr>
+                            <td>
+                              <% if content_for? :preview_body %>
+                                <%= yield(:preview_body) %>
+                              <% else %>
+                                <%= yield %>
+                              <% end %>
+                            </td>
+                            <td class="expander"></td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+                  </table>
+                  <%= render partial: 'spree/shared/base_mailer_footer' %>
+                <!-- container end below -->
+                </td>
+              </tr>
+            </table>
+          </center>
+        </td>
+      </tr>
+    </table>
+  </div>
+</body>

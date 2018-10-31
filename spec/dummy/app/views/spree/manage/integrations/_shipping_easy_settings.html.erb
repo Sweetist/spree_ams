@@ -1,0 +1,32 @@
+
+  <div class="form-body">
+    <div class="row static-info">
+      <% Spree::ShippingEasyIntegration::Item::SHIPPING_EASY_SWITCHER_FIELDS.each do |field|%>
+        <div class="row">
+          <div class="col-md-3 name"><%= "#{field.titleize}"%></div>
+          <div class="col-md-9 value">
+            <%= @integration.send("shipping_easy_#{field}").to_bool ? 'Yes' : 'No' %>
+          </div>
+        </div>
+      <br>
+      <% end %>
+      <div class="row">
+        <div class="col-md-3 name">Fractional Line Quantity</div>
+        <div class="col-md-9 value">
+          <%= Spree.t(@integration.shipping_easy_round, scope: :round_method) %>
+        </div>
+      </div>
+      <br>
+      <% Spree::ShippingEasyIntegration::Item::SHIPPING_EASY_FORM_FIELDS.each do |field|%>
+        <div class="row">
+          <div class="col-md-3 name"><%= "Shipping Easy #{field.titleize}" %></div>
+          <div class="col-md-9 value">
+            <%= @integration.send("shipping_easy_#{field}") %>
+          </div>
+        </div>
+      <br>
+      <% end %>
+      <%= render partial: "spree/manage/integrations/shared/settings", locals: { item: @integration } %>
+    </div>
+  </div>
+</div>

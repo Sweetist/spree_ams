@@ -1,0 +1,36 @@
+<% content_for :page_title do %>
+  <%#= Spree.t(:users) %>
+  <%= "Payment Terms" %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <%#= button_link_to Spree.t(:new_user), new_admin_user_url, :class => "btn-success", :icon => 'add', :id => 'admin_new_user_link' %>
+  <%= button_link_to "New Payment Term", new_admin_payment_term_url, :class => "btn-success", :icon => 'add', :id => 'admin_new_payment_term_link' %>
+<% end %>
+
+
+<table class="table" id="listing_users" data-hook>
+  <thead>
+    <tr data-hook="admin_companies_index_headers">
+      <th>Payment Terms</th>
+      <th># Days to Pay from End of Invoice</th>
+      <th>Payment Due Before Order Submit</th>
+      <th data-hook="admin_companies_index_header_actions" class="actions"></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @payment_terms.each do |payment|%>
+      <tr id="<%= spree_dom_id payment %>" data-hook="admin_payment_terms_index_rows">
+        <td><%= payment.name %></td>
+        <td><%= payment.num_days %></td>
+        <td><%= payment.pay_before_submit ? Spree.t(:say_yes) : Spree.t(:say_no) %>
+        <td data-hook="admin_payment-terms_index_row_actions" class="actions actions-2 text-right">
+          <%= link_to_edit payment, :no_text => true %>
+          <%= link_to_delete payment, :no_text => true %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%#= paginate @companies %>

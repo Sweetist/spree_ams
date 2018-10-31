@@ -1,0 +1,31 @@
+<tr id='<%= "#{schedule.id}_row_2" %>'>
+  <% btn_class = "schedule_action" %>
+  <td>
+    <% if schedule.skip %>
+      <%= link_to "Enqueue", manage_standing_order_schedule_enque_path(schedule, standing_order_id: schedule.standing_order_id), class: "btn btn-xs btn-info #{btn_class}", data: { 'schedule-id' => schedule.id }, method: :put, remote: true %>
+    <% elsif schedule.will_perform?(:remind) || schedule.will_perform?(:create) || schedule.will_perform?(:process) %>
+      <%= link_to "Skip", manage_standing_order_schedule_skip_path(schedule, standing_order_id: schedule.standing_order_id), class: "btn btn-xs btn-info #{btn_class}", data: { 'schedule-id' => schedule.id }, method: :put, remote: true %>
+    <% end %>
+  </td>
+  <td>
+    <% if schedule.created_at %>
+      <%= sweet_full_date_time(schedule.created_at, @vendor.time_zone) %>
+    <% elsif schedule.create_at %>
+      <%= link_to "Create Order!", manage_standing_order_schedule_generate_order_path(schedule, standing_order_id: schedule.standing_order_id), class: "btn btn-xs btn-success #{btn_class}", data: { 'schedule-id' => schedule.id }, method: :put, remote: true %>
+    <% end %>
+  </td>
+  <td>
+    <% if schedule.processed_at %>
+      <%= sweet_full_date_time(schedule.processed_at, @vendor.time_zone) %>
+    <% elsif schedule.process_at %>
+      <%= link_to "Submit Order!", manage_standing_order_schedule_process_order_path(schedule, standing_order_id: schedule.standing_order_id), class: "btn btn-xs btn-success #{btn_class}", data: { 'schedule-id' => schedule.id }, method: :put, remote: true %>
+    <% end %>
+  </td>
+  <td>
+    <% if schedule.reminded_at %>
+      <%= sweet_full_date_time(schedule.reminded_at, @vendor.time_zone) %>
+    <% elsif schedule.remind_at %>
+      <%= link_to "Remind!", manage_standing_order_schedule_remind_path(schedule, standing_order_id: schedule.standing_order_id), class: "btn btn-xs btn-success #{btn_class}", data: { 'schedule-id' => schedule.id }, method: :put, remote: true %>
+    <% end %>
+  </td>
+</tr>

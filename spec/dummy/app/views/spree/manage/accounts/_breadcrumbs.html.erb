@@ -1,0 +1,19 @@
+<ul class="page-breadcrumb">
+  <li>
+    <%= link_to "Home", manage_path %>
+    <i class="fa fa-circle"></i>
+  </li>
+  <li>
+    <%= link_to "Customer Accounts", manage_accounts_path %>
+    <i class="fa fa-circle"></i>
+  </li>
+  <% if account.parent_account %>
+    <li>
+      <%= link_to "#{account.parent_account.name}", manage_customer_account_path(account.parent_account.customer, account.parent_account) %>
+      <i class="fa fa-circle"></i>
+    </li>
+  <% end %>
+  <li>
+    <span class="font-blue-madison bold uppercase"><%= account.name %></span>
+  </li>
+</ul>

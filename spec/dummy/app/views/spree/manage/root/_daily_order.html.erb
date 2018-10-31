@@ -1,0 +1,13 @@
+<tbody id="daily-orders-body">
+  <% if @daily_orders.present? %>
+    <% @daily_orders.each do |order| %>
+      <tr>
+        <td><%= link_to order.account.fully_qualified_name, edit_manage_order_path(order) %></td>
+        <td><%= link_to order.display_number, edit_manage_order_path(order) %></td>
+        <td><%= link_to display_sweet_price(order.total, order.currency), edit_manage_order_path(order) %></td>
+      </tr>
+    <% end %>
+  <% else %>
+    <tr><td colspan='3'>No orders found for <%= overview_date %>.</td></tr>
+  <% end %>
+</tbody>

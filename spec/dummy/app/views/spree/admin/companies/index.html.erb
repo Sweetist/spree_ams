@@ -1,0 +1,71 @@
+<% content_for :page_title do %>
+  <%#= Spree.t(:users) %>
+  <%= "Companies" %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= button_link_to "New Company", new_admin_company_path, class: "btn-success", icon: 'add', id: 'admin_new_company_link' %>
+<% end %>
+
+<% content_for :table_filter_title do %>
+  <%= Spree.t(:search) %>
+<% end %>
+
+<% content_for :table_filter do %>
+  <div data-hook="admin_companyies_index_search">
+    <%= search_form_for [:admin, @search], url: spree.admin_companies_path do |f| %>
+      <div class="form-group">
+        <%#= f.label Spree.t(:email) %>
+        <%= f.label "Name" %>
+        <%= f.text_field :name_cont, class: "form-control js-quick-search-target" %>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label Spree.t(:first_name) %>
+            <%= f.text_field :bill_address_firstname_cont, class: 'form-control' %>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label Spree.t(:last_name) %>
+            <%= f.text_field :bill_address_lastname_cont, class: 'form-control' %>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <%= f.label Spree.t(:company) %>
+        <%= f.text_field :bill_address_company_cont, class: 'form-control' %>
+      </div>
+      <div data-hook="admin_users_index_search_buttons" class="form-actions">
+        <%= button Spree.t(:search), 'search' %>
+      </div>
+
+    <% end %>
+  </div>
+<% end %>
+
+<table class="table" id="listing_users" data-hook>
+  <thead>
+    <tr data-hook="admin_companies_index_headers">
+      <th>
+        Company
+      </th>
+      <th data-hook="admin_companies_index_header_actions" class="actions"></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @companies.each do |company|%>
+      <tr id="<%= spree_dom_id company %>" data-hook="admin_companies_index_rows">
+        <td class='user_email'><%=link_to company.name, edit_admin_company_path(company) %></td>
+        <td data-hook="admin_companies_index_row_actions" class="actions actions-2 text-right">
+          <%= link_to_edit company, :no_text => true %>
+          <%= link_to_delete company, :no_text => true %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= paginate @companies %>

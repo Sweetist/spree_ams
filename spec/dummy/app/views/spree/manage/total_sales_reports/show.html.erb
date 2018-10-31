@@ -1,0 +1,211 @@
+<%= content_for :head_title do %>
+  Reports
+<% end %>
+
+<%= content_for :page_title do %>
+  Total Sales Report
+<% end %>
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <span>Total Sales Report</span>
+    </li>
+  </ul>
+  <div class="page-toolbar">
+    <div class="btn-group pull-right">
+
+    </div>
+  </div>
+<% end %>
+
+<!-- <h4><%#= pluralize(@orders.count, 'order') %> in production requirements</h4> -->
+<!-- <form id="production-filter"> -->
+<%= search_form_for @search, url: manage_total_sales_report_path, html:{ class: "form", id: "production-filter"} do |f| %>
+
+  <div class="portlet light bordered">
+    <div class="portlet-body">
+
+      <div class='col-md-4'>
+        <%= render partial: 'spree/manage/reports/shared/search/order_status' %>
+      </div>
+      <div class='col-md-8'>
+        <div class='row'>
+
+          <div class='col-xs-12'>
+            <div class="form-group">
+              <label>Customer Accounts</label>
+              <%= select_tag("q[account_id_in][]",
+                options_for_select(@vendor.customer_accounts.order(:fully_qualified_name).pluck(:fully_qualified_name, :id), params.fetch(:q, {}).fetch('account_id_in', [])),
+                {style: 'width:100%', class: 'select2-tags input-large form-control', multiple: true }) %>
+            </div>
+            <%#= render partial: 'spree/manage/reports/shared/search/customer_accounts' %>
+          </div>
+          <div class='col-sm-6'>
+            <div class='form-group'>
+              <label class='control-label'><%= "#{@vendor.order_date_text.to_s.capitalize} Date".strip %></label>
+              <%= render partial: 'spree/shared/forms/fields/date_range', locals: {f: f, date_key: :delivery_date, company: @vendor} %>
+            </div>
+          </div>
+          <div class='col-sm-6'>
+            <div class='form-group'>
+              <label class='control-label'>Submitted On</label>
+              <%= render partial: 'spree/shared/forms/fields/date_range', locals: {f: f, date_key: :completed_at, company: @vendor} %>
+            </div>
+          </div>
+          <div class='col-sm-6'>
+            <div class='form-group'>
+              <label class='control-label'>Approved On</label>
+              <%= render partial: 'spree/shared/forms/fields/date_range', locals: {f: f, date_key: :approved_at, company: @vendor} %>
+            </div>
+          </div>
+
+          <div class='col-sm-6'>
+            <div class='form-group'>
+              <label class='control-label'>Sales channel</label>
+              <%= render partial: 'spree/manage/reports/shared/search/sales_channel'%>
+            </div>
+          </div>
+
+          <div class="col-sm-6">
+            <div class='pull-right margin-top-25'>
+              <button class="btn btn-primary update_report">Update Report</button>
+              <%= link_to "Reset", manage_total_sales_report_path, class: "btn btn-default" %>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- END col-md-8 -->
+      <div class="clearfix"></div>
+
+    </div>
+  </div>
+  <div class="clearfix"></div>
+
+  <div class="portlet light bordered">
+      <div class="portlet-title">
+          <div class="caption">
+              <!-- <i class="icon-bar-chart font-green"></i> -->
+              <!-- <span class="caption-subject font-green bold uppercase"> -->
+                <select class="form-control" name="chart_content" id="chart-select">
+                  <% @content_options.each do |co| %>
+                    <option value="<%= co.fetch(:slug) %>"><%= co.fetch(:name) %></option>
+                  <% end %>
+                </select>
+                <!-- Sales From <%#= "#{@dates[:start].strftime('%m-%d-%Y')} to #{@dates[:end].strftime('%m-%d-%Y')}" %> -->
+              <!-- </span> -->
+          </div>
+          <div style="padding-left: 100px; padding-top: 15px;">
+            <% if @total_revenue > 0 %>
+              <div class="chart-total" id="chart-total-revenue">Total: <%= display_sweet_price(@total_revenue, @vendor.currency) %></div>
+            <% end %>
+            <% if @total_items > 0 %>
+              <div class="chart-total hidden" id="chart-total-items">Total: <%= @total_items %></div>
+            <% end %>
+            <% if @total_orders > 0 %>
+              <div class="chart-total hidden" id="chart-total-orders">Total: <%= @total_orders %></div>
+            <% end %>
+          </div>
+      </div>
+      <div class="portlet-body">
+        <div class="chart-block">
+          <div id="revenue-total-chart" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+        </div>
+        <div class="chart-block hidden">
+          <div id="items-total-chart" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+        </div>
+        <div class="chart-block hidden">
+          <div id="orders-total-chart" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+        </div>
+      </div>
+  </div>
+<!-- </form> -->
+<% end %>
+
+<div class="table">
+  <table class="table table-hover table-striped" id="production"
+  data-sortdir='desc'
+  data-sortcol='0'
+  data-title='Total Sales Report <%= display_vendor_date_format(@dates[:start], @vendor.date_format) %> - <%= display_vendor_date_format(@dates, @vendor.date_format) %>'>
+    <thead>
+      <tr>
+        <th><%= "#{@vendor.order_date_text.to_s.capitalize} Date".strip %></th>
+        <th>
+          Order #
+        </th>
+        <th>
+          Account
+        </th>
+        <th>
+          Sales channel
+        </th>
+        <th>
+          # Items
+        </th>
+        <th>
+          Approved At
+        </th>
+        <th>
+          Submitted At
+        </th>
+        <th>
+          Total Amt.
+        </th>
+      </tr>
+
+    </thead>
+    <tbody class="product-production-row">
+      <% @orders.each do |order| %>
+        <tr>
+          <td><%= display_vendor_date_format(order.delivery_date, @vendor.date_format) %></td>
+          <td><%= order.display_number %></td>
+          <td><%= order.account.fully_qualified_name %></td>
+          <td><%= t(order.channel) %></td>
+          <td><%= order.item_count %></td>
+          <td><%= sweet_full_date_time(order.approved_at) %></td>
+          <td><%= sweet_full_date_time(order.completed_at) %></td>
+          <td><%= display_sweet_price(order.total, order.currency) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+</div>
+
+<script type="text/javascript">
+  $(function() {
+
+    $('#revenue-total-chart').highcharts(<%= raw @revenue_chart_data.to_json %>);
+    $('#items-total-chart').highcharts(<%= raw @items_chart_data.to_json %>);
+    $('#orders-total-chart').highcharts(<%= raw @orders_chart_data.to_json %>);
+
+    $('#chart-select').change(function(){
+
+      id = $(this.selectedOptions).val();
+      $('.chart-block').each(function(){
+        if (!$(this).hasClass('hidden')){
+          $(this).addClass('hidden');
+        }
+      });
+      $('.chart-total').each(function(){
+        if (!$(this).hasClass('hidden')){
+          $(this).addClass('hidden');
+        }
+      });
+
+      $("#chart-total-" + id).removeClass('hidden');
+      $("#" + id + "-total-chart").parent().removeClass('hidden');
+      $("#" + id + "-total-chart").highcharts().reflow();
+    });
+
+    $(document).on('click', '.update_report' , function(){
+      if(($("input[name=start_date]").val()=="" || $("input[name=end_date]").val()=="") && ($("input[name=approved_start_date]").val()=="" || $("input[name=approved_end_date]").val()=="") && ($("input[name=submitted_start_date]").val()=="" || $("input[name=submitted_end_date]").val()=="")){
+        alert("At least 1 date range must be used!")
+        return false;
+      }
+    })
+  });
+</script>

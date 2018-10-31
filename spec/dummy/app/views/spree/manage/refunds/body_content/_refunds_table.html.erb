@@ -1,0 +1,37 @@
+<h3>Refunds</h3>
+<table class="table table-condensed table-bordered" id='refunds' data-order-id='<%= order.number %>'>
+  <thead>
+    <tr data-hook="refunds_header">
+      <th><%= Spree.t(:payment_identifier) %></th>
+      <th><%= "#{Spree.t('date')}/#{Spree.t('time')}" %></th>
+      <th><%= Spree.t(:amount) %></th>
+      <th><%= Spree.t(:payment_method) %></th>
+      <th><%= Spree.t(:transaction_id) %></th>
+      <th><%= Spree.t(:reason) %></th>
+      <%# if show_actions %>
+        <!-- <th></th> -->
+      <%# end %>
+    </tr>
+  </thead>
+  <tbody>
+    <% zone = @order.try(:vendor).try(:time_zone) %>
+    <% refunds.each do |refund| %>
+      <% payment = refund.linked_payment %>
+      <% pm_name = payment_method_name(payment) %>
+      <% pm_name = "#{pm_name} (...#{payment.source.try(:last_digits)})" if payment.source_type == 'Spree::CreditCard' %>
+      <tr id="<%= dom_id(refund) %>" data-hook="refunds_row" class="<%= cycle('odd', 'even', name: 'refund_table_cycle')%>">
+        <td><%= payment.display_number %></td>
+        <td><%= sweet_full_date_time(refund.created_at, zone) %></td>
+        <td class="amount"><%= display_sweet_price(refund.amount, payment.currency) %></td>
+        <td><%= pm_name %></td>
+        <td><%= refund.transaction_id %></td>
+        <td><%= truncate(refund.reason.name, length: 100) %></td>
+        <%# if show_actions %>
+          <!-- <td class="actions actions-1"> -->
+            <%#= link_to_with_icon('edit', Spree.t(:edit), edit_admin_order_payment_refund_path(refund.payment.order, refund.payment, refund), no_text: true, class: "btn btn-default btn-sm") if can?(:edit, refund) %>
+          <!-- </td> -->
+        <%# end %>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

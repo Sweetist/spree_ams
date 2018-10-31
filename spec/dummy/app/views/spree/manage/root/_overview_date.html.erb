@@ -1,0 +1,18 @@
+<div id='overview-date-holder'>
+  <%#= link_to("javascript:void(0)", id: 'prev-day', data: { 'overview-date': prev_day }) do %>
+
+    <!-- <i class="fa fa-caret-left" aria-hidden="true"></i> -->
+  <%# end %>
+
+
+  <%= form_tag('/manage', id: 'datepicker-form',  method: :post, remote: true) do %>
+  <input data-date-format="<%= @company.date_format %>" class='form-control' type="text" name='overview-date' id="overview-date" value="<%= overview_date %>">
+    <label for='overview-date' class='control-label pull-right margin-right-5 padding-top-5'>
+      <%= "#{@company.order_date_text.to_s.titleize} Date".strip %>
+    </label>
+  <% end %>
+
+  <%#= link_to("javascript:void(0)", id: 'next-day', data: { 'overview-date': next_day }) do %>
+    <!-- <i class="fa fa-caret-right" aria-hidden="true"></i> -->
+  <%# end %>
+</div>

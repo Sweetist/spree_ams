@@ -1,0 +1,23 @@
+---
+subject: '{{contact.first_name}}, please try our wholesale B2B portal ({{my_company.name}})'                   # REQUIRED
+from: ''   # optional
+cc: ''     # optional
+bcc: ''     # optional
+---
+
+Hi {{contact.full_name}},
+<br>
+
+<p>Please try our new wholesale online ordering platform! Click <a href="{{contact.sign_up_url}}">here</a> to set up an account now.</p>
+<p>
+  Using our wholesale portal, you can make your wholesale orders online, view our up-to-date catalog, see your order history, and download pdf invoices.
+</p>
+<p>
+  If the above link does not work for you, please copy and paste the below link into your browser bar:<br><br>
+  {{contact.sign_up_url}}
+</p>
+
+<p>
+Thanks!<br>
+{{my_company.name}}
+</p>

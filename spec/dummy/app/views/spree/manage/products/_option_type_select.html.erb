@@ -1,0 +1,22 @@
+<!-- <div class="form-group" data-index='<%= idx %>'> -->
+  <% pos = idx + 1 %>
+  <label for='product_product_option_types_attributes_<%= idx %>_option_type_id'>Option Type <%= pos %></label>
+  <select name="product[product_option_types_attributes][<%= idx %>][option_type_id]",
+    class='form-control option-type-select' id='product_product_option_types_attributes_<%= idx %>_option_type_id'
+    data-ot-position='<%= pos %>'>
+    <option></option>
+    <% @vendor.option_types.select(:presentation, :id).each do |ot| %>
+      <option value='<%= ot.id %>' <%="selected" if product_option_type.try(:option_type_id) == ot.id %>>
+        <%= ot.presentation %>
+      </option>
+    <% end %>
+    <option disabled class='ot-select-divider'>&#9472&#9472&#9472&#9472&#9472&#9472</option>
+    <option value='new'><%= "< Add New / Edit >" %></option>
+  </select>
+  <% if product_option_type %>
+    <input type='hidden' name="product[product_option_types_attributes][<%= idx %>][id]",
+      value="<%= product_option_type.try(:id) %>">
+  <% end %>
+  <input type='hidden' name="product[product_option_types_attributes][<%= idx %>][position]",
+    value="<%= pos %>">
+<!-- </div> -->

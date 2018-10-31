@@ -1,0 +1,358 @@
+<%= content_for :head_title do %>
+  New Stock Transfer
+<% end %>
+
+<%= content_for :page_title do %>
+  New Stock Transfer
+<% end %>
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Stock Transfers", manage_stock_transfers_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <span>New Stock Transfer</span>
+    </li>
+  </ul>
+  <div class="page-toolbar">
+    <%= link_to new_manage_stock_transfer_path, class: "btn green pull-right" do%>
+      <i class="fa fa-plus"></i>&nbsp;New Stock Transfer
+    <% end %>
+  </div>
+<% end %>
+
+<div class='content'>
+  <%= form_for [:manage, @stock_transfer], html: {id: "stock_transfer-form", class: "prevent-double-submission horizontal-form"} do |f| %>
+    <div class="portlet box blue-hoki">
+      <div class="portlet-title">
+        <div class="caption">
+          Stock Transfer
+        </div>
+      </div>
+
+      <div class="portlet-body form">
+        <div class="form-body">
+          <div class='row'>
+            <div class='col-md-4'>
+              <div class='form-group is-transfer'>
+                <label class='margin-right-10'>Transfer
+                  <input type='radio' name='stock_transfer[is_transfer]' value='true' class='noUniform' checked id='is_transfer_true'>
+                </label>
+                <label>Add/Take Stock
+                  <input type='radio' name='stock_transfer[is_transfer]' value='false' class='noUniform' id='is_transfer_false'>
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4 source">
+              <div class="form-group">
+                <%= f.label :source_location_id, Spree.t(:source), class: 'control-label' %>
+                <%= f.collection_select :source_location_id, @vendor.stock_locations.active, :id, :name, {include_blank: true}, {class:'form-control'} %>
+                <%= f.hidden_field :source_location_id, id: 'source-location-id'%>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <%= f.label :destination_location_id, Spree.t(:destination), class: 'control-label' %>
+                <%= f.collection_select :destination_location_id, @vendor.stock_locations.active, :id, :name, {include_blank: true}, {class:'form-control'} %>
+                <%= f.hidden_field :destination_location_id, id: 'destination-location-id'%>
+              </div>
+            </div>
+            <div class='col-md-4'>
+              <div class='form-group'>
+                <%= f.label :reference, raw("#{Spree.t(:reference)} (#{Spree.t(:optional)})"), class: 'control-label' %>
+                <%= f.text_field :reference, class: 'form-control' %>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              <div class="form-group">
+                <%= f.label :general_account_id, class: 'control-label' %>
+                <%= f.grouped_collection_select(:general_account_id, Spree::ChartAccountCategory.all.map{|c| c.filter_vendor_id = spree_current_user.company_id; c}, :vendors_chart_accounts, :name, :id, :name, {}, { class: 'form-control' }) %>
+              </div>
+              <% if @vendor.lot_tracking %>
+                <div class="form-group">
+                  <button type="button" class="lot_info btn btn-info" data-toggle="modal" data-target="#lot_modal">Create Lot</button>
+                </div>
+              <% end %>
+            </div>
+            <div class='col-md-8'>
+              <div class="form-group">
+                <%= f.label :note, 'Notes', class: 'control-label' %>
+                <%= f.text_area :note %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <% if @vendor.lot_tracking %>
+      <%= render partial: 'spree/manage/lots/modal/new' %>
+    <% end %>
+
+    <div class="row">
+      <div class="col-md-12">
+        <div class="table-scrollable">
+          <table class="table table-hover table-striped" id="basic-table">
+            <thead>
+              <tr>
+                <th style='min-width: 280px;'>Product</th>
+                <% if @vendor.lot_tracking %>
+                  <th class="source-lot-header source">Source Lot</th>
+                  <th class="destination-lot-header">Destination Lot</th>
+                <% end %>
+
+                <th class='source'>Source Qty</th>
+                <th>Destination Qty</th>
+                <th>Transfer Qty</th>
+                <th>Destination After</th>
+                <th class='sorting_disabled'></th>
+              </tr>
+
+            </thead>
+            <tbody id='stock-transfer-list'>
+              <tr id='variant-search-row'>
+                <td colspan="100%">
+                  <%= collection_select :variant, 'transfer_variant_id', @vendor.showable_variants.active.inventory.includes(:product, :option_values).order('full_display_name asc'), :id, :full_context, {include_blank: true}, {class: 'form-control select2'} %>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <%= link_to 'Cancel', manage_stock_transfers_path, class: 'btn default' %>
+    <%= f.submit 'Transfer Stock', class: "btn btn-primary transfer_add_variant", id: "transfer-stock-btn" %>
+  <% end %>
+
+</div>
+
+<script type='text/javascript'>
+
+  var create_lot= function(lot_number, lot_expires, lot_available, lot_sell_by, lot_variant, source_id, destination_id){
+    $.ajax({
+      url: '/manage/stock_transfers/create_lot',
+      type: 'GET',
+      dataType: 'script',
+      data: {
+        lot: {
+          number: lot_number,
+          expires_at: lot_expires,
+          available_at: lot_available,
+          sell_by: lot_sell_by,
+          variant_id: lot_variant,
+          source_id: source_id,
+          destination_id: destination_id
+        }
+      }
+    });
+  };
+
+
+  $('#create-lot-button').click(function(e) {
+    e.preventDefault();
+    var lot_number = $('#lot_number').val();
+    var lot_expires = $('#lot_expires').val();
+    var lot_available = $('#lot_available').val();
+    var lot_sell_by = $('#lot_sell_by').val();
+    var lot_variant = $('#lot_variant').val();
+    var source_id = $('#stock_transfer_source_location_id').val();
+    var destination_id = $('#stock_transfer_destination_location_id').val();
+    create_lot(lot_number, lot_expires, lot_available, lot_sell_by, lot_variant, source_id, destination_id);
+    $('.modal').modal('hide');
+  });
+
+
+
+  var getCurrentStock = function(variant_id, source_id, destination_id){
+    $.ajax({
+      url: '/manage/stock_transfers/current_stock',
+      type: 'GET',
+      dataType: 'script',
+      data: {
+        variant_id: variant_id,
+        source_id: source_id,
+        destination_id: destination_id
+      }
+    });
+  };
+
+  function lotChangeHandler() {
+
+    $('.destination-lot').off('change').change(function(e){
+      var lot_qty = this.selectedOptions[0].dataset.lotQty
+      var variant_id = this.selectedOptions[0].dataset.variantId
+      $('.variant_destination_qty[data-id=' + variant_id + ']').html(lot_qty)
+      recalculate(variant_id)
+    })
+
+    $('.source-lot').off('change').change(function(e){
+      var lot_qty = this.selectedOptions[0].dataset.lotQty
+      var variant_id = this.selectedOptions[0].dataset.variantId
+      $('.variant_source_qty[data-id=' + variant_id + ']').html(lot_qty)
+    })
+  }
+
+  lotChangeHandler()
+
+  $('#stock_transfer_destination_location_id').change(function(){
+    $('#destination-location-id').val(this.value);
+    <% if @vendor.lot_tracking == false %>
+      if(this.value == $('#source-location-id').val()){
+        $('#alert').empty().append("<div class='alert alert-danger alert-dismissable'>You must select different SOURCE and DESTINATION.<button type='button' class='close' data-dismiss='alert' aria-hidden='true'></button></div>");
+      }
+    <% end %>
+  })
+  $('#stock_transfer_source_location_id').change(function(){
+    $('#source-location-id').val(this.value);
+    <% if @vendor.lot_tracking == false %>
+      if(this.value == $('#destination-location-id').val()){
+        $('#alert').empty().append("<div class='alert alert-danger alert-dismissable'>You must select different SOURCE and DESTINATION.<button type='button' class='close' data-dismiss='alert' aria-hidden='true'></button></div>");
+      }
+    <% end %>
+  })
+
+  $('#variant_transfer_variant_id').change(function(){
+
+    var variant_id = $('#variant_transfer_variant_id').val();
+    var source_id = $('#stock_transfer_source_location_id').val();
+    var destination_id = $('#stock_transfer_destination_location_id').val();
+    $('#stock_transfer_destination_location_id').parent().removeClass('has-error');
+    $('#stock_transfer_source_location_id').parent().removeClass('has-error');
+    $('#alert').empty();
+
+    if($("#is_transfer_false").is(':checked') === true && destination_id === ''){
+      $('#stock_transfer_destination_location_id').parent().addClass('has-error');
+      $('#alert').append("<div class='alert alert-danger alert-dismissable'>You must select a DESTINATION first.<button type='button' class='close' data-dismiss='alert' aria-hidden='true'></button></div>");
+    }else if($("#is_transfer_true").is(':checked') === true && (source_id === '' || destination_id === '')){
+      if(destination_id === ''){$('#stock_transfer_destination_location_id').parent().addClass('has-error');}
+      if(source_id === ''){$('#stock_transfer_source_location_id').parent().addClass('has-error');}
+      $('#alert').append("<div class='alert alert-danger alert-dismissable'>You must select a SOURCE and DESTINATION first.<button type='button' class='close' data-dismiss='alert' aria-hidden='true'></button></div>");
+    }else{
+      $('#stock_transfer_source_location_id').prop('disabled', true);
+      $('#stock_transfer_destination_location_id').prop('disabled', true);
+      if ($("#is_transfer_true").is(':checked') === true){
+        $("#is_transfer_false").prop('disabled', true);
+      }else{
+        $("#is_transfer_true").prop('disabled', true);
+      }
+      getCurrentStock(variant_id, source_id, destination_id);
+    }
+    $('#variant_transfer_variant_id').val('');
+
+  });
+
+  var resetRowQuantities = function(variant_id, source_on_hand, destination_on_hand){
+    $('.variant_source_after[data-id=' + variant_id + ']').val(source_on_hand);
+    $('.variant_destination_after[data-id=' + variant_id + ']').val(destination_on_hand);
+    $('.variant_transfer_qty[data-id=' + variant_id + ']').val(0);
+    $('.insufficient-stock[data-id=' + variant_id + ']').removeClass('hidden');
+  };
+
+
+  function recalculate(variant_id) {
+
+    var source_on_hand = parseFloat($('.variant_source_qty[data-id=' + variant_id + ']').text());
+    var destination_on_hand = parseFloat($('.variant_destination_qty[data-id=' + variant_id + ']').text());
+    var transfer_qty = parseFloat($('.variant_transfer_qty[data-id=' + variant_id + ']').val());
+
+    var source_after = source_on_hand - transfer_qty;
+    var destination_after = destination_on_hand + transfer_qty;
+
+    if(($("#is_transfer_false").is(':checked') === true || source_after >= 0)){
+      $('.insufficient-stock[data-id=' + variant_id + ']').addClass('hidden');
+      $('.variant_source_after[data-id=' + variant_id + ']').val(source_after);
+      $('.variant_destination_after[data-id=' + variant_id + ']').val(destination_after);
+    }else{
+      resetRowQuantities(variant_id, source_on_hand, destination_on_hand);
+    }
+  }
+
+// Update source after qty and destination after qty when transfer qty is changed
+  $('body').on('change','.variant_transfer_qty', function(e){
+    var variant_id = $(e.currentTarget).data('id');
+    recalculate(variant_id)
+  });
+
+
+// Update source after qty and transfer qty when destination_after qty is changed
+  $('body').on('change','.variant_destination_after', function(e){
+    var variant_id = $(e.currentTarget).data('id');
+    var source_on_hand = parseFloat($('.variant_source_qty[data-id=' + variant_id + ']').text());
+    var destination_on_hand = parseFloat($('.variant_destination_qty[data-id=' + variant_id + ']').text());
+    var destination_after = parseFloat($('.variant_destination_after[data-id=' + variant_id + ']').val());
+    var transfer_qty = destination_after - destination_on_hand;
+    var source_after = source_on_hand - transfer_qty;
+
+    if(($("#is_transfer_false").is(':checked') === true || source_after >= 0)){
+      $('.insufficient-stock[data-id=' + variant_id + ']').addClass('hidden');
+      $('.variant_transfer_qty[data-id=' + variant_id + ']').val(transfer_qty);
+      $('.variant_source_after[data-id=' + variant_id + ']').val(source_after);
+    }else{
+      resetRowQuantities(variant_id, source_on_hand, destination_on_hand);
+    }
+  });
+
+  // Update destination_after qty and transfer qty when source_after qty is changed
+    $('body').on('change','.variant_source_after', function(e){
+      var variant_id = $(e.currentTarget).data('id');
+      var source_on_hand = parseFloat($('.variant_source_qty[data-id=' + variant_id + ']').text());
+      var destination_on_hand = parseFloat($('.variant_destination_qty[data-id=' + variant_id + ']').text());
+      var source_after = parseFloat($('.variant_source_after[data-id=' + variant_id + ']').val());
+      var transfer_qty = source_on_hand - source_after;
+      var destination_after = destination_on_hand + transfer_qty;
+
+      if(destination_after >= 0 && ($("#is_transfer_false").is(':checked') === true || source_after >= 0)){
+        $('.insufficient-stock[data-id=' + variant_id + ']').addClass('hidden');
+        $('.variant_transfer_qty[data-id=' + variant_id + ']').val(transfer_qty);
+        $('.variant_destination_after[data-id=' + variant_id + ']').val(destination_after);
+      }else{
+        resetRowQuantities(variant_id, source_on_hand, destination_on_hand);
+      }
+    });
+
+    $('body').on('click','.close-button', function(e){
+      e.preventDefault();
+      var variant_id = $(e.currentTarget).data('id');
+      $('tr#variant_' + variant_id).remove();
+      if ($('.variant-transfer-row').length === 0){
+        $('#stock_transfer_source_location_id').prop('disabled', false);
+        $('#stock_transfer_destination_location_id').prop('disabled', false);
+        $("#is_transfer_false").prop('disabled', false);
+        $("#is_transfer_true").prop('disabled', false);
+      }
+    });
+
+    $("input[type=radio][name='stock_transfer[is_transfer]']").change(function(){
+      if ( this.value === 'true' ) {
+        $('.source').removeClass('hidden');
+      }else{
+        $('#stock_transfer_source_location_id').val('');
+        $('#source-location-id').val('');
+        $('.source').addClass('hidden');
+      }
+    });
+
+    $(document).ready(function(){
+      $('#stock_transfer-form').submit(function(e){
+        e.preventDefault();
+        if ($('.variant-transfer-row').length === 0){
+          alert('There is nothing to transfer.');
+          reEnableForm();
+        }else{
+          e.currentTarget.submit();
+        }
+      });
+    })
+
+
+</script>

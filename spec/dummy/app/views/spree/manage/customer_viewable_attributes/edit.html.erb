@@ -1,0 +1,72 @@
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+		<li>
+			<span>Customer View Settings</span>
+    </li>
+  </ul>
+<% end %>
+
+<div class="profile-content">
+  <div class="row">
+    <div class="portlet light ">
+      <div class="portlet-title tabbable-line">
+        <div class="caption caption-md">
+          <i class="icon-globe theme-font hide"></i>
+          <span class="caption-subject font-blue-madison bold uppercase">Customer View Settings</span>
+        </div>
+        <div class="btn-group pull-left hidden-md hidden-lg" style = "width:100%">
+          <button type="button" class="btn green dropdown-toggle dropdown-btn-text" data-toggle="dropdown" style = "width:100%">
+            <label>Information</label>&nbsp;
+            <i class="fa fa-angle-down"></i>
+          </button>
+          <ul class="dropdown-menu pull-left" style="width:100%" role="menu">
+            <li class="tab-link">
+              <a href="#attributes_tab" data-toggle="tab" >Attributes</a>
+            </li>
+            <li class="tab-link">
+              <a href="#layout_tab" data-toggle="tab">Layout</a>
+            </li>
+            <li class="tab-link">
+              <a href="#content_management_tab" data-toggle="tab">Content Management</a>
+            </li>
+          </ul>
+        </div>
+        <ul class="nav nav-tabs hidden-xs hidden-sm" id="cva_tabs">
+            <li class="active long-tabs-link">
+              <a href="#attributes_tab" data-toggle="tab">Attributes</a>
+            </li>
+            <li class="long-tabs-link">
+              <a href="#layout_tab" data-toggle="tab">Layout</a>
+            </li>
+            <li class="long-tabs-link">
+              <a href="#content_management_tab" data-toggle="tab">Content Management</a>
+            </li>
+        </ul>
+      </div>
+      <div class="portlet-body">
+        <div class="tab-content">
+          <div class="tab-pane active" id="attributes_tab">
+            <%= render partial: 'attributes_tab' %>
+          </div>
+          <div class="tab-pane" id="layout_tab">
+            <%= render partial: 'layout_tab' %>
+          </div>
+          <div class="tab-pane" id="content_management_tab">
+            <%= render partial: 'content_management_tab' %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type='text/javascript'>
+  $('form').submit(function(){
+    compileSortAttributes('variant');
+    compileSortAttributes('line_item');
+  });
+</script>

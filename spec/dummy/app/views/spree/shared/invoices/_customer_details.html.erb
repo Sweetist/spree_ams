@@ -1,0 +1,71 @@
+<div class="col-md-6 col-sm-12">
+  <div class="portlet blue-hoki box">
+    <div class="portlet-title">
+      <div class="caption">
+        <i class="fa fa-cogs"></i>Customer Information
+      </div>
+    </div>
+  <div class="portlet-body">
+    <div class="row static-info">
+      <div class="col-md-5 name"> Customer Name: </div>
+      <div class="col-md-7 value">
+        <% if request.fullpath.include?("manage") %>
+          <%= link_to manage_customer_account_path(@invoice.account.customer, @invoice.account) do %>
+            <%= @invoice.account.try(:fully_qualified_name) %>
+          <% end %>
+        <% else %>
+          <%= @invoice.account.try(:fully_qualified_name) %>
+        <% end %>
+      </div>
+    </div>
+    <div class="row static-info">
+      <div class="col-md-5 name"> Email: </div>
+      <div class="col-md-7 value order-email"> <%= @invoice.account.email %> </div>
+    </div>
+    <div class="row static-info">
+      <div class="col-md-5 name"> Shipping Address: </div>
+      <div class="col-md-7 value"> <%= @invoice.ship_address.address1 unless @invoice.ship_address.nil? %> </div>
+    </div>
+    <% unless @invoice.ship_address.nil? || @invoice.ship_address.address2.blank? %>
+      <div class="row static-info">
+        <div class="col-md-5 name"> </div>
+        <div class="col-md-7 value"> <%= @invoice.ship_address.address2 %> </div>
+      </div>
+    <% end %>
+    <div class="row static-info">
+      <div class="col-md-5 name"> </div>
+      <div class="col-md-7 value">
+        <% unless @invoice.ship_address.nil? %>
+          <%= @invoice.ship_address.city %><%= "," unless @invoice.ship_address.city.blank? || @invoice.ship_address.state.blank? %> <%= @invoice.ship_address.state.abbr unless @invoice.ship_address.state.blank? %> <%= @invoice.ship_address.zipcode %>
+        <% end %>
+      </div>
+    </div>
+    <div class="row static-info">
+      <div class="col-md-5 name"> Shipping Phone Number: </div>
+      <div class="col-md-7 value"> <%= @invoice.ship_address.phone unless @invoice.ship_address.nil? %> </div>
+    </div>
+    <div class="row static-info">
+      <div class="col-md-5 name"> Billing Address: </div>
+      <div class="col-md-7 value"> <%= @invoice.bill_address.address1 unless @invoice.bill_address.nil? %> </div>
+    </div>
+    <% unless @invoice.bill_address.nil? || @invoice.bill_address.address2.blank? %>
+      <div class="row static-info">
+        <div class="col-md-5 name"> </div>
+        <div class="col-md-7 value"> <%= @invoice.bill_address.address2 %> </div>
+      </div>
+    <% end %>
+    <div class="row static-info">
+      <div class="col-md-5 name"> </div>
+      <div class="col-md-7 value">
+        <% unless @invoice.bill_address.nil? %>
+          <%= @invoice.bill_address.city %><%= "," unless @invoice.bill_address.city.blank? || @invoice.bill_address.state.blank? %> <%= @invoice.bill_address.state.abbr unless @invoice.bill_address.state.blank? %> <%= @invoice.ship_address.zipcode %>
+        <% end %>
+      </div>
+    </div>
+    <div class="row static-info">
+      <div class="col-md-5 name"> Billing Phone Number: </div>
+      <div class="col-md-7 value"> <%= @invoice.bill_address.phone unless @invoice.bill_address.nil? %> </div>
+    </div>
+  </div>
+</div>
+</div>

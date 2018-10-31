@@ -1,0 +1,16 @@
+<div class="col-md-6 col-sm-12" id='account-details'>
+  <div class="portlet blue-hoki box">
+    <div class="portlet-title">
+      <div class="caption">
+        <i class="fa fa-cogs"></i>Order Information
+      </div>
+    </div>
+    <div class="portlet-body">
+      <div class="row static-info">
+        <div class="col-md-5 name"> Vendor Name: </div>
+        <div class="col-md-7 value"> <%= @order.account.try(:fully_qualified_name) %> </div>
+      </div>
+      <%= render partial: 'spree/manage/purchase_orders/account_address_fields' %>
+    </div>
+  </div>
+</div>

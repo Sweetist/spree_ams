@@ -1,0 +1,313 @@
+<%= content_for :head_title do %>
+  Standing Order: <%= @order.name %>
+<% end %>
+
+<%= content_for :page_title do %>
+  Standing Order: <%= @order.name %>
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", root_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Orders", orders_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Standing Orders", standing_orders_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <span><%= @order.name %></span>
+    </li>
+  </ul>
+
+  <div class="page-toolbar">
+    <%= link_to standing_order_generate_path(@order), method: :post, class: 'btn green-jungle pull-right' do%>
+      <i class ="fa fa-plus"></i>&nbsp;New Order From Standing Order
+    <% end %>
+  </div>
+<% end %>
+
+
+<div class="content">
+  <% if @order.errors_from_order_rules.any? && @order.line_items.any?%>
+    <div class='alert alert-warning alert-dismissable'>
+      <button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
+      <%= raw(@order.errors_from_order_rules.join(',')) %>
+    </div>
+  <% end %>
+  <%= simple_form_for @order, url: standing_order_path(@order.id), method: "put", wrapper: :horizontal_form do |f| %>
+    <div class="row">
+      <div class="col-md-6">
+        <div class="portlet blue-hoki box">
+          <div class="portlet-title">
+            <div class="caption">
+              <i class="fa fa-cogs"></i>Order Details
+            </div>
+          </div>
+          <div class="portlet-body form">
+            <div class="form-body">
+              <%= f.input :name, label: 'Name', input_html: {tabindex: 1} %>
+              <%#= f.association :vendor, label: 'Vendor', collection: @vendors, include_blank: false, input_html: {tabindex: 1} %>
+              <%= f.association :account, label: 'Account', collection: @user_accounts, include_blank: false %>
+              <%= f.association :shipping_method, label: 'Shipping Method', collection: @vendor_shipping, include_blank: false %>
+              <hr/>
+
+              <div class="form-group standing_order_start_at">
+                <label for="start_at" class="string control-label col-sm-3 control-label">Start</label>
+                <div class="col-sm-9">
+                  <input type="text" name="standing_order[start_at]"
+                    value="<%= display_vendor_date_format(@order.start_at, @order.vendor.date_format) unless @order.start_at.blank? %>"
+                    class="string form-control date-picker" data-date-format="<%= @order.vendor.date_format %>" id="start_at" tabindex="1">
+                </div>
+              </div>
+              <%= f.input :end_at_id, label: 'End', collection: Spree::StandingOrder.end_at_options, include_blank: false, input_html: {tabindex: 1} %>
+              <div id="standing_order_end_at_1" class="standing_order_end_at" style="<%= "display:none;" if @order.end_at_id != 1 %>">
+                <%= f.input :end_at_data_1_after, label: '&nbsp;'.html_safe, hint: 'occurrences', input_html: {tabindex: 1} %>
+              </div>
+              <div id="standing_order_end_at_2" class="standing_order_end_at" style="<%= "display:none;" if @order.end_at_id != 2 %>">
+                <div class="form-group standing_order_start_at">
+                  <label for="end_at_data_2_by" class="string control-label col-sm-3 control-label">End at</label>
+                  <div class="col-sm-9">
+                    <input type="text" name="standing_order[end_at_data_2_by]"
+                      value="<%= display_vendor_date_format(@order.end_at_data_2_by, @order.vendor.date_format) unless @order.end_at_data_2_by.blank? %>"
+                      class="string form-control date-picker" data-date-format="<%= @order.vendor.date_format %>" id="end_at_data_2_by" tabindex="1">
+                  </div>
+                </div>
+              </div>
+              <hr/>
+
+              <%= f.input :frequency_id, label: 'Frequency', collection: Spree::StandingOrder.frequency_options, include_blank: false, input_html: {tabindex: 1} %>
+
+              <%= render partial: 'frequency_data_1', locals: {f: f} %>
+
+              <div id="standing_order_frequency_2" class="standing_order_frequency" style="<%= "display:none;" if @order.frequency_id != 2 %>">
+                <%= f.input :frequency_data_2_every, label: 'Every', hint: 'week(s)', input_html: {tabindex: 1} %>
+                <%= f.input :frequency_data_2_day_of_week, collection: Spree::StandingOrder.day_options, label: 'On', include_blank: false, input_html: {tabindex: 1} %>
+              </div>
+              <div id="standing_order_frequency_3" class="standing_order_frequency" style="<%= "display:none;" if @order.frequency_id != 3 %>">
+                <%= f.input :frequency_data_3_type, collection: Spree::StandingOrder.frequency_type_options, label: 'On', include_blank: false, input_html: {tabindex: 1} %>
+                <div id="standing_order_frequency_3_a" class="standing_order_frequency_3" style="<%= "display:none;" if @order.frequency_data_3_type != "day"%>">
+                  <%= f.input :frequency_data_3_month_number, collection: Spree::StandingOrder.frequency_type_day_options, label: '&nbsp;'.html_safe, include_blank: false, input_html: {tabindex: 1} %>
+                </div>
+                <div id="standing_order_frequency_3_b" class="standing_order_frequency_3" style="<%= "display:none;" if @order.frequency_data_3_type == "day"%>">
+                  <%= f.input :frequency_data_3_week_number, collection: Spree::StandingOrder.day_options, label: '&nbsp;'.html_safe, include_blank: false, input_html: {tabindex: 1} %>
+                </div>
+                <%= f.input :frequency_data_3_every, label: 'Every', hint: 'month', input_html: {tabindex: 1} %>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="portlet blue-hoki box">
+          <div class="portlet-title">
+            <div class="caption">
+              <i class="fa fa-bell"></i>Order Actions
+            </div>
+          </div>
+          <div class="portlet-body form">
+            <div class="form-body">
+              <%= f.input :timing_id, label: 'Action', collection: Spree::StandingOrder.timing_options, include_blank: false, input_html: {tabindex: 1} %>
+              <div id="standing_order_timing_1" class="standing_order_timing" style="<%= "display:none;" if @order.timing_id != 1 %>">
+                <%= f.input :timing_data_create_days, label: '&nbsp;'.html_safe, hint: 'day(s) in advance', input_html: {tabindex: 1} %>
+                <%= f.input :timing_data_create_at_hour, label: 'At', collection: Spree::StandingOrder.hour_options.map {|item| [item[:hour], item[:value]]}, include_blank: false, input_html: {tabindex: 1} %>
+                <div class="col-md-2"></div>
+                <% if @order.errors_from_order_rules.any? %>
+                  <%= f.check_box :timing_process, disabled: 'disabled' %>
+                  <%= f.label :timing_process, "Submit" %>
+                  <div class="margin-bottom-10">
+                    <div class='col-sm-3'></div>
+                    <div class='col-sm-9'>
+                      <p class='help-block-italic'>Must meet minimum order requirements before selecting 'Submit', <%= raw(@order.errors_from_order_rules.join(',')) %></p>
+                    </div>
+                  </div>
+                <% else %>
+                  <%= f.check_box :timing_process, input_html: { checked: @order.timing_process } %>
+                  <%= f.label :timing_process, "Submit" %>
+                <% end %>
+                <div id="standing_order_timing_process_1" style="<%= "display:none;" if @order.timing_process == false %>">
+                  <%= f.input :timing_data_process_days, label: '&nbsp;'.html_safe, hint: 'day(s) in advance', input_html: {tabindex: 1} %>
+                  <%= f.input :timing_data_process_hours, label: '&nbsp;'.html_safe, hint: 'hours before cut-off time', collection: Spree::StandingOrder.hour_options.map {|item| [item[:time], item[:value]]}, include_blank: false, input_html: {tabindex: 1} %>
+                </div>
+                <br/>
+              </div>
+              <div id="standing_order_timing_2" class="standing_order_timing" style="<%= "display:none;" if @order.timing_id != 2 %>">
+                <%= f.input :timing_data_remind_days, label: '&nbsp;'.html_safe, hint: 'day(s) in advance' %>
+                <%= f.input :timing_data_remind_at_hour, label: 'At', collection: Spree::StandingOrder.hour_options.map {|item| [item[:hour], item[:value]]}, include_blank: false, input_html: {tabindex: 1} %>
+              </div>
+
+              <p class='important-clarifier margin-top-20'>
+                <strong>Note:</strong> All timing is based on the maximum lead time of any item in the standing order.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <label>Next Order at:</label>
+            <% schedules = @order.standing_order_schedules.where("visible = true and deliver_at > ?", Date.current.in_time_zone(@order.vendor.time_zone)).order(:deliver_at) %>
+            <% schedules.each do |schedule| %>
+              <% if schedule.skip %>
+                <br/><span style="text-decoration: line-through"><%= sweet_date(schedule.deliver_at, @order.vendor.time_zone) %></span>
+                <%= link_to "Enqueue", standing_order_schedule_enque_path(schedule, standing_order_id: @order.id), class: "btn btn-xs btn-info", method: :put %>
+              <% else %>
+                <br/><%= sweet_date(schedule.deliver_at, @order.vendor.time_zone) %>
+                <%= link_to "Skip", standing_order_schedule_skip_path(schedule, standing_order_id: @order.id), class: "btn btn-xs btn-info", method: :put %>
+              <% end %>
+              <% break unless schedule.skip %>
+            <% end %>
+            <br/>
+            <%= "(#{schedules.count} in total by #{sweet_date((Date.current + 3.months).end_of_month)})" %>
+            <% if current_vendor_view_settings.variant_lead_time %>
+              <br/>
+              <small><%= "* some scheduled orders may not be available due to overall lead time of order (#{@order.max_lead_time} #{"day".pluralize(@order.max_lead_time)})." %></small>
+            <% end %>
+            <hr/>
+            <%= f.submit "Update", class: "btn btn-primary", tabindex: 1 %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <div class="table-scrollable">
+          <table class="table table-checkable table-hover">
+            <thead>
+              <tr>
+                <th></th>
+                <th>
+                  Item
+                </th>
+                <% if current_vendor_view_settings.variant_sku %>
+                  <th>
+                    SKU
+                  </th>
+                <% end %>
+                <% if current_vendor_view_settings.variant_pack_size %>
+                  <th>
+                    Pack/Size
+                  </th>
+                <% end %>
+                <th>
+                  Price
+                </th>
+                <th>
+                  Qty
+                </th>
+                <th>
+                  Total
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <% order_total = 0 %>
+              <%= f.simple_fields_for :products do |item_form| %>
+                <% @order.standing_line_items.includes(variant: :product).each do |line_item| %>
+                  <% variant = line_item.variant %>
+                  <% product = line_item.variant.product %>
+                  <% avv = @order.account.account_viewable_variants.find_by(variant_id: variant.id) %>
+                  <tr id="line_item_<%= line_item.id %>">
+                    <td>
+                      <%= link_to raw("<i class='fa fa-times'></i>"), unpopulate_standing_order_path(@order, line_item_id: line_item.id),
+                        class: 'btn btn-xs red delete-input-row-btn close-button', id: "delete-item-button-#{line_item.id}", remote: true %>
+                    </td>
+                    <td>
+                      <%= link_to standing_order_product_path(@order, product) do %>
+                        <%= variant.flat_or_nested_name %>
+                      <% end %>
+                    </td>
+                    <% if current_vendor_view_settings.variant_sku %>
+                      <td>
+                        <%= link_to variant.sku, standing_order_product_path(@order, product) %>
+                      </td>
+                    <% end %>
+                    <% if current_vendor_view_settings.variant_pack_size %>
+                      <td>
+                        <%= link_to "#{variant.pack_size}", standing_order_product_path(@order, product) %>
+                      </td>
+                    <% end %>
+                    <td>
+                      <%= link_to display_sweet_price(avv.price, @order.currency), standing_order_product_path(@order, product) %>
+                    </td>
+                    <td>
+                      <%= item_form.input "#{line_item.id}", as: :integer, wrapper: false, label: false, input_html: { value: line_item.quantity, class: '', :min => 0, size: 5, tabindex: 1 } %>
+                    </td>
+                    <td>
+                      <%= link_to standing_order_product_path(@order, product) do %>
+                        <% total_price = line_item.quantity.nil? ? 0 : avv.price.to_f * line_item.quantity %>
+                        <% order_total += total_price %>
+                        <%= display_sweet_price(total_price, @order.currency) %>
+                      <% end %>
+                    </td>
+                  </tr>
+                <% end %>
+              <% end %>
+              <%= render partial: 'subtotal_row', locals: {order_total: order_total} %>
+            </tbody>
+          </table>
+        </div>
+        <div class="single-order-buttons">
+          <%= f.submit "Add Items", class: "btn btn-primary warn-before-action" %>
+          <%= f.submit "Update", class: "btn btn-primary warn-before-action", tabindex: 1 %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+
+
+
+<script type="text/javascript">
+  $(function() {
+    $('#standing_order_frequency_id').change(function(){
+      $('.standing_order_frequency').hide();
+      $('#standing_order_frequency_' + $(this).val()).show();
+    });
+    $('#standing_order_frequency_data_3_type').change(function(){
+      $('.standing_order_frequency_3').hide();
+      if ($(this).val() === 'day') {
+        $('#standing_order_frequency_3_a').show();
+      } else {
+        $('#standing_order_frequency_3_b').show();
+      }
+    });
+
+    $('#standing_order_end_at_id').change(function(){
+      $('.standing_order_end_at').hide();
+      $('#standing_order_end_at_' + $(this).val()).show();
+    });
+
+    $('#standing_order_timing_id').change(function(){
+      $('.standing_order_timing').hide();
+      $('#standing_order_timing_' + $(this).val()).show();
+    });
+    $('#standing_order_timing_process').change(function(){
+      if ($('#standing_order_timing_process').is(':checked')) {
+        $('#standing_order_timing_process_1').show();
+      } else {
+        $('#standing_order_timing_process_1').hide();
+      }
+    });
+
+    function filterShippingMethods(){
+      var $sel = $('#standing_order_shipping_method_id'),
+          vendor = $('#standing_order_vendor_id option:selected').text();
+      $('span > optgroup', $sel).unwrap();
+      $('optgroup:not([label="' + vendor + '"])', $sel).wrap('<span/>');
+    }
+
+    $("#standing_order_vendor_id").change(function () {
+      filterShippingMethods();
+    });
+    filterShippingMethods();
+
+  });
+</script>

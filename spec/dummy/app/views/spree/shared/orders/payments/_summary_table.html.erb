@@ -1,0 +1,44 @@
+<div class="panel panel-default" id='payments-summary'>
+  <div class="panel-heading">
+    <h3 class="panel-title">
+      <strong><%= Spree.t(:payment) %>:</strong>
+      <label class='btn circle payment_status <%= @order.payment_state %>'>
+        <%= Spree.t(@order.payment_state, scope: :payment_states, default: [:missing, "none"]).to_s.titleize %>
+      </label>
+    </h3>
+  </div>
+
+  <table class="table table-condensed table-bordered" id="order_tab_summary" data-hook>
+    <tbody class="additional-info">
+
+      <tr>
+        <td data-hook='order_tab_total_title'>
+          <strong>Total Due:</strong>
+        </td>
+        <td id='order_total'><%= @order.display_total.to_html %></td>
+      </tr>
+
+      <tr>
+        <td>
+          <strong>Total Paid:</strong>
+        </td>
+        <td><%= display_sweet_price(@order.payment_total, @order.currency) %></td>
+      </tr>
+
+      <tr>
+        <td>
+          <strong>Pending:</strong>
+        </td>
+        <td><%= display_sweet_price(@order.pending_balance, @order.currency) %></td>
+      </tr>
+
+      <tr>
+        <td>
+          <strong>Remaining Balance:</strong>
+        </td>
+        <td><%= display_sweet_price(@order.remaining_balance, @order.currency) %></td>
+      </tr>
+
+    </tbody>
+  </table>
+</div>

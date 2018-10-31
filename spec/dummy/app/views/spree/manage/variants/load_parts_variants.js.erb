@@ -1,0 +1,3 @@
+$('#loading-message','#build-assembly-modal').hide();
+$('#product-name','#build-assembly-modal').html("- <%= @variant.full_context %>")
+$('#modal-form-container','#build-assembly-modal').html("<%= j(render(partial: 'spree/manage/variants/build_assembly.html.erb')) %>");

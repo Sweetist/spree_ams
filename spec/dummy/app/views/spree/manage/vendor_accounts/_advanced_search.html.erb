@@ -1,0 +1,59 @@
+<div class="portlet box blue-hoki" id='search'>
+  <div class="portlet-title">
+    <div class='col-xs-12 col-sm-6 col-lg-4'>
+      <%= f.text_field :number_or_fully_qualified_name_cont, class: 'form-control', placeholder: 'Enter search term' %>
+      <div class="visible-xs-block" style="min-height:10px;">
+      </div>
+    </div>
+    <div class="col-xs-8 col-sm-4" id="basic-search-buttons">
+      <button type="submit" class="btn green"><i class="fa fa-search" aria-hidden="true"></i> Search</button>
+      <%= link_to manage_vendor_accounts_path, class: "btn default" do %>
+        <i class='fa fa-times'></i> Reset
+      <% end %>
+    </div>
+
+    <div class="tools">
+      <a href="javascript:;" id='toggle-advanced-search'>Advanced Search <i class="fa fa-angle-down"></i></a>
+    </div>
+  </div>
+  <div class="portlet-body form hidden" id='advanced-search-form'>
+    <div class="form-body">
+      <div class='row'>
+        <div class='col-sm-4'>
+          <div class='form-group' data-open="<%= params[:q] && !params[:q].fetch(:id_eq, nil).blank? %>">
+            <%= f.label :id_eq, 'Vendor', class: 'control-label' %>
+            <%= f.collection_select :id_eq,
+                @company.vendor_accounts.order(fully_qualified_name: :asc)
+                .select(:id, :fully_qualified_name).distinct,
+                :id, :fully_qualified_name, {include_blank: true }, {class: 'select2 form-control'} %>
+          </div>
+        </div>
+        <div class='col-sm-4'>
+          <div class='form-group' data-open="<%= params[:q] && !params[:q].fetch(:number_cont, nil).blank? %>">
+            <%= f.label :number_cont, 'Account Number', class: 'control-label' %>
+            <%= f.text_field :number_cont, class: 'form-control' %>
+          </div>
+        </div>
+        <div class='col-sm-4'>
+          <div class='form-group' data-open="<%= !params[:active].blank? %>">
+            <%= f.label :active, 'Active' %>
+            <%= select_tag :active, options_for_select([['Active', ''],['Inactive', 'inactive'], ['Both', 'both']], params[:active]), {class: "form-control"} %>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="form-actions">
+      <div class="row">
+        <div class="col-md-12">
+          <div class='btn-set pull-right'>
+            <button type="submit" class="btn green"><i class="fa fa-search" aria-hidden="true"></i> Search</button>
+            <%= link_to manage_vendor_accounts_path, class: "btn default" do %>
+              <i class='fa fa-times'></i> Reset
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,20 @@
+<% @count = 0 %>
+<% avvs.each do |avv| %>
+  <% avvariant = avv.variant %>
+  <% avproduct = avvariant.product %>
+  <% @count += 1 %>
+  <div>
+    <h3 class="slick-image-container">
+      <%= link_to vendor_product_variant_path(@vendor, avproduct, avvariant), style: 'text-decoration:none' do %>
+        <%= product_image(avvariant, itemprop: "image", class: "slick-image") %>
+        <h4><%= avvariant.default_display_name.to_s %></h4>
+        <h5><b><%= display_sweet_price(avvariant.price, avvariant.currency) %></b></h5>
+      <% end %>
+    </h3>
+  </div>
+<% end %>
+<% if @count > 4 %>
+  <% (4 - @count % 4).times do %>
+    <div><h3 class="slick-image-container empty-slide"></h3></div>
+  <% end %>
+<% end %>

@@ -1,0 +1,24 @@
+<table>
+  <tr>
+    <td>
+      <p class="lede">
+				Hi <%= @order.vendor.name %>,<br>
+      </p>
+      <p>
+
+        <%= @order.account.fully_qualified_name %> has requested a review of order <%= @order.display_number %>.<br>
+        Please reach out to them directly.<br>
+
+        Click <%= link_to "here", edit_manage_order_url(@order, host: @order.vendor.domain, protocol: 'https') %> to view additional order details.<br>
+      </p>
+
+      <!-- Order Summary -->
+      <%= render partial: 'mailers/spree/shared/vendor_mailer_order_summary_table' %>
+
+      <!-- Order Items Summary -->
+      <%= render partial: 'mailers/spree/shared/mailer_all_line_items_table' %>
+
+    </td>
+    <td class="expander"></td>
+  </tr>
+</table>

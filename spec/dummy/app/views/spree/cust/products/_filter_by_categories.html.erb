@@ -1,0 +1,119 @@
+<h3>Filter by Categories</h3>
+<% @taxonomies.each do |taxonomy| %>
+  <div class="panel-group accordion" id="root_<%= taxonomy.root.id %>"> <!-- closed -->
+    <% taxons = taxonomy.taxons.where('spree_taxons.depth >= ?', 1).order('lft ASC, name ASC') %>
+    <% taxon_group1, taxon_group2, taxon_group3, taxon_group4 = nil, nil, nil, nil %>
+    <% taxons.each_with_index do |taxon, idx| %>
+      <%
+        case taxon.depth
+        when 1
+          taxon_group1 = taxon.id
+          taxon_group2 = nil
+          taxon_group3 = nil
+          taxon_group4 = nil
+        when 2
+          taxon_group2 = taxon.id
+          taxon_group3 = nil
+          taxon_group4 = nil
+        when 3
+          taxon_group3 = taxon.id
+          taxon_group4 = nil
+        when 4
+          taxon_group4 = taxon.id
+        end
+      %>
+      <% if taxon.depth == 1 %>
+        <% class1 = 'panel no-border margin-bottom-10' %>
+        <% class2 = 'panel-heading bottom-border' %>
+      <% else %>
+        <% class1 = 'panel sub no-border margin-bottom-10' %>
+        <% class2 = "panel-heading no-border margin-left-#{(taxon.depth.to_i - 1) * 20}" %>
+      <% end %>
+      <div class='<%= class1 %>'
+        data-taxon-group1='<%= taxon_group1 %>'
+        data-taxon-group2='<%= taxon_group2 %>'
+        data-taxon-group3='<%= taxon_group3 %>'
+        data-taxon-group4='<%= taxon_group4 %>'
+        data-parent-id='<%= taxon.parent_id %>' id='taxon_<%= taxon.id %>'>
+        <div class='<%= class2 %>'>
+          <%
+            if params[:q].present? && params[:q][:variant_product_taxons_id_or_variant_taxons_id_in].present?
+              if params[:q][:variant_product_taxons_id_or_variant_taxons_id_in].include? taxon.id.to_s
+                 check_flag = true
+              else
+                check_flag = false
+              end
+            else
+              check_flag = false
+            end
+          %>
+          <h4 class='panel-title' data-id='<%= taxon.id %>'>
+            <% if check_flag %>
+              <input type='checkbox' class='cb-sidebar'
+                data-taxon-group1='<%= taxon_group1 %>'
+                data-taxon-group2='<%= taxon_group2 %>'
+                data-taxon-group3='<%= taxon_group3 %>'
+                data-taxon-group4='<%= taxon_group4 %>'
+                data-taxon-depth='<%= taxon.depth %>'
+                checked data-taxon-id='<%= taxon.id %>'>
+            <% else %>
+              <input type='checkbox' class='cb-sidebar'
+                data-taxon-group1='<%= taxon_group1 %>'
+                data-taxon-group2='<%= taxon_group2 %>'
+                data-taxon-group3='<%= taxon_group3 %>'
+                data-taxon-group4='<%= taxon_group4 %>'
+                data-taxon-depth='<%= taxon.depth %>'
+                data-taxon-id='<%= taxon.id %>'>
+            <% end %>
+            <a class='link-to-checkbox'><%= taxon.name %></a>
+            <% if taxon.depth == 1 && taxons[idx + 1].try(:parent_id) == taxon.id %>
+              <a class="taxon-toggler pull-right open" data-toggle="collapse"
+                data-taxon-group1='<%= taxon_group1 %>' data-id="<%= taxon.id %>"
+                href="#parent_taxon_<%= taxon.id %>">
+                <i class="fa fa-chevron-down" aria-hidden="true"></i>
+              </a>
+            <% end %>
+          </h4>
+
+        </div>
+      </div>
+    <% end %>
+  </div>
+ <% end %>
+<button id = "search-btn" class="btn btn-primary margin-left-20"><i class="fa fa-search" aria-hidden="true"></i> Update</button>
+<%= link_to vendor_products_path(@vendor), class: "btn btn-primary margin-left-20", id: "clear-all-btn" do %>
+  <i class='fa fa-times'></i> Clear All
+<% end %>
+
+<script type='text/javascript'>
+  $('.taxon-toggler').click(function(e){
+    e.preventDefault();
+    var taxonGroup = $(this).data('id');
+    $(this).toggleClass('open');
+    if($(this).hasClass('open')){
+      $('.sub[data-taxon-group1="' + taxonGroup +'"]').show();
+      $(this).css({'transform' : 'rotate('+ 0 +'deg)'});
+    }else{
+      $('.sub[data-taxon-group1="' + taxonGroup +'"]').hide();
+      $(this).css({'transform' : 'rotate('+ 90 +'deg)'});
+    }
+  });
+  $('input.cb-sidebar').change(function(){
+    var taxonId = $(this).data('taxon-id');
+    var depth = parseInt($(this).data('taxon-depth'));
+    var maxDepth = 4;
+    if( $(this).is(':checked') ){
+      for(i = 1; i < depth; i++){
+        var taxonGroup = $(this).data('taxon-group' + String(i));
+        $('input.cb-sidebar[data-taxon-id="' + taxonGroup + '"]').prop('checked', true);
+      }
+      for(i = depth + 1; i < maxDepth; i++){
+        $('input.cb-sidebar[data-taxon-group' + String(depth) + '="' + String(taxonId) + '"]').prop('checked', true);
+      }
+    }else{
+      for(i = depth + 1; i < maxDepth; i++){
+        $('input.cb-sidebar[data-taxon-group' + String(depth) + '="' + String(taxonId) + '"]').prop('checked', false);
+      }
+    }
+  })
+</script>

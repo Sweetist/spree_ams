@@ -1,0 +1,55 @@
+<%= content_for :head_title do %>
+My Profile
+<% end %>
+
+<%= content_for :page_title do %>
+  New User
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", root_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Edit Account", edit_manage_vendor_vendor_account_path(@account.vendor, @account) %>
+    </li>
+  </ul>
+<% end %>
+
+<div class="portlet light">
+  <div class="portlet-title row">
+    <div class="caption caption-md">
+      <span class="caption-subject font-blue-madison bold uppercase">
+        Add User for <%= @account.fully_qualified_name %>
+      </span>
+    </div>
+  </div>
+  <div class="portlet-body form">
+    <div class='row form-body'>
+    <%= form_for @user, url: existing_user_manage_vendor_vendor_account_path, method: :post, html: {class: 'form-horizontal form-row-separated'} do |f| %>
+        <div class='form-body'>
+          <div class='col-md-4'>
+            <div class='form-group'>
+              <%= f.label "User", class: 'control-label' %>
+              <%= f.collection_select :id, @new_users, :id, :name, {include_blank: true}, {class: 'select2 form-control'} %>
+            </div>
+          </div>
+          <%= f.submit 'Add Existing User', class:'btn btn-primary', style: 'margin-top:28px;' %>
+        </div>
+      <% end %>
+    </div>
+    <%= form_for @user, url: create_user_manage_vendor_vendor_account_path, html: {class: "horizontal-form"} do |f| %>
+    <div class="row form-body">
+      <%= render partial: "user_form", locals: {f: f} %>
+
+      <div class="clear"></div>
+      <div class="form-actions right">
+        <%= link_to "Cancel", edit_manage_vendor_vendor_account_path(@account.vendor, @account), class: "btn btn-default" %>
+        <%= f.submit "Save", class: "btn btn-primary" %>
+      </div>
+    <% end %>
+  </div>
+</div>
+  <div class="clear"></div>

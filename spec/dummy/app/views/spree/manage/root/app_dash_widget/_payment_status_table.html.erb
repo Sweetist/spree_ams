@@ -1,0 +1,16 @@
+<h3 class="title">Payment Status</h3>
+<table class="status-table">
+  <tr>
+    <th>Customer</th>
+    <th>Connection</th>
+    <th>Last Invoice</th>
+  </tr>
+  <% @customers.each do |customer| %>
+    <% next if customer.purchase_orders.count == 0 %>
+    <tr>
+      <td><%= customer.name %></td>
+      <td><i class="fa fa-check"></i></td>
+      <td> <%= customer.purchase_orders.where('delivery_date <= ?', DateTime.current).order('delivery_date DESC').first.delivery_date.to_date.to_formatted_s(:long) %> </td>
+    </tr>
+  <% end %>
+</table>

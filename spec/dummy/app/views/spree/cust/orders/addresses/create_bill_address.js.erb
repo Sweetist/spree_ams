@@ -1,0 +1,20 @@
+<% if flash[:errors] %>
+  $(".alert-address-modal").html("<%= escape_javascript(render(partial: 'spree/shared/errors')) %>");
+<% elsif @order.persisted? %>
+  $('#address_modal').modal('hide');
+
+  $('#alert').html("<div class='alert alert-success alert-auto-dissapear'><%= flash[:success] %></div>");
+
+  $("div#account_addresses").html("<%= escape_javascript(render(partial: 'spree/cust/orders/account_address_fields')) %>");
+
+  $("div#edit-bill-address-modal-div").html("<%= escape_javascript(render(partial: 'spree/cust/orders/addresses/edit_bill_address_modal')) %>");
+
+  setTimeout(function() {
+   $(".alert-auto-dissapear").fadeOut(1500);
+  },2000);
+
+<% else %>
+
+  $("#alert").html("<%= escape_javascript(render(partial: 'spree/shared/errors')) %>");
+
+<% end %>

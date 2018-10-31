@@ -1,0 +1,3 @@
+$('#product-name').html("- <%= @product.name %>");
+$('#loading-message').addClass("hidden");
+$('#modal-form-container').html("<%= j(render(partial: 'spree/manage/products/build_product')) %>");

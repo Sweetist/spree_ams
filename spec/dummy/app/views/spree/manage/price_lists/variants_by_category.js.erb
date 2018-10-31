@@ -1,0 +1,2 @@
+$('#variants').append("<%= j render(partial: 'spree/manage/price_lists/form/variants_by_category_table_body', locals: {price_list_variants: @price_list_variants, variants: @variants, category: @category_id, currency: current_company.currency} ) %>")
+$('#loading-variants').addClass('hidden');

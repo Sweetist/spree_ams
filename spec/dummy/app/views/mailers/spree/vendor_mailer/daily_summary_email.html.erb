@@ -1,0 +1,70 @@
+<table>
+  <tr>
+    <td>
+      <p>
+        <% vendor = @orders.first.vendor %>
+        <%= vendor.name %><br>
+        Daily Summary of Orders
+      </p>
+      <p>
+        Click <%= link_to "here", manage_orders_url(host: vendor.domain, protocol: 'https') %> to view all of your orders.<br>
+      </p>
+
+        <table class="table table-striped table-hover table-checkable" id="sample_1">
+          <thead>
+            <tr>
+              <th>
+                Order #
+              </th>
+              <th>
+                <%= "#{vendor.order_date_text.to_s.capitalize} Date".strip %>
+              </th>
+              <th>
+                Customer
+              </th>
+              <th class="center">
+                Total Items
+              </th>
+              <th class="center">
+                Total
+              </th>
+            </tr>
+            </thead>
+          <tbody>
+            <% @orders.each do |order| %>
+              <tr>
+                <td>
+                  <%= link_to order.display_number, edit_manage_order_url(order) %>
+                </td>
+                <td>
+                  <%= display_vendor_date_format(order.delivery_date, order.vendor.date_format) %>
+                </td>
+                <td>
+                  <%= order.account.fully_qualified_name %>
+                </td>
+                <td class="center">
+                  <%= order.item_count %>
+                </td>
+                <td class="center">
+                  <%= display_sweet_price(order.total, order.currency) %>
+                </td>
+              </tr>
+          <% end %>
+          <tr>
+            <td colspan=3 class="right"><strong>
+              Grand Totals
+            </strong></td>
+            <td class="center"><strong>
+              <%= @item_qty_total %>
+            </strong></td>
+            <td class="center"><strong>
+              <%= display_sweet_price(@order_total, @order.currency) %>
+            </strong></td>
+          </tr>
+        </tbody>
+        </table>
+
+    </td>
+    <td class="expander"></td>
+  </tr>
+</table>

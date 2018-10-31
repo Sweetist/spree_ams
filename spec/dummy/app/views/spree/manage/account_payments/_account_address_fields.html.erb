@@ -1,0 +1,13 @@
+<section id='account-address-info'>
+  <% @account ||= @order.try(:account) %>
+  <% @company ||= @order.try(:account).try(:customer) %>
+  <% @stock_location ||= @order.try(:po_stock_location) %>
+  <div class="row static-info">
+    <div class="col-md-5 name">Email:</div>
+    <div class="col-md-7 value" id='vendor-email'><%= @account.try(:email) %></div>
+  </div>
+  <div class="row static-info">
+    <div class="col-md-5 name"> Phone: </div>
+    <div class="col-md-7 value order-email" id='vendor-phone'> <%= @account.try(:bill_address).try(:phone) %> </div>
+  </div>
+</section>

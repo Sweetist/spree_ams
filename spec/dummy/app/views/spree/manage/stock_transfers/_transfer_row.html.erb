@@ -1,0 +1,67 @@
+<%
+  if @variant.should_track_lots?
+    lots_available = @variant.lots.unarchived.sellable.in_stock.order(expires_at: :desc, created_at: :desc)
+    if @variant.lots.unarchived.any?
+      destination_qty = @variant.lots.unarchived.order("created_at DESC").first.count_at_stock_item(@destination_stock.id)
+    else
+      destination_qty = 0
+    end
+    if lots_available.any?
+      source_qty = lots_available.last.count_at_stock_item(@source_stock.id)
+    else
+      source_qty = @source_stock.count_on_hand
+    end
+  else
+    source_qty = @source_stock.count_on_hand
+    destination_qty = @destination_stock.count_on_hand
+  end
+%>
+
+<tr id='variant_<%= @variant.id %>' class='variant-transfer-row'>
+  <td><%= @variant.full_display_name %></td>
+  <% if @variant.should_track_lots? %>
+    <td>
+      <% opts_for_source = lots_available.map do |lot|
+        [raw(lot.display_with_expiray), lot.id, { 'data-lot-qty' => lot.count_at_stock_item(@source_stock.id), 'data-variant-id' => @variant.id }]
+      end %>
+      <% unassigned_source = @source_stock.unassigned_inventory_count %>
+      <% if unassigned_source > 0 %>
+        <% opts_for_source << ['Unassigned', '', { 'data-lot-qty' => unassigned_source, 'data-variant-id' => @variant.id }] %>
+      <% end %>
+      <%= select_tag "lots[[variant_lot_sources][#{@variant.id}]]",
+      options_for_select(opts_for_source, selected: lots_available.last.try(:id)),
+      class: 'form-control source-lot' %>
+    </td>
+    <td>
+      <% opts_for_destination = @variant.lots.unarchived.order(expires_at: :desc, created_at: :desc).map do |lot|
+        [raw(lot.display_with_expiray), lot.id, { 'data-lot-qty' => lot.count_at_stock_item(@destination_stock.id), 'data-variant-id' => @variant.id }]
+      end %>
+      <% opts_for_destination << ['Unassigned', '', { 'data-lot-qty' => @destination_stock.unassigned_inventory_count, 'data-variant-id' => @variant.id }] %>
+      <%= select_tag "lots[[variant_lot_destinations][#{@variant.id}]]",
+          options_for_select(opts_for_destination, selected: @variant.lots.unarchived.order("created_at DESC").first.try(:id)),
+          class: 'form-control destination-lot' %>
+
+    </td>
+  <% elsif @vendor.lot_tracking %>
+    <td>N/A</td>
+    <td>N/A</td>
+  <% end %>
+  <td data-id='<%= @variant.id %>' class='variant_source_qty'><%= source_qty %></td>
+  <td data-id='<%= @variant.id %>' class='variant_destination_qty'><%= destination_qty %></td>
+  <td>
+    <input type='number' step='any' name='stock_transfer[variants][<%=@variant.id%>]'
+      value='0' data-id='<%= @variant.id %>' class='form-control variant_transfer_qty'>
+    <span class='help-block-italic insufficient-stock hidden' data-id='<%= @variant.id %>'>
+      Not enough stock on hand
+    </span>
+  </td>
+  <td>
+    <input type='number' step='any' value='<%= destination_qty %>'
+      data-id='<%= @variant.id %>' class='form-control variant_destination_after'>
+  </td>
+  <td>
+    <a class='btn red close-button', data-id='<%= @variant.id %>'>
+      <i class='fa fa-times' aria-hidden='true'></i>
+    </a>
+  </td>
+</tr>

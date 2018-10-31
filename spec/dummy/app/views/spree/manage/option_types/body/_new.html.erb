@@ -1,0 +1,25 @@
+<div class="portlet light">
+  <div class="portlet-title">
+    <div class="caption">
+      <span class="caption-subject font-blue-madison bold uppercase">
+        Option Type
+      </span>
+    </div>
+  </div>
+  <div class="portlet-body form">
+    <%= form_for [:manage, @option_type], class:"horizontal-form", id: "option_type_values", remote: !!@remote do |f| %>
+      <% if @remote && params[:ot_position] %>
+        <input type='hidden' name='ot_position' value='<%= params[:ot_position] %>'>
+      <% end %>
+      <%= render partial: 'form', locals: {f: f} %>
+      <div class="form-actions right">
+        <%= link_to manage_option_types_path, class: "btn btn-default", 'data-dismiss'=>"modal", 'aria-hidden'=>"true" do %>
+          <i class='fa fa-times'></i> <%= Spree.t(:Cancel) %>
+        <% end %>
+        <button class="btn btn-primary">
+          <i class="fa fa-check"></i> <%= Spree.t(:save) %>
+        </button>
+      </div>
+    <% end %>
+  </div>
+</div>

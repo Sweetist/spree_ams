@@ -1,0 +1,22 @@
+<% default_country_id = params[:country_filter_id].present? ? params[:country_filter_id] : @zone.try(:states).try(:first).try(:country_id) %>
+<% default_country_id ||= Spree::Country.find_by_name('United States').try(:id) %>
+<%= render partial: 'spree/manage/zones/filters/country_filter', locals: {filter_id: default_country_id} %>
+
+<div class='row'>
+  <div class='col-md-12' id='state'>
+    <div class="form-group">
+      <%= label_tag :state_ids, Spree.t(:states), class: 'control-label' %><br>
+      <% states = Spree::State.where(country_id: default_country_id).order('name ASC') %>
+      <% if states.present? %>
+        <%= collection_select :zone, :state_ids, states, :id, :name, {include_blank: true}, {name: 'zone[state_ids][]', multiple: true, class: 'select2 select2-multiple select2-hidden-accessible form-control'} %>
+      <% else %>
+        <span class='help-block-italic'>Please select a country to filter on</span>
+      <% end %>
+    </div>
+  </div>
+</div>
+<script type='text/javascript'>
+  $('#zone_state_ids').select2({width: '100%'});
+  $('#zone_country_filter_id').select2({width: '100%'});
+  $('#zone_country_filter_id').select2('val','<%= default_country_id %>');
+</script>

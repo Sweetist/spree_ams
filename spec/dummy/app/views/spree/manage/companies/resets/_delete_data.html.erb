@@ -1,0 +1,157 @@
+<%= form_for :company, url: delete_data_manage_account_path, method: :delete, remote: true, html: {class: 'form prevent-double-submission', id: 'reset-data-form'} do |f| %>
+  <div class='portlet box red'>
+    <div class="portlet-title">
+      <div class="caption">
+        <i class='fa fa-exclamation-triangle'></i>
+        <span class='caption-subject'>Danger Zone - Delete Data</span>
+      </div>
+    </div>
+    <div class='portlet-body'>
+      <div class='form-body'>
+        <div class='row'>
+          <div class='col-xs-12'>
+            <p class='help-block-italic'>
+              <strong>WARNING:</strong>
+              Deleting data here will <strong>permanently</strong> delete the selected objects and any reference to them.
+            </p>
+          </div>
+        </div>
+        <div class='row'>
+          <div class='col-xs-12'>
+            <div class="form-group">
+              <%= link_to 'Select All', 'void:javascript();', id: 'destroy-all' %>
+            </div>
+          </div>
+        </div>
+        <div class='row'>
+          <div class='col-sm-4'>
+            <div class='margin-bottom-10' style='border:1px solid #e7ecf1; padding:15px;'>
+              <div class="form-group">
+                <input type='checkbox' id='check-all-transactions'
+                  class='select-all' data-type='transaction'>
+                <label for='check-all-transactions'>
+                  <strong>All Transactions</strong>
+                </label>
+              </div>
+              <% Spree::Company::Resets::RESET_TRANSACTIONS.each do |event| %>
+                <%= render partial: 'spree/manage/companies/resets/checkbox',
+                  locals: {f: f, event: event, type: 'transaction'} %>
+              <% end %>
+            </div>
+          </div>
+          <div class='col-sm-8'>
+            <div class='row'>
+              <div class='col-sm-6'>
+                <div class='margin-bottom-10' style='border:1px solid #e7ecf1; padding:15px;'>
+                  <div class="form-group">
+                    <input type='checkbox' id='check-all-relationships'
+                      class='select-all' data-type='relationship'>
+                    <label for='check-all-relationships'>
+                      <strong>All Relationships</strong>
+                    </label>
+                  </div>
+                  <% Spree::Company::Resets::RESET_RELATIONSHIPS.each do |event| %>
+                    <%= render partial: 'spree/manage/companies/resets/checkbox',
+                      locals: {f: f, event: event, type: :relationship} %>
+                  <% end %>
+                </div>
+              </div>
+              <div class='col-sm-6'>
+                <div class='margin-bottom-10' style='border:1px solid #e7ecf1; padding:15px;'>
+                  <div class="form-group">
+                    <input type='checkbox' id='check-all-products'
+                      class='select-all' data-type='product'>
+                    <label for='check-all-products'>
+                      <strong>All Products</strong>
+                    </label>
+                  </div>
+                  <% Spree::Company::Resets::RESET_PRODUCTS.each do |event| %>
+                    <%= render partial: 'spree/manage/companies/resets/checkbox',
+                      locals: {f: f, event: event, type: :product} %>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class='form-actions'>
+        <div class='pull-right'>
+          <%= link_to '#confirm-with-email-modal', class: 'btn red', id: 'delete-data-btn',
+            data: {toggle: 'modal', target:'#confirm-with-email-modal'} do %>
+            <i class='fa fa-exclamation-triangle'></i> Delete Data
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+  <%= render partial: 'spree/manage/companies/confirm_with_email_modal',
+    locals: { modal_id: 'confirm-with-email-modal',
+              title: 'Confirm Deletion',
+              warning_message: Spree.t("data_reset.delete_data.warning_message")} %>
+<% end %>
+<script type='text/javascript'>
+  var toggleDependencyMessages = function(){
+    var anyHasErrors = false;
+    $('.delete-data-checkbox').each(function(){
+      var eventId = $(this).prop('id');
+      var dependenciesSatisfied = true;
+      if($(this).prop('checked') && $('.dependency_msg[data-event-id="' + eventId + '"]').length){
+        String($(this).data('dependencies')).split(',').forEach(function(event){
+          if(!$('#company_destroy_' + event).prop('checked')){
+            dependenciesSatisfied = false;
+            anyHasErrors = true;
+            return;
+          }
+        });
+      }
+      if(dependenciesSatisfied){
+        $('.dependency_msg[data-event-id="' + eventId + '"]').addClass('hidden');
+      }else{
+        $('.dependency_msg[data-event-id="' + eventId + '"]').removeClass('hidden');
+      }
+    });
+
+    if(anyHasErrors){
+      $('#delete-data-btn').addClass('disabled');
+    }else{
+      $('#delete-data-btn').removeClass('disabled');
+    }
+  }
+  $(document).ready(function(){
+    $('#destroy-all').click(function(e){
+      e.preventDefault();
+      $("input[type='checkbox']", "#reset-data-form").prop('checked', true);
+    });
+    $('input', '#reset-data-form').keypress(function(e){
+      if( e.keyCode === 13 ){
+        e.preventDefault();
+      }
+    });
+
+    $('.select-all').change(function(){
+      var type = $(this).data('type');
+      if($(this).prop('checked')){
+        $('.delete-data-checkbox[data-type="' + type + '"]').prop('checked', true);
+      }else{
+        $('.delete-data-checkbox[data-type="' + type + '"]').prop('checked', false);
+      }
+      toggleDependencyMessages();
+    });
+    $('.delete-data-checkbox').change(function(){
+      var type = $(this).data('type');
+      if(!$(this).prop('checked')){
+        $('.select-all[data-type="' + type + '"]').prop('checked', false);
+      }
+      toggleDependencyMessages();
+    });
+
+    $('.confirm-by-email').click(function(e){
+      e.preventDefault();
+      $(this).closest('form').submit();
+      $('.confirmation-modal').modal('hide');
+      $('.confirm_with_email').val('');
+    });
+
+  });
+</script>

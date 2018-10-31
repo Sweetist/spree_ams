@@ -1,0 +1,33 @@
+<%= form_for [:manage, @refund.payment.order, @refund.payment, @refund], html: {class: 'prevent-double-submission form', id: 'refund-form'} do |f| %>
+  <div class='form-body'>
+    <div data-hook="admin_refund_form_fields">
+      <div class="form-group">
+        <%= f.label :payment_amount, Spree.t(:payment_amount) %><br/>
+        <%= display_sweet_price(@refund.payment.amount, @order.try(:currency)) %>
+      </div>
+      <div class="form-group">
+        <%= f.label :credit_allowed, Spree.t(:credit_allowed) %><br/>
+        <%= display_sweet_price(@refund.payment.credit_allowed, @order.try(:currency)) %>
+      </div>
+      <div class="form-group price-input-with-label">
+        <%= f.label :amount, Spree.t(:amount) %>
+        <label class="currency-label"><%= currency_symbol(@order.try(:currency)) %></label>
+        <%= f.number_field :amount, step: '0.01', class: 'form-control price-field amount' %>
+      </div>
+      <div class="form-group">
+        <%= f.label :refund_reason_id, Spree.t(:reason) %>
+        <%= f.collection_select(:refund_reason_id, refund_reasons, :id, :name, {include_blank: true}, {class: 'select2'}) %>
+      </div>
+    </div>
+  </div>
+  <div class="form-actions" data-hook="buttons">
+    <div class='actions pull-right'>
+      <button class='btn btn-primary'>
+        <i class='fa fa-check'></i> <%= Spree.t(:refund) %>
+      </button>
+      <%= link_to edit_manage_order_path(@order), class: 'btn btn-default', data: {dismiss: 'modal'} do %>
+        <i class='fa fa-times'></i> <%= Spree.t(:Cancel) %>
+      <% end %>
+    </div>
+  </div>
+<% end %>

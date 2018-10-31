@@ -1,0 +1,99 @@
+<% disable_fields = States[@order.state] >= States['shipped'] || !@order.is_editable? || !@order.is_submitable? || order_is_void? %>
+<% @order.shipments.group_by { |s| s.selected_shipping_rate.try(:name) }.each do |name, shipments| %>
+  <tr class="adjustment">
+    <td></td>
+    <td colspan='<%= colspan_left - 1 %>'>
+      <label id="special-instructions-checkbox" value="false">
+        <a style='text-decoration: underline;'>
+          <i class="fa fa-plus <%= 'hidden' if @order.special_instructions.present? %>"></i>
+          <i class="fa fa-minus <%= 'hidden' if @order.special_instructions.blank? %>"></i>
+          Special Instructions (shown on packing list)
+        </a>
+      </label>
+      <div class="row hidden" id="special-instructions-div">
+        <div class="col-md-12">
+          <div class="form-group">
+            <textarea rows="5" placeholder="Write Instructions Here"
+            id="special-instructions" class="form-control"
+            <%= 'disabled' if disable_fields %>
+            name=order[special_instructions] maxlength="1000"><%= @order.special_instructions %></textarea>
+            <span class='pull-right help-block'>(1,000 char limit)</span>
+          </div>
+        </div>
+      </div>
+    </td>
+    <td colspan="<%= colspan %>">
+      <% if @order.ship_address.blank? %>
+        Must set up ship address to apply shipping methods
+      <% elsif @order.shipments.first.blank? %>
+        Shipping has not been set up yet and may not reflect the final cost.<br>
+        Please <%= submit_tag "Update" %>.
+      <% else %>
+        <% if available_methods.present? %>
+          <% available_methods_ids = available_methods.map(&:id) %>
+
+          <% if disable_fields %>
+            Shipment via: <%= @order.shipping_method.try(:name) %>
+          <% elsif @order.account.try(:default_shipping_method_only) && available_methods_ids.any?{|id| id == @order.account.default_shipping_method_id } %>
+            Shipment via:
+            <%= @order.shipping_method.try(:name) %>
+            <input type='hidden' name='order[shipping_method_id]'
+              value='<%= @order.shipping_method_id || @order.account.default_shipping_method_id %>'
+              id='order_shipping_method_id'>
+          <% elsif @order.account.try(:default_shipping_method_only) && available_methods_ids.none?{|id| id == @order.account.default_shipping_method_id } %>
+            <span class='red-thunderbird'>Please contact <%= @order.vendor.try(:name) || 'vendor' %> for shipping options</span>
+          <% else %>
+            Shipment via:
+            <% if States[@order.state].between?(States['complete'], States['approved']) && @order.past_delivery? %>
+              <%= collection_select :order, :shipping_method_id, available_methods, :id, :name, {include_blank: true}, {class: 'form-control', disabled: 'disabled'} %>
+            <% else %>
+              <%= collection_select :order, :shipping_method_id, available_methods, :id, :name, {include_blank: true}, {class: 'form-control'} %>
+            <% end %>
+          <% end %>
+          <% if @order.recalculate_shipping && @order.active_shipping_calculator && !disable_fields %>
+            <%= link_to 'Recalculate Shipping', order_recalculate_shipping_path(@order), method: :post,
+                remote: true, id: 'recalculate_shipping', class: 'font-red', data: { disable_with: 'Recalculate Shipping' } %>
+          <% end %>
+          <a id='recalculate_shipping_update' class='font-red' data-remote='true' data-disable-with='Recalculate Shipping' rel='nofollow' style='display: none;' href='#'>Recalculate Shipping</a>
+        <% else %>
+          Shipping:
+        <% end %>
+      <% end %>
+    </td>
+    <td>
+      <% if @order.shipping_method.try(:rate_tbd) && !@order.override_shipment_cost %>
+        TBD
+        <i class="fa fa-info-circle tooltips" data-original-title="Shipping price is 'to-be-determined' and will be updated by the vendor shortly after order completion." data-container="body"></i>
+      <% elsif @order.recalculate_shipping && @order.active_shipping_calculator %>
+        <span id='shipment-rate' class='font-red'><%= display_sweet_price(@order.shipment_total, @order.currency) %></span>
+      <% else %>
+        <span id='shipment-rate'><%= display_sweet_price(@order.shipment_total, @order.currency) %></span>
+        <% unless @order.shipped? || @order.received? %>
+          <i class="fa fa-info-circle tooltips" data-original-title="This is an estimated price. <%= @order.vendor.try(:name) %> reserves the right to change the shipping price" data-container="body"></i>
+        <% end %>
+      <% end %>
+    </td>
+  </tr>
+<% end %>
+
+<script>
+  $(document).ready(function(){
+    $('#recalculate_shipping').click(function(){
+      $('#recalculate_shipping').replaceWith("<a id='recalculate_shipping' class='font-red' data-remote='true' data-disable-with='Recalculate Shipping' rel='nofollow' data-method='post' href='#'>Recalculating Shipping</a>");
+      $('#shipment-rate').replaceWith("<img src='/assets/frontend/loading.gif' alt='Loading' id='shipment-rate' />");
+      $('#order_shipment_total').attr('value','');
+    });
+    $('#recalculate_shipping_update').click(function(e){
+      e.preventDefault();
+      $('#recalculate_shipping_update').text('Recalculating shipping');
+      $('#recalculate_shipping_update').attr('style','pointer-events:none; opacity: 0.65;');
+      $('#single-order-form').append("<input type='hidden' name='commit' value='Update Order'>");
+      $('#single-order-form').submit();
+    });
+  });
+  $(window).load(function(){
+    <% if @recalculate_shipping %>
+      $('#recalculate_shipping').click();
+    <% end %>
+  });
+</script>

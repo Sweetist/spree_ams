@@ -1,0 +1,8 @@
+<% if flash[:errors] %>
+
+<% else %>
+  $('.note-container').toggleClass('hidden');
+  $('#show-note').replaceWith("<%= j render(partial: 'spree/manage/stock_transfers/show_note', locals: {stock_transfer: @stock_transfer}) %>");
+  $('#toggle-note').show();
+<% end %>
+enableFormButtons();

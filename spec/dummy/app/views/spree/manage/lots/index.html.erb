@@ -1,0 +1,120 @@
+<%= content_for :head_title do %>
+  Lots
+<% end %>
+
+<%= content_for :page_title do %>
+  Lots
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+		<li>
+      <span>Lots</span>
+    </li>
+  </ul>
+	<div class="page-toolbar">
+    <% if current_spree_user.can_write?('basic_options', 'inventory') %>
+      <%= link_to new_manage_lot_path, class: "btn green pull-right" do%>
+        <i class="fa fa-plus"></i>&nbsp;New Lot
+      <% end %>
+    <% end %>
+  </div>
+<% end %>
+
+<div class='content'>
+  <%= search_form_for [:manage, @search], url: manage_lots_path, class: "form", id: 'products-search-form' do |f| %>
+    <%= render partial: 'lots_advanced_search', locals: {f: f} %>
+  <% end %>
+
+  <!-- <div class="row hidden"> -->
+    <!-- <div id="source-dt-buttons"> -->
+      <div class="btn-group margin-right-10 margin-bottom-10">
+        <div class="btn btn-default">
+          <input type="checkbox" class="group-checkable">
+        </div>
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"> Actions
+          <i class="fa fa-angle-down"></i>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+          <li>
+            <%= submit_tag Spree.t('lots.bulk_actions.archive'), form: "lots-list-form" %>
+          </li>
+          <li>
+            <%= submit_tag Spree.t('lots.bulk_actions.unarchive'), form: "lots-list-form" %>
+          </li>
+        </ul>
+      </div>
+    <!-- </div> -->
+  <!-- </div> -->
+  <%= form_for @vendor, html: {id: "lots-list-form"}, url: actions_router_manage_lots_path, method: :patch do |f| %>
+    <div class='hidden'>
+      <p>
+        You have selected all <strong><%= @lots.count %></strong> lots on this page. <a id='select-all-lots'>Click Here</a> to select all lots.
+      </p>
+      <input type="hidden" id='all-lots-input' name='all_lots' value="false">
+    </div>
+    <div class='hidden'>
+      <p>
+        All lots are selected. <a id='unselect-all-lots'>Clear selection</a>
+      </p>
+    </div>
+    <%= render partial: 'lots_table', locals: {f: f} %>
+  <% end %>
+
+</div>
+
+<%= paginate @lots %>
+
+<script type='text/javascript'>
+  $('.group-checkable').click(function(event) {
+    if(this.checked === true){
+      $('#select-all-lots').parent().parent().removeClass('hidden');
+      $('.checkboxes:checkbox').each(function() {
+        this.checked = true;
+      });
+    }else{
+      $('#all-lots-input').val('false');
+      if(!$('#select-all-lots').parent().parent().hasClass('hidden')){
+        $('#select-all-lots').parent().parent().addClass('hidden');
+      }
+      if(!$('#unselect-all-lots').parent().parent().hasClass('hidden')){
+        $('#unselect-all-lots').parent().parent().addClass('hidden');
+      }
+      $('.checkboxes:checkbox').each(function() {
+        this.checked = false;
+      });
+    }
+  });
+
+  $('#select-all-lots').click(function(){
+    $('#all-lots-input').val('true');
+    $(this).parent().parent().addClass('hidden');
+    $('#unselect-all-lots').parent().parent().removeClass('hidden');
+  });
+
+  $('#unselect-all-lots').click(function(){
+    $(this).parent().parent().addClass('hidden');
+    $('#all-lots-input').val('false');
+    $('.group-checkable:checkbox')[0].checked = false;
+
+    $('.checkboxes:checkbox').each(function() {
+      this.checked = false;
+    });
+  });
+
+  $('.checkboxes').click(function(){
+    $('.group-checkable:checkbox')[0].checked = false;
+    if(!$('#select-all-lots').parent().parent().hasClass('hidden')){
+      $('#select-all-lots').parent().parent().addClass('hidden');
+    }
+    if(!$('#unselect-all-lots').parent().parent().hasClass('hidden')){
+      $('#unselect-all-lots').parent().parent().addClass('hidden');
+    }
+    $('#all-lots-input').val('false');
+  });
+
+</script>

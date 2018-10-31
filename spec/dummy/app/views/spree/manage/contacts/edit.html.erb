@@ -1,0 +1,40 @@
+<%= content_for :head_title do %>
+  Contacts
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Contacts", manage_account_contacts_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+     <span><%= @contact.first_name %> <%= @contact.last_name %></span>
+     <i class="fa fa-circle"></i>
+    </li>
+    <li>
+     <span>Edit</span>
+    </li>
+  </ul>
+  <div class="page-toolbar">
+    <%= link_to new_manage_account_contact_path, class: "btn green pull-right" do%>
+      <i class="fa fa-plus"></i>&nbsp;New Contact
+    <% end %>
+  </div>
+<% end %>
+
+<%= form_for @contact, url: manage_account_contact_path(@contact) do |f| %>
+  <div class='form-body'>
+    <%= render partial: "form", locals: {f: f} %>
+  </div>
+  <div class="form-actions">
+    <%= link_to manage_account_contacts_path, class: "btn btn-default" do %>
+      <i class='fa fa-times'></i> Cancel
+    <% end %>
+    <%= f.submit "Update", class: "btn green" %>
+  </div>
+<% end %>

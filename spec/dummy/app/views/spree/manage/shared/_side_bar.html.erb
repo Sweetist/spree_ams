@@ -1,0 +1,22 @@
+<ul class="page-sidebar-menu page-header-fixed" data-keep-expanded="true" data-auto-scroll="false" data-slide-speed="200" style="padding-top: 20px">
+  <li class="sidebar-toggler-wrapper hide">
+    <!-- BEGIN SIDEBAR TOGGLER BUTTON -->
+    <div class="sidebar-toggler"> </div>
+    <!-- END SIDEBAR TOGGLER BUTTON -->
+  </li>
+  <li class="nav-item <%= "active" if current_controller?(['root']) %>">
+    <%= link_to manage_path, class: "nav-link" do %>
+      <i class="fa fa-home"></i>
+      <span class="title">Dashboard</span>
+    <% end %>
+  </li>
+  <%= render partial: 'spree/manage/shared/side_bar/transactions' %>
+  <%= render partial: 'spree/manage/shared/side_bar/products' %>
+  <%= render partial: 'spree/manage/shared/side_bar/relationships' %>
+  <%= render partial: 'spree/manage/shared/side_bar/contacts' %>
+  <%= render partial: 'spree/manage/shared/side_bar/pricing_adjustments' %>
+  <%= render partial: 'spree/manage/shared/side_bar/reports' %>
+  <%= render partial: 'spree/manage/shared/side_bar/integrations' %>
+  <%= render partial: 'spree/manage/shared/side_bar/configurations' %>
+  <%= render partial: 'spree/manage/shared/side_bar/my_account' %>
+</ul>

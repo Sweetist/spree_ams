@@ -1,0 +1,138 @@
+<%= content_for :head_title do %>
+  <%= @account.default_display_name %>
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="breadcrumb">
+    <li>
+      <%= link_to "Home", root_path %>
+    </li>
+    <li>
+      <%= link_to "Accounts", accounts_path %>
+    </li>
+    <li>
+      <span> <%= @account.vendor_account_name %></span>
+    </li>
+  </ul>
+<% end %>
+
+<div class="content">
+<div class="row">
+  <div class="col-md-12">
+      <!-- BEGIN PROFILE SIDEBAR -->
+      <div class="profile-sidebar">
+          <!-- PORTLET MAIN -->
+          <div class="portlet light profile-sidebar-portlet ">
+
+              <!-- SIDEBAR USERPIC -->
+              <div class="profile-userpic">
+                <% if @account.customer.images.present? %>
+                  <% image = @account.customer.images.first%>
+                  <%= image_tag image.attachment.url(:product), :class => "img-responsive", alt: image.alt %>
+                <% else %>
+                  <%= image_tag "spree/manage/img/multi-user.png", :class => "img-responsive", alt: "company image" %>
+                <% end %>
+              </div>
+
+              <!-- END SIDEBAR USERPIC -->
+              <!-- SIDEBAR USER TITLE -->
+              <div class="profile-usertitle">
+                <div class="profile-usertitle-name">
+                  <%= @account.vendor_account_name %>
+                </div>
+              </div>
+
+          </div>
+          <!-- END PORTLET MAIN -->
+
+       </div>
+        <!-- END BEGIN PROFILE SIDEBAR -->
+        <!-- BEGIN PROFILE CONTENT -->
+        <div class="profile-content">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="portlet light ">
+                        <div class="portlet-title tabbable-line">
+                            <div class="caption caption-md">
+                                <i class="icon-globe theme-font hide"></i>
+                                <span class="caption-subject font-blue-madison bold uppercase">Account Details</span>
+                            </div>
+                            <div class="btn-group hidden-md hidden-lg pull-left" style = "width:100%">
+                              <button type="button" class="btn green dropdown-toggle dropdown-btn-text " data-toggle="dropdown" style = "width:100%">
+                                <label>Information</label>
+                                <i class="fa fa-angle-down"></i>
+                              </button>
+                              <ul class="dropdown-menu pull-left link-items" role="menu" style = "width:100%">
+                                <li class= "active tab-link">
+                                  <a href="#overview" data-toggle="tab">Overview</a>
+                                </li>
+                                <li class= "tab-link">
+                                  <a href="#account_info" data-toggle="tab">Information</a>
+                                </li>
+                                <li class= "tab-link">
+                                  <a href="#addresses" data-toggle="tab">Addresses</a>
+                                </li>
+                                <li class= "tab-link">
+                                 <a href="#users_table" data-toggle="tab">Users</a>
+                               </li>
+                              </ul>
+                            </div>
+                            <ul class="nav nav-tabs hidden-xs hidden-sm">
+                                <li class= "active long-tabs-link">
+                                  <a href="#overview" data-toggle="tab">Overview</a>
+                                </li>
+                                <li class="long-tabs-link">
+                                    <a href="#account_info" data-toggle="tab">Information</a>
+                                </li>
+                                <li class="long-tabs-link">
+                                  <a href="#addresses" data-toggle="tab">Addresses</a>
+                                </li>
+                                <li class="long-tabs-link">
+                                    <a href="#users_table" data-toggle="tab">Users</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="portlet-body form">
+                          <div class="tab-content">
+                            <div class="tab-pane active" id="overview">
+                              <!--<form role="form" action="#">-->
+                              <%= render partial: 'spree/cust/accounts/overview' %>
+                            </div>
+                                <!-- INFO TAB -->
+                            <div class="tab-pane" id="account_info">
+                              <%= form_for @account, url: account_path(@account), method: :patch do |f| %>
+                                <%= render partial: 'spree/cust/accounts/account_form', locals: { f: f } %>
+                                <div class="form-actions">
+                                  <%= f.submit class: "btn btn-primary"%>
+                                </div>
+                              <% end %>
+                            </div>
+                            <!-- END INFO TAB -->
+                            <!-- ADDRESS INFO TAB -->
+                            <div class="tab-pane" id="addresses">
+                              <%= form_for @account, url: account_path(@account), method: :patch do |f| %>
+                              <%= render partial: "spree/cust/accounts/addresses", locals: { f: f } %>
+                              <% end %>
+                            </div>
+                            <!-- END ADDRESS INFO TAB -->
+                            <!-- USERS TABLE TAB -->
+                            <div class="tab-pane" id="users_table">
+                              <%= form_for @account, url: account_path(@account), method: :patch do |f| %>
+                              <%= render partial: "user_table", locals: {users: @account.users.where(company_id: @account.customer_id)} %>
+                              <% end %>
+                            </div>
+                              <!-- END USERS TABLE TAB -->
+                          </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- END PROFILE CONTENT -->
+    </div>
+</div>
+</div>
+
+<!-- BEGIN ADDRESS MODAL -->
+<div class="modal fade" id="address_modal" tabindex="-1" role="basic" aria-labelledby="myModalLabel" aria-hidden="true"></div>
+<!-- END ADDRESS MODAL -->

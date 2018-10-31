@@ -1,0 +1,11 @@
+<%= render partial: 'spree/manage/variants/headers/edit_header' %>
+<div class='row'>
+  <div class="portlet light no-padding-top">
+    <%= render partial: 'spree/manage/variants/page_content/edit_body' %>
+  </div>
+</div>
+
+<% if @product.assemblies_parts.present? && @product.should_track_inventory? && @vendor.subscription_includes?('assemblies') %>
+  <%= render partial: 'spree/manage/inventories/build_assembly_modal' %>
+<% end %>
+<%= render partial: 'spree/manage/option_types/modal/edit' %>

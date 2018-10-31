@@ -1,0 +1,32 @@
+<div class='manage-main-img-container'>
+  <% if defined?(image) && image %>
+    <%= image_tag image.attachment.url(:product), itemprop: "image", class: "img-thumbnail" %>
+  <% else %>
+    <%= product_image(@variant, itemprop: "image", class: "img-thumbnail", id: 'manageMainImage') %>
+  <% end %>
+</div>
+<% if params[:action] == 'edit' %>
+  <div>
+    <%= link_to 'Manage images', manage_product_images_path(@product) %>
+  </div>
+<% end %>
+<% if @variant.multiple_images? %>
+  <div>
+    <ul id="manage-img-gallery">
+      <% @variant.all_images.each do |image| %>
+        <li>
+          <div class="manage-img-container">
+            <%= create_product_image_tag(image, @variant.product, {alt: @variant.product.name}, 'product') %>
+          </div>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<script>
+  $(".manage-img-container img").click(function(){
+    var src = $(this).attr("src");
+    $("#manageMainImage").attr("src",src);
+  });
+</script>

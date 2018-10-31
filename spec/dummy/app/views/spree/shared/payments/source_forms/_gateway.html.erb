@@ -1,0 +1,123 @@
+<fieldset data-id="credit-card">
+  <% if payment_method.try(:payment_profiles_supported?) %>
+    <div class="table-scrollable table-scrollable-borderless table-sizing">
+      <table class="table table-hover table-light">
+        <thead>
+          <tr>
+            <th> </th>
+            <th> Type </th>
+            <th> Last 4 digit </th>
+            <th> Name </th>
+            <th> Expires </th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% previous_cards.each do |credit_card| %>
+            <tr class="payment_boxes" id="payment_<%= credit_card.id %>" data-credit-card-id='<%= credit_card.id %>'>
+              <td>
+                <%= radio_button_tag :card, credit_card.id, credit_card.id == previous_cards.first.id, {class:"noUniform", data: {method: payment_method.id}} %>
+              </td>
+              <td> <%= credit_card.cc_type %> </td>
+              <td> <%= credit_card.display_number %> </td>
+              <td> <%= credit_card.name %> </td>
+              <td> <%= credit_card.display_expiry %></td>
+              <td>
+                <% if request.path.include? 'manage' %>
+                  <% url = manage_credit_card_path(credit_card.id) %>
+                <% else %>
+                  <% url = credit_card_path(credit_card.id) %>
+                <% end %>
+                <%= link_to url, method: :delete, remote: true,
+                  data: {confirm: 'Are you sure you want to permanently remove this credit card?'} do %>
+                  <i class='fa fa-times'></i> remove
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+          <tr class="payment_boxes">
+            <td>
+              <%= radio_button_tag :card, 'new',
+                previous_cards.none? || (params[:card] == 'new' && @payment.try(:payment_method_id) == payment_method.id),
+                { id: "card_new#{payment_method.id}", class: 'noUniform' } %>
+            </td>
+            <td colspan="4">
+              <%= Spree.t(:use_new_cc) %>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  <% end %>
+
+  <% if payment_method.try(:credit_card?) %>
+    <div id="card_form<%= payment_method.id %>" class="margin-top-10" data-profiles='<%= payment_method.try(:payment_profiles_supported?) %>'>
+      <% param_prefix = "payment_source[#{payment_method.id}]" %>
+
+      <div data-hook="card_name" class="form-group">
+        <%= label_tag "card_name#{payment_method.id}", raw(Spree.t(:name) + content_tag(:span, ' *', class: 'required')) %>
+        <%= text_field_tag "#{param_prefix}[name]", params.fetch('payment',{}).fetch('source_attributes', {}).fetch('name', ''),
+            id: "card_name#{payment_method.id}", class: 'required form-control' %>
+      </div>
+
+      <div data-hook="card_number" class="form-group">
+        <%= hidden_field_tag "#{param_prefix}[cc_type]",
+            params.fetch('payment',{}).fetch('source_attributes', {}).fetch('cc_type', ''),
+            {class: 'ccType'} %>
+        <%= label_tag "card_number#{payment_method.id}", raw(Spree.t(:card_number) + content_tag(:span, ' *', class: 'required')) %>
+        <%= text_field_tag "#{param_prefix}[number]",
+            params.fetch('payment',{}).fetch('source_attributes', {}).fetch('number', ''),
+            class: 'required form-control cardNumber', id: "card_number#{payment_method.id}", maxlength: 19 %>
+        <span id="card_type" style="display:none;">
+          ( <span id="looks_like" ><%= Spree.t(:card_type_is) %> <span id="type"></span></span>
+          <span id="unrecognized"><%= Spree.t(:unrecognized_card_type) %></span>
+          )
+        </span>
+      </div>
+
+      <!-- <div data-hook="card_expiration" class="form-group">
+        <%#= label_tag "card_expiry#{payment_method.id}", raw(Spree.t(:expiration) + content_tag(:span, ' *', class: 'required')) %><br>
+        <%#= text_field_tag "#{param_prefix}[expiry]", '', id: "card_expiry#{payment_method.id}", class: "required cardExpiry form-control", placeholder: "MM / YY" %>
+      </div> -->
+      <div class='row'>
+        <div class='col-xs-6'>
+          <div class="form-group">
+            <%= label_tag "#{param_prefix}_expiry_month", raw('Exp. Month' + content_tag(:span, ' *', class: 'required')) %><br>
+            <%= select_month(params.fetch('payment',{}).fetch('source_attributes', {}).fetch('expiry_month', 14).to_i, {},
+            {name: "#{param_prefix}[expiry_month]", id: "source_expiry_month", class: "required cardExpiry form-control"}) %>
+          </div>
+        </div>
+        <div class='col-xs-6'>
+          <div class="form-group">
+            <%= label_tag "#{param_prefix}_expiry_year", raw('Exp. Year' + content_tag(:span, ' *', class: 'required')) %><br>
+            <%= select_year(params.fetch('payment',{}).fetch('source_attributes', {}).fetch('expiry_year', 14).to_i, {start_year: Date.today.year, end_year: (Date.today.year + 20)}, {name: "#{param_prefix}[expiry_year]", id: "source_expiry_year", class: "required cardExpiry form-control"}) %>
+          </div>
+        </div>
+      </div>
+
+
+      <div class='row'>
+        <div class='col-xs-6'>
+          <div data-hook="card_code" class="form-group">
+            <%= label_tag "card_code#{payment_method.id}", raw(Spree.t(:cvv_code) + content_tag(:span, ' *', class: "required")) %>
+            <%= text_field_tag "#{param_prefix}[verification_value]",
+                params.fetch('payment',{}).fetch('source_attributes', {}).fetch('verification_value', ''),
+                id: "card_code#{payment_method.id}", class: 'required form-control cardCode', size: 5 %>
+            <a href="/content/cvv" class="info cvvLink" target="_blank">
+              (<%= Spree.t(:what_is_this) %>)
+            </a>
+          </div>
+        </div>
+        <div class='col-xs-6'>
+          <div data-hook="card_zip" class="form-group">
+            <%= label_tag "card_zip#{payment_method.id}", raw(Spree.t(:billing_zipcode) + content_tag(:span, ' *', class: 'required')) %>
+            <%= text_field_tag "#{param_prefix}[zip]",
+                params.fetch('payment',{}).fetch('source_attributes', {}).fetch('zip', ''), id: "card_zip#{payment_method.id}", class: 'required form-control' %>
+          </div>
+        </div>
+      </div>
+      <%= image_tag 'credit_cards/credit_card.gif', class: 'credit-card-image' %>
+
+    </div>
+  <% end %>
+</fieldset>

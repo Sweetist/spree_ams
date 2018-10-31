@@ -1,0 +1,12 @@
+<% if !@new_form %>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="form-group">
+        <label for="special-instructions" class="control-label textarea-label">Special Instructions (will be attached to all new orders)</textarea>
+        <%= f.fields_for :note do |note| %>
+          <%= note.text_area :body %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>

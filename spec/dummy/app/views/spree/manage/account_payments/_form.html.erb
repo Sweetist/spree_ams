@@ -1,0 +1,80 @@
+<div class="row">
+  <div class="col-md-12">
+    <div data-hook="admin_payment_form_fields">
+
+      <div class="form-group">
+        <div class="payment-method-settings">
+          <div class="payment-methods" id="payment_method_<%= payment_method.id %>" data-method="<%= payment_method.id %>" data-creditcard='<%= payment_method.credit_card? %>'>
+            <% if payment_method.source_required? %>
+              <% previous_cards = account.present? ? account.credit_cards.where(payment_method_id: payment_method.id)
+                                                                         .active
+                                                                         .where.not(gateway_customer_profile_id: nil)
+                                                                         .order(updated_at: :desc) : [] %>
+              <%= render :partial => "spree/shared/payments/source_forms/gateway", locals: { payment_method: payment_method, previous_cards: previous_cards } %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <% if !payment_method.source_required? %>
+        <div id='non-credit-card-params'>
+          <div class='form-group'>
+            <%= f.label :txn_id, Spree.t('payment_attrs.txn_id') %>
+            <%= f.text_field :txn_id, class: 'required form-control cardCode' %>
+          </div>
+          <div class='form-group'>
+            <%= f.label :memo, Spree.t('payment_attrs.memo') %>
+            <%= f.text_area :memo, class: 'required form-control cardCode', size: 5 %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+
+<script type="text/javascript">
+
+
+  $(document).ready(function() {
+
+    var toggleCardForm = function(paymentMethodId){
+      pmId = paymentMethodId.toString();
+      var useNewCardId = '#card_new' + pmId;
+      var cardForm = '#card_form' + pmId;
+      var usesProfiles = $(cardForm).data('profiles');
+      if($(useNewCardId).is(':checked') || !usesProfiles){
+        $(cardForm).show();
+      }else{
+        $(cardForm).hide();
+      }
+    }
+
+    var togglePaymentMethodViews = function(){
+      var selectedMethod = $('#account_payment_payment_method_id').val();
+      $('.payment-methods').each(function(){
+        if($(this).data('method') == selectedMethod){
+          $(this).show();
+          if($(this).data('creditcard')){
+            $('#non-credit-card-params').hide();
+            toggleCardForm(selectedMethod);
+          }else{
+            $('#non-credit-card-params').show();
+          }
+        }else{
+          $(this).hide();
+        }
+
+      });
+    }
+
+    $('#account_payment_payment_method_id').change(function(){
+      togglePaymentMethodViews();
+    });
+    $('input[type=radio]', '.payment_boxes').change(function(){
+      togglePaymentMethodViews();
+    });
+
+    togglePaymentMethodViews();
+  });
+</script>

@@ -1,0 +1,76 @@
+<div class="portlet box blue-hoki" id='search'>
+  <div class="portlet-title">
+    <div class='col-xs-12 col-sm-6 col-lg-4'>
+      <%= f.text_field :full_name_or_email_cont, class: 'form-control', placeholder: 'Enter search term' %>
+      <div class="visible-xs-block" style="min-height:10px;">
+      </div>
+    </div>
+    <div class="col-xs-8 col-sm-4" id="basic-search-buttons">
+      <button type="submit" class="btn green"><i class="fa fa-search" aria-hidden="true"></i> Search</button>
+      <%= link_to manage_account_contacts_path, class: "btn default" do %>
+        <i class='fa fa-times'></i> Reset
+      <% end %>
+    </div>
+
+    <div class="tools">
+      <a href="javascript:;" id='toggle-advanced-search'>Advanced Search <i class="fa fa-angle-down"></i></a>
+    </div>
+  </div>
+  <div class="portlet-body form hidden" id='advanced-search-form'>
+    <div class="form-body">
+      <div class='row'>
+        <div class='col-md-4'>
+          <div class='form-group' data-open="<%= @open_search %>">
+            <%= f.label :first_name_cont, 'First Name', class: 'control-label' %>
+            <%= f.text_field :first_name_cont, class: 'form-control' %>
+          </div>
+        </div>
+        <div class='col-md-4'>
+          <div class='form-group' data-open="<%= @open_search %>">
+            <%= f.label :last_name_cont, 'Last Name', class: 'control-label' %>
+            <%= f.text_field :last_name_cont, class: 'form-control' %>
+          </div>
+        </div>
+        <div class='col-md-4'>
+          <div class='form-group' data-open="<%= @open_search %>">
+            <%= f.label :phone_cont, 'Phone', class: 'control-label' %>
+            <%= f.text_field :phone_cont, class: 'form-control' %>
+          </div>
+        </div>
+      </div>
+      <div class='row'>
+        <div class='col-md-4'>
+          <div class='form-group' data-open="<%= @open_search %>">
+            <%= f.label :email_cont, 'Email', class: 'control-label' %>
+            <%= f.text_field :email_cont, class: 'form-control' %>
+          </div>
+        </div>
+        <div class='col-md-4'>
+          <div class='form-group' data-open="<%= @open_search %>">
+            <%= f.label :position_cont, 'Position', class: 'control-label' %>
+            <%= f.text_field :position_cont, class: 'form-control' %>
+          </div>
+        </div>
+        <div class='col-md-4'>
+          <div class='form-group' data-open="<%= @open_search %>">
+            <%= f.label :accounts_id_in, 'Account', class: 'control-label' %>
+            <%= f.collection_select :accounts_id_in, @vendor.customer_accounts.order('fully_qualified_name ASC'), :id, :fully_qualified_name, {include_blank: true }, {class: 'select2 form-control'} %>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="form-actions">
+      <div class="row">
+        <div class="col-md-12">
+          <div class='btn-set pull-right'>
+            <button type="submit" class="btn green"><i class="fa fa-search" aria-hidden="true"></i> Search</button>
+            <%= link_to manage_account_contacts_path, class: "btn default" do %>
+              <i class='fa fa-times'></i> Reset
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

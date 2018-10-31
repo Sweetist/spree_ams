@@ -1,0 +1,46 @@
+<%= content_for :head_title do %>
+  Pages
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Pages", manage_pages_path %>
+       <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      New Page
+    </li>
+  </ul>
+<% end %>
+
+<%= form_for [:manage, @page], method: :post, class:'prevent-double-submission' do |f| %>
+  <div class="content">
+    <div class="row">
+      <div class="portlet light">
+        <div class="portlet-body">
+          <div class='form'>            
+            <div class='form-body'>
+              <%= render partial: 'form', locals: {f: f} %>
+            </div>
+
+            <div class="form-actions" data-hook="buttons">
+              <div class='pull-right'>
+                <%= link_to manage_pages_path, class: 'btn btn-default prevent-double-submission' do %>
+                  <i class='fa fa-times'></i> <%= Spree.t(:Cancel) %>
+                <% end %>
+                <button class='btn btn-primary prevent-double-submission' id='page-submit'>
+                  <i class='fa fa-check'></i> <%= Spree.t(:save) %>
+                </button>
+              </div>
+            </div>            
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>

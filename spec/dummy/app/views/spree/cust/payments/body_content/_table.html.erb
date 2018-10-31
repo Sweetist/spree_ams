@@ -1,0 +1,40 @@
+<div class='table-scrollable'>
+  <table class="table table-bordered" id='payments-table', data-order-id='<%= @order.id %>' >
+    <thead>
+      <tr data-hook="payments_header">
+        <!-- <th><%#= Spree::Payment.human_attribute_name(:number) %></th> -->
+        <th><%= "#{Spree.t('date')}/#{Spree.t('time')}" %></th>
+        <th class="text-center"><%= Spree.t(:amount) %></th>
+        <th class="text-center"><%= Spree.t(:payment_method) %></th>
+        <th class="text-center"><%= Spree.t(:status) %></th>
+      <% card_payments = payments.any?{|payment| payment.account_payment.payment_method.credit_card? if payment.account_payment.present?} %>
+      <% if card_payments %>
+        <th class="text-center"><%= Spree.t(:card) %></th>
+        <th class="text-center"><%= Spree.t(:expires) %></th>
+      <% end %>
+      </tr>
+    </thead>
+    <tbody>
+      <% if payments.present? %>
+        <% zone = @order.try(:vendor).try(:time_zone) %>
+        <% payments.each do |payment| %>
+          <% if payment.account_payment %>
+            <%= render 'spree/cust/payments/body_content/account_payment_line',
+                      payment: payment, zone: zone,
+                      url_prefix: url_prefix, card_payments: card_payments %>
+          <% else %>
+            <%= render 'spree/cust/payments/body_content/payment_line',
+                      payment: payment, zone: zone,
+                      url_prefix: url_prefix, card_payments: card_payments %>
+          <% end %>
+        <% end %>
+      <% else %>
+        <tr>
+          <td colspan="100%">
+            No Payments
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

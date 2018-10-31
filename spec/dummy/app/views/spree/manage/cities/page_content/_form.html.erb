@@ -1,0 +1,15 @@
+<div class='row'>
+  <div class='col-md-6'>
+    <%= f.label :state_id, Spree.t(:state), class: 'control-label' %>
+    <% state_id = @city.state_id || params[:state_id] %>
+    <%= f.hidden_field :state_id, value: state_id %>
+    <input type='text' name='' value='<%= Spree::State.find_by_id(state_id).try(:name) %>'
+      disabled='true' class='form-control'>
+  </div>
+  <div class='col-md-6'>
+    <div class='form-group'>
+      <%= f.label :name, Spree.t(:name), class: 'control-label' %>
+      <%= f.text_field :name, class: 'form-control' %>
+    </div>
+  </div>
+</div>

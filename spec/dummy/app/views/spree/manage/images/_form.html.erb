@@ -1,0 +1,16 @@
+<div data-hook="admin_image_form_fields">
+  <div class="">
+    <div data-hook="file" class="">
+      <%= f.label :attachment, Spree.t(:filename), class: "control-label" %><br>
+      <%= f.file_field :attachment, class: "image-size-check" %>
+    </div>
+    <div data-hook="variant" class="form-group">
+      <%= f.label :viewable_id, Spree::Variant.model_name.human, class:"control-label" %><br>
+      <%= f.select :viewable_id, @variants, {}, { class: 'form-control' } %>
+    </div>
+  </div>
+  <div data-hook="alt_text" class="">
+    <%= f.label :alt, Spree.t(:alt_text) %><br>
+    <%= f.text_field :alt, class: 'form-control' %>
+  </div>
+</div>

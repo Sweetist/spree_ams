@@ -1,0 +1,102 @@
+<% variant = line_item.variant %>
+<%= order_form.fields_for :line_items, line_item do |item_form| %>
+  <% stock_message = line_item.display_stock_level %>
+  <% out_of_stock = [Spree.t(:backordered), Spree.t(:out_of_stock), Spree.t(:insufficient_stock)].any?{|m| stock_message.start_with?(m)} %>
+  <% url = vendor_product_variant_url(@order.vendor, variant.product, variant) %>
+  <tr id="line_item_<%= line_item.id %>" class="<%= 'warning' if show_backordered_notice && out_of_stock %>">
+    <td>
+      <% if @order.shipped? && !@order.received? %>
+        <div class="cel">
+          <%= item_form.check_box :confirm_received %>
+        </div>
+      <% elsif order_can_add_products? && !@order.shipped? && !@order.received? && !@order.all_variants_past_cutoff? %>
+        <div class="cel">
+          <%= link_to raw("<i class='fa fa-times'></i>"), {format: :js, action: :unpopulate, order_id: @order.id, line_item_id: line_item.id, item_form_idx: item_form.index},
+            class: 'btn btn-xs red delete-input-row-btn close-button', id: "delete-item-button-#{line_item.id}", remote: true %>
+        </div>
+      <% end %>
+    </td>
+    <td>
+      <%= link_to line_item.item_name || line_item.name, url %>
+    </td>
+    <% if current_vendor_view_settings.variant_sku %>
+      <td>
+        <a href="<%= url %>" class="cel"><%= line_item.sku %></a>
+      </td>
+    <% end %>
+    <% if current_vendor_view_settings.line_item_lot_number %>
+      <td>
+        <%= link_to line_item.lot_number.to_s, url %>
+      </td>
+    <% end %>
+    <% if current_vendor_view_settings.variant_pack_size %>
+      <td>
+        <a href="<%= url %>" class="cel"><%= line_item.pack_size %></a>
+      </td>
+    <% end %>
+    <% if @order.vendor.try(:include_unit_weight) %>
+      <td>
+        <%= link_to variant.display_weight.to_s, url %>
+      </td>
+    <% end %>
+    <td>
+      <a href="<%= url %>" class="cel"><%= display_sweet_price(line_item.discount_price, line_item.currency) %></a>
+    </td>
+    <td>
+      <% if order_can_add_products? && !line_item.is_past_cutoff? %>
+        <%= item_form.number_field :quantity, min: 0, step: variant.step_size, class: "form-control order-qty", tabindex: 1 %>
+        <% if show_lead_time_warning && @order.vendor.try(:selectable_delivery)  %>
+          <span id='variant_lead_time_<%= variant.id %>' class="help-block-italic hidden" data-lead-time='<%= variant.lead_time %>'><%= pluralize(variant.lead_time, 'day') %> lead time req'd</span>
+        <% end %>
+        <% if show_backordered_notice && out_of_stock %>
+          <span class='help-block-italic'> <%= stock_message %></span>
+        <% end %>
+      <% elsif order_can_add_products? && line_item.is_past_cutoff? %>
+        <%= item_form.number_field :quantity, min: 0, step: variant.step_size, class: "form-control order-qty", tabindex: 1 %>
+        <% if show_lead_time_warning && @order.vendor.try(:selectable_delivery) %>
+          <span id='variant_lead_time_<%= variant.id %>' class="help-block-italic lead-time-reqmt" data-lead-time='<%= variant.lead_time %>'><%= pluralize(variant.lead_time, 'day') %> lead time req'd</span>
+        <% end %>
+        <% if show_backordered_notice && out_of_stock %>
+          <br>
+          <span class='help-block-italic'> <%= stock_message %></span>
+        <% end %>
+      <% else %>
+        <%= link_to line_item.ordered_qty.to_s, url %>
+      <% end %>
+    </td>
+    <% if @order.shipped? || @order.received? %>
+      <td>
+        <%= link_to line_item.shipped_qty.to_s, url %>
+      </td>
+      <% if @order.vendor.try(:receive_orders) %>
+        <td>
+          <% if @order.received? %>
+            <%= link_to line_item.quantity.to_s, url %>
+          <% else %>
+            <%= item_form.number_field :quantity, min: 0, step: variant.step_size, class: "form-control order-qty", tabindex: 1 %>
+          <% end %>
+        </td>
+      <% end %>
+    <% end %>
+    <% if @order.vendor.try(:include_total_weight) %>
+      <td>
+        <%= link_to line_item.display_weight, url %>
+      </td>
+    <% end %>
+    <td>
+      <a href="<%= url %>" class="cel"><%= display_sweet_price(line_item.amount, line_item.currency) %></a>
+    </td>
+  </tr>
+  <% if line_item.variant.is_bundle? && line_item.variant.should_show_parts? %>
+    <%= render partial: 'spree/cust/orders/shared/line_item_bundle_parts',
+               locals: { line_item: line_item,
+                         line_qty: line_item.quantity }  %>
+
+  <% end %>
+  <% if line_item.variant.is_assembly? && line_item.variant.should_show_parts? %>
+    <%= render partial: 'spree/cust/orders/shared/line_item_assembly_parts',
+               locals: { line_item: line_item,
+                         line_qty: line_item.quantity }  %>
+  <% end %>
+
+<% end %>

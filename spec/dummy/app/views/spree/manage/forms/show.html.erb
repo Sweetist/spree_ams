@@ -1,0 +1,21 @@
+<%= content_for :head_title do %>
+  Forms
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Forms", manage_forms_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <span>Preview - <%= @form.name %></span>
+    </li>
+  </ul>
+<% end %>
+
+<%= render partial: "spree/manage/forms/preview/layouts/#{@form.form_type}" %>

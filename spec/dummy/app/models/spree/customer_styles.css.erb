@@ -1,0 +1,100 @@
+.customer .pre-header{
+  color: <%= @pre_header_text_color %>;
+  background-color: <%= @pre_header_background_color %>;
+}
+
+.customer .pre-header a, .customer .pre-header #catalog_link {
+  color: <%= @pre_header_text_color %>;
+}
+
+.customer .header{
+  color: <%= @header_text_color %>;
+  background-color: <%= @header_background_color %>;
+}
+
+.customer .btn-primary{
+  color: <%= @button_text_color %>!important;
+  background-color: <%= @button_background_color %>;
+  border-color: <%= @button_background_color %>;
+}
+
+.customer .btn-primary:hover,
+.customer .btn-primary:focus,
+.customer .btn-primary:active{
+  color: <%= @button_text_color %>!important;
+  background-color: <%= @button_background_color %>;
+  border-color: <%= @button_background_color %>;
+  filter: brightness(80%);
+}
+
+.customer .main .sidebar #clear-all-btn{
+  color: <%= @button_text_color %>;
+}
+
+.customer .main .sidebar #clear-all-btn i,
+.customer .main .sidebar #search-btn i{
+  color: <%= @button_text_color %>!important;
+}
+
+.customer .pre-header li {
+  border-right: solid 1px <%= @pre_header_text_color %>;
+}
+
+.customer .pre-header ul > li > a.dropdown-link:last-child:active,
+.customer .pre-header ul > li > a.dropdown-link:last-child:hover{
+  color: <%= @button_text_color %>;
+  background-color: <%= @button_background_color %>;
+}
+
+.customer a:hover{
+  color: <%= @button_background_color %>;
+}
+
+.customer .main .sidebar a:hover{
+  color: <%= @button_background_color %>;
+}
+
+.customer .pre-footer{
+  color: <%= @footer_text_color %>;
+  background-color: <%= @footer_background_color %>;
+}
+
+.customer .footer{
+  color: <%= @footer_text_color %>;
+  background-color: <%= @footer_background_color %>;
+  filter: brightness(80%);
+}
+
+.customer .main.page-content-wrapper{
+  background-color: <%= @body_background_color %>;
+}
+
+.customer .main .page-bar-breadcrumb .breadcrumb a,
+.customer .main .page-bar-breadcrumb .breadcrumb a:hover,
+.customer .main .sidebar a,
+.customer .main > .container a:hover,
+.customer .main > .container *{
+  color: <%= @body_text_color %>;
+}
+
+.customer .header #shopping-cart .fa-shopping-cart{
+  color: <%= @button_text_color %>;
+  background-color: <%= @button_background_color %>;
+}
+
+.customer .header .top-cart-content{
+  border-top: solid 2px <%= @button_background_color %>;
+}
+.customer .header .top-cart-content:after{
+  border-bottom: 8px solid <%= @button_background_color %>;
+}
+
+.customer .announcement {
+  color: <%= @announcement_text_color %> !important;
+  background: <%= @announcement_background_color %> !important;
+}
+.customer a.btn.btn-default.add-to-cart-modal-btn.active,
+.customer .table a.btn.btn-default.add-to-cart-modal-btn.active {
+  border-color: <%= @button_background_color %>;
+  color: <%= @button_background_color %> !important;
+}

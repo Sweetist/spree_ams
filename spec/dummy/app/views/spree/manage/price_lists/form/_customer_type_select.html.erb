@@ -1,0 +1,12 @@
+<%
+  indent = ""
+  5.times {indent += "&nbsp;"}
+  c_types = current_company.customer_types.order(:name).pluck(:name, :id).map do |c_type|
+    ["#{indent}#{c_type[0]}".html_safe, "#{c_type[1]}"]
+  end
+%>
+<% grouped_options = [['', [['Individual Customers', 'individual'], ['All Customers', 'all']]], ['Customer Type', c_types]] %>
+
+<%= select_tag 'price_list[select_customers_by]',
+  grouped_options_for_select(grouped_options, selected: @price_list.try(:select_customers_by).to_s),
+  {class: 'form-control select2 new-item-required', id: 'select-customers-by'} %>

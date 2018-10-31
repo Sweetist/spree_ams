@@ -1,0 +1,51 @@
+<%= content_for :head_title do %>
+  New <%= @display_shipping_group_class %>
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+		<li>
+      <%= link_to "#{@display_shipping_group_class}s", manage_shipping_groups_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <span>New <%= @display_shipping_group_class %></span>
+    </li>
+  </ul>
+	<div class="page-toolbar">
+    <div class="btn-group pull-right">
+			<%= link_to "Back to #{@display_shipping_group_class}s", manage_shipping_groups_path, class: "btn green" %>
+    </div>
+  </div>
+<% end %>
+
+<div class="portlet light">
+  <div class="portlet-title">
+    <div class="caption">
+      <span class="caption-subject font-blue-madison bold uppercase">
+        New <%= @display_shipping_group_class %>
+      </span>
+    </div>
+  </div>
+  <div class="portlet-body form">
+    <%= form_for [:manage, @shipping_group] do |f| %>
+      <div class="form-body">
+        <%= render partial: 'form', locals: {f:f} %>
+      </div>
+      <div class="form-actions">
+        <div class="pull-right">
+          <%= link_to manage_shipping_groups_path, class: "btn btn-default" do %>
+            <i class='fa fa-times'></i> <%= Spree.t(:Cancel) %>
+          <% end %>
+          <button class="btn btn-primary">
+            <i class='fa fa-check'></i> <%= Spree.t(:save) %>
+          </button>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

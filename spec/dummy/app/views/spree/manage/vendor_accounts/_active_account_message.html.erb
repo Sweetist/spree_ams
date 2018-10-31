@@ -1,0 +1,12 @@
+<%= link_to "Deactivate Account", 'javascript:;', class: 'btn red', id: 'deactivate-account-btn' %>
+  <div class='form-group'>
+    <div id="account-activity" class='hidden'>
+      <%= f.label :inactive_reason, 'Reason for deactivating' %>
+      <div class='input-group'>
+        <%= f.text_field :inactive_reason, class: 'form-control' %>
+        <span class="input-group-btn">
+          <%= f.submit 'Confirm', class: 'btn red' %>
+        </span>
+      </div>
+    </div>
+</div>

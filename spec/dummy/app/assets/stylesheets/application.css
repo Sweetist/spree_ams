@@ -1,0 +1,188 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
+ * or any plugin's vendor/assets/stylesheets directory can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the bottom of the
+ * compiled file so the styles you add here take precedence over styles defined in any styles
+ * defined in the other CSS/SCSS files in this directory. It is generally better to create a new
+ * file per style scope.
+ *
+ * require_tree .
+ *= require_self
+ *= require mentionsInput/jquery.mentionsInput
+ *= require commontator/application
+ */
+
+body, html, img, form {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  font: inherit;
+  color: inherit;
+  text-align: inherit;
+  text-decoration: inherit;
+  vertical-align: inherit;
+  box-sizing: inherit;
+  display: block;
+}
+
+body, html {
+  height: 100%;
+}
+
+body {
+  min-height: 100%;
+}
+
+ div.root-page {
+   min-height: 100%;
+   background-color: indigo;
+   color: black;
+ }
+
+ .splash-logo, .login-form-container {
+   display: block;
+   width: 80%;
+   max-width: 500px;
+   min-width: 300px;
+   margin: 0 auto;
+   padding: 50px 0 30px;
+ }
+
+ .login-form-container input {
+   font-size: 16px;
+   font-family: 'p22_underground_cy_probook';
+   padding: 10px;
+   width: 80%;
+   margin: 40px auto;
+   display: block;
+   border-bottom: 1px solid #444;
+   border-left: 1px solid #444;
+   border-right: 1px solid #777;
+   border-top: 1px solid #777;
+ }
+
+ .btn-login{
+   display: block;
+   background: #F57E20;
+   color: #fff;
+   font-size: 12px;
+   font-family: 'Open Sans';
+   padding: 10px 20px;
+   margin: 20px auto;
+ }
+
+ .btn-forgot-pw{
+   display: block;
+   background: darkgrey;
+   color: #333;
+   font-size: 12px;
+   font-family: 'Open Sans';
+   padding: 10px 20px;
+   margin: 20px auto;
+ }
+
+ /************************* COMMENTS ADD-ON STYLES ********************/
+.app_ui-wrapper .app_ui-block .thread .cta-link.comments{
+  float:none;
+}
+
+.app_ui-wrapper .app_ui-block .thread{
+  margin-top: 20px;
+}
+
+.thread_comment_list .comment{
+  color: #6e665f;
+}
+ .comment_share_level_block{
+   float:left;
+   color: #6e665f;
+ }
+
+ .app_ui-wrapper .app_ui-block .comment_share_level_block label{
+   display: inline-block;
+   margin-right: 20px;
+   color: #6e665f;
+ }
+
+ .comment_share_level_block input.comment_share_level{
+   display: inline-block;
+ }
+
+.app_ui-wrapper .app_ui-block .comment_form_actions .cta-link{
+  margin-left: 20px;
+}
+
+.app_ui-wrapper .app_ui-block .comment_form_actions{
+  margin-bottom: 20px;
+}
+
+@media (max-width: 600px){
+  .app_ui-wrapper .app_ui-block .comment_form_actions{
+    display: block;
+  }
+  .app_ui-wrapper .app_ui-block .comment_form_actions .cta-link{
+    float: right;
+  }
+}
+/**********************************************************************/
+
+/************************  PAGINATION  ********************************/
+.app_ui-wrapper .app_ui-block .pagination{
+  font-size: 16px;
+  margin-top: 10px;
+}
+
+.app_ui-wrapper .app_ui-block .pagination li, .app_ui-wrapper .app_ui-block .pagination li.active{
+  background: #ff7e00;
+  color: #fff;
+  padding: 0;
+  display: inline-block;
+
+  box-shadow: 3px 3px 3px #aaa;
+
+  -webkit-transition: all 0.3s ease;
+    -moz-transition: all 0.3s ease;
+    -o-transition: all 0.3s ease;
+    transition: all 0.3s ease;
+}
+
+.app_ui-wrapper .app_ui-block .pagination li a{
+  min-width: 30px;
+  /*height: 30px;*/
+  padding: 5px 0;
+  color: #fff;
+  display: block;
+  vertical-align: middle;
+  text-align: center;
+}
+
+.app_ui-wrapper .app_ui-block .pagination li.active a {
+  color: #ff7e00;
+}
+
+.app_ui-wrapper .app_ui-block .pagination li:active, .app_ui-wrapper .app_ui-block .pagination li.active:active{
+  box-shadow: 1px 1px 3px #aaa;
+}
+
+.app_ui-wrapper .app_ui-block .pagination li.active {
+  background: #fff;
+  color: #ff7e00;
+}
+.app_ui-wrapper .app_ui-block .pagination li.active:hover{
+  cursor: pointer;
+  background: #fff;
+}
+
+.app_ui-wrapper .app_ui-block .pagination li:hover {
+  background-color: #FF9012;
+}
+.app_ui-wrapper .app_ui-block .pagination .disabled{
+  display: none;
+}
+
+/**********************************************************************/

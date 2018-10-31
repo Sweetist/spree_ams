@@ -1,0 +1,22 @@
+<% unless @current_order %>
+  <form class="btn-group input-group-sm select2-bootstrap-prepend pull-right" id="view-as-form">
+    <p><%= Spree.t('manage.viewing_as') %>:</p>
+    <div id='view-as-account-wrapper'>
+      <select name="account_id" class="select2" id="view-as-account" placeholder="<%= @vendor.name %>">
+        <option <%= 'selected' if session[:account_id].to_i == 0 %> value='0'><%= @vendor.name %> (View All Products)</option>
+        <% @vendor.customer_accounts.order('fully_qualified_name asc').each do |account| %>
+          <option <%= 'selected' if session[:account_id].to_i == account.id %> value="<%= account.id %>">
+            <%= account.fully_qualified_name %>
+          </option>
+        <% end %>
+      </select>
+    </div>
+  </form>
+  <script type="text/javascript">
+    $(document).ready(function(){
+      $('#view-as-account').change(function(){
+        $('#view-as-form').submit();
+      });
+    });
+  </script>
+<% end %>

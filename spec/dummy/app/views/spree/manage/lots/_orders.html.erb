@@ -1,0 +1,51 @@
+<div class="row" id='orders-table-container'>
+  <!-- BEGIN PORTLET-->
+  <div class="portlet light">
+    <div class="caption">
+      <span class="caption-subject font-blue-soft bold uppercase"> Orders</span>
+    </div>
+    <div class='table-scrollable'>
+      <table class="table table-hover">
+        <tbody>
+          <tr>
+            <th>Date</th>
+            <th>Order #</th>
+            <th>Account</th>
+            <th>Type</th>
+            <th>Qty</th>
+            <th>Status</th>
+          </tr>
+          <% @orders.each do |order| %>
+            <tr>
+              <% if order.purchase_order? %>
+                <td><%= display_vendor_date_format(order.delivery_date, @vendor.date_format) rescue '' %></td>
+                <td><%= link_to order.display_number, edit_manage_purchase_order_path(order) %></td>
+                <td><%= link_to order.account.fully_qualified_name, manage_vendor_vendor_account_path(order.account.vendor, order.account) %></td>
+                <td>Purchase</td>
+                <td>
+                  <% sum = 0 %>
+                  <% order.line_item_lots.each{ |lil| sum += lil.count if lil.lot_id == @lot.id } %>
+                  <%= sum %>
+                </td>
+                <td><%= order.state_text %></td>
+              <% else %>
+                <td><%= display_vendor_date_format(order.delivery_date, @vendor.date_format) rescue '' %></td>
+                <td><%= link_to order.display_number, edit_manage_order_path(order) %></td>
+                <td><%= link_to order.account.fully_qualified_name, manage_customer_account_path(order.account.customer, order.account) %></td>
+                <td>Sales</td>
+                <td>
+                  <% sum = 0 %>
+                  <% order.line_item_lots.each{ |lil| sum -= lil.count if lil.lot_id == @lot.id } %>
+                  <%= sum %>
+                </td>
+                <td><%= order.state_text %></td>
+              <% end %>
+            <% end %>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <%= paginate @orders, param_name: :orders_page, remote: true %>
+    <hr class='visible-xs visible-sm'>
+  </div>
+</div>

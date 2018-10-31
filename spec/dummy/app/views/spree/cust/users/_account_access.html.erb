@@ -1,0 +1,102 @@
+<div class='row'>
+  <div class="col-md-12">
+    <div class="table">
+      <% if current_spree_user.customer_admin %>
+        <%= form_for @user, html: {id: "user-list-form", class: 'form'}, url: update_account_access_my_company_user_path(@user) do |f| %>
+          <div class='form-body'>
+            <table class="table table-hover table-checkable">
+              <thead>
+                <tr>
+                  <th style="padding-left:10px;">Access</th>
+                  <th>
+                    Account #
+                  </th>
+                  <th>
+                    Vendor
+                  </th>
+                  <th>
+                    Name
+                  </th>
+                  <th>
+                    Active
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @company_accounts.each do |account| %>
+                  <tr>
+                    <% url = edit_account_path(account) %>
+                    <td><%= f.check_box "account_id", {checked: @user.has_access_to_account(account), multiple: true}, account.id, nil %></td>
+                    <td><%= link_to account.number.to_s, url %></td>
+                    <td><%= link_to account.vendor.name.to_s, url %></td>
+                    <td><%= link_to account.default_display_name, url %></td>
+                    <td>
+                      <% if account.active? %>
+                        <%= link_to url do %><i class='fa fa-check'></i><% end %>
+                      <% end %>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+          <div class="form-actions right">
+            <div class='pull-right'>
+              <button class="btn btn-primary"><i class="fa fa-check"></i>Update</button>
+            </div>
+          </div>
+        <% end %>
+      <% else %>
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>
+                Account #
+              </th>
+              <th>
+                Name
+              </th>
+              <th>
+                Active
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if request.host == ENV['DEFAULT_URL_HOST'] %>
+              <% accounts = @user.accounts.where(customer_id: @user.company_id) %>
+            <% else %>
+              <% accounts = @user.accounts.where(customer_id: @user.company_id, vendor_id: current_vendor.try(:id)) %>
+            <% end %>
+            <% accounts.each do |account| %>
+              <tr>
+                <% url = edit_account_path(account) %>
+                <td><%= link_to account.number.to_s, url %></td>
+                <td><%= link_to account.fully_qualified_name.to_s, url %></td>
+                <td>
+                  <% if account.active? %>
+                    <%= link_to url do %><i class='fa fa-check'></i><% end %>
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<script>
+ $('#group-checkable').click(function(event) {
+    if(this.checked === true){
+      $('.checkboxes:checkbox').each(function() {
+        this.checked = true;
+      });
+    }else{
+      $('.checkboxes:checkbox').each(function() {
+        this.checked = false;
+      });
+    }
+  });
+
+</script>

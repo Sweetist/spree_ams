@@ -1,0 +1,13 @@
+<div class='form-group'>
+  <label>Order Status</label>
+  <div class='checkbox-group'>
+    <% States.keys.each do |status| %>
+      <div>
+        <label class="inline-check-100">
+        <input type="checkbox" name="order_states[]" id="order_state_<%= status %>"
+          value='<%= status %>' class="noUniform" <%= 'checked' if params[:order_states] && params[:order_states].include?(status) %>>
+        <%= status == 'complete' ? 'Submitted' : status.capitalize %></label>
+      </div>
+    <% end %>
+  </div>
+</div>

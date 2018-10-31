@@ -1,0 +1,51 @@
+<% if item.try(:limit_shipping_methods?) %>
+  <%= f.input :limit_shipping_method_by, as: :select,
+    collection: [['', I18n.t('integrations.shipping.limit_shipping_method_by.all')],['blacklist', I18n.t('integrations.shipping.limit_shipping_method_by.blacklist')],['whitelist', I18n.t('integrations.shipping.limit_shipping_method_by.whitelist')]],
+    label: I18n.t('integrations.shipping.limit_shipping_method_by.label'),
+    label_method: :last, value_method: :first, include_blank: false %>
+  <div class="form-group string optional" id='shipping_methods_container'>
+    <%= f.label :shipping_methods, I18n.t('integrations.shipping.shipping_methods'),
+      class: 'string optional col-sm-3 control-label'%>
+    <div class="col-sm-9">
+      <%= f.collection_select :shipping_methods, @vendor.shipping_methods, :id, :name, {include_blank: true}, {multiple: true, class: 'form-control select2 select2-multiple select2-hidden-accessible', selected: item.shipping_methods} %>
+    </div>
+  </div>
+<% end %>
+<% if item.try(:limit_payment_methods?) %>
+  <%= f.input :limit_payment_method_by, as: :select,
+    collection: [['', I18n.t('integrations.payment.limit_payment_method_by.all')],['blacklist', I18n.t('integrations.payment.limit_payment_method_by.blacklist')],['whitelist', I18n.t('integrations.payment.limit_payment_method_by.whitelist')]],
+    label: I18n.t('integrations.payment.limit_payment_method_by.label'),
+    label_method: :last, value_method: :first, include_blank: false %>
+  <div class="form-group string optional" id='payment_methods_container'>
+    <%= f.label :payment_methods, I18n.t('integrations.payment.payment_methods'),
+      class: 'string optional col-sm-3 control-label'%>
+    <div class="col-sm-9">
+      <%= f.collection_select :payment_methods, @vendor.payment_methods.visible, :id, :name, {include_blank: true}, {multiple: true, class: 'form-control select2 select2-multiple select2-hidden-accessible', selected: item.payment_methods} %>
+    </div>
+  </div>
+<% end %>
+<% if item.sales_channel? %>
+  <div class="form-group">
+    <%= f.label I18n.t('integrations.sync_to_other_integrations'), class: 'col-sm-3 control-label' %>
+    <div class='col-sm-9'>
+      <div class='form-control' disabled='disabled'>
+        <% %w[accounting shipping].each do |type| %>
+          <% integrations_text = item.send("#{type}_siblings").map(&:default_name).join(', ') %>
+          <% if integrations_text.present? %>
+            <%= "#{type.titleize}:" %>
+            <%= integrations_text %>
+            <br>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% else %>
+  <div class="form-group string optional">
+    <%= f.label :sales_channel , class: 'string optional col-sm-3 control-label'%>
+    <div class="col-sm-9">
+      <%= f.select :sales_channel, @vendor.sales_channels, {include_blank: true}, {multiple: true, class: 'form-control select2 select2-multiple select2-hidden-accessible', selected: item.sales_channel} %>
+    </div>
+  </div>
+<% end %>
+<!-- keep sales channel at the end to be next to other related partials -->

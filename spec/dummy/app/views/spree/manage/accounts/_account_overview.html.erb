@@ -1,0 +1,133 @@
+<div class="row">
+  <% unless @account.active? %>
+    <div class='col-xs-12'>
+      <div class='alert alert-danger alert-dismissable'>
+        <button type='button' class='close' data-dismiss='alert' aria-hidden='true'></button>
+        <%= Spree.t(:account_is_inactive, scope: :manage, reason: @account.inactive_reason) %>
+      </div>
+    </div>
+  <% end %>
+  <div class="col-md-2">
+    <div class='row'>
+      <div class="col-xs-12 profile-userpic margin-bottom-10">
+        <% if @customer.images.present? %>
+          <% image = @customer.images.first %>
+          <%= image_tag image.attachment.url(:product), :class => "img-thumbnail img-responsive", alt: image.alt %>
+        <% else %>
+          <%= image_tag "spree/manage/img/multi-user.png", :class => "img-thumbnail img-responsive", alt: "account image" %>
+        <% end %>
+      </div>
+      <% if current_spree_user.can_read?('basic_options', 'reports') && @account.vendor.show_account_balance %>
+        <div class='col-xs-12'>
+          <h4>Balance</h4>
+          <h3 class='margin-top-0'><%= @account.display_account_balance %></h3>
+        </div>
+        <div class='col-xs-12'>
+          <h4>Past Due</h4>
+          <h3 class='margin-top-0'><%= display_sweet_price(@account.past_due_balance, @account.currency) %></h3>
+        </div>
+        <div class='col-xs-12'>
+          <h4>Credit Limit</h4>
+          <h3 class='margin-top-0'>
+            <% if @account.credit_limit.nil? %>
+              <%= Spree.t(:no_credit_limit) %>
+            <% else %>
+              <%= display_sweet_price(@account.credit_limit, @account.currency) %>
+            <% end %>
+          </h3>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="col-md-5">
+    <div class="row static-info">
+      <div class="col-xs-4 name">Account Number:</div>
+      <div class="col-xs-8 value"><%= @account.number %></div>
+    </div>
+    <div class="row static-info">
+      <div class="col-xs-4 name">Display Name:</div>
+      <div class="col-xs-8 value"><%= @account.display_name %></div>
+    </div>
+    <div class="row static-info">
+      <div class="col-xs-4 name">Email:</div>
+      <div class="col-xs-8 value order-email"><%= @account.email %></div>
+    </div>
+    <div class="row static-info">
+      <div class="col-xs-4 name">Shipment Email:</div>
+      <div class="col-xs-8 value order-email"><%= @account.shipment_email %></div>
+    </div>
+    <div class="row static-info">
+      <div class="col-xs-4 name">Customer Type:</div>
+      <div class="col-xs-8 value"><%= @account.customer_type.try(:name) %></div>
+    </div>
+    <div class="row static-info">
+      <div class="col-xs-4 name">Status: </div>
+      <div class="col-xs-8 value"><%= @account.active? ? Spree.t(:active) : Spree.t(:inactive) %></div>
+    </div>
+    <% if @account.taxable %>
+      <div class="row static-info">
+        <div class="col-xs-4 name">Taxable: </div>
+        <div class="col-xs-8 value"><%= Spree.t(:say_yes) %></div>
+      </div>
+    <% else %>
+      <div class="row static-info">
+        <div class="col-xs-4 name">Tax Exempt Number: </div>
+        <div class="col-xs-8 value"><%= @account.tax_exempt_id %></div>
+      </div>
+    <% end %>
+
+    <div class="row static-info">
+      <div class="col-xs-4 name">Default Stock Location:</div>
+      <div class="col-xs-8 value"><%= @account.default_stock_location.try(:name) %></div>
+    </div>
+  </div>
+  <div class="col-md-5">
+    <div class="row static-info">
+      <div class="col-xs-5 name">Send Emails To:</div>
+      <div class="col-xs-7 value"><%= @account.display_send_mail %></div>
+    </div>
+    <div class="row static-info">
+      <div class="col-xs-5 name">Payment Terms:</div>
+      <div class="col-xs-7 value"><%= @account.payment_terms.try(:name_with_required) %></div>
+    </div>
+    <div class="row static-info">
+      <div class="col-xs-5 name">Default Ship Method:</div>
+      <div class="col-xs-7 value"><%= @account.default_shipping_method.try(:name) %></div>
+    </div>
+    <div class="row static-info">
+      <div class="col-xs-5 name"><%= Spree.t(:default_shipping_method_only) %>:</div>
+      <div class="col-xs-7 value"><%= @account.default_shipping_method_only ? Spree.t(:say_yes) : Spree.t(:say_no) %></div>
+    </div>
+    <div class="row static-info">
+      <div class="col-xs-5 name">Sales Rep:</div>
+      <div class="col-xs-7 value"><%= @account.rep.try(:name) %></div>
+    </div>
+    <% if @account.vendor.track_order_class? %>
+      <div class="row static-info">
+        <div class="col-xs-5 name">Class:</div>
+        <div class="col-xs-7 value"><%= @account.transaction_class.try(:fully_qualified_name) %></div>
+      </div>
+    <% end %>
+    <% if @account.sub_accounts.present? %>
+      <div class="row static-info">
+        <div class="col-xs-5 name"><label for="include_sub_accounts">Aggregate Sub Accounts:</label></div>
+        <div class="col-xs-7 value">
+          <input id='include_sub_accounts' type="checkbox" class="make-switch" data-size="mini">
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<script>
+if (localStorage['include_sub_accounts']) {
+  if(localStorage['include_sub_accounts'] === 'true') {
+    $('#include_sub_accounts').bootstrapSwitch('state', true)
+  } else {
+    $('#include_sub_accounts').bootstrapSwitch('state', false)
+  }
+} else {
+  $('#include_sub_accounts').bootstrapSwitch('state', false)
+}
+</script>

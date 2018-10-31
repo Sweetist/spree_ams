@@ -1,0 +1,270 @@
+<%= content_for :head_title do %>
+  Customers
+<% end %>
+
+<%= content_for :page_title do %>
+  Customer Accounts
+<% end %>
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Customer Accounts", manage_accounts_path %>
+    </li>
+  </ul>
+  <div class="page-toolbar">
+    <% if current_spree_user.can_write?('basic_options', 'customers') %>
+      <%= link_to new_manage_account_path, class: "btn green margin-right-10" do %>
+        <i class= "fa fa-plus"></i>&nbsp;New Customer
+      <% end %>
+    <% end %>
+  </div>
+<% end %>
+
+<div class="content">
+
+  <%= search_form_for [:manage, @search], url: manage_accounts_path, class: "form" do |f| %>
+    <%= render partial: 'advanced_search', locals: { f: f } %>
+  <% end %>
+
+  <div class="row hidden">
+    <div id="source-dt-buttons">
+      <div class="btn-group margin-right-10">
+        <div class="btn btn-default">
+          <input type="checkbox" class="group-checkable">
+        </div>
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"> Actions
+          <i class="fa fa-angle-down"></i>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+          <li>
+            <%= submit_tag "Invite Selected Customers", form: "customer-list-form" %>
+          </li>
+          <li>
+            <%= submit_tag Spree.t(:export_all_customers), form: "customer-list-form" %>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+<div class = "clearfix"></div>
+<% show_sales = current_spree_user.can_read?('basic_options', 'reports') %>
+<% show_balance = @vendor.show_account_balance %>
+<div class="">
+  <%= form_for @vendor, html: {id: "customer-list-form"}, url: actions_router_manage_customers_path, method: :patch do |f| %>
+  <div class='hidden'>
+    <p>
+      You have selected all <strong><%=@accounts.count%></strong> customers on this page. <a id='select-all-customers'>Click Here</a> to select all customers.
+    </p>
+    <input type="hidden" id='all-customers-input' name='all_customers' value="false">
+  </div>
+  <div class='hidden'>
+    <p>
+      All customers are selected. <a id='unselect-all-customers'>Clear selection</a>
+    </p>
+  </div>
+  <table class="table table-striped table-hover table-checkable basic-table-no-buttons" data-paging="false" id="sample_1">
+    <thead>
+      <tr>
+        <th class="table-checkbox sorting_disabled dt-no-settings-visible" width="2%">
+        </th>
+        <th>
+          <%= sort_link @search, :number, "Account #" %>
+        </th>
+        <th>
+          <%= sort_link @search, :fully_qualified_name, "Name" %>
+        </th>
+        <th class='dt-invisible'>
+          <%= sort_link @search, :display_name, "Display Name" %>
+        </th>
+        <th>
+          <%= sort_link @search, :customer_type_name, "Type" %>
+        </th>
+        <th>
+          <%= sort_link @search, :created_at, "Created On" %>
+        </th>
+        <th>
+          <%= sort_link @search, :inactive_date, "Active" %>
+        </th>
+        <th>
+          <%= sort_link @search, :last_invoice_date, "Last Invoice Date" %>
+        </th>
+        <th>
+          Payment Terms
+        </th>
+        <% if show_sales %>
+          <th>
+            30 Day Spend *
+          </th>
+          <% if show_balance %>
+            <th>
+              <% if @vendor.use_external_balance %>
+                <%= sort_link @search, :external_balance, "Balance" %>
+              <% else %>
+                <%= sort_link @search, :balance, "Balance" %>
+              <% end %>
+            </th>
+          <% end %>
+        <% end %>
+        <th>
+          Primary Contact
+          <%#= sort_link @search, :customer_email, "Email" %>
+        </th>
+        <th>
+          Phone
+          <%#= sort_link @search, :customer_ship_address_phone, "Phone" %>
+        </th>
+        <th class='dt-invisible'>
+          <%= sort_link @search, :email, "Email" %>
+        </th>
+      </tr>
+        <!--<tr class='hidden'>
+        <th></th>
+        <th colspan="100%" style='text-align:left;'>
+          You have selected all <strong><%=@accounts.count%></strong> customers on this page. <a id='select-all-customers'>Click Here</a> to select all customers.
+        </th>
+        <input type="hidden" id='all_customers' name='all_customers' value="false">
+      </tr>
+      <tr class='hidden'>
+        <th></th>
+        <th colspan="100%" style='text-align:left;'>
+          All customers are selected. <a id='unselect-all-customers'>Clear selection</a>
+        </th>
+      </tr> -->
+    </thead>
+      <tbody>
+        <% use_external_balance = @vendor.use_external_balance %>
+        <% @accounts.each do |account|%>
+          <%= f.fields_for :customer_accounts, account do |ff|%>
+          <%# NEED TO ADD ABILITY TO SET AN ACCOUNT AS PAST DUE %>
+            <tr class="<%= 'past-due' if account.past_due? %>">
+              <td>
+                <%= ff.check_box 'action', class: 'checkboxes noUniform' %>
+                <input name="company[customer_accounts_attributes][<%= ff.index %>][id]" type="hidden"
+                value="<%= account.id %>" id="company_customer_accounts_attributes_<%= ff.index %>_id">
+              </td>
+              <td>
+                <%= account.number %>
+              </td>
+              <td>
+                <%= link_to manage_customer_account_path(account.customer, account), class: "accounts-list-account-link cel" do %>
+                  <%= account.fully_qualified_name %>
+                <% end %>
+              </td>
+              <td>
+                <%= link_to manage_customer_account_path(account.customer, account), class: "accounts-list-account-link cel" do %>
+                  <%= account.display_name.to_s %>
+                <% end %>
+              </td>
+              <td>
+                <%= account.customer_type.try(:name) %>
+              </td>
+              <td>
+                <%= display_vendor_date_format(account.created_at, @vendor.date_format)%>
+              </td>
+              <td>
+                <% if account.active? %>
+                  <i class="fa fa-check"></i>
+                <% end %>
+              </td>
+              <td>
+                <%= display_vendor_date_format(account.last_invoice_date, @vendor.date_format) if account.last_invoice_date %>
+              </td>
+              <td>
+                <%= account.payment_terms.try(:name_with_required_short) %>
+              </td>
+              <% if show_sales %>
+                <td>
+                  <%= display_sweet_price(account.orders_including_sub_accounts.where('delivery_date BETWEEN ? AND ?', Time.current - 30.days, Time.current).approved.sum(:total), @vendor.currency) %>
+                </td>
+                <% if show_balance %>
+                  <td>
+                    <%= account.display_account_balance(use_external_balance) %>
+                  </td>
+                <% end %>
+              <% end %>
+              <td>
+                <% if account.primary_cust_contact %>
+                  <%= link_to manage_account_contact_path(account.primary_cust_contact), class: "accounts-list-account-link cel" do %>
+                    <%= account.primary_cust_contact.try(:name) %>
+                  <% end %>
+                <% end %>
+              </td>
+              <td>
+                <%= account.primary_cust_contact.try(:phone) %>
+              </td>
+              <td>
+                <% if account.valid_emails.present? %>
+                  <%= mail_to account.valid_emails.first, account.valid_emails_string, cc: (account.valid_emails - [account.valid_emails.first]).join(', ') %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
+</div>
+
+<%= paginate @accounts %>
+<p class='help-block-italic'>
+  * Includes aggregated totals from sub accounts<br>
+  ** Payment is required for the customer to submit an order
+</p>
+
+
+</div><!--/.containter-->
+
+<script type='text/javascript'>
+  $('.group-checkable').click(function(event) {
+    if(this.checked === true){
+      $('#select-all-customers').parent().parent().removeClass('hidden');
+      $('.checkboxes:checkbox').each(function() {
+        this.checked = true;
+      });
+    }else{
+      $('#all-customers-input').val('false');
+      if(!$('#select-all-customers').parent().parent().hasClass('hidden')){
+        $('#select-all-customers').parent().parent().addClass('hidden');
+      }
+      if(!$('#unselect-all-customers').parent().parent().hasClass('hidden')){
+        $('#unselect-all-customers').parent().parent().addClass('hidden');
+      }
+      $('.checkboxes:checkbox').each(function() {
+        this.checked = false;
+      });
+    }
+  });
+
+  $('#select-all-customers').click(function(){
+    $('#all-customers-input').val('true');
+    $(this).parent().parent().addClass('hidden');
+    $('#unselect-all-customers').parent().parent().removeClass('hidden');
+  });
+
+  $('#unselect-all-customers').click(function(){
+    $(this).parent().parent().addClass('hidden');
+    $('#all-customers-input').val('false');
+    $('.group-checkable:checkbox')[0].checked = false;
+
+    $('.checkboxes:checkbox').each(function() {
+      this.checked = false;
+    });
+  });
+
+  $('.checkboxes').click(function(){
+    $('.group-checkable:checkbox')[0].checked = false;
+    if(!$('#select-all-customers').parent().parent().hasClass('hidden')){
+      $('#select-all-customers').parent().parent().addClass('hidden');
+    }
+    if(!$('#unselect-all-customers').parent().parent().hasClass('hidden')){
+      $('#unselect-all-customers').parent().parent().addClass('hidden');
+    }
+    $('#all-customers-input').val('false');
+  });
+
+</script>

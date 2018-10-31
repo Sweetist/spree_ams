@@ -1,0 +1,38 @@
+  <div>
+    <table class="hidden" id='inventory-report' data-title='Inventory Summary Report <%= display_vendor_date_format(@date_start, @vendor.date_format) %> - <%= display_vendor_date_format(@date_end, @vendor.date_format) %>'>
+      <thead>
+          <tr class="table-grey">
+            <th width="200"></th>
+            <th>Product Pack/Size</th>
+            <% @report_data.pack_size_names.size.times do %><th></th><% end %>
+          </tr>
+      </thead>
+      <tbody class="product-products-report-row">
+          <tr>
+            <th class="table-grey">Customer Type / Stock Change Reason</th>
+            <% @report_data.pack_size_names.each do |pack_size_name|%>
+              <td class="table-grey"><%= pack_size_name.titleize %></td>
+            <% end -%>
+            <th class="table-grey">Total</th>
+          </tr>
+          <% @report_data.customer_type_reason_names.each do |customer_type_name|%>
+            <tr>
+              <td class="table-grey"><%= customer_type_name.titleize %></td>
+              <% @report_data.pack_size_names.each do |pack_size_name|%>
+                <td>
+                  <%=  @report_data.result_for(pack_size: pack_size_name, reason_customer: customer_type_name) %>
+                </td>
+              <% end -%>
+              <td><%= @report_data.total_for(reason_customer:customer_type_name) %></td>
+            </tr>
+          <% end -%>
+          <tr>
+            <th class="table-grey">Grand Total</th>
+            <% @report_data.pack_size_names.each do |pack_size_name|%>
+              <td><%= @report_data.total_for(pack_size: pack_size_name) %></td>
+            <% end -%>
+            <th><%= @report_data.overal_total %></th>
+          </tr>
+      </tbody>
+    </table>
+  </div>

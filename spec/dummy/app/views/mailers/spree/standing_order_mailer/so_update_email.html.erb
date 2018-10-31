@@ -1,0 +1,48 @@
+<table>
+  <tr>
+    <td>
+      <p class="lede">
+        <%#= Spree.t('order_mailer.confirm_email.dear_customer') %>
+        Dear <%= @order.account_handle %>,
+      </p>
+      <p>Standing order <b><%= @order.name %> has been updated.</b></p>
+      <p>You will find all changes listed below.</p>
+
+      <p>
+        Order Summary<br/>
+        Account number: <b><%= @account.number %></b><br/>
+        Customer: <b><%= @order.account.try(:fully_qualified_name) %></b><br/>
+        Delivery address:<br/>
+        <b><%= "#{@address.try(:firstname)} #{@address.try(:lastname)}" %><br/>
+        <%= "#{@address.try(:address1)}" %><br/>
+        <% if @address.try(:address2).present? %><%= "#{@address.address2}" %><br/><% end %>
+        <%= "#{@address.try(:city)}, #{"#{@address.try(:states).try(:name)}, " if @address.try(:state)}#{@address.try(:zipcode)}" %><br/>
+        <%= "#{@address.try(:phone)}"%></b><br/>
+      </p>
+
+      <p>
+        <b>List of changes:</b>
+        <ol>
+          <% @tracker.original_changes["standing_order"].each do |change| %>
+            <li><%= "#{change["title"]} changed from '#{change["original"]}' to '#{change["current"]}'." %></li>
+          <% end %>
+          <% @tracker.original_changes["standing_line_items"]["new"].each do |change| %>
+            <% variant = Spree::Variant.find(change["variant_id"]) %>
+            <li><%= "Item #{"#{variant.product.name} (#{variant.sku})" rescue ""} with quantity: #{change["current"]} has been added." %></li>
+          <% end %>
+          <% @tracker.original_changes["standing_line_items"]["updated"].each do |change| %>
+            <% variant = Spree::Variant.find(change["variant_id"]) %>
+            <li><%= "Item #{"#{variant.product.name} (#{variant.sku})" rescue ""} quantity changed from #{change["original"]} to #{change["current"]}." %></li>
+          <% end %>
+          <% @tracker.original_changes["standing_line_items"]["updated"].each do |change| %>
+            <% variant = Spree::Variant.find(change["variant_id"]) %>
+            <li><%= "Item #{"#{variant.product.name} (#{variant.sku})" rescue ""} with quantity #{change["original"]} has been removed." %></li>
+          <% end %>
+        </ol>
+      </p>
+
+      <p>To review current version, please login into portal.<p>
+
+    </td>
+  </tr>
+</table>

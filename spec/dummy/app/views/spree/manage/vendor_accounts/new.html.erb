@@ -1,0 +1,60 @@
+<%= content_for :head_title do %>
+  Account
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Vendor Accounts", manage_vendor_accounts_path %>
+    </li>
+  </ul>
+
+<% end %>
+<div class="portlet light">
+  <div class="portlet-title row">
+    <div class="caption caption-md">
+      <i class="icon-globe theme-font hide"></i>
+      <span class="caption-subject font-blue-madison bold uppercase">Vendor Details</span>
+    </div>
+  </div>
+
+  <div class="portlet-body form">
+      <!-- BEGIN FORM-->
+    <div class='row'>
+      <%= form_for @account, url: manage_vendor_accounts_path, class:"horizontal-form" do |f| %>
+          <!-- <div class="form-body">
+            <h3 class="form-section">Company</h3>
+            <div class="form-group">
+              <%#= f.collection_select :customer_id,
+                  @company.vendor_accounts.joins(:customer).order('spree_companies.name ASC').select('spree_companies.id, spree_companies.name').distinct,
+                  :id, :name, {include_blank: true}, class: 'form-control select2' %>
+            </div>
+          </div> -->
+
+          <div class="form-body">
+            <%= render partial: 'account_form', locals: {f: f, edit: true} %>
+          </div>
+          <div class="form-actions right">
+            <%= link_to 'Cancel', manage_vendor_accounts_path, class: "btn default" %>
+            <button class="btn btn-primary"><i class="fa fa-check"></i>Save</button>
+          </div>
+      <% end %>
+    </div>
+      <!-- END FORM-->
+  </div>
+</div>
+
+<script type='text/javascript'>
+  $('form').submit(function(e){
+    var subAccount = $('#make-sub-account')[0];
+    if((subAccount != undefined) && subAccount.checked && $("#account_parent_id").select2("val") === ""){
+      e.preventDefault();
+      $('#account-parent-id-container').addClass('has-error');
+      alert("You must select a parent account to create a sub-account");
+    }
+  });
+</script>

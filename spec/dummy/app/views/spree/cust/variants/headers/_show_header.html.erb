@@ -1,0 +1,38 @@
+<%= content_for :head_title do %>
+  <%= @product.vendor.name %> - <%= @product.name %>
+<% end %>
+
+<%= content_for :pre_header_left do %>
+  <% if current_vendor_view_settings.try(:catalog_account_name_and_number) %>
+    <h4 class='margin-top-10'>
+      <b><%= @current_vendor_account.try(:display_name_and_number) %></b>
+    </h4>
+  <% end %>
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="breadcrumb">
+    <li>
+      <%= link_to "Home", root_path %>
+    </li>
+    <li>
+      <%= link_to "Products", vendor_products_path(@vendor) %>
+    </li>
+    <% unless @variant.is_master? %>
+      <li>
+        <%= link_to @product.default_display_name, vendor_product_path(@vendor, @product) %>
+      </li>
+    <% end %>
+    <li>
+      <span><%= @variant.default_display_name %></span>
+    </li>
+  </ul>
+
+  <div class="page-toolbar">
+    <% unless @current_order || current_spree_user.vendor_accounts.where(vendor_id: @vendor.try(:id)).count <= 1%>
+      <%= form_for :product, url: vendor_product_path(@vendor, @product), method: :get, html: {id:'view-as-vendor-account', style: 'display:inline;'} do |f| %>
+        <%= render partial: 'spree/cust/shared/my_accounts_select' %>
+      <% end %>
+    <% end %>
+  </div>
+<% end %>

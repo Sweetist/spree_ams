@@ -1,0 +1,28 @@
+<%= content_for :head_title do %>
+  <%= @vendor.name %> - <%= @product.name %>
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Products", manage_products_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <span class="font-blue-madison bold uppercase">
+        <%= @product.name %>
+      </span>
+    </li>
+  </ul>
+
+  <div class="page-toolbar">
+    <div class="pull-right">
+      <%= link_to "Back to Catalog", manage_products_path, class: 'btn btn-success' %>
+    </div>
+  </div>
+
+<% end %>

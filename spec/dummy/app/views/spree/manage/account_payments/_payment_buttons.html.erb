@@ -1,0 +1,29 @@
+<div class="single-order-buttons pull-right" data-hook="buttons">
+  <%= link_to new_manage_account_payment_path, class: "btn btn-default" do %>
+    <%= Spree.t(:Cancel) %>
+  <% end %>
+  <button class='btn green-jungle new-account-payment-btn'>
+    Apply
+  </button>
+</div>
+<script>
+  $('.new-account-payment-btn').click(function(evt) {
+    total = 0;
+    var amount2 = $(".payment-amount");
+    for (var i = 0; i < amount2.length; i++) {
+      if (amount2[i].value > 0) {
+        total += parseFloat(amount2[i].value);
+      };
+    };
+    amount = parseFloat($('.amount-to-apply')[0].innerText.substring(1));
+    if (amount > total) {
+      $("#myModal").modal();
+      $(".modal-body").html("<%= Spree.t('payment_balance_warning') %>");
+      $(".new-payment-btn").html("Apply");
+      return false;
+    };    
+  });
+  $('.new-payment-btn').click(function(){
+    $('#myModal').modal('hide');
+  });
+</script>

@@ -1,0 +1,71 @@
+<%= form_for stock_item_lot, remote: true, url: manage_stock_item_lots_path(format: :js) do |f| %>
+  <%= f.fields_for :lot do |ff| %>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="portlet light ">
+          <div class="portlet-title">
+            <div class="caption caption-md">
+              <span class="caption-subject font-blue-madison bold uppercase">New Lot:</span>
+            </div>
+          </div>
+          <div class="portlet-body form">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <%= ff.label :number, class: 'control-label' %>
+                  <%= ff.text_field :number, class: 'form-control' %>
+                </div>
+              </div>
+
+              <!-- <%= f.fields_for :stock_locations do |ff| %> -->
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <%= f.label :stock_location_id, Spree.t(:Destination), class: 'control-label' %>
+                    <%= f.collection_select :stock_location_id, @vendor.stock_locations, :id, :name, {selected: @vendor.default_stock_location}, {class:'form-control'} %>
+                  </div>
+                </div>
+              <!-- <% end %> -->
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <%= ff.label :expires_at, class: "control-label" %>
+                  <%= ff.text_field :expires_at, class: "form-control date-picker", data: {'date-format' => @vendor.date_format } %>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-group">
+                  <%= ff.label :available_at, class: "control-label" %>
+                  <%= ff.text_field :available_at, class: "form-control date-picker", data: {'date-format' => @vendor.date_format } %>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <%= ff.label :sell_by, class: "control-label" %>
+                  <%= ff.text_field :sell_by, class: "form-control date-picker", data: {'date-format' => @vendor.date_format } %>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <%= f.label :variant_id, class: 'control-label' %>
+                  <%= f.collection_select("variant_id", variants, :id, :full_context, {selected: variants.first.full_context}, {class:"form-control select2"}) %>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <input type='button' class="btn btn-primary pull-right create-lot" onclick="$('#new_stock_item_lots').submit();" value="Create">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+<% end %>
+<script>
+</script>

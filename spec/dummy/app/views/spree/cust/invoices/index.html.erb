@@ -1,0 +1,117 @@
+<%= content_for :head_title do %>
+  Invoices
+<% end %>
+
+<%= content_for :page_title do %>
+  Invoices
+<% end %>
+<%= content_for :page_bar do %>
+  <ul class="breadcrumb">
+    <li>
+      <%= link_to "Home", root_path %>
+    </li>
+    <li>
+      <%= link_to "Invoices", invoices_path %>
+    </li>
+  </ul>
+<% end %>
+<%= search_form_for @search, url: invoices_path, class: "form", id: "invoice_search_form" do |f| %>
+  <%= render partial: 'advanced_search', locals: {f: f} %>
+<% end %>
+
+<div class="table-scrollable">
+  <table class="table table-hover" id="sample_1">
+    <thead>
+      <tr>
+        <th>
+          <%= sort_link @search, :end_date, "Invoice Date" %>
+        </th>
+        <th>
+          <%= sort_link @search, :due_date, "Due Date" %>
+        </th>
+        <th>
+          <%= sort_link @search, :vendor_name, "Vendor" %>
+        </th>
+        <th>
+          <%= sort_link @search, :account_default_display_name, "Account" %>
+        </th>
+        <th>
+          <%= sort_link @search, :number, "Invoice #" %>
+        </th>
+        <th>
+          <%= sort_link @search, :item_count, "Total Items" %>
+        </th>
+        <th>
+          <%= sort_link @search, :total, "Total" %>
+        </th>
+        <% if any_vendor_view_invoice_payments? %>
+          <th>
+            <%= sort_link @search, :payment_state, "Payment Status" %>
+          </th>
+        <% end %>
+				<th></th><!-- placeholder for pdf link -->
+      </tr>
+    </thead>
+    <tbody>
+
+      <% @invoices.each do |invoice| %>
+        <tr class="<%= 'alert-danger' if invoice.state == 'review' %>">
+          <td>
+            <%= link_to invoice_path(invoice), class: "invoices-list-invoice-link cel" do %>
+              <%= display_vendor_date_format(invoice.end_date, @customer.date_format) %>
+            <% end %>
+          </td>
+          <td>
+            <%= link_to invoice_path(invoice), class: "invoices-list-invoice-link cel" do %>
+              <%= display_vendor_date_format(invoice.end_date, @customer.date_format) %>
+            <% end %>
+          </td>
+          <td>
+            <%= link_to invoice_path(invoice), class: "invoices-list-invoice-link cel" do %>
+              <%= invoice.vendor.name %>
+            <% end %>
+          </td>
+          <td>
+            <%= link_to invoice_path(invoice), class: "invoices-list-invoice-link cel" do %>
+              <%= invoice.account.default_display_name %>
+            <% end %>
+          </td>
+          <td>
+            <%= link_to invoice_path(invoice), class: "invoices-list-invoice-link cel" do %>
+              <%= invoice.number %>
+            <% end %>
+          </td>
+          <td>
+            <%= link_to invoice_path(invoice), class: "invoices-list-invoice-link cel" do %>
+              <%= invoice.item_count %>
+            <% end %>
+          </td>
+          <td>
+            <%= link_to invoice_path(invoice), class: "invoices-list-invoice-link cel" do %>
+              <%= display_sweet_price(invoice.total, invoice.currency) %>
+            <% end %>
+          </td>
+          <% if any_vendor_view_invoice_payments? %>
+            <td>
+              <% if invoice.vendor.cust_can_view?('invoice', 'payment_state') %>
+                <% status = invoice.payment_status %>
+                <%= link_to invoice_path(invoice), class: "label circle invoices-list-invoice-link cel payment_status #{status}" do %>
+                  <%= Spree.t(status, scope: :payment_statuses, default: [:missing, '']).to_s.titleize %>
+                <% end %>
+              <% else %>
+                --
+              <% end %>
+            </td>
+          <% end %>
+					<td>
+            <%= link_to invoice_path(invoice, format: :pdf), target: "_blank" do %>
+              <i class="fa fa-file-pdf-o"></i>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+<%= paginate @invoices %>

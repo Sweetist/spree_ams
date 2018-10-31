@@ -1,0 +1,29 @@
+<% url = variant.is_master? ? manage_product_path(variant.product) : manage_product_variant_path(variant.product, variant) %>
+
+<tr class="<%= 'discontinued' if variant.discontinued_on %>">
+  <td>
+    <% if variant.variant_type == 'inventory_assembly' && variant.should_track_inventory? %>
+      <%= link_to '#build_assembly', {data:{toggle: 'modal', target:'#build-assembly-modal', 'variant-id' => "#{variant.id}"}, class: 'btn-build-assembly btn btn-circle btn-outline btn-primary build-btn load-parts'} do %>
+        <i class='fa fa-sitemap'></i>
+      <% end %>
+    <% end %>
+  </td>
+  <td><%= link_to variant.full_display_name, url %></td>
+  <td><%= link_to variant.sku.to_s, url %></td>
+  <td><%= link_to variant.pack_size.to_s, url %></td>
+  <% variant.stock_items.joins(:stock_location).where('spree_stock_locations.vendor_id = ? and spree_stock_locations.active = ?', @vendor.id, true).order('spree_stock_locations.name ASC').each do |stock_item| %>
+    <%= render partial: 'spree/manage/inventories/stock_counts', locals: {stock_item: stock_item, url: url} %>
+  <% end %>
+  <% total_committed = variant.total_committed %>
+  <% total_available = variant.total_available %>
+  <% total_on_hand = [total_available + total_committed, 0].max %>
+  <td>
+    <%= total_on_hand %>
+  </td>
+  <td>
+    <%= total_available %>
+  </td>
+  <td>
+    <%= total_committed %>
+  </td>
+</tr>

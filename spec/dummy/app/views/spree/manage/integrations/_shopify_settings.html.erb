@@ -1,0 +1,105 @@
+<div>
+  <div class="form-body">
+    <div class="row static-info">
+      <% Spree::ShopifyIntegration::Item::SHOPIFY_SWITCHER_FIELDS.each do |field|%>
+        <div class="row">
+          <div class="col-md-3 name"><%= I18n.t("integrations.shopify.#{field}.label") %>:</div>
+          <div class="col-md-9 value">
+            <% value = I18n.t("integrations.shopify.#{field}.is_#{@integration.send("shopify_#{field}").to_bool}.label", default: '')
+               value = @integration.send("shopify_#{field}").to_bool ? Spree.t(:say_yes) : Spree.t(:say_no) if value.blank?
+               value_helper = I18n.t("integrations.shopify.#{field}.is_#{@integration.send("shopify_#{field}").to_bool}.helper", default: '')
+               if value_helper.present?
+                 value += "&nbsp;<i class='fa fa-info-circle tooltips' data-container='body' data-original-title='#{value_helper}'></i>"
+               end
+            %>
+            <%= raw(value) %>
+          </div>
+        </div>
+      <br>
+      <% end %>
+      <% Spree::ShopifyIntegration::Item::SHOPIFY_FORM_FIELDS.each do |field|%>
+        <div class="row">
+          <div class="col-md-3 name"><%= "Shopify #{field.titleize}" %>:</div>
+          <div class="col-md-9 value">
+            <%= @integration.send("shopify_#{field}") %>
+          </div>
+        </div>
+      <br>
+      <% end %>
+      <div class="row">
+        <div class="col-md-3 name"><%= I18n.t('integrations.shopify.default_stock_location') %>:</div>
+        <div class="col-md-9 value">
+          <%= @vendor.stock_locations
+                     .find_by(id: @integration.shopify_stock_location)
+                     .try(:name)%>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-3 name"><%= I18n.t('integrations.shopify.parent_account') %>:</div>
+        <div class="col-md-9 value">
+          <%= @vendor.customer_accounts
+                     .find_by(id: @integration.shopify_parent_account)
+                     .try(:name)%>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-3 name"><%= I18n.t('integrations.shopify.shipping_category') %>:</div>
+        <div class="col-md-9 value">
+          <%= @vendor.shipping_categories
+                     .find_by(id: @integration.shopify_shipping_category)
+                     .try(:name)%>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-3 name"><%= I18n.t('integrations.shopify.shipping_method') %>:</div>
+        <div class="col-md-9 value">
+          <%= @vendor.shipping_methods
+                     .find_by(id: @integration.shopify_shipping_method)
+                     .try(:name)%>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-3 name"><%= I18n.t('integrations.shopify.tax_zone') %>:</div>
+        <div class="col-md-9 value">
+          <%= @vendor.zones
+                     .find_by(id: @integration.shopify_tax_zone)
+                     .try(:name)%>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-3 name"><%= I18n.t('integrations.shopify.tax_category') %>:</div>
+        <div class="col-md-9 value">
+          <%= @vendor.tax_categories
+                     .find_by(id: @integration.shopify_tax_category)
+                     .try(:name)%>
+        </div>
+      </div>
+      <br>
+        <div class="row">
+          <div class="col-md-3 name"><%= I18n.t('integrations.shopify.last_sync_order')  %></div>
+          <div class="col-md-9 value">
+            <%= sweet_full_date_time @integration.shopify_last_sync_order, @vendor.time_zone %>
+          </div>
+        </div>
+      <br>
+  <%= render partial: "spree/manage/integrations/shared/settings", locals: { item: @integration } %>
+    </div>
+    <div class="row static-info">
+      <% if @integration.created_at %>
+        <%= link_to manage_integration_execute_path(@integration.id, name: "get_products"), class: "btn btn-info", data: { turbolinks: false } do %>
+          <i class='fa fa-download'></i> <%= I18n.t('integrations.get_products') %>
+        <% end %>
+      <% end %>
+      <% if @integration.created_at %>
+        <%= link_to manage_integration_execute_path(@integration.id, name: "get_orders"), class: "btn btn-info", data: { turbolinks: false } do %>
+          <i class='fa fa-download'></i> <%= I18n.t('integrations.get_orders') %>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</div

@@ -1,0 +1,27 @@
+<%= content_for :head_title do %>
+  New Integration
+<% end %>
+
+<%= content_for :page_title do %>
+  New Integration
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Integrations", manage_integrations_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <span>New</span>
+    </li>
+  </ul>
+<% end %>
+
+<div class="content">
+  <%= render partial: "form_#{@item.fetch(:integration_key)}", locals: { item: @item, integration: @integration, path: manage_integrations_path, method: :post } %>
+</div>

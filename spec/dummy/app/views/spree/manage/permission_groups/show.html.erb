@@ -1,0 +1,42 @@
+<%= content_for :head_title do %>
+  Permission Group
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+		<li>
+      <%= link_to 'Permission Groups', manage_permission_groups_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= @permission_group.name %>
+    </li>
+  </ul>
+	<div class="page-toolbar">
+    <% if current_spree_user.can_write?('company') %>
+			<%= link_to new_manage_permission_group_path, class: "btn green pull-right" do %>
+        <i class='fa fa-plus'></i> New permission Group
+      <% end %>
+    <% end %>
+  </div>
+<% end %>
+<div class='row'>
+  <div class="portlet light">
+    <div class="portlet-title">
+      <div class="caption">
+        <span class="caption-subject font-blue-madison bold uppercase">Permission Group: <%= @permission_group.name %></span>
+      </div>
+    </div>
+    <div class="portlet-body">
+      <div class='row'>
+        <div class='col-md-9'>
+          <%= render partial: 'spree/manage/shared/permissions/table', locals: {permittable: @permission_group} %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

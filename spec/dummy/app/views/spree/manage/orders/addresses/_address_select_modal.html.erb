@@ -1,0 +1,57 @@
+<%= form_for @order, url: set_ship_address_manage_order_path(@order), method: :get, remote: true do |f| %>
+  <div class="modal fade" id="address-select-modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class='portlet light'>
+          <div class="portlet-title">
+            <div class="caption">
+              <span class="caption-subject font-blue-madison bold uppercase">
+                Edit Address
+              </span>
+            </div>
+            <div class="actions">
+              <button type="button" class="close modal-close" data-dismiss="modal" aria-hidden="true"></button>
+            </div>
+          </div>
+          <div class='portlet-body'>
+            <% @ship_addresses.each do |sa| %>
+              <div class="row">
+                <div class="col-md-12 margin-left-20">
+                  <div class="form-group">
+                    <div class="radio-inline" style="padding-left: 0;">
+                      <%= f.radio_button :ship_address_id, sa.id %>
+                    </div>
+                    <span class="margin-left-10">
+                      <%= sa.one_line_summary.html_safe %>
+                    </span>
+                    <span class="edit-ship-address-link">
+                      <%= link_to "Edit", edit_manage_customer_account_address_path(customer_id: @order.account.customer_id, account_id: @order.account_id, id: sa.id, order_id: @order.id, addr_type: "shipping"), :remote => true %>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+            <div class="row">
+              <div class="col-md-12 margin-left-20 margin-top-10">
+                <div class="form-group">
+                  <span id="use-address-button">
+                    <%= link_to new_ship_address_manage_order_path(@order),
+                    remote: true, data: {'data-toggle' =>  "modal", 'data-target' => '#address_modal'}, class: '' do %>
+                      <i class='fa fa-plus'></i>&nbsp;Add a new shipping address
+                    <% end %>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">
+              <i class='fa fa-times'></i> Cancel
+            </button>
+            <%= f.submit "Use this Address", class: "btn btn-primary" %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>

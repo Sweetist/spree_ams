@@ -1,0 +1,60 @@
+<% relationship_controller = current_controller?(['accounts', 'vendor_accounts', 'customer_imports', 'vendor_imports']) %>
+<li class="nav-item <%= "active" if relationship_controller %>">
+  <a href="#" class="nav-link nav-toggle">
+    <i class="fa fa-users"></i>
+    <span class="title">Relationships</span>
+    <span class="arrow <%= "open" if relationship_controller %>"></span>
+  </a>
+  <ul class="sub-menu">
+    <% if current_spree_user.can_read?('basic_options', 'customers') %>
+      <li class="nav-item <%= "active" if current_controller?(['accounts']) %>">
+        <%= link_to manage_accounts_path, class: "nav-link" do %>
+          <span class="title">Customers</span>
+        <% end %>
+      </li>
+    <% else %>
+      <li class="nav-item">
+        <%= link_to 'void:javascript();', class: "nav-link" do %>
+          <span class="title">Customers</span>
+          <i class='fa fa-lock'></i>
+        <% end %>
+      </li>
+    <% end %>
+
+    <% if current_spree_user.can_read?('vendors', 'purchase_orders') %>
+      <li class="nav-item  <%= "active" if current_controller?(['vendor_accounts']) %>">
+        <%= link_to manage_vendor_accounts_path, class: "nav-link" do %>
+          <span class="title">Vendors</span>
+        <% end %>
+      </li>
+    <% end %>
+    <% if current_spree_user.can_write?('basic_options', 'customers') %>
+      <li class="nav-item <%= "active" if current_controller?(['customer_imports']) %>">
+        <%= link_to manage_customer_imports_path, class: "nav-link" do %>
+          <span class="title">Customer Import</span>
+        <% end %>
+      </li>
+    <% else %>
+      <li class="nav-item">
+        <%= link_to 'void:javascript();', class: "nav-link" do %>
+          <span class="title">Customer Import</span>
+          <i class='fa fa-lock'></i>
+        <% end %>
+      </li>
+    <% end %>
+    <% if current_spree_user.can_write?('vendors', 'purchase_orders') %>
+      <li class="nav-item <%= "active" if current_controller?(['vendor_imports']) %>">
+        <%= link_to manage_vendor_imports_path, class: "nav-link" do %>
+          <span class="title">Vendor Import</span>
+        <% end %>
+      </li>
+    <% else %>
+      <li class="nav-item">
+        <%= link_to 'void:javascript();', class: "nav-link" do %>
+          <span class="title">Vendor Import</span>
+          <i class='fa fa-lock'></i>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+</li>

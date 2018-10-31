@@ -1,0 +1,103 @@
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label :name, class: 'control-label' %>
+            <%= f.text_field :name, class: 'form-control' %>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-group">
+            <input type='checkbox' name=stock_location[default]
+              class='' id='stock_location_default'
+              <%= 'disabled' if @stock_location.default? %>
+              <%= 'checked' if @stock_location.default? %>>
+            <%= f.label :default, 'Default Location', class: 'control-label' %>
+            <% if @stock_location.default? %>
+              <p class='help-block-italic'>Set up another location as the default to change</p>
+            <% end %>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-group">
+            <%= f.check_box :backorderable_default, class: '' %>
+            <%= f.label :backorderable_default, 'Make items at this location backorderable by default (recommended)', class: 'control-label inline' %>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label :address1, 'Address 1', class: 'control-label' %>
+            <%= f.text_field :address1, class: 'form-control' %>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label :address2, 'Address 2', class: 'control-label' %>
+            <%= f.text_field :address2, class: 'form-control' %>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <%= f.label :city, Spree.t(:city), class: 'control-label' %>
+              <%= f.text_field :city, class: 'form-control' %>
+            </div>
+          </div>
+          <!--/span-->
+          <div class="col-md-6">
+            <div class="form-group">
+              <%= f.label :zipcode, Spree.t(:zip), class: 'control-label' %>
+              <%= f.text_field :zipcode, class: 'form-control' %>
+            </div>
+          </div>
+          <!--/span-->
+      </div>
+      <!--/row-->
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label :state_id, Spree.t(:state), class: 'control-label' %>
+            <span id="state">
+              <%= f.grouped_collection_select(:state_id, available_countries, :states, :name, :id, :name, {include_blank: true}, {class: 'form-control' } ) %>
+            </span>
+          </div>
+        </div>
+        <!--/span-->
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label :country_id, Spree.t(:country), class: 'control-label' %>
+            <span id="country">
+              <%= f.collection_select :country_id, available_countries, :id, :name, {include_blank: true}, { class: 'form-control select2' } %>
+            </span>
+          </div>
+        </div>
+        <!--/span-->
+      </div>
+
+      <div class='row'>
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.check_box :active %>
+            <%= f.label :active, class: 'control-label' %>
+          </div>
+        </div>
+      </div>
+
+<script type='text/javascript'>
+  function filterStates(){
+    var $sel = $('#stock_location_state_id'),
+        country = $('#stock_location_country_id option:selected').text();
+    $('span > optgroup', $sel).unwrap();
+    $('optgroup:not([label="' + country + '"])', $sel).wrap('<span/>');
+  }
+
+  $("#stock_location_country_id").change(function () {
+    filterStates();
+  });
+  filterStates();
+</script>

@@ -1,0 +1,161 @@
+<%= form_for @account, url: manage_outgoing_communications_path, html: {class: 'form'} do |f| %>
+  <div class='form-body'>
+    <div class="form-group">
+      <span style="margin-left:92px;">Invitation Email</span>
+      <%= link_to "edit", edit_manage_email_template_path(@invite_email_template) if @invite_email_template %>
+    </div>
+    <div class="form-group">
+      <%= f.check_box :send_confirm_email, class: 'make-switch', "data-size" =>'mini' %>
+      <%= f.label :send_confirm_email,
+        raw("#{Spree.t(:label, scope: [:outgoing_comms_settings, :send_confirm_email], default: '')}
+        <i class='fa fa-info-circle tooltips'
+        data-original-title='#{Spree.t(:helper, scope: [:outgoing_comms_settings, :send_confirm_email], default: '')}'
+        data-container='body'></i>"),
+        class: 'margin-left-20'%>
+      <%= link_to "edit", edit_manage_email_template_path(@confirm_email_template) if @confirm_email_template %>
+    </div>
+    <div class="form-group">
+      <%= f.check_box :send_approved_email, class: 'make-switch', "data-size" =>'mini' %>
+      <%= f.label :send_approved_email,
+        raw("#{Spree.t(:label, scope: [:outgoing_comms_settings, :send_approved_email], default: '')}
+        <i class='fa fa-info-circle tooltips'
+        data-original-title='#{Spree.t(:helper, scope: [:outgoing_comms_settings, :send_approved_email], default: '')}'
+        data-container='body'></i>"),
+        class: 'margin-left-20'%>
+      <%= link_to "edit", edit_manage_email_template_path(@approved_email_template) if @approved_email_template %>
+    </div>
+    <div class="nested-mini-switch-level-1 form-group">
+      <%= f.check_box :send_approved_email_b2b_and_standing_only, class: 'make-switch', "data-size" =>'mini' %>
+      <%= f.label :send_approved_email_b2b_and_standing_only,
+        raw("#{Spree.t(:label, scope: [:outgoing_comms_settings, :send_approved_email_b2b_and_standing_only], default: '')}
+        <i class='fa fa-info-circle tooltips'
+        data-original-title='#{Spree.t(:helper, scope: [:outgoing_comms_settings, :send_approved_email_b2b_and_standing_only], default: '')}'
+        data-container='body'></i>"),
+        class: 'margin-left-20'%>
+    </div>
+    <div class="form-group">
+      <%= f.check_box :send_shipped_email, class: 'make-switch',
+        data:{ size: 'mini', receive: @account.receive_orders} %>
+      <%= f.label :send_shipped_email, 'Shipped Notification', class: 'margin-left-20' %>
+      <%= link_to "edit", edit_manage_email_template_path(@shipped_email_template) if @shipped_email_template %>
+    </div>
+    <% if current_vendor.receive_orders %>
+      <% # review required emails only necessary for customers who receive orders and might receive a different qty than ordered %>
+      <div class="form-group">
+        <%= f.check_box :send_review_order_email, class: 'make-switch', "data-size" =>'mini' %>
+        <%= f.label :send_review_order_email, 'Order Review Required Notification', class: 'margin-left-20'%>
+        <%= link_to "edit", edit_manage_email_template_path(@review_order_email_template) if @review_order_email_template %>
+      </div>
+    <% end %>
+    <div class="form-group">
+      <%= f.check_box :send_cancel_email, class: 'make-switch', "data-size" =>'mini' %>
+      <%= f.label :send_cancel_email, 'Cancellation Notification', class: 'margin-left-20'%>
+      <%= link_to "edit", edit_manage_email_template_path(@cancel_email_template) if @cancel_email_template %>
+    </div>
+    <div class="form-group">
+        <%= f.check_box :send_final_invoice_email, class: 'make-switch', "data-size" =>'mini' %>
+        <%= f.label :send_final_invoice_email, 'Invoice Notification', class: 'margin-left-20'%>
+        <%= link_to "edit", edit_manage_email_template_path(@final_invoice_email_template) if @final_invoice_email_template %>
+    </div>
+    <% if current_vendor.multi_order_invoice %>
+      <div class="form-group">
+        <%= f.check_box :send_weekly_invoice_email, class: 'make-switch', id: 'weekly-invoice-switch',
+          data: {size: 'mini', multiorder: @account.multi_order_invoice} %>
+        <%= f.label :send_weekly_invoice_email,'Weekly Invoice', class: 'margin-left-20'%>
+        <%= link_to '(Only available for weekly invoices)', edit_manage_invoice_settings_path,
+          id: 'weekly-invoice-clarifier', target: '_blank' %>
+        <%= link_to "edit", edit_manage_email_template_path(@weekly_invoice_email_template) if @weekly_invoice_email_template %>
+      </div>
+    <% end %>
+    <div class="form-group">
+      <%= f.check_box :send_unapprove_email, class: 'make-switch', "data-size" =>'mini' %>
+      <%= f.label :send_unapprove_email, "Order 'Unapproved' Notification",class: 'margin-left-20'%>
+      <%= link_to "edit", edit_manage_email_template_path(@unapprove_template) if @unapprove_template %>
+    </div>
+    <div class="form-group">
+      <%= f.check_box :send_invoice_reminder, class: 'make-switch', "data-size" =>'mini' %>
+      <%= f.label :send_invoice_reminder, "Send reminder", class: 'margin-left-20'%>
+      <%= f.text_field :invoice_reminder_days, class: 'form-control inline-input-short number-only' %>
+      <%= f.label :invoice_reminder_days, "day(s) before invoice is due" %>
+      <%= link_to "edit", edit_manage_email_template_path(@reminder_email_template) if @reminder_email_template %>
+    </div>
+    <div class="form-group">
+      <%= f.check_box :send_invoice_past_due, class: 'make-switch', "data-size" =>'mini' %>
+      <%= f.label :send_invoice_past_due, "Send notice", class: 'margin-left-20'%>
+      <%= f.text_field :invoice_past_due_days, class: 'form-control inline-input-short number-only' %>
+      <%= f.label :invoice_past_due_days, "day(s) after invoice is due" %>
+      <%= link_to "edit", edit_manage_email_template_path(@past_due_email_template) if @past_due_email_template %>
+    </div>
+    <div class="form-group">
+      <%= f.check_box :send_so_create_email, class: 'make-switch', "data-size" =>'mini' %>
+      <%= f.label :send_so_create_email,'Order Started from Standing Order Notification', class: 'margin-left-20'%>
+    </div>
+    <div class="form-group">
+      <%= f.check_box :send_so_update_email, class: 'make-switch', "data-size" =>'mini' %>
+      <%= f.label :send_so_update_email,'Standing Order Updated Notification', class: 'margin-left-20'%>
+    </div>
+    <div class="form-group">
+      <%= f.check_box :send_so_create_error_email, class: 'make-switch', "data-size" =>'mini' %>
+      <%= f.label :send_so_create_error_email,'Error Starting Order from Standing Order Notification', class: 'margin-left-20'%>
+    </div>
+    <div class="form-group">
+      <%= f.check_box :send_so_process_error_email, class: 'make-switch', "data-size" =>'mini' %>
+      <%= f.label :send_so_process_error_email, 'Error Submitting Order from Standing Order Notification', class: 'margin-left-20'%>
+    </div>
+    <div class="form-group">
+      <%= f.check_box :send_shipping_reminder, class: 'make-switch', "data-size" =>'mini' %>
+      <%= f.label :send_shipping_reminder, "Notify my company email when orders have not been shipped", class: 'margin-left-20'%>
+    </div>
+    <div class="form-group">
+      <%= f.check_box :send_cc_to_my_company, class: 'make-switch', "data-size" =>'mini' %>
+      <%= f.label :send_cc_to_my_company, "CC my company email on outgoing emails to my customers", class: 'margin-left-20'%>
+    </div>
+    <div class="form-group">
+      <%= f.check_box :send_mail_to_my_company, class: 'make-switch', "data-size" =>'mini' %>
+      <%= f.label :send_mail_to_my_company, "Send email to #{@account.name} when no customer emails or mailer is turned off", class: 'margin-left-20'%>
+    </div>
+    <div class="form-group">
+      <%= f.check_box :include_website_url_in_emails, class: 'make-switch', "data-size" =>'mini' %>
+      <%= f.label :include_website_url_in_emails, "Include website URL in standing order notifications", class: 'margin-left-20'%>
+    </div>
+  </div>
+  <div class='form-actions'>
+    <%= link_to edit_manage_account_user_path(current_spree_user, anchor: 'comm_settings_tab'), target: '_blank' do %>
+      Personal email preferences available under My Profile
+    <% end %>
+    <div class="pull-right">
+      <button class='btn btn-primary'>
+        <i class='fa fa-check'></i> <%= Spree.t(:update) %>
+      </button>
+    </div>
+  </div>
+<% end %>
+
+<style type="text/css">li.attach{ margin:4px 0 28px 120px;font-size: .8em; }</style>
+<script type="text/javascript">
+  var toggleApprovedEmailSettings = function(){
+    if($('#company_send_approved_email').bootstrapSwitch('state')){
+      $('#company_send_approved_email_b2b_and_standing_only').bootstrapSwitch('readonly',false);
+    }else{
+      $('#company_send_approved_email_b2b_and_standing_only').bootstrapSwitch('state',false);
+      $('#company_send_approved_email_b2b_and_standing_only').bootstrapSwitch('readonly',true);
+    }
+  }
+  var toggleDependentSettings = function(){
+    if($('#weekly-invoice-switch').data('multiorder') === false){
+      $('#weekly-invoice-switch').bootstrapSwitch('state',false);
+      $('#weekly-invoice-switch').bootstrapSwitch('readonly',true);
+      $('#weekly-invoice-clarifier').show();
+    }else{
+      $('#weekly-invoice-switch').bootstrapSwitch('readonly',false);
+      $('#weekly-invoice-clarifier').hide();
+    }
+    if(<%= current_company.try(:auto_approve_orders) %>){
+      $('#company_send_confirm_email').bootstrapSwitch('state', false);
+      $('#company_send_confirm_email').bootstrapSwitch('readonly', true);
+    }
+    toggleApprovedEmailSettings();
+  }
+  $(document).ready(toggleDependentSettings);
+  $('#company_send_approved_email').on('switchChange.bootstrapSwitch', toggleApprovedEmailSettings);
+</script>

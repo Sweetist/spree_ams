@@ -1,0 +1,54 @@
+<%= content_for :head_title do %>
+  Zones
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Zones", manage_zones_path %>
+       <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      New Zone
+    </li>
+  </ul>
+  <div class="page-toolbar">
+    <div class="btn-group pull-right">
+    </div>
+  </div>
+<% end %>
+
+<%= form_for [:manage, @zone], method: :post do |f|%>
+  <div class="row">
+    <div class="portlet light ">
+      <div class="portlet-title">
+        <div class="caption caption-md">
+          <span class="caption-subject font-blue-madison bold uppercase">
+            <%= Spree.t(:zone) %>
+          </span>
+        </div>
+      </div>
+      <div class="portlet-body form">
+        <div class='form-body'>
+          <%= render partial: 'form', locals: { f: f } %>
+        </div>
+        <div class="form-actions">
+          <div class='pull-right'>
+            <button class='btn btn-primary'>
+              <i class='fa fa-check'></i> <%= Spree.t(:save) %>
+            </button>
+            <%= link_to manage_zones_path, class: 'btn btn-default' do %>
+              <i class='fa fa-times'></i> <%= Spree.t(:Cancel) %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<%= render partial: 'spree/manage/cities/modal' %>

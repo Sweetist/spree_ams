@@ -1,0 +1,81 @@
+<%= content_for :head_title do %>
+  Reports
+<% end %>
+
+<%= content_for :page_title do %>
+  Production Report
+<% end %>
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Production By Customer Report", manage_production_path %>
+    </li>
+  </ul>
+  <div class="page-toolbar">
+    <div class="btn-group pull-right">
+
+    </div>
+  </div>
+<% end %>
+
+<form id="production-filter" style='border: 1px solid rgb(231, 236, 241); padding: 10px;'>
+  <div class='col-md-4'>
+    <%= render partial: 'spree/manage/reports/shared/search/order_status' %>
+  </div>
+
+  <div class='col-md-8'>
+    <div class='row'>
+      <div class='col-md-12'>
+        <%= render partial: 'spree/manage/reports/shared/search/customer_accounts' %>
+      </div>
+    </div>
+    <div class='row'>
+      <div class="col-md-6">
+        <%= render partial: 'spree/manage/reports/shared/search/date_range' %>
+      </div>
+      <div class='col-md-6'>
+        <div class='form-actions pull-right margin-top-25'>
+          <button class="btn btn-primary">Update Report</button>
+          <%= link_to "Reset", manage_production_by_customer_path, class: "btn btn-default" %>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class='clearfix'></div>
+</form>
+
+<div class="table margin-top-10">
+  <table class="table table-hover table-striped" id="production" data-title='Production Report <%= display_vendor_date_format(@dates[:start], @vendor.date_format) %> - <%= display_vendor_date_format(@dates[:end], @vendor.date_format) %>'>
+    <thead>
+      <tr>
+        <th>Product</th>
+        <th>Sku</th>
+        <% @report.accounts.each do |account| %>
+          <th class='dt-no-settings-visible'> <%= account[:name] %> </th>
+        <% end %>
+        <th>Total</th>
+      </tr>
+
+    </thead>
+    <tbody class="product-production-row">
+      <% @report.variants.each do |variant| %>
+        <% total = 0 %>
+          <tr>
+            <td><%= variant[:name] %></td>
+            <td><%= variant[:sku] %></td>
+            <% @report.accounts.each do |account| %>
+            <% total_for_account = @report.result_for(account_id: account[:id], variant_sku: variant[:sku]) %>
+            <% total += total_for_account.to_f %>
+              <td> <%= number_with_precision(total_for_account.to_d, precision: 5, strip_insignificant_zeros: true) %> </td>
+            <% end %>
+            <td><%= number_with_precision(total.to_d, precision: 5, strip_insignificant_zeros: true) %></td>
+          </tr>
+      <!-- </tbody> -->
+      <% end %>
+    </tbody>
+  </table>
+</div>

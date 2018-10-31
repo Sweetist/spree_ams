@@ -1,0 +1,11 @@
+<%= render partial: "spree/shared/payments/source_views/#{@payment.payment_method.method_type}",
+  locals: {payment: @payment.source.is_a?(Spree::AccountPayment || Spree::Payment) ? @payment.source : @payment}%>
+
+<div class="alert alert-info" data-hook="amount">
+  <%= Spree.t(:amount) %>: <%= @payment.display_amount.to_html %>
+</div>
+
+<%= render 'spree/manage/payments/capture_events' %>
+<% if @payment.refunds.present? %>
+    <%= render partial: 'spree/manage/refunds/body_content/refunds_table_account_payment', locals: {refunds: @payment.refunds, order: @payment} %>
+<% end %>

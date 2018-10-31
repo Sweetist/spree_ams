@@ -1,0 +1,11 @@
+<div id="account-activity">
+  <div class="alert alert-danger alert-dismissable" id="inactive-account">
+    <%= Spree.t(:account_is_inactive, scope: :manage, reason: @account.inactive_reason) %>
+    <% if current_spree_user.can_write?('basic_options', 'customers') %>
+      <div class="pull-right">
+        <%= link_to 'Reactivate', activate_manage_customer_account_path(@account.customer, @account), class: 'btn btn-primary' %>
+      </div>
+    <% end %>
+    <div class="clearfix"></div>
+  </div>
+</div>

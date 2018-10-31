@@ -1,0 +1,45 @@
+<%= stylesheet_link_tag 'sweet-session' %>
+<%= stylesheet_link_tag 'sweet-frontend/layouts/layout/themes/darkblue'%>
+<% @vendor = current_company %>
+<%
+  if @vendor.present?
+    theme_name = @vendor.customer_viewable_attribute.theme_name
+    if theme_name == "custom"
+      body_bg_color = @vendor.customer_viewable_attribute.theme_colors["header_background"] || "#364150"
+      body_text_color = @vendor.customer_viewable_attribute.theme_colors["header_text"] || "#8290a3"
+    end
+  end
+ %>
+
+<div class="login <%= Rails.env.test? ? 'disable-animations' : '' %>" style="background-color:<%= body_bg_color %>">
+ <!-- BEGIN LOGO -->
+  <div class="logo">
+    <div class="row">
+      <div class="col-sm-4 col-sm-offset-4">
+        <%= link_to root_path, style: "color:#{body_text_color};" do %>
+          <% if @vendor && @vendor.logo.nil? %>
+            <h2 style="color:<%= body_text_color %>;"><%= @vendor.name %></h2>
+          <% else %>
+            <%= image_tag(@vendor.try(:logo).try(:attachment, :large) || 'sweet.png', class: 'splash-logo img-responsive')%>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  <h3 style="color:<%= body_text_color %>;">Wholesale Ordering Platform</h3>
+  <!-- END LOGO -->
+  <!-- BEGIN LOGIN -->
+  <div class="content">
+
+    <%= render partial: "spree/manage/forms/preview/content/#{@form.form_type}" %>
+
+  </div>
+  
+  <% if @vendor.nil? || @vendor.cva.footer_powered_by_sweet %>
+   <div class="copyright" style="color:<%= body_text_color %>;">
+     <%= link_to 'void:javascript();' do %>
+       <%= render partial: 'spree/shared/copyright_text' %>
+     <% end %>
+   </div>
+  <% end %>
+</div>

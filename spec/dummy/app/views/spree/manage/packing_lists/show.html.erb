@@ -1,0 +1,176 @@
+<%= content_for :head_title do %>
+  Packing List
+<% end %>
+
+<%= content_for :page_title do %>
+  Packing List
+<% end %>
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Packaging List Report", manage_packing_list_path %>
+    </li>
+  </ul>
+  <div class="page-toolbar">
+    <div class="btn-group pull-right">
+
+    </div>
+  </div>
+<% end %>
+
+<h4><%= pluralize(@orders.total_count, 'order') %> in Packing Lists </h4>
+<form id="production-filter" class='margin-bottom-10 prevent-double-submission' style='border: 1px solid rgb(231, 236, 241); padding: 10px;'>
+  <div class='col-md-4'>
+    <%= render partial: 'spree/manage/reports/shared/search/order_status' %>
+  </div>
+
+  <div class='col-md-8'>
+    <div class='row'>
+      <div class='col-md-12'>
+        <%= render partial: 'spree/manage/reports/shared/search/customer_accounts' %>
+      </div>
+    </div>
+    <div class='row'>
+      <div class="col-md-6">
+        <%= render partial: 'spree/manage/reports/shared/search/date_range' %>
+      </div>
+      <div class='col-md-6'>
+        <label>Ships From</label>
+        <%= select_tag('q[shipments_stock_location_id_eq]',
+          options_for_select(@vendor.stock_locations.active.pluck(:name, :id), params.dig(:q, :shipments_stock_location_id_eq)),
+          {style: 'width:100%', class: 'form-control', include_blank: true}) %>
+      </div>
+      <div class='col-md-6'>
+        <div class='form-actions pull-right margin-top-25'>
+          <button class="btn btn-primary">Update Report</button>
+          <%= link_to "Reset", manage_packing_list_path, class: "btn btn-default" %>
+        </div>
+      </div>
+    </div>
+  </div>
+  <input type='hidden' name='q[s]' value='<%= params[:q][:s] %>' id='pack-list-sort'>
+  <div class='clearfix'></div>
+</form>
+<div class="clearfix"></div>
+<div class='form-inline col-xs-6 margin-top-10'>
+  <div class='row'>
+    <div class='form-group' style='display:inline-block;'>
+      <label class='control-label'>Sort By</label>
+      <% opts = [['Order #', 'number'],['Customer', 'account_fully_qualified_name'],['Ships Via', 'shipping_method_name']] %>
+      <%= select_tag "sort", options_for_select(opts, params[:q][:s]), class: 'form-control', id: 'pack-list-sort-select' %>
+    </div>
+  </div>
+</div>
+
+<div class="pull-right margin-top-10">
+  <%= link_to manage_packing_list_path(
+    format: :pdf,
+    start_date: params[:start_date],
+    end_date: params[:end_date],
+    order_states: params[:order_states],
+    account_ids: params[:account_ids],
+    q: params[:q],
+    'q[s]' => params[:q][:s]
+    ), target: '_blank', class: 'btn green' do %>
+    <i class='fa fa-file-pdf-o'></i> PDF
+  <% end %>
+
+  <%= link_to download_xlsx_manage_packing_list_path(
+    start_date: params[:start_date],
+    end_date: params[:end_date],
+    order_states: params[:order_states],
+    account_ids: params[:account_ids],
+    q: params[:q],
+    'q[s]' => params[:q][:s]
+    ), target: '_blank', class: 'btn green' do %>
+    <i class='fa fa-file-excel-o'></i> Excel
+  <% end %>
+</div>
+
+<div class="table margin-top-20">
+  <table class="table table-hover" data-title='Packing List <%= display_vendor_date_format(@dates[:start], @vendor.date_format) %> - <%= display_vendor_date_format(@dates[:end], @vendor.date_format) %>'>
+    <thead>
+      <%#= search_form_for [:manage, @search], class: "form" do |f| %>
+      <tr>
+        <th>Customer Details</th>
+        <th>Product</th>
+        <% if current_vendor_view_settings.variant_sku %>
+          <th>Sku</th>
+        <% end %>
+        <% if current_vendor_view_settings.line_item_lot_number %>
+          <th>Lot #</th>
+        <% end %>
+        <% if current_vendor_view_settings.variant_pack_size %>
+          <th>Pack/Size</th>
+        <% end %>
+        <th>Unit Count</th>
+        <th>Qty</th>
+        <th>Total Units</th>
+      </tr>
+
+    </thead>
+    <tbody>
+      <% @orders.each do |order| %>
+
+        <% order.line_items.each_with_index do |line_item, idx| %>
+          <tr>
+            <% if idx == 0 %>
+              <td rowspan="<%= order.line_items.count %>">
+                <div class="packing-list-order-info">
+                  <div><strong>Order:</strong> <%= order.display_number %></div>
+                  <div><strong>Item Count:</strong> <%= order.item_count %></div>
+                  <div><strong>Ship From:<strong>
+                    <%= order.shipments[0].try(:stock_location).try(:name) %>
+                  </div>
+                  <div><strong>Ship via:</strong> <%= order.shipping_method.try(:name) %></div>
+                  <% account = order.account %>
+                  <div><strong>Ship to:</strong></div>
+                  <div class='margin-left-20'>
+                    <%= account.fully_qualified_name %><br>
+                    <% address = order.ship_address %>
+                    <% if address %>
+                      <%= address.address1 %><br>
+                      <%= "#{address.city}, #{address.state.try(:abbr)} #{address.zipcode}" %>
+                    <% end %>
+                  </div>
+                </div>
+              </td>
+            <% end %>
+            <% pack_size_qty = line_item.variant.try(:pack_size_qty) %>
+            <td><%= line_item.item_name %></td>
+            <% if current_vendor_view_settings.variant_sku %>
+              <td><%= line_item.variant.try(:sku) %></td>
+            <% end %>
+            <% if current_vendor_view_settings.line_item_lot_number %>
+              <td>
+                <%= line_item.line_item_lots_text(line_item.line_item_lots, {sparse: true}) %>
+              </td>
+            <% end %>
+            <% if current_vendor_view_settings.variant_pack_size %>
+              <td><%= line_item.variant.try(:pack_size) %></td>
+            <% end %>
+            <td><%= pack_size_qty %></td>
+            <td><%= line_item.quantity %></td>
+            <td><%= pack_size_qty ? line_item.quantity * pack_size_qty.to_f : '' %></td>
+          </tr>
+        <% end %>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+<%= paginate @orders %><br>
+<%= page_entries_info @orders, entry_name: 'order' %>
+
+<script type='text/javascript'>
+  $(document).ready(function(){
+    $('#pack-list-sort-select').change(function(){
+      $('#pack-list-sort').val(this.value);
+      $('form#production-filter').submit();
+    });
+  });
+</script>

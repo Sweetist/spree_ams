@@ -1,0 +1,25 @@
+<% if @line_item %>
+  <% colspan_left = 6 %>
+  <% colspan_left += 1 if current_vendor.try(:include_unit_weight) %>
+  $('#variant-quick-add').before("<%= j (render(:partial => 'new_line_item.html.erb', locals: {item_form_idx: params[:item_form_idx], variant: @variant, avv: @avv})) %>");
+
+  $('#new-line-item-qty').val('');
+
+  $("#new-line-item-select").select2('val', '');
+
+  $('.subtotal-price').replaceWith("<span class='subtotal-price'><%= display_sweet_price(@credit_memo.item_total, @credit_memo.currency) %></span>");
+  $('.total-price').replaceWith("<span class='total-price'><%= display_sweet_price(@credit_memo.total, @credit_memo.currency) %></span>");
+  // $('#subtotals-row').replaceWith("<%#= j (render(partial: 'subtotal_row.html.erb', locals: {colspan_left: colspan_left})) %>");
+  // $('#totals-row').replaceWith("<%#= j (render(partial: 'total_row.html.erb', locals: {colspan_left: colspan_left})) %>");
+
+<% else %>
+  if($('.line-item-row').length === 0 && $('#credit-memo-customer-id').length > 0){
+    $('#credit-memo-customer-id').select2('enable', true);
+  }
+<% end %>
+$('#alert').html("<%= j (render(partial: 'spree/shared/errors.html.erb')) %>");
+
+$("#new-line-item-select").select2('enable', true);
+$('#new-line-item-qty').prop('disabled', false);
+$('#add-new-line-item-button').attr('disabled',false);
+$("#new-line-item-select").select2('open').select2('close');

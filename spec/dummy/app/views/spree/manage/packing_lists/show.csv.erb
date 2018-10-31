@@ -1,0 +1,32 @@
+<%- headers = ['Customer Details', 'Product', 'Sku', 'Lot #', 'Pack/Size', 'Unit Count', 'Quantity', 'Total Units'] -%>
+<%= CSV.generate_line headers %>
+<%- @orders.each do |order| -%>
+<%- order.line_items.each_with_index do |line_item, idx| -%>
+<%- if idx == 0 -%>
+<%- address = order.ship_address -%>
+<%- customer_details = [
+  "Order #: #{order.number}",
+  "Item Count: #{order.item_count}",
+  "Ship From: #{order.shipments[0].try(:stock_location).try(:name)}",
+  "Ship to:",
+  "#{order.account.try(:fully_qualified_name)}",
+  "#{address.try(:address1)}",
+  "#{address.try(:address2)}",
+  "#{address.try(:city)} #{address.try(:state)} #{address.try(:zipcode)}"
+].reject(&:blank?).join("\n")-%>
+<%- else -%>
+<%- customer_details = nil -%>
+<%- end %>
+<%- row = [
+customer_details,
+line_item.variant.try(:flat_or_nested_name),
+line_item.variant.try(:sku),
+line_item.variant.try(:lot_number),
+line_item.variant.try(:pack_size),
+line_item.variant.try(:pack_size_qty),
+line_item.quantity,
+line_item.quantity * line_item.variant.try(:pack_size_qty).to_f
+] -%>
+<%= CSV.generate_line row, row_sep: "\r" %>
+<%- end -%>
+<%- end -%>

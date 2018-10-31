@@ -1,0 +1,5 @@
+<% if States[@order.state] < States['shipped']%>
+  <%= collection_select(:order, :po_stock_location_id, @order.customer.stock_locations, :id, :name, {}, class: 'form-control') %>
+<% else %>
+  <%= @order.po_stock_location.try(:name) %>
+<% end %>

@@ -1,0 +1,185 @@
+<% colspan = 2 %>
+<% colspan += 1 if @order.approved? %>
+<% colspan += 1 if @order.vendor.try(:receive_orders) && (@order.shipped? || @order.received?) %>
+
+<% if @order.line_item_adjustments.exists? %>
+  <% @order.line_item_adjustments.promotion.eligible.group_by(&:label).each do |label, adjustments| %>
+    <tr class="adjustment">
+      <td colspan="5"></td>
+      <td colspan="<%= colspan %>">
+        <%= adjustments.first.source.try(:promotion).try(:name) || label %>:
+      </td>
+      <td>
+        <%= display_sweet_price(adjustments.sum(&:amount), @order.currency) %>
+      </td>
+    </tr>
+  <% end %>
+<% end %>
+<% @order.adjustments.eligible.each do |adjustment| %>
+  <% next if (adjustment.source_type == 'Spree::TaxRate') and (adjustment.amount == 0) %>
+  <tr class="adjustment">
+    <td colspan="5"></td>
+    <td colspan="<%= colspan %>">
+    <% if adjustment.source_type == "Spree::PromotionAction" %>
+      <%= "#{adjustment.source.try(:promotion).try(:name) || adjustment.label}:" %>
+    <% elsif !@manual_adjustment %>
+      <%= "#{adjustment.label}:" %>
+    <% else %>
+      <%= link_to manage_order_adjustment_url(@order.id, adjustment.id), method: :delete,
+      data:{confirm: "Are you sure you want to delete this adjustment?"} do %>
+        <i class="fa fa-times"></i>
+      <% end %>
+      <%= link_to "#{adjustment.label}:", edit_manage_order_adjustment_url(@order, adjustment.id) %>
+    <% end %>
+    </td>
+    <td>
+      <div class="right"><%= display_sweet_price(adjustment.amount, @order.currency) %></div>
+    </td>
+  </tr>
+<% end %>
+<!-- END ORDER LEVEL ADJUSTMENTS -->
+<!-- BEGIN TAX ADJUSTMENTS -->
+<% if @order.all_adjustments.eligible.tax.exists? %>
+  <% @order.all_adjustments.eligible.tax.group_by(&:label).each do |label, adjustments| %>
+  <tr class="adjustment">
+    <td colspan="5"></td>
+    <td colspan="<%= colspan %>">
+      <%= Spree.t(:tax) %> <%= label %>:
+    </td>
+    <td>
+      <%= display_sweet_price(adjustments.sum(&:amount), @order.currency) %>
+    </td>
+  </tr>
+  <% end %>
+<% end %>
+<!-- END TAX ADJUSTMENTS -->
+
+<!-- BEGIN SHIPPING METHODS -->
+<% no_ship_products = @order.no_shipping_method_products %>
+<% @order.shipments.group_by { |s| s.selected_shipping_rate.try(:name) }.each do |name, shipments| %>
+  <tr class="adjustment <%= 'alert-danger' if @order.ship_address.blank? %>">
+    <td></td>
+    <td colspan='4'>
+      <label id="special-instructions-checkbox" value="false">
+        <a>Special Instructions</a>
+      </label>
+      <div class="row hidden" id="special-instructions-div">
+        <div class="col-md-12">
+          <div class="form-group">
+            <textarea rows="5" placeholder="Write Instructions Here" id="special-instructions" class="form-control" name=order[special_instructions] maxlength="1000"><%= @order.special_instructions %></textarea>
+            <span class='pull-right help-block'>(1,000 char limit)</span>
+          </div>
+        </div>
+      </div>
+    </td>
+
+    <% if @order.vendor.try(:shipping_methods).present? %>
+      <td colspan="<%= colspan %>">
+        <% if @order.ship_address.blank? %>
+          Must set up ship address to apply shipping methods
+        <% elsif @order.shipments.first.blank? %>
+          Shipping has not been set up yet and may not reflect the final cost.<br>
+          Please <%= submit_tag "Update" %>.
+        <% else %>
+          Shipment via:
+          <% if !@order.shipments.first.shipping_method.blank? && (@order.shipped? || @order.received? || (@order.approved? && !@approve_ship_receive)) %>
+            <%= @order.shipments.first.shipping_method.try(:name) %>
+          <% else %>
+            <%= collection_select :order, :shipping_method_id, @order.available_shipping_methods, :id, :name, {include_blank: true}, {class: 'form-control'} %>
+          <% end %>
+        <% end %>
+      </td>
+      <td>
+        <% if @manual_adjustment && !(@order.shipped? || @order.received?) %>
+          <%= hidden_field :order, :override_shipment_cost %>
+
+          <i class="fa fa-info-circle tooltips" data-original-title="Applying a price change here will override any dynamically calculated shipping rates. Selecting a different shipping method will revert this change" data-container="body"></i>
+          <div class='input-group'>
+            <div class='price-input'>
+              <% if @order.shipping_method.try(:rate_tbd) && !@order.override_shipment_cost %>
+                <label class="currency-label"><%= currency_symbol(@order.currency) %></label>
+                <input type='number' step='0.01' name='order[shipment_total]' class='form-control price-field' placeholder="TBD" id='order_shipment_total'>
+                <%#= order_form.number_field :shipment_total, step: 0.01, placeholder: '-- --', class: 'form-control price-field' %>
+              <% else %>
+                <label class="currency-label"><%= currency_symbol(@order.currency) %></label>
+                <%= number_field_tag 'order[shipment_total]', number_with_precision(@order.shipment_total, precision: 2), step: 0.01, class: 'form-control price-field', id: 'order_shipment_total' %>
+              <% end %>
+            </div>
+            <span class='input-group-btn'>
+              <button class='btn btn-primary' id='apply-shipment-cost'>Apply</button>
+            </span>
+          </div>
+        <% else %>
+          <%= display_sweet_price(shipments.sum(&:cost), @order.currency) %>
+        <% end %>
+      </td>
+    <% else %>
+      <td colspan='100%'></td>
+    <% end %>
+  </tr>
+<% end %>
+<!-- END SHIPPING METHODS -->
+<!-- BEGIN SHIPPING ADJUSTMENTS (only promotion adjustments)-->
+<% @order.shipment_adjustments.promotion.eligible.group_by(&:label).each do |label, adjustments| %>
+  <tr class="adjustment">
+    <td colspan="5"></td>
+    <td colspan="<%= colspan %>">
+      <%= adjustments.first.source.try(:promotion).try(:name) || label %>:
+    </td>
+    <td>
+      <%= display_sweet_price(adjustments.sum(&:amount), @order.currency) %>
+    </td>
+  </tr>
+<% end %>
+<!-- END SHIPPING ADJUSTMENTS -->
+<!-- BEGIN ADD ADJUSTMENT -->
+<% unless @order.received? %>
+  <tr class="adjustment">
+    <td colspan="5"></td>
+
+    <td colspan="<%= colspan %>">
+      <% if @manual_adjustment %>
+        <%= link_to 'Add Adjustment', new_manage_purchase_order_adjustment_path(@order), id: 'new-adjustment' %>
+      <% end %>
+    </td>
+    <td></td>
+    <td></td>
+  </tr>
+<% end %>
+<!-- END ADD ADJUSTMENT -->
+
+<script type='text/javascript'>
+  $('#apply-shipment-cost').click(function(e){
+    e.preventDefault();
+    $('#order_override_shipment_cost').val(true);
+    $('#single-order-form').submit();
+  });
+  $('#order_shipment_total').keypress(function(e){
+    if(e.which === 13){
+      $('#apply-shipment-cost').trigger('click');
+    }
+  });
+  $('#order_shipping_method_id').change(function(e){
+    $('#order_override_shipment_cost').val(false);
+    $(this).parents('form')[0].submit();
+  });
+
+  var stored_text = "";
+  if (!!$.trim($("#special-instructions").val())) {
+    $('#special-instructions-div').removeClass('hidden');
+    $('#special-instructions-checkbox').val("true");
+  }
+
+  $('#special-instructions-checkbox').click(function(){
+    if ($('#special-instructions-checkbox').val() == "true") {
+      stored_text = $('#special-instructions').val();
+      $('#special-instructions-div').addClass('hidden');
+      $('#special-instructions').val(null);
+      $('#special-instructions-checkbox').val("false");
+    } else {
+      $('#special-instructions-div').removeClass('hidden');
+      $('#special-instructions').val(stored_text);
+      $('#special-instructions-checkbox').val("true");
+    }
+  });
+</script>

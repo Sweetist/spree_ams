@@ -1,0 +1,67 @@
+<div class="row">
+  <div class="col-md-12">
+    <div data-hook="admin_payment_form_fields">
+      <div class='form-group'>
+        <%= f.label :payment_date %>
+        <%= f.text_field :payment_date, class: 'form-control date-picker',
+          data: {'provide' => 'datepicker', 'date-format' => current_company.date_format},
+          value: "#{display_vendor_date_format(f.object.try(:payment_date), current_company.date_format) unless f.object.try(:payment_date).blank?}" %>
+        <!-- <input data-provide = "datepicker" type="text" name="account_payment[payment_date]"
+          value="<%#= display_vendor_date_format(@account_payment.payment_date, @vendor.date_format) unless @account_payment.payment_date.blank? %>"
+          class="form-control date-picker" data-date-format="<%#= @vendor.date_format %>" id="payment-date"> -->
+      </div>
+      <div class="form-group">
+        <%= f.label :amount, Spree.t(:amount) %>
+        <div class='price-input'>
+          <label class="currency-label"><%= currency_symbol(@order.currency) %></label>
+          <%= f.number_field :amount, step: '0.01', value: number_with_precision(@order.outstanding_balance - @order.pending_balance, precision: 2), class: 'form-control price-field' %>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :payment_method_id, Spree.t(:payment_method) %>
+        <%= f.collection_select :payment_method_id, @payment_methods, :id, :name, {}, {class: 'form-control'} %>
+        <div class="payment-method-settings">
+          <% @payment_methods.each do |method| %>
+            <div class="payment-methods" id="payment_method_<%= method.id %>" data-method="<%= method.id %>" data-creditcard='<%= method.credit_card? %>'>
+              <% if method.source_required? %>
+                <% previous_cards = @order.account.credit_cards
+                                                  .active
+                                                  .where(payment_method_id: method.id)
+                                                  .where.not(gateway_customer_profile_id: nil)
+                                                  .order(updated_at: :desc) %>
+                <%= render :partial => "spree/shared/payments/source_forms/gateway", locals: { payment_method: method, previous_cards: previous_cards } %>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <div id='non-credit-card-params'>
+        <div class='form-group'>
+          <%= f.label :txn_id, Spree.t('payment_attrs.txn_id') %>
+          <%= f.text_field :txn_id, class: 'required form-control cardCode' %>
+        </div>
+        <div class='form-group'>
+          <%= f.label :memo, Spree.t('payment_attrs.memo') %>
+          <%= f.text_area :memo, class: 'required form-control cardCode', size: 5 %>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('#payment_payment_method_id').change(function(){
+      togglePaymentMethodViews();
+    });
+    $('input[type=radio]', '.payment_boxes').change(function(){
+      togglePaymentMethodViews();
+    });
+
+    togglePaymentMethodViews();
+  });
+</script>

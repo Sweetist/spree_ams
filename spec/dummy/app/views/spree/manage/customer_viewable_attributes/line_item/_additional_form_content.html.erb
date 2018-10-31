@@ -1,0 +1,21 @@
+<div class='col-xs-12'>
+  <%= render partial: "spree/manage/customer_viewable_attributes/default_sorts", locals: {base: 'line_item', f: f} %>
+</div>
+<script type='text/javascript'>
+  $('#line_item_primary_sort_column').change(function(){
+    if ($(this).val() === 'position'){
+      $('#line_item_primary_sort_direction').val('asc');
+      $('#line_item_primary_sort_direction option[value="desc"]').prop('disabled', true);
+    }else {
+      $('#line_item_primary_sort_direction option[value="desc"]').prop('disabled', false);
+    }
+  });
+  $('#line_item_secondary_sort_column').change(function(){
+    if ($(this).val() === 'position'){
+      $('#line_item_secondary_sort_direction').val('asc');
+      $('#line_item_secondary_sort_direction option[value="desc"]').prop('disabled', true);
+    }else {
+      $('#line_item_secondary_sort_direction option[value="desc"]').prop('disabled', false);
+    }
+  });
+</script>

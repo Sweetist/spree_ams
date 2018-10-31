@@ -1,0 +1,29 @@
+<h4 class='form-section'>UPS Settings</h4>
+<div class='row'>
+  <div class='col-md-6'>
+    <div class='col-md-12'>
+      <div class="form-group">
+        <%= f.label :ups_login, Spree.t('active_shipping.ups_login'), class: "control-label" %><br>
+        <%= f.text_field :ups_login, class: 'form-control' %>
+      </div>
+    </div>
+    <div class='col-md-12'>
+      <div class="form-group">
+        <%= f.label :ups_password, Spree.t('active_shipping.ups_password'), class: "control-label" %><br>
+        <%= f.text_field :ups_password, class: 'form-control' %>
+      </div>
+    </div>
+    <div class='col-md-12'>
+      <div class="form-group">
+        <%= f.label :ups_key, Spree.t('active_shipping.ups_key'), class: "control-label" %><br>
+        <%= f.text_field :ups_key, class: 'form-control' %>
+      </div>
+    </div>
+    <div class='col-md-12'>
+      <div class="form-group">
+        <%= f.label :shipper_number, Spree.t('active_shipping.shipper_number'), class: "control-label" %><br>
+        <%= f.text_field :shipper_number, class: 'form-control' %>
+      </div>
+    </div>
+  </div>
+</div>

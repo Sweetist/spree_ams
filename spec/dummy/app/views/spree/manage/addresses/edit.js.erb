@@ -1,0 +1,5 @@
+<% if params[:order_id] %>
+  $('#address-select-modal').modal('hide');
+<% end %>
+$('#address_modal').modal('show');
+$('#address_modal').html("<%= j render("/spree/manage/accounts/edit_address_modal")%>")

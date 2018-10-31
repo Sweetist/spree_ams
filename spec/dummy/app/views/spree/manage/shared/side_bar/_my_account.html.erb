@@ -1,0 +1,66 @@
+<li class="nav-item <%= "active open" if current_controller?(['companies', 'users', 'company_logos', 'reps', 'permission_groups']) %>">
+  <a href="#" class="nav-link nav-toggle">
+    <i class="fa fa-user"></i>
+    <span class="title">My Account</span>
+    <span class="arrow <%= "open" if current_controller?(['companies', 'users', 'company_logos', 'permission_groups']) %>"></span>
+  </a>
+  <ul class="sub-menu">
+    <% if current_spree_user.can_write?('company') %>
+      <li class="nav-item <%= "active" if current_controller?(['companies']) %>">
+        <%= link_to edit_manage_account_path, class: "nav-link" do %>
+          <span class="title">My Company</span>
+        <% end %>
+      </li>
+      <li class="nav-item <%= "active" if current_controller?(['company_logos']) %>">
+        <%= link_to manage_account_logos_path, class: "nav-link" do %>
+          <span class="title">My Logo</span>
+        <% end %>
+      </li>
+    <% else %>
+      <li class="nav-item">
+        <%= link_to 'void:javascript();', class: "nav-link" do %>
+          <span class="title">My Company</span>
+          <i class='fa fa-lock'></i>
+        <% end %>
+      </li>
+      <li class="nav-item">
+        <%= link_to 'void:javascript();', class: "nav-link" do %>
+          <span class="title">My Logo</span>
+          <i class='fa fa-lock'></i>
+        <% end %>
+      </li>
+    <% end %>
+
+    <li class="nav-item <%= "active" if current_controller?(['users']) && params[:id].to_i == current_spree_user.id %>">
+      <%= link_to edit_manage_account_user_path(current_spree_user), class: "nav-link" do %>
+        <span class="title">My Profile</span>
+      <% end %>
+    </li>
+
+    <% if current_spree_user.can_read?('basic_options', 'users') %>
+      <li class="nav-item <%= "active" if current_controller?(['users']) && params[:id].to_i != current_spree_user.id %>">
+        <%= link_to manage_account_users_path, class: "nav-link" do %>
+          <span class="title">Users</span>
+        <% end %>
+      </li>
+    <% end %>
+
+    <% if current_spree_user.can_read?('company') %>
+      <li class="nav-item <%= "active" if current_controller?(['permission_groups']) %>">
+        <%= link_to manage_permission_groups_path, class: "nav-link" do %>
+          <span class="title">Permission Groups</span>
+          <% unless current_company.subscription_includes?('permission_groups') %>
+            <i class='fa fa-lock'></i>
+          <% end %>
+        <% end %>
+      </li>
+    <% else %>
+      <li class="nav-item">
+        <%= link_to 'void:javascript();', class: "nav-link" do %>
+          <span class="title">Permission Groups</span>
+          <i class='fa fa-lock'></i>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+</li>

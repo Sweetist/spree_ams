@@ -1,0 +1,6 @@
+<%= link_to url, class: "white_space_nowrap" do %>
+  <%= "#{display_sweet_price(avv.price, variant.currency)}" %>
+  <% if @vendor.show_suggested_price && variant.price.to_f > avv.price.to_f %>
+    <span class="suggested-price">SRP. <span class="price"><%= display_sweet_price(variant.price, variant.currency) %></span>
+  <% end %>
+<% end %>

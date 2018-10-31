@@ -1,0 +1,22 @@
+  <div id='cart-overview'>
+    <table class="table" style="table-layout: fixed">
+      <tbody>
+      <% current_order.line_items.each_with_index do |li, idx| %>
+        <tr>
+          <% url = vendor_product_variant_path(current_order.vendor, li.product, li.variant)  %>
+          <td><strong><%= link_to li.item_name, url %></strong></td>
+          <td><strong><%= li.quantity %></strong></td>
+          <td> <strong><%= display_sweet_price(li.amount, li.currency) %></strong></td>
+          <% if false %>
+            <td>
+              <div class="cel margin-top-10">
+                <%= link_to raw("<i class='fa fa-times'></i>"), edit_order_path(current_order),
+                  class: 'btn btn-xs red delete-input-row-btn close-button', id: "delete-item-button-#{li.id}" %>
+              </div>
+            </td>
+          <% end %>
+        </tr>
+      <% end %>
+    </tbody>
+    </table>
+  </div>

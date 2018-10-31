@@ -1,0 +1,74 @@
+<%= content_for :head_title do %>
+  Orders
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="breadcrumb">
+    <li>
+      <%= link_to "Home", root_path %>
+    </li>
+    <li>
+      <%= link_to "Invoices", invoices_path %>
+    </li>
+    <li>
+      <%= link_to "Invoice #{@invoice.number}", invoice_path(@invoice.id) %>
+    </li>
+  </ul>
+  <div class="page-toolbar">
+    <div class="btn-group pull-right">
+      <%= link_to "Back to All invoices", invoices_path, class: "btn green" %>
+    </div>
+  </div>
+<% end %>
+
+<%= render partial: 'spree/shared/invoices/all_details' %>
+
+  <div class="table-scrollable">
+    <table class="table table-hover" id="sample_1">
+      <thead>
+        <tr>
+          <th>
+            Name
+          </th>
+          <% if current_vendor_view_settings.variant_sku %>
+            <th>
+              Sku
+            </th>
+          <% end %>
+          <% if current_vendor_view_settings.line_item_lot_number %>
+            <th>
+              Lot Number
+            </th>
+          <% end %>
+          <% if current_vendor_view_settings.variant_pack_size %>
+            <th>
+              Pack/Size
+            </th>
+          <% end %>
+          <% if current_vendor.try(:include_unit_weight) %>
+            <th>
+              Weight
+            </th>
+          <% end %>
+          <th>
+            Price
+          </th>
+          <th>
+            Quantity
+          </th>
+          <% if current_vendor.try(:include_total_weight) %>
+            <th>Tot Wt</th>
+          <% end %>
+          <th>
+            Total
+          </th>
+        </tr>
+
+      </thead>
+      <tbody>
+        <%= render partial: 'line_item', collection: @line_items %>
+        <%= render partial: 'spree/shared/invoices/adjustments' %>
+      </tbody>
+    </table>
+
+</div>

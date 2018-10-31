@@ -1,0 +1,46 @@
+<% @vendor ||= current_vendor %>
+<% if @vendor.present? && @vendor.customer_viewable_attribute.try(:theme_name) == "custom" %>
+  <%
+    @button_background_color = @vendor.customer_viewable_attribute.theme_colors["button_background"]
+    @button_text_color = @vendor.customer_viewable_attribute.theme_colors["button_text"]
+    @form_title_color = @vendor.customer_viewable_attribute.theme_colors["body_text"]
+  %>
+  <style>
+    .btn-primary{
+      color: <%= @button_text_color %> !important;
+      background-color:<%= @button_background_color %>;
+      border-color:<%= @button_background_color %>;
+    }
+
+    .btn-primary:hover,
+    .btn-primary:focus,
+    .btn-primary:active{
+      color: <%= @button_text_color %> !important;
+      background-color:  <%= @button_background_color %>;
+      border-color: <%= @button_background_color %>;
+      filter: brightness(80%);
+    }
+  </style>
+<% end %>
+<%
+  if @form.nil? || @form.num_columns == 1
+    container_class = 'one-column-form'
+  else
+    container_class = 'multi-column-form'
+  end
+%>
+<div class="form-container <%= container_class %>">
+  <%= form_for :spree_user, url: submit_request_path, html:{ id: 'request-account-form'} do |f| %>
+    <% if @form %>
+      <%= render partial: 'spree/cust/request_access/custom_form', locals: {f: f} %>
+    <% else %>
+      <%= render partial: 'spree/cust/request_access/default_form', locals: {f: f} %>
+    <% end %>
+  <% end %>
+</div>
+
+<script>
+  $('form').submit(function(e){
+    e.preventDefault();
+  });
+</script>

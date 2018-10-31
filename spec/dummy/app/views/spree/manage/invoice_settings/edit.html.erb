@@ -1,0 +1,112 @@
+<% if @account.errors.any? %>
+  <div id="error_explanation">
+    <h2><%= pluralize(@account.errors.count, "error") %> prohibited this account from being saved:</h2>
+
+    <ul>
+    <% @account.errors.full_messages.each do |msg| %>
+      <li><%= msg %></li>
+    <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<%= content_for :head_title do %>
+  Order/Invoice Settings
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <span>Order/Invoice Settings</span>
+    </li>
+  </ul>
+<% end %>
+
+<div class="content">
+  <div class="row">
+    <div class="portlet light">
+
+      <div class="portlet-body">
+        <div class='form'>
+          <%= form_for @account, url: manage_invoice_settings_path, method: 'patch', class:'prevent-double-submission' do |f| %>
+            <div class='form-body'>
+              <%= render partial: 'order_settings', locals: {f: f} %>
+              <%= render partial: 'invoice_settings', locals: {f: f} %>
+              <%= render partial: 'invoice_pdf_settings', locals: {f: f} %>
+              <%= render partial: 'purchase_order_settings', locals: {f: f} %>
+              <%= render partial: 'po_pdf_settings', locals: {f: f} %>
+              <%= render partial: 'bill_of_lading_settings', locals: {f: f} %>
+              <%= render partial: 'shared_pdf_settings', locals: {f: f} %>
+            </div>
+
+            <div class="form-actions" data-hook="buttons">
+              <div class='pull-right'>
+                <%= link_to edit_manage_invoice_settings_path, class: 'btn btn-default prevent-double-submission' do %>
+                  <i class='fa fa-times'></i> <%= Spree.t(:Cancel) %>
+                <% end %>
+                <button class='btn btn-primary prevent-double-submission' id='settings-submit'>
+                  <i class='fa fa-check'></i> <%= Spree.t(:update) %>
+                </button>
+              </div>
+            </div>
+
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%= render partial: 'number_change_modal' %>
+
+<script type='text/javascript'>
+  var initOrderPrefix = '<%= current_vendor.order_prefix.to_s %>';
+  var initOrderNumber = '<%= current_vendor.order_next_number.to_s %>';
+
+  var toggleWeeklyInvoiceOptions = function(){
+    if($('#company_multi_order_invoice').val() == 'true'){
+      $('#weekly_invoice_email_options').show();
+    }else{
+      $('#company_send_invoices').bootstrapSwitch('state', false);
+      $('#weekly_invoice_email_options').hide();
+    }
+  }
+  var toggleInvoiceOptions = function(){
+    if($('#company_use_separate_invoices').bootstrapSwitch('state') == true){
+      $('#invoice_frequency').show();
+      $('#invoice-number-settings').show();
+      toggleWeeklyInvoiceOptions();
+    }else{
+      $('#company_multi_order_invoice').val('false');
+      toggleWeeklyInvoiceOptions();
+      $('#invoice_frequency').hide();
+      $('#invoice-number-settings').hide();
+    }
+  }
+  $(document).ready(function(){
+    $('#company_use_separate_invoices').on('switchChange.bootstrapSwitch', toggleInvoiceOptions);
+    $('#company_multi_order_invoice').change(toggleWeeklyInvoiceOptions);
+    toggleInvoiceOptions();
+    $('form').submit(function(e){
+      var newOrderPrefix = $('#company_order_prefix').val();
+      var newOrderNumber = $('#company_order_next_number').val();
+
+      var numberChanged = (newOrderNumber !== '' && newOrderNumber !== '0' && newOrderNumber !== initOrderNumber)
+      var prefixChanged = (newOrderPrefix !== initOrderPrefix)
+
+      if(prefixChanged || numberChanged){
+        e.preventDefault();
+        $('#order-number-modal').modal('show');
+      }
+    });
+    $('#cart-options-proceed').click(function(){
+      var radioValue = $("input[name='cart_options']:checked").val();
+      $('#update_carts').val(radioValue);
+      $('form').off('submit').submit();
+    });
+  });
+</script>

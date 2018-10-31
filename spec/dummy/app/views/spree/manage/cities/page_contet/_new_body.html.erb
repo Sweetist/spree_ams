@@ -1,0 +1,31 @@
+<div class="portlet light" style='margin-bottom:0px;'>
+  <div class="portlet-title">
+    <div class="caption">
+      <span class="caption-subject font-blue-madison bold uppercase">
+        New City
+      </span>
+    </div>
+    <div class="actions">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+    </div>
+  </div>
+  <div class="portlet-body form">
+    <div id='modal-errors'></div>
+
+    <%= form_for @city, url: manage_cities_path, method: :post, html:{id:'city-form'} do |f| %>
+      <div class="form-body">
+        <%= render partial: 'spree/manage/cities/page_content/form', locals: {f:f} %>
+      </div>
+      <div class="form-actions" style='margin-bottom:0px;'>
+        <div class="pull-right">
+          <%= link_to manage_zones_path, class: "btn btn-default",'data-dismiss'=>"modal", 'aria-hidden'=>"true" do %>
+            <i class='fa fa-times'></i> Cancel
+          <% end %>
+          <button class="btn btn-primary">
+            <i class='fa fa-check'></i> Save
+          </button>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

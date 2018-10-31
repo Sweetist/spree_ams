@@ -1,0 +1,36 @@
+<h4 class='form-section'>Invoice Settings</h4>
+<div class='row'>
+  <div class='col-sm-4'>
+    <div class="form-group">
+      <%= f.label :use_separate_invoices, Spree.t(:use_separate_invoices), class: "control-label" %><br>
+      <%= f.check_box :use_separate_invoices, class: 'make-switch', 'data-size' => 'mini' %>
+    </div>
+  </div>
+  <div class='col-sm-4'>
+    <div class="form-group" id='invoice_frequency'>
+      <%= f.label :multi_order_invoice, "Invoice Frequency", class: 'control-label' %>
+      <%= f.select :multi_order_invoice, [['Weekly', true], ['One Invoice Per Order', false]], {}, class: 'form-control' %>
+    </div>
+  </div>
+  <div class='col-sm-4'>
+    <div class="form-group" id='weekly_invoice_email_options'>
+      <%= f.label :send_invoices, Spree.t(:send_weekly_invoices), class: "control-label" %><br>
+      <%= f.check_box :send_invoices, class: 'make-switch', 'data-size' => 'mini' %>
+    </div>
+  </div>
+</div>
+<div class='row' id='invoice-number-settings'>
+  <div class='col-sm-4'>
+    <%= f.label :invoice_prefix, 'Invoice Prefix', class: 'control-label' %>
+    <%= f.text_field :invoice_prefix, class: 'form-control' %>
+  </div>
+  <div class='col-sm-4'>
+    <div class="form-group">
+      <%= f.label :next_number, 'Next Invoice Number',class: "control-label" %><br />
+      <%= f.number_field :next_number, class: "form-control" %>
+        <span class='help-block-italic'>Set this to 0 to use the order number as the invoice number (Only applicable for One Order Per Invoice)</span>
+        <% unless current_vendor.use_separate_invoices %>
+        <% end %>
+    </div>
+  </div>
+</div>

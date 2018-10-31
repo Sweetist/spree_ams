@@ -1,0 +1,14 @@
+<table>
+  <tr>
+    <td>
+      <%= @body.try(:html_safe) %>
+      <br>
+      <!-- Order Summary -->
+      <%= render partial: 'mailers/spree/shared/customer_mailer_order_summary_table' %>
+
+      <!-- Order Items Summary -->
+      <%= render partial: 'mailers/spree/shared/mailer_line_items_table' %>
+    </td>
+    <td class="expander"></td>
+  </tr>
+</table>

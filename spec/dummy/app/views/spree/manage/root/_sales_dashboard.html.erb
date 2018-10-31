@@ -1,0 +1,110 @@
+<div class="row">
+  <div class="col-md-6 col-sm-6">
+    <!-- BEGIN PORTLET-->
+    <div class="portlet light bordered">
+      <%= render partial: 'spree/manage/root/order_controls' %>
+      <%= render partial: 'spree/manage/root/overview_date' %>
+      <div class="portlet-body">
+        <div class="">
+          <table class="table table-hover table-striped" >
+            <thead>
+              <tr>
+                <th>
+                  Customer Account
+                </th>
+                <th>
+                  Order #
+                </th>
+                <th>
+                  Total
+                </th>
+              </tr>
+            </thead>
+            <%= render partial: 'spree/manage/root/daily_order' %>
+
+          </table>
+
+        </div>
+      </div>
+    </div>
+    <!-- END PORTLET-->
+  </div>
+  <div class="col-md-6 col-sm-6">
+    <!-- BEGIN PORTLET-->
+
+    <!-- Total Sales Chart -->
+    <div class="portlet light bordered">
+      <div class="portlet-title">
+        <div class="caption">
+          <i class="icon-bar-chart font-green"></i>
+          <span class="caption-subject font-green bold uppercase">Sales History</span>
+        </div>
+      </div>
+      <div class="portlet-body">
+        <div class="chart-block">
+          <div id="sales-history-chart" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Customer Sales Charts -->
+    <div class="portlet light bordered chart-block chart-tabbed">
+      <div class="portlet-title">
+        <div class="caption">
+          <i class="icon-bar-chart font-green"></i>
+          <span class="caption-subject font-green bold uppercase">Customer Account Sales</span>
+        </div>
+        <div class="actions">
+          <div class="btn-group btn-group-devided tabs" data-toggle="buttons">
+            <label class="btn red btn-outline btn-circle btn-sm bar-chart active">
+              <input type="radio" name="options" class="toggle" id="option1"><i class="fa fa-bar-chart"></i>
+            </label>
+            <label class="btn red btn-outline btn-circle btn-sm pie-chart">
+              <input type="radio" name="options" class="toggle" id="option2"><i class="fa fa-pie-chart"></i>
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="portlet-body">
+        <div class="chart chart-tabbed">
+          <% unless @customer_account_sales_bar_chart_data.nil? %>
+            <div id="bar-chart" data-highcharts-chart="1">
+              <div id="customer-sales-bar-chart"></div>
+            </div>
+            <div id="pie-chart" data-highcharts-chart="2">
+              <div id="customer-sales-pie-chart"></div>
+            </div>
+          <% else %>
+            <%# insert graphic saying "No data available" %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+    <!-- END PORTLET-->
+  </div>
+</div>
+
+<script type="text/javascript">
+  $('.open-pdf').click(function(e){
+    var anyApprovedOrdersToday = <%= @any_approved_orders_today %>
+    var anyOrdersToday = <%= @any_orders_today %>
+    if ($(this).data('approved-only')){
+      if(!anyApprovedOrdersToday){
+        e.preventDefault();
+        alert('There are no approved orders for today.');
+      }
+    }else{
+      if(!anyOrdersToday){
+        e.preventDefault();
+        alert('There are no orders for today.');
+      }
+    }
+  });
+  $(function(){
+    $('#sales-history-chart').highcharts(<%= raw @sales_history_chart_data.to_json %>);
+    <% unless @customer_account_sales_bar_chart_data.nil? %>
+      $('#customer-sales-bar-chart').highcharts(<%= raw @customer_account_sales_bar_chart_data.to_json %>);
+      $('#customer-sales-pie-chart').highcharts(<%= raw @customer_account_sales_pie_chart_data.to_json %>);
+    <% end %>
+  });
+</script>

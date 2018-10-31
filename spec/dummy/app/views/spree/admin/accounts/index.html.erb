@@ -1,0 +1,51 @@
+<% content_for :page_title do %>
+  <%= "Accounts" %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= button_link_to "New Account", new_admin_account_path, class: "btn-success", icon: 'add', id: 'admin_new_account_link' %>
+<% end %>
+
+<% content_for :table_filter_title do %>
+  <%= Spree.t(:search) %>
+<% end %>
+
+<% content_for :table_filter do %>
+  <div data-hook="admin_accounts_index_search">
+    <%= search_form_for [:admin, @search], url: spree.admin_accounts_path do |f| %>
+      <div class="form-group">
+        <%= f.label "Name" %>
+        <%= f.text_field :fully_qualified_name_cont, class: "form-control js-quick-search-target" %>
+      </div>
+
+      <div data-hook="admin_accounts_index_search_buttons" class="form-actions">
+        <%= button Spree.t(:search), 'search' %>
+      </div>
+
+    <% end %>
+  </div>
+<% end %>
+
+<table class="table" id="listing_users" data-hook>
+  <thead>
+    <tr data-hook="admin_accounts_index_headers">
+      <th>
+        Account
+      </th>
+      <th data-hook="admin_accounts_index_header_actions" class="actions"></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @accounts.each do |account|%>
+      <tr id="<%= spree_dom_id account %>" data-hook="admin_accounts_index_rows">
+        <td class='user_email'><%=link_to account.name, edit_admin_account_path(account) %></td>
+        <td data-hook="admin_accounts_index_row_actions" class="actions actions-2 text-right">
+          <%= link_to_edit account, :no_text => true %>
+          <%= link_to_delete account, :no_text => true %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= paginate @accounts %>

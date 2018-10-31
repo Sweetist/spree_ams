@@ -1,0 +1,4 @@
+$('#alert').replaceWith("<%= j render(partial: 'layouts/shared/alert_box') %>");
+setTimeout(function() {
+  $(".alert-auto-dissapear").fadeOut(1500);
+},2000);

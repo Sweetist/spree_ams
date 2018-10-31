@@ -1,0 +1,42 @@
+<% if @order.shipments.any?(&:shipped?) && @order.return_authorizations.any? %>
+  <table class="table">
+    <thead data-hook="rma_header">
+      <tr>
+        <th><%= Spree.t(:rma_number) %></th>
+        <th><%= Spree.t(:status) %></th>
+        <th><%= Spree.t(:pre_tax_total) %></th>
+        <th><%= "#{Spree.t('date')}/#{Spree.t('time')}" %></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @order.return_authorizations.each do |return_authorization| %>
+        <tr id="<%= spree_dom_id(return_authorization) %>" data-hook="rma_row">
+          <td><%= return_authorization.number %></td>
+          <td><%= Spree.t(return_authorization.state.downcase) %></td>
+          <td><%= return_authorization.display_pre_tax_total.to_html %></td>
+          <td><%= pretty_time(return_authorization.created_at) %></td>
+          <td class="actions actions-2 center">
+            <%= link_to edit_manage_order_return_authorization_url(@order, return_authorization), no_text: true, class: 'btn btn-sm btn-primary pull-right tooltips' do %>
+            <i class="fa fa-pencil"></i>
+            <% end %>
+            <% if can?(:delete, return_authorization) && !return_authorization.customer_returned_items? %>
+              <%= link_to manage_order_return_authorization_url(@order, return_authorization), method: :delete, no_text: true, class: 'btn btn-sm btn-danger pull-right tooltips'  do %>
+              <i class="fa fa-times"></i>
+              <% end %>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% elsif @order.shipments.any?(&:shipped?) %>
+  <div class="alert alert-info no-objects-found">
+    <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::ReturnAuthorization)) %>
+  </div>
+    <%= button_link_to Spree.t(:new_return_authorization), new_manage_order_return_authorization_url(@order), class: "btn-success", icon: 'add' %>
+<% else %>
+  <div data-hook="rma_cannot_create" class="alert alert-info no-objects-found">
+    <%= Spree.t(:cannot_create_returns) %>
+  </div>
+<% end %>

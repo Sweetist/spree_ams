@@ -1,0 +1,99 @@
+<%= content_for :head_title do %>
+  Product Categories
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Products", manage_products_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <span>Categories</span>
+    </li>
+  </ul>
+
+  <div class="page-toolbar">
+    <% if @user_can_edit_taxons %>
+      <div class="btn-group pull right">
+        <%= link_to new_manage_taxon_path, class: 'btn green pull pull-right' do%>
+          <i class="fa fa-plus"></i>&nbsp;New Product Category
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+<% end %>
+
+<% if @vendor.taxons.where.not(parent_id: nil).empty? %>
+  <div class = "alert alert-warning">
+    There are no product categories set up.
+  </div>
+<% end %>
+
+<div class='content row'>
+  <!-- BEGIN ACCORDION PORTLET-->
+  <div class="portlet light">
+    <div class="portlet-title">
+      <div class="caption">
+        <span class="caption-subject font-blue-soft bold uppercase">Product Categories</span>
+      </div>
+      <div class="tools">
+      </div>
+    </div>
+
+    <div class="portlet-body">
+      <% @taxonomies.each do |taxonomy| %>
+        <div class="panel-group accordion" id="root_<%= taxonomy.root.id %>">
+
+          <% taxonomy.root.children.order('name ASC').each do |taxon| %>
+            <div class="panel panel-default no-border" id='taxon_<%= taxon.id %>'>
+              <%= render partial: 'taxon', locals: {taxon: taxon} %>
+              <div id="parent_taxon_<%= taxon.id %>" class="panel-collapse collapse">
+
+                <% taxon.children.order('name ASC').each do |taxon| %>
+                  <div class="panel-body no-border" id='taxon_<%= taxon.id %>'>
+                    <div class="panel panel-default sub-panel no-border">
+                      <%= render partial: 'taxon', locals: {taxon: taxon} %>
+                      <div id="parent_taxon_<%= taxon.id %>" class="panel-collapse collapse">
+
+                        <% taxon.children.order('name ASC').each do |taxon| %>
+                          <div class="panel-body no-border" id='taxon_<%= taxon.id %>'>
+                            <div class="panel panel-default sub-panel no-border">
+                              <%= render partial: 'taxon', locals: {taxon: taxon} %>
+                              <div id="parent_taxon_<%= taxon.id %>" class="panel-collapse collapse">
+
+                                <% taxon.children.order('name ASC').each do |taxon| %>
+                                  <div class="panel-body no-border" id='taxon_<%= taxon.id %>'>
+                                    <div class="panel panel-default sub-panel no-border">
+                                      <%= render partial: 'taxon', locals: {taxon: taxon} %>
+                                      <div id="parent_taxon_<%= taxon.id %>" class="panel-collapse collapse">
+
+                                      <!-- ADD MORE LEVELS HERE -->
+                                      </div>
+                                    </div>
+                                  </div>
+                                <% end %>
+                              </div>
+                            </div>
+                          </div>
+                        <% end %>
+                      </div>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+      <% if @taxonomies.any?{|taxonomy| taxonomy.root.children.count > 10} %>
+        <%= link_to raw("<i class='fa fa-plus'></i> New Product Category"), new_manage_taxon_path, class: 'btn btn-primary' %>
+      <% end %>
+    </div>
+  </div>
+  <!-- END ACCORDION PORTLET-->
+</div>

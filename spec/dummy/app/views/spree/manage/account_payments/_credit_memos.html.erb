@@ -1,0 +1,122 @@
+<div id="credit-memo">
+<% if credit_memos.any? %>
+    <div class="col-md-12">
+      <h2>Credits</h2>
+        <div class="table-scrollable">
+          <table class="table table-striped table-hover table-checkable">
+            <thead>
+              <tr>
+                <th>
+                </th>
+                <th>Description</th>
+                <th>Date</th>
+                <th>Original Amount</th>
+                <th>Open Balance</th>
+                <th>Payment</th>
+              </tr>
+              <tr role="row" class="filter">
+
+              </tr>
+            </thead>
+              <tbody id="credit-body">
+                <% credit_memos.each do |credit_memo|%>
+                  <%
+                  if account_payment
+                    payment_value = account_payment.applied_credit_amount_for(credit_memo)
+                    checked = account_payment.applied_credit_memo?(credit_memo) ? 'checked': ''
+                  else
+                    checked = ''
+                    payment_value = 0
+                  end
+                  %>
+
+                  <tr data-credit-memo-id="<%= credit_memo.id %>">
+                      <td>
+                        <% if account_payment.nil? || account_payment.editable? %>
+                          <%= hidden_field_tag "credit_memos_attributes[][credit_memo_id]", credit_memo.id %>
+                          <input type='checkbox' name='credit_memos_attributes[][check]' class='checkboxes noUniform' <%= checked %> >
+                        <% else %>
+                          <i class='fa fa-check'></i>
+                        <% end %>
+                      </td>
+                      <td>
+                        <%= link_to credit_memo.display_with_creation_date, edit_manage_credit_memo_path(credit_memo) %>
+                      </td>
+                      <td>
+                        <%= display_vendor_date_format(credit_memo.txn_date, @vendor.date_format) %>
+                      </td>
+                      <td>
+                        <%= display_sweet_price(credit_memo.total, credit_memo.currency) %>
+                      </td>
+                      <td class="credit-remaining">
+                        <%= display_sweet_price(credit_memo.amount_remaining, credit_memo.currency) %>
+                      </td>
+                      <td>
+                        <div class='price-input'>
+                          <% if account_payment.nil? || account_payment.editable? %>
+                            <label class="currency-label"><%= currency_symbol(credit_memo.currency) %></label>
+                            <%= number_field_tag "credit_memos_attributes[][amount]", payment_value,  in: 0..credit_memo.amount_remaining, step: '0.01', class: 'form-control price-field credit-memo-amount' %>
+                          <% else %>
+                            <%= display_sweet_price(credit_memo.applied_credits.where(account_payment: @account_payment).last.try(:amount).to_d, @account_payment.vendor.currency) %>
+                          <% end %>
+                        </div>
+                      </td>
+                  </tr>
+
+                <% end -%>
+                <tr id='subtotals-row'></tr>
+              </tbody>
+          </table>
+        </div>
+    </div>
+<% end %>
+</div>
+
+<script type="text/javascript">
+  var calculateCreditToApply = function() {
+    var chRow = $('#credit-body tr').filter(':has(:checkbox:checked)');
+    var credit_to_apply = 0
+    chRow.each(function(index){
+      credit_to_apply += parseFloat($(this).find('.credit-memo-amount').val());
+    })
+
+    $('#account_payment_credit_to_apply').val(credit_to_apply.toFixed(2));
+    $('#credit-to-apply').text('$' + credit_to_apply.toFixed(2))
+  }
+
+  var formatNumber = function(num) {
+    return '$' + num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
+  };
+
+  var fromFrontendNumber = function(tdText) {
+    return parseFloat(tdText.replace(/\$|\s/g, ''))
+  }
+
+  var calculateAmountToApply = function(){
+    var amount = $('#account_payment_amount').val()
+    var credit_to_apply = fromFrontendNumber($('#credit-to-apply').text())
+    $('.amount-to-apply')[0].innerText = formatNumber((parseFloat(amount)+parseFloat(credit_to_apply)).toFixed(2));
+  }
+
+  $(document).ready(function(){
+    $('.credit-memo-amount').change(function(){
+      var $row = $(this).closest("tr")
+      $row.find("[name='credit_memos_attributes[][check]']")[0].checked = true
+      calculateCreditToApply()
+      calculateAmountToApply()
+    })
+    $('#credit-body input:checkbox').click(function() {
+      var $this = $(this);
+      var $row = $(this).closest("tr")
+      if ($this.is(':checked')) {
+        var credit_total = fromFrontendNumber($row.find('.credit-remaining').text())
+        $row.find('.credit-memo-amount').val(credit_total);
+      } else {
+        $row.find('.credit-memo-amount').val('0');
+      }
+      calculateCreditToApply()
+      calculateAmountToApply()
+    });
+  })
+
+</script>

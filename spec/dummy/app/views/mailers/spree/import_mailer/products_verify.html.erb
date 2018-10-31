@@ -1,0 +1,21 @@
+<table>
+  <tr>
+    <td>
+      <p class="lede">
+        Dear <%= @import.company.name %>,
+      </p>
+      <p>
+        your file <%= @import.file_file_name %> from <%= DateHelper.sweet_time(@import.created_at) %> has been verified
+        <b>
+          <% if @import.status == 2 %>
+            Successfully!
+          <% else %>
+            with Errors!
+          <% end %>
+        </b>
+      </p>
+      <p>Valid: <%= @import.verify_result.select {|p| p["valid"]}.count rescue 0 %>; Invalid: <%= @import.verify_result.select {|p| !p["valid"]}.count rescue 0 %></p>
+      <p>Click <%= link_to "here", manage_product_import_url(@import.id, host: @import.company.domain, protocol: 'https') %> to view results.</p>
+    </td>
+  </tr>
+</table>

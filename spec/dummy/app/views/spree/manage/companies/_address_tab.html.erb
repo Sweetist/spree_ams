@@ -1,0 +1,18 @@
+<%=form_for @account, url: manage_account_path, remote: true, html: {class: 'form'} do |f|%>
+  <div class='form-body'>
+    <h3 class="form-section">Main Contact and Address</h3>
+    <div id='bill-address-container'>
+
+      <%= f.fields_for :bill_address, @bill_address do |ba_form| %>
+        <%= render partial: 'spree/shared/forms/address_form', locals: { f: ba_form, type: 'billing' } %>
+      <% end %>
+    </div>
+  </div>
+  <div class='form-actions'>
+    <div class="pull-right">
+      <button class='btn btn-primary'>
+        <i class='fa fa-check'></i> Update
+      </button>
+    </div>
+  </div>
+<%end%>

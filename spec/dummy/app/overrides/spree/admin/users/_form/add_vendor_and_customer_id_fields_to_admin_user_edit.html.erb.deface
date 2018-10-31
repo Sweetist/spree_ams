@@ -1,0 +1,3 @@
+<!-- insert_after 'div[data-hook="admin_user_form_roles"]' -->
+<%= render partial: 'spree/admin/users/customer_admin_field', locals: {f: f} %>
+<%= render partial: 'spree/admin/users/company_field', locals: {f: f} %>

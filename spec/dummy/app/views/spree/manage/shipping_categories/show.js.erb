@@ -1,0 +1,5 @@
+// ajax response from rails controller
+<% if @target_shipping_categories %>
+  $(".modal fade").remove();
+  $("body").append("<%= escape_javascript(render partial: 'delete_form') %>");
+<% end %>

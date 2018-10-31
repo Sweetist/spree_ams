@@ -1,0 +1,101 @@
+<h1 class="catalog-title"><%= @account.name %>
+  <a href="<%= edit_account_url %>" class="edit-link">(Edit)</a>
+  <a href="<%= new_account_user_url %>" class="cta-link">Add New User</a>
+</h1>
+<div class="clear"></div>
+<h3 id="account-id">Account #<%= @account.spree_account_id %> </h3>
+
+<div class="manage-customer">
+
+  <div class="contact-group">
+		<%= link_to account_account_images_path do %>
+			<div class="contact-img-block">
+    		<% if @account.images.any? %>
+          <% image = @account.images.find_by(position:1) %>
+          <%= image_tag image.attachment.url(:product), :class => "contact-img", alt: image.alt %>
+				<% else %>
+					<%= image_tag "spree/manage/img/multi-user.png", :class => "contact-img", alt: "account image" %>
+    		<% end %>
+				<div class="img-block-overlay">
+          <div class="btn btn-primary btn-xs">
+            <i class='fa fa-pencil'></i> Edit Image
+          </div>
+				</div>
+			</div>
+		<% end %>
+
+    <div class="contact-info">
+      <% if @account.ship_address %>
+        <ul class="primary-contact">
+          <li><strong>Contact:</strong> <%= "#{@account.ship_address.firstname} #{@account.ship_address.lastname}" %></li>
+          <li><strong>Phone:</strong> <%= @account.ship_address.phone %></li>
+          <li><strong>Email:</strong> <%= @account.email %></li>
+          <li><strong>Address:</strong>
+            <ul class="address">
+              <li><%= @account.ship_address.address1 %></li>
+              <% unless @account.ship_address.address2.nil? %>
+                <li><%= @account.ship_address.address2 %></li>
+              <% end %>
+              <li> <%= @account.ship_address.city %>,
+                <%= Spree::State.find(@account.ship_address.state_id).abbr %>
+                <%= @account.ship_address.zipcode %>
+              </li>
+              <!-- change to @account.ship_address.state_name after associated correctly -->
+            </ul>
+          </li>
+        </ul>
+      <% else %>
+        No address found.
+      <% end %>
+    </div>
+  </div>
+
+  <div class="clear"></div>
+  <% @users.each do |user| %>
+  <% next if user.has_spree_role?('admin') %>
+  	<div class="contact-group">
+			<% if user == spree_current_user %>
+     		<%= link_to account_user_user_images_path(user) do %>
+					<div class="contact-img-block">
+						<% if user.images.any? %>
+              <% image = user.images.find_by(position:1) %>
+         			<%= image_tag image.attachment.url(:product), :class => "contact-img", alt: image.alt %>
+  					<% else %>
+  						<%= image_tag "frontend/avatar.png", :class => "contact-img", alt: "contact image" %>
+     				<% end %>
+       			<div class="img-block-overlay">
+              <div class="btn btn-primary btn-xs">
+                <i class='fa fa-pencil'></i> Edit Image
+              </div>
+       			</div>
+					</div>
+				<% end %>
+			<% else %>
+				<div class="contact-img-block">
+					<% if user.images.any? %>
+            <% image = user.images.find_by(position:1) %>
+         	  <%= image_tag image.attachment.url(:product), :class => "contact-img", alt: image.alt %>
+  				<% else %>
+  					<%= image_tag "frontend/avatar.png", :class => "contact-img", alt: "contact image" %>
+					<% end %>
+				</div>
+			<% end %>
+
+      <div class="contact-info">
+
+          <ul class="contact">
+            <li><strong>Contact:</strong> <%= "#{user.firstname} #{user.lastname}" %></li>
+            <li><strong>Position:</strong> <%= user.position %></li>
+            <li><strong>Phone:</strong> <%= user.phone %></li>
+            <li><strong>Email:</strong> <%= user.email %></li>
+          </ul>
+            <% if user == current_spree_user || current_spree_user.customer_admin %>
+              <a href="<%= edit_account_user_url(user) %>" class="edit-contact-link">Edit Contact Information</a>
+            <% end %>
+      </div>
+  </div>
+    <% end %>
+
+  <div class="clear"></div>
+
+</div>

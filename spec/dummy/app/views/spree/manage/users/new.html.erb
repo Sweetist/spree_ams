@@ -1,0 +1,52 @@
+<%= content_for :head_title do %>
+My Profile
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", root_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Account", edit_manage_account_path %>
+    </li>
+  </ul>
+<% end %>
+
+<div class="portlet light">
+    <div class="portlet-title">
+        <div class="caption">
+          <span class="caption-subject font-blue-madison bold uppercase">
+            Add User for <%= current_spree_user.company.name %>
+          </span>
+        </div>
+    </div>
+    <div class="portlet-body form">
+    <%= form_for @user, url: manage_account_users_url, html: {class: "horizontal-form"} do |f| %>
+    <div class="form-body">
+      <%= render partial: "form", locals: {f: f} %>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label :password, class: "control-label" %>
+            <%= f.password_field :password, class: "form-control" %>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label :password_confirmation, class: "control-label" %>
+            <%= f.password_field :password_confirmation, class: "form-control" %>
+          </div>
+        </div>
+      </div>
+      <div class="clear"></div>
+      <div class="form-actions right">
+        <%= link_to "Cancel", edit_manage_account_path, class: "btn btn-default" %>
+        <%= f.submit "Save", class: "btn btn-primary" %>
+      </div>
+    <% end %>
+  </div>
+</div>
+  <div class="clear"></div>

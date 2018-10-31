@@ -1,0 +1,7 @@
+<% if flash[:errors].present? %>
+  $('.modal-errors', '#option-type-modal').html("<%= j(render(partial: 'spree/shared/errors.html.erb')) %>");
+<% else %>
+  $('.modal-errors', '#option-type-modal').empty();
+  $("#<%= @option_type.dom_id %>").html("<%= j(render(partial: 'spree/manage/variants/option_values', locals: {option_type: @option_type, variant: @variant})) %>");
+  $('#option-type-modal').modal('hide');
+<% end %>

@@ -1,0 +1,84 @@
+<div class="product-title">
+  <div class="caption">
+    <span class="caption-subject font-blue-madison bold uppercase pull-left" id='product-name'>
+      <%#= "#{@product.name}" %>
+    </span>
+  </div>
+</div>
+<%= form_for [:manage, @product], url: manage_product_path(@product),
+  html: {class: "product_form prevent-double-submission", data: {submitted: current_spree_user.cannot_write?('catalog', 'products')}} do |f| %>
+  <div class="portlet-body form">
+    <div class="form-body">
+      <%= render partial: 'spree/manage/products/form', locals: {f: f} %>
+    </div>
+    <div class="form-actions">
+      <div class="links pull-right">
+        <%= link_to edit_manage_product_path(@product), class: 'btn btn-default', 'data-dismiss'=>"modal", 'aria-hidden'=>"true" do %>
+        <i class='fa fa-times'></i> Cancel
+        <% end %>
+        <% if current_spree_user.can_write?('catalog', 'products') %>
+          <button class="btn btn-primary" id='update-variant-btn'>
+            <i class='fa fa-check'></i> Update
+          </button>
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<script type="text/javascript">
+  var toggleCostPrice = function(){
+    var costingMethod = $('#variant_costing_method').val();
+    $('.cost-price-container').each(function(){
+      if($(this).attr('id') === (costingMethod + '-cost-price-container')){
+        $(this).show();
+      }else{
+        $(this).hide();
+      }
+    });
+  }
+
+  $(document).ready(function(){
+    var ot0 = $('#product_product_option_types_attributes_0_option_type_id').val();
+    var ot1 = $('#product_product_option_types_attributes_1_option_type_id').val();
+    var ot2 = $('#product_product_option_types_attributes_2_option_type_id').val();
+    var ot3 = $('#product_product_option_types_attributes_3_option_type_id').val();
+
+    $('.option-type-select').change(function(){
+      handleOptionTypeChange(ot0, ot1, ot2, ot3, this);
+    });
+
+    toggleCostPrice();
+    initAssembly();
+    if(<%= current_spree_user.cannot_write?('catalog', 'products') %>){
+      disableFormInputs($('.product_form'));
+    }
+    // $('a.parent-details').click(function(e){
+    //   e.preventDefault();
+    //   $('.parent-details').toggleClass('hidden');
+    // });
+    $('a.toggle-variants').click(function(e){
+      e.preventDefault();
+      $('.toggle-variants').toggleClass('hidden');
+      var $selectedTab = $('.long-tabs-link.active');
+      if($(this).data('use-variants')){
+        $('#variants-tab-link').trigger('click');
+      }else{
+        $('#general-tab-link').trigger('click');
+      }
+    });
+    $('#variant_costing_method').change(toggleCostPrice);
+
+    $('#product_master_attributes_preferred_vendor_account_id').change(function(){
+      if($(this).val() === ''){
+        $('#add-to-vendor-list-msg').addClass('hidden');
+        return;
+      }
+      if($('#product_master_attributes_vendor_account_ids').val().indexOf($(this).val()) === -1){
+        $('#add-to-vendor-list-msg').removeClass('hidden');
+      }else{
+        $('#add-to-vendor-list-msg').addClass('hidden');
+      }
+    });
+  });
+</script>

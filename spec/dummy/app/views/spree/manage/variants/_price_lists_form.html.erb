@@ -1,0 +1,87 @@
+<div class='row'>
+  <div class='col-xs-12'>
+    <div class="table-scrollable">
+      <table class="table table-hover" id='price-lists-table'>
+        <thead>
+          <th>
+            Price List
+          </th>
+          <th>
+            Cost Price
+          </th>
+          <th>
+            Sales Price
+          </th>
+          <th>
+            Adjusted Price
+          </th>
+          <th>
+            Active
+          </th>
+          <th></th>
+        </thead>
+        <tbody>
+          <% variant_price_lists = f.object.variant_price_lists.includes(:price_list) %>
+          <% if variant_price_lists.present? %>
+            <% variant_price_lists.each do |variant_price_list| %>
+              <%= f.fields_for :variant_price_lists, variant_price_list do |ff| %>
+                <% price_list = variant_price_list.price_list %>
+                <tr data-idx='<%= ff.index %>'>
+                  <td>
+                    <% if current_spree_user.can_write?('promotions') %>
+                      <%= link_to price_list.name, edit_manage_price_list_path(price_list) %>
+                    <% else %>
+                      <%= price_list.name %>
+                    <% end %>
+                  </td>
+                  <td> <%= display_sweet_price(f.object.current_cost_price, current_company.currency) %> </td>
+                  <td> <%= display_sweet_price(f.object.price, current_company.currency) %> </td>
+                  <td class='price-input'>
+                    <label class="currency-label"><%= currency_symbol(current_company.currency) %></label>
+                    <%= ff.number_field :price, step: 0.01, min: 0, class: 'form-control price-field', style: 'max-width: 150px;' %>
+                  </td>
+                  <td>
+                    <% if price_list.active? %>
+                    <i class='fa fa-check'></i>
+                    <% end %>
+                  </td>
+                  <td class='remove-price-list'>
+                    <% if price_list.select_variants_by == 'individual' %>
+                      <!-- Add delete button -->
+                      <%= link_to 'void:javascript();',
+                        class: 'btn btn-xs red delete-input-row-btn pull-right remove-price-list' do %>
+                        <i class='fa fa-times'></i>
+                      <% end %>
+                      <%= ff.hidden_field :_destroy, value: false %>
+                    <% end %>
+                  </td>
+                </tr>
+              <% end %>
+            <% end %>
+          <% else %>
+            <tr>
+              <td colspan="100%">
+                <span class='help-block-italic nowrap'>
+                  This <%= f.object.is_master? ? 'product' : 'variant' %> is not on any <%= link_to 'price lists', manage_price_lists_path, class: 'inline' %>.
+                </span>
+              </td>
+            </tr>
+          <% end %>
+
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script type='text/javascript'>
+  $('a.remove-price-list').off('click').click(function(e){
+    e.preventDefault();
+    if(confirm('Are you sure you want to remove this variant from the price list?')){
+      var $tr = $(this).closest('tr');
+      var idx = $tr.data('idx');
+      $('input[name="variant[variant_price_lists_attributes][' + idx + '][_destroy]"]').val('true');
+      $tr.hide();
+    }
+  });
+</script>

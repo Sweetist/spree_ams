@@ -1,0 +1,19 @@
+<div class="modal fade" id="update-confirmation" role="dialog">
+  <div class="modal-dialog">
+  
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p><%= Spree.t('active_shipping.update_confirmation') %></p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-default" data-dismiss="modal" id='dismiss-update'>Update (I'll resubmit later)</button>
+        <button class='btn green-jungle' id='confirm-update'>Update & Resubmit</button>
+      </div>
+    </div>
+    
+  </div>
+</div>

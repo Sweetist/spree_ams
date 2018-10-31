@@ -1,0 +1,202 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="row">
+      <%= simple_form_for integration, url: path, method: method, wrapper: :horizontal_form do |f| %>
+        <div class="portlet light">
+          <div class="portlet-title">
+            <div class="caption">
+              <span class="caption-subject font-blue-madison bold uppercase">
+                <%=image_tag(item.fetch(:image, ''), width: '32')%>
+                <%= item.fetch(:name, '') %>
+              </span>
+            </div>
+          </div>
+          <div class="portlet-body form">
+            <div class="form-body">
+              <% if integration.qbo_company_name.blank? %>
+                <div class='alert alert-danger'>
+                  You are not connected to Quickbooks Online.
+                </div>
+              <% end %>
+              <div class="row">
+                <div class="col-sm-3 name">
+                  <label class="control-label">
+                    Status:
+                  </label>
+                </div>
+                <div class="col-sm-9 value">
+                  <% if integration.qbo_company_name.blank? %>
+                    <label class='btn red circle' style='cursor:default;'>Disconnected</label>
+                  <% else %>
+                    <label class='btn green-jungle circle' style='cursor:default;'>
+                      Connected
+                    </label>
+                  <% end %>
+                  <% if integration.created_at && integration.qbo_access_token.blank? %>
+                    <%= link_to "Connect", manage_integration_execute_path(integration.id, name: "authenticate"), class: "btn btn-info" %>
+                  <% elsif integration.created_at && !integration.qbo_access_token.blank? %>
+                    <%= link_to "Disconnect", manage_integration_execute_path(integration.id, name: "disconnect"), class: "btn btn-outline red" %>
+                  <% end %>
+                </div>
+              </div>
+              <hr>
+              <%= f.input :qbo_country, as: :select,
+                collection: Spree::Country.order(:name).pluck(:name, :iso),
+                label: I18n.t('integrations.qbo.country.label'), include_blank: false,
+                input_html: {class: 'select2'} %>
+              <%= f.input :qbo_match_with_name, as: :radio_buttons, collection: [[true, 'Name'], [false, 'SKU']], label: 'Match Product by', label_method: :last, value_method: :first, wrapper: :horizontal_radio_and_checkboxes %>
+              <%= f.input :qbo_create_related_objects, as: :radio_buttons, collection: [[true, 'Yes (recommended)'], [false, 'No']], label: 'Create Customers & Products', label_method: :last, value_method: :first, wrapper: :horizontal_radio_and_checkboxes %>
+              <%= f.input :qbo_use_categories, as: :radio_buttons, collection: [[true, 'Product with categories'], [false, 'Sub Item']], label: 'Sync Variants as', label_method: :last, value_method: :first, wrapper: :horizontal_radio_and_checkboxes %>
+
+              <%#= f.input :qbo_overwrite_conflicts_in, as: :radio_buttons, collection: [['none', 'No resolution'], ['quickbooks', 'Quickbooks'], ['sweet', 'Sweet']], label: 'Overwrite conflicts in', label_method: :last, value_method: :first, wrapper: :horizontal_radio_and_checkboxes %>
+              <% %w[variant customer vendor].each do |obj| %>
+                <%= f.input "qbo_#{obj}_overwrite_conflicts_in", as: :radio_buttons,
+                  collection: [['none', 'No resolution'], ['quickbooks', 'Quickbooks (recommended)']],
+                  label: I18n.t("integrations.qbo.#{obj}.overwrite_conflicts_in.label"),
+                  label_method: :last, value_method: :first, wrapper: :horizontal_radio_and_checkboxes %>
+              <% end %>
+              <%= f.input :qbo_overwrite_conflicts_in, as: :radio_buttons,
+                collection: [['none', 'No resolution'], ['quickbooks', 'Quickbooks (recommended)']],
+                label: raw("#{I18n.t('integrations.qbo.overwrite_conflicts_in.label')}
+                            <i class='fa fa-info-circle tooltips'
+                            data-original-title='#{I18n.t('integrations.qbo.overwrite_conflicts_in.helper')}'
+                            data-container='body'></i>"),
+                label_method: :last, value_method: :first, wrapper: :horizontal_radio_and_checkboxes %>
+
+              <%= f.input :qbo_send_as_invoice, as: :radio_buttons, collection: [[true, 'Invoice'], [false, 'Sales Receipt']], label: 'Send Order as', label_method: :last, value_method: :first, wrapper: :horizontal_radio_and_checkboxes %>
+              <%= f.input :qbo_strip_html, as: :radio_buttons,
+                collection: [[true, Spree.t(:say_yes)], [false, Spree.t(:say_no)]],
+                label: I18n.t('integrations.qbo.strip_html.label'),
+                label_method: :last, value_method: :first,
+                wrapper: :horizontal_radio_and_checkboxes %>
+              <%= render partial: "spree/manage/integrations/shared/form", locals: { item: @integration, f: f } %>
+              <% @vendor.sales_integration_items.pluck(:integration_key).uniq.each do |key| %>
+                <%= render partial: "spree/manage/integrations/shared/#{key}_fields", locals: {f: f} %>
+              <% end %>
+              <hr>
+              <div class="alert alert-warning alert-dismissable">Please enable selected features below in Quickbooks Online Company settings.</div>
+              <section class='important-clarifier'>
+                <%= f.input :qbo_multi_currency, as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']],
+                  label: I18n.t('integrations.qbo.multi_currency.label'), label_method: :last, value_method: :first, wrapper: :horizontal_radio_and_checkboxes %>
+                <%= f.input :qbo_include_department, as: :radio_buttons, collection: [[true, 'Yes (recommended)'], [false, 'No']],
+                  label: raw("Sync Order Sales Dept/Channel
+                              <i class='fa fa-info-circle tooltips'
+                              data-original-title='Department designates where the order originates from.
+                              Sweet will send sales channel to Quickbooks departments which can be used for better reporting.'
+                              data-container='body'></i><br>
+                              <span class='help-block-italic'>(Not supported by all versions of Quickbooks)</span>"),
+                  label_method: :last, value_method: :first, wrapper: :horizontal_radio_and_checkboxes %>
+
+                <%= f.input :qbo_enforce_channel, as: :radio_buttons, collection: [[true, 'Yes (recommended)'], [false, 'No']],
+                  label: raw("Require Order Sales Dept. to Match<i class='fa fa-info-circle tooltips' data-original-title='Department designates where the order originates from. Enabling this will check that the sales channel matches the department in Quickbooks if an Invoice is found with the same number. This will only affect orders that have not already been matched.' data-container='body'></i>"),
+                  label_method: :last, value_method: :first, wrapper: :horizontal_radio_and_checkboxes %>
+                <%= f.input :qbo_custom_field_1, as: :select, collection: integration.qbo_custom_field_options, label: 'Sales Form Custom Field 1', include_blank: true %>
+                <%= f.input :qbo_custom_field_2, as: :select, collection: integration.qbo_custom_field_options, label: 'Sales Form Custom Field 2', include_blank: true %>
+                <%= f.input :qbo_custom_field_3, as: :select, collection: integration.qbo_custom_field_options, label: 'Sales Form Custom Field 3', include_blank: true %>
+                <%= f.input :qbo_include_discounts, as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']], label: raw('Include Discounts<br/>(grouped as one)'), label_method: :last, value_method: :first, wrapper: :horizontal_radio_and_checkboxes %>
+
+                <div class="form-group select optional integration_item_qbo_discount_account_id">
+                  <%= f.label :qbo_discount_account_id, 'Discount Account', class: "select optional col-sm-3 control-label"%>
+                  <div class="col-sm-9">
+                    <%= f.grouped_collection_select(:qbo_discount_account_id, Spree::ChartAccountCategory.all.map{|c| c.filter_vendor_id = spree_current_user.company_id; c}, :vendors_chart_accounts, :name, :id, :fully_qualified_name, {include_blank: true}, { class: "select optional form-control" }) %>
+                  </div>
+                </div>
+
+                <%= f.input :qbo_include_shipping, as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']], label: 'Include Shipping', label_method: :last, value_method: :first, wrapper: :horizontal_radio_and_checkboxes %>
+                <%= f.input :qbo_send_to_line_description, as: :select,
+                  collection: [
+                    ['fully_qualified_description', I18n.t('integrations.qbo.send_to_line_description.options.fully_qualified_description')],
+                    ['pack_size', I18n.t('integrations.qbo.send_to_line_description.options.pack_size')],
+                    ['sku', I18n.t('integrations.qbo.send_to_line_description.options.sku')],
+                    ['variant_description', I18n.t('integrations.qbo.send_to_line_description.options.variant_description')]
+                  ],
+                  label: I18n.t('integrations.qbo.send_to_line_description.label'), label_method: :last, value_method: :first,
+                  include_blank: false, input_html: {class: 'form-control'} %>
+                <%= f.input :qbo_include_lots, as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']], label: 'Include Lots in Line Description', label_method: :last, value_method: :first, wrapper: :horizontal_radio_and_checkboxes %>
+                <%= f.input :qbo_include_assembly_lots, as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']], label: 'Include Assembly Component Lots in Line Description', label_method: :last, value_method: :first, wrapper: :horizontal_radio_and_checkboxes %>
+                <%= f.input :qbo_bill_from_po, as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']],
+                  label: raw("Create Bill from Purchase Order <i class='fa fa-info-circle tooltips' data-original-title='QBO API does not yet support linking transactions to bills. Turning this feature on will create a bill once the purchase order has been received in Sweet, but will not be tied to the created Purchase Order in Quickbooks.' data-container='body'></i>"),
+                  label_method: :last, value_method: :first, wrapper: :horizontal_radio_and_checkboxes %>
+                <%= f.input :qbo_send_as_non_inventory, as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No (recommended)']],
+                  label: raw("Sync Inventory Items as NonInventory <i class='fa fa-info-circle tooltips' data-original-title='This is required for certain Quickbooks subscriptions that do not allow any inventory types' data-container='body'></i>"),
+                  label_method: :last, value_method: :first, wrapper: :horizontal_radio_and_checkboxes %>
+
+                <% if @vendor.subscription_includes?('inventory') %>
+                  <%= f.input :qbo_track_inventory, as: :radio_buttons, collection: [[true, 'Yes'], [false, 'No']],
+                    label: raw("Track Inventory<br>
+                                <span class='help-block-italic'>(Not supported by all versions of Quickbooks)</span>"),
+                    label_method: :last, value_method: :first, wrapper: :horizontal_radio_and_checkboxes %>
+                  <% opts_for_location = @vendor.stock_locations.pluck(:id, :name) %>
+                  <% opts_for_location.unshift(['', Spree.t(:aggregate_stock)]) %>
+                  <%= f.input :qbo_track_inventory_from, as: :select, collection: opts_for_location,
+                    label: 'Track Inventory from Stock Location',
+                    label_method: :last, value_method: :first, include_blank: false %>
+                <% else %>
+                  <%= f.input :qbo_track_inventory, as: :hidden, input_html: {value: false} %>
+                  <%= f.input :qbo_track_inventory_from, as: :hidden, input_html: {value: ''} %>
+                <% end %>
+                <%#= f.input :qbo_send_as_bundle, as: :radio_buttons, collection: [[true, 'As Quickbooks Bundle'], [false, 'As NonInventory Item']], label: 'Send Bundle Items', label_method: :last, value_method: :first, wrapper: :horizontal_radio_and_checkboxes %>
+                <%= f.input :qbo_bundle_adjustment_name, as: :string, label: 'Bundle Adjustment Item Name' %>
+                <%= f.input :qbo_bundle_adjustment_account_id, as: :select, collection: @vendor.chart_accounts.where(chart_account_category_id: Spree::ChartAccountCategory.find_by_name('Income Account').try(:id)), label_method: :fully_qualified_name, value_method: :id, label: 'Bundle Adjustment Account', include_blank: false %>
+                <%= f.input :qbo_deposit_to_account, as: :string, label: raw("Deposit to Account (optional) <i class='fa fa-info-circle tooltips' data-original-title='Account that payments will be applied to. Quickbooks defaults this to &#39;Undeposited Funds&#39; if no account is supplied.' data-container='body'></i>") %>
+              </section>
+            </div>
+            <div class='form-actions'>
+              <div class='pull-right'>
+                <%= link_to manage_integration_path(integration.id), class:'btn btn-default' do %>
+                  <i class='fa fa-times'></i> Cancel
+                <% end %>
+                <button class='btn btn-primary'>
+                  <i class='fa fa-check'></i> Save
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+  $(function() {
+    var hideShowElements = function(){
+      if ($('#integration_item_qbo_send_as_non_inventory_true:checked').length) {
+        $('#integration_item_qbo_track_inventory_false').prop('checked', true);
+        $('#integration_item_qbo_track_inventory_true').removeAttr('checked');
+        $('#integration_item_qbo_track_inventory_true').prop('disabled', 'disabled');
+      }else{
+        $('#integration_item_qbo_track_inventory_true').removeAttr('disabled');
+      }
+      if ($('#integration_item_qbo_track_inventory_true:checked').length) {
+        $('.integration_item_qbo_track_inventory_from').show();
+      } else {
+        $('.integration_item_qbo_track_inventory_from').hide();
+      }
+      if ($('#integration_item_qbo_include_discounts_true:checked').length) {
+        $('.integration_item_qbo_discount_account_id').show();
+      } else {
+        $('.integration_item_qbo_discount_account_id').hide();
+      }
+
+      if ($('#integration_item_qbo_include_department_false:checked').length) {
+        $('#integration_item_qbo_enforce_channel_false').prop('checked', true);
+        $('#integration_item_qbo_enforce_channel_true').prop('disabled', 'disabled');
+        $('#integration_item_qbo_enforce_channel_true').removeAttr('checked');
+      } else {
+        $('#integration_item_qbo_enforce_channel_true').removeAttr('disabled');
+      }
+
+      if ($('#integration_item_qbo_include_lots_false:checked').length) {
+        $('#integration_item_qbo_include_assembly_lots_false').prop('checked', true);
+        $('#integration_item_qbo_include_assembly_lots_true').prop('disabled', 'disabled');
+        $('#integration_item_qbo_include_assembly_lots_true').removeAttr('checked');
+      }else {
+        $('#integration_item_qbo_include_assembly_lots_true').removeAttr('disabled');
+      }
+    };
+
+    $(document).ready(hideShowElements);
+    $('input[type=radio]').change(hideShowElements);
+  });
+</script>

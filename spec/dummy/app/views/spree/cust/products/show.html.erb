@@ -1,0 +1,170 @@
+<%= content_for :head_title do %>
+  <%= @product.name %>
+<% end %>
+
+<%= content_for :page_title do %>
+<%= @product.name %>
+<% end %>
+
+<%= content_for :pre_header_left do %>
+  <% if current_vendor_view_settings.try(:catalog_account_name_and_number) %>
+    <h4 class='margin-top-10'>
+      <b><%= @current_vendor_account.try(:display_name_and_number) %></b>
+    </h4>
+  <% end %>
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="breadcrumb">
+    <li>
+      <%= link_to "Home", root_path %>
+    </li>
+    <li>
+      <%= link_to "Products", vendor_products_path(@vendor) %>
+    </li>
+    <li>
+      <span><%= @product.default_display_name %></span>
+    </li>
+  </ul>
+
+  <div class="page-toolbar">
+    <% unless @current_order || current_spree_user.vendor_accounts.where(vendor_id: @vendor.try(:id)).count <= 1%>
+      <%= form_for :product, url: vendor_product_path(@vendor, @product), method: :get, html: {id:'view-as-vendor-account', style: 'display:inline;'} do |f| %>
+        <%= render partial: 'spree/cust/shared/my_accounts_select' %>
+      <% end %>
+    <% end %>
+  </div>
+
+<% end %>
+
+<div class="content">
+  <div class='row'>
+    <div class='portlet light'>
+      <div class="portlet-title">
+        <div class="caption col-sm-8">
+          <span class="caption-subject font-blue-madison bold uppercase pull-left variant-name">
+            <%= @product.default_display_name %>
+          </span>
+        </div>
+
+      </div>
+      <div class='portlet-body'>
+        <div class="row">
+          <% if @product.discontinued_on %>
+            <div class='alert alert-danger'>
+              This product has been <%= Spree.t('variant.deactivated') %>.
+            </div>
+          <% end %>
+          <div class="col-md-4">
+            <div class="row">
+              <div class="col-md-12">
+                <div class='max-w400 margin-auto'>
+                  <%= large_image(@product, itemprop: "image", class: "img-w100") %>
+                </div>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <% if @product.taxons.any? %>
+                <div class="col-md-12 name">
+                  <label class="control-label">
+                    Product Categories:
+                  </label>
+                </div>
+                <div class="col-md-9 value">
+                  <ul class="list-unstyled">
+                      <% @product.taxons.order('name ASC').each do |taxon| %>
+                        <li data-id='<%= taxon.id %>'><%= taxon.pretty_name %></li>
+                      <% end %>
+                  </ul>
+                </div>
+              <% end %>
+            </div>
+          </div>
+          <div class="col-md-7">
+            <%= raw(@product.description.to_s.html_safe) %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <% if @avvs.present? %>
+    <% if @current_order %>
+      <%= form_for @current_order, url: order_add_to_cart_path(@current_order), method: 'post',
+        html: {id: "add-to-order-form", class: 'prevent-double-submission'},
+        remote: (current_vendor_view_settings.try(:catalog_after_add_to_cart) == 'products') do |f| %>
+        <% sum_stock_items = current_vendor_view_settings.try(:catalog_stock_level_sum) %>
+        <% stock_location = @current_order.try(:default_stock_location) %>
+        <% @avvs.each do |avv| %>
+          <% next if avv.variant.is_master? && @product.has_variants? %>
+          <table class="table table-bordered">
+            <tbody>
+              <%= render partial: 'spree/cust/products/variant_table',
+                locals: {
+                  f: f, avv: avv, variant: avv.variant, inventory_on: false,
+                  sum_stock_items: sum_stock_items,
+                  stock_location: stock_location
+                } %>
+            </tbody>
+          </table>
+        <% end %>
+
+        <% if current_vendor_view_settings.try(:catalog_add_to_cart) == 'legacy' %>
+          <div class="pull-right">
+            <% unless @product.discontinued_on %>
+              <button class="btn btn-primary" style="margin-right: 0" id="add-to-cart"> Add To Cart</button>
+            <% end %>
+          </div>
+        <% end %>
+      <% end %> <!-- end form -->
+    <%# end %>
+    <% else %>
+      <% @avvs.each do |avv| %>
+        <% next if avv.variant.is_master? && @product.has_variants? %>
+        <table class="table table-bordered">
+          <tbody>
+            <%= render partial: 'spree/cust/products/variant_table', locals: {
+              avv: avv, variant: avv.variant, inventory_on: false,
+              sum_stock_items: sum_stock_items,
+              stock_location: stock_location
+            } %>
+          </tbody>
+        </table>
+      <% end %>
+    <% end %>
+  <% end %>
+  <div class="clearfix"></div>
+</div>
+
+<%= render partial: 'spree/cust/orders/modals/variant_container' %>
+
+<script type='text/javascript'>
+  var initAddToCartModal = function(){
+    $('.add-to-cart-modal-btn').click(function(e){
+      $('.modal-content', '#add-to-cart-modal').html("<%= j render(partial: 'spree/shared/loading_text.html.erb', locals: {text: 'Loading Product'}) %>");
+      e.preventDefault();
+      var variantId = $(this).data('variant-id');
+      var orderId = $(this).data('order-id');
+
+      $.ajax({
+        url: '/orders/' + orderId +'/variant.js',
+        type: 'GET',
+        dataType: 'script',
+        data: {
+          variant_id: variantId
+        }
+      });
+    });
+  }
+
+  $(document).ready(function(){
+    initAddToCartModal();
+    $('#add-to-cart-modal').on('show.bs.modal', function (e) {
+      var button = e.relatedTarget;
+      if ($(button).hasClass('multiple')) {
+        alert("<%= Spree.t('cust.multi_line_warning') %>");
+        e.stopPropegation();
+      }
+    });
+  });
+</script>

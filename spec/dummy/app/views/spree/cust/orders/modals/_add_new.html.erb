@@ -1,0 +1,72 @@
+<%= form_for order, url: order_add_to_cart_path(order), method: 'post',
+  html: {id: 'modal-add-to-order-form'} do |f| %>
+  <div class="modal-body">
+    <div class='error-container'></div>
+    <div class="row">
+      <div class="col-md-6">
+        <%= large_image(variant, itemprop: "image", class: "img-responsive") %>
+      </div>
+      <div class="col-md-6">
+        <% url = variant.is_master? ? vendor_product_path(order.vendor, variant.product) : vendor_product_path(order.vendor, variant.product)  %>
+        <h3>
+          <% if avv.recalculating < Spree::AccountViewableVariant::RecalculatingStatus['complete'] %>
+            <div id="update-price-<%= avv.id %>">
+              Price is updating...
+            </div>
+          <% elsif variant.price %>
+            <%= render partial: 'spree/cust/products/variant_price.html.erb', locals: { avv: avv, variant: variant, url: url } %>
+          <% end %>
+        </h3>
+        <%
+          multiplier = [1, variant.step_size].max
+          options = (1..300).map {|n| [n * multiplier, n * multiplier]}
+        %>
+        <% if variant.text_options.present? && current_vendor.try(:use_variant_text_options) %>
+          <div class='form-group'>
+            <%= f.label :text_option, 'Options', class: 'control-label' %>
+            <%= select_tag "order[products][#{variant.id}][text_option]",
+            options_for_select(variant.text_options_arr.map{|opt| [opt,opt]} + [['','']]),
+            class: 'form-control', id: 'line_item_text_option' %>
+          </div>
+        <% end %>
+        <div class="form-group">
+          <%= select_tag "item_quantity",
+              options_for_select(options),
+              disabled: avv.try(:recalculating).to_i < Spree::AccountViewableVariant::RecalculatingStatus['complete'],
+              data: { 'line-item-id' => '0' },
+              class: 'form-control product-qty active' %>
+          <input id="variant_qty_<%= variant.id %>" tabindex="1" type="number" name='item_quantity'
+            class="form-control product-qty hidden" min="0" step='<%= variant.step_size %>' data-line-item-id='0'
+            '<%= 'disabled' if avv.try(:recalculating).to_i < Spree::AccountViewableVariant::RecalculatingStatus['complete'] %>'>
+          <input type='hidden' id='item-quantity' value='<%= 1 * multiplier %>'
+            name='<%= "order[products][#{variant.id}][quantity]" %>' data-line-item-id='0'>
+        </div>
+        <div class="form-group text-right">
+          <a href="void:javascript();" class="" id='enter-other-qty'>Enter Other Quantity</a>
+        </div>
+        <div class="form-group">
+          <button class="btn btn-primary btn-block"><%= Spree.t(:add_to_cart) %></button>
+        </div>
+      </div>
+    </div>
+    <div>
+      <%= raw(variant.variant_description.to_s.html_safe) %>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <!-- TODO add line notes -->
+    <!-- <button type="button" class="btn btn-default btn-block" id="add-line-note">Add Item Notes</button>
+    <textarea id="line-note-text" class="form-control" style="display:none;" placeholder="Add Item Notes"></textarea> -->
+  </div>
+<% end %>
+<script type='text/javascript'>
+  $('#modal-add-to-order-form').off('submit').submit(function(e){
+    // if($('#line_item_text_option').length && $('#line_item_text_option').val() === ''){
+    //   e.preventDefault();
+    //   alert("Please select an option.");
+    // }else{
+      $(this).attr('data-remote', 'true');
+      preventSecondSubmit($(this), e);
+    // }
+  });
+</script>

@@ -1,0 +1,68 @@
+<div class="portlet box blue-hoki" id="search">
+  <div class="portlet-title">
+    <div class="col-xs-12 col-sm-6 col-lg-4">
+      <% if current_vendor.nest_variant_names? %>
+        <%= f.text_field :variant_full_display_name_or_variant_sku_cont, class: 'form-control', placeholder: 'Enter search term' %>
+      <% else %>
+        <%= f.text_field :variant_default_display_name_or_variant_sku_cont, class: 'form-control', placeholder: 'Enter search term' %>
+      <% end %>
+      <div class="visible-xs-block" style="min-height:10px;">
+      </div>
+    </div>
+    <div class="col-xs-8 col-sm-4" id="basic-search-buttons">
+      <button type="submit" class="btn green"><i class="fa fa-search" aria-hidden="true"></i> Search</button>
+      <%= link_to standing_order_products_path(@order), class: "btn default" do %>
+        <i class='fa fa-times'></i> Reset
+      <% end %>
+    </div>
+    <div class="tools">
+      <a href="javascript:;" id='toggle-advanced-search'>Advanced <i class="fa fa-angle-down"></i></a>
+    </div>
+  </div>
+  <div class="portlet-body form hidden" id='advanced-search-form'>
+    <div class="form-body">
+      <div class='row'>
+        <div class='col-md-4'>
+          <% if current_vendor.nest_variant_names? %>
+            <div class='form-group' data-open="<%= params[:q] && !params[:q].fetch(:variant_full_display_name_cont, nil).blank? %>">
+              <%= f.label :variant_full_display_name_cont, 'Product Name', class: 'control-label' %>
+              <%= f.text_field :variant_full_display_name_cont, class: 'form-control' %>
+            </div>
+          <% else %>
+            <div class='form-group' data-open="<%= params[:q] && !params[:q].fetch(:variant_default_display_name_cont, nil).blank? %>">
+              <%= f.label :variant_default_display_name_cont, 'Product Name', class: 'control-label' %>
+              <%= f.text_field :variant_default_display_name_cont, class: 'form-control' %>
+            </div>
+          <% end %>
+        </div>
+        <% if current_vendor_view_settings.variant_sku %>
+          <div class='col-md-4'>
+            <div class='form-group' data-open="<%= params[:q] && !params[:q].fetch(:variant_sku_cont, nil).blank? %>">
+              <%= f.label :variant_sku_cont, 'Sku', class: 'control-label' %>
+              <%= f.text_field :variant_sku_cont, class: 'form-control' %>
+            </div>
+          </div>
+        <% end %>
+        <div class='col-md-4'>
+          <div class='form-group' data-open="<%= params[:q] && !params[:q].fetch(:variant_product_taxons_name_cont, nil).blank? %>">
+            <%= f.label :variant_product_taxons_name_cont, 'Category', class: 'control-label' %>
+            <%= f.text_field :variant_product_taxons_name_cont, class: 'form-control' %>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="form-actions">
+      <div class="row">
+        <div class="col-md-12">
+          <div class='btn-set pull-right'>
+            <button type="submit" class="btn green"><i class="fa fa-search" aria-hidden="true"></i> Search</button>
+            <%= link_to standing_order_products_path(@order), class: "btn default" do %>
+              <i class='fa fa-times'></i> Reset
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

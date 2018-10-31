@@ -1,0 +1,7 @@
+<%= form_for @order, url: delivery_update_admin_order_path(@order.number), html: { method: :patch, id: "delivery_form"}  do |f|%>
+
+  <%= f.label :delivery_date, "Delivery/Ship Date" %>
+  <%= f.date_field :delivery_date %>
+  <%= f.submit %>
+
+<% end %>

@@ -1,0 +1,7 @@
+<div class='col-sm-6'>
+  <div class='form-group'>
+    <%= f.check_box :order_backordered_notice, class: 'make-switch', data: {size: 'mini'}  %>
+    <%= f.label :order_backordered_notice, Spree.t(:backordered_notice_label, scope: [:customer_view_settings, :order], default: '') %><br>
+    <span class='help-block-italic'><%= Spree.t(:backordered_notice_description, scope: [:customer_view_settings, :order], default: '') %></span>
+  </div>
+</div>

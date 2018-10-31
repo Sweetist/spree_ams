@@ -1,0 +1,7 @@
+$('#refund-modal').modal('show');
+$('#refund-form-container','#refund-modal').html("<%= j(render(partial: 'refund_body')) %>");
+$('#refund-form-container','#refund-modal').prepend("<%= j(render(partial: 'spree/shared/errors')) %>");
+<% if flash[:error] %>
+  $('#refund-errors').html("<div class='alert alert-danger'><%= flash[:error] %></div>");
+<% end %>
+enableFormButtons();

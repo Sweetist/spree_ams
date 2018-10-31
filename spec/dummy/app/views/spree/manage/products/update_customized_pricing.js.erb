@@ -1,0 +1,9 @@
+<% if @avv %>
+  <% variant = @avv.variant %>
+  <% product = variant.product %>
+  <% url = variant.is_master? ? manage_product_path(product) : manage_product_variant_path(product, variant) %>
+
+  $('#update-price-<%= @avv.id %>').replaceWith("<%= j(render(partial: 'spree/manage/products/variant_price.html.erb', locals: { avv: @avv, variant: variant, url: url })) %>");
+  $('#variant_qty_<%= variant.id %>').prop('disabled', false);
+
+<% end %>

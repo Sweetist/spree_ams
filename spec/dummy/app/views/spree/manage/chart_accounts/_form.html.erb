@@ -1,0 +1,53 @@
+<div class="row">
+  <div class='col-md-4'>
+    <div class="form-group">
+      <%= f.label :name, class: 'control-label' %>
+      <%= f.text_field :name, class: 'form-control' %>
+    </div>
+  </div>
+  <div class='col-md-4'>
+    <div class="form-group">
+      <%= f.label :parent_id, 'Parent Account', class: 'control-label' %>
+      <%= f.grouped_collection_select(:parent_id, Spree::ChartAccountCategory.all.map{|c| c.filter_vendor_id = spree_current_user.company_id; c}, :vendors_chart_accounts, :name, :id, :fully_qualified_name, {include_blank: true}, { class: 'form-control chart-account-select', id: 'parent-account' }) %>
+    </div>
+  </div>
+  <div class='col-md-4'>
+    <div class="form-group">
+      <%= f.label :chart_account_category_id, 'Account Category', class: 'control-label' %>
+      <select disabled class="form-control hidden" id="fake-account-category" name="fake_account_category"><option></option></select>
+      <%= f.collection_select :chart_account_category_id, Spree::ChartAccountCategory.all, :id, :name, {include_blank: false}, class: 'form-control', id: 'account-category' %>
+      <span class="help-block-italic hidden" id="chart_account_category_id_warning">Account category must be the same as the parent.</span>
+    </div>
+  </div>
+</div>
+
+<script type='text/javascript'>
+  $(document).ready(function(){
+    $(function() {
+      if ( $('#parent-account').val() != '') {
+        $('#account-category').prop('disabled',true);
+        $('#chart_account_category_id_warning').removeClass('hidden');
+      }
+      $('#parent-account').change(function(){
+        if ( $(this).val() != '') {
+          var acc_cat = '<%= @acc_cat.to_json %>';
+          acc_cat = acc_cat.replace(/&quot;:&quot;/g, '":"');
+          acc_cat = acc_cat.replace(/&quot;,&quot;/g, '", "');
+          acc_cat = acc_cat.replace(/&quot;}/g, '"}');
+          acc_cat = acc_cat.replace(/&quot;/g, '"');
+          var cat = JSON.parse(acc_cat);
+          $('#account-category').prop('disabled',true);
+          $('#fake-account-category').removeClass('hidden');
+          $('#fake-account-category option').html(cat[$(this).val()]);
+          $('#chart_account_category_id_warning').removeClass('hidden');
+          $('#account-category').addClass('hidden');
+        } else {
+          $('#account-category').prop('disabled',false);
+          $('#chart_account_category_id_warning').addClass('hidden');
+          $('#fake-account-category').addClass('hidden');
+          $('#account-category').removeClass('hidden');
+        }
+      });
+    });
+  });
+</script>

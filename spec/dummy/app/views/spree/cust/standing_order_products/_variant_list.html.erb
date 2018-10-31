@@ -1,0 +1,98 @@
+<% col_span = '6' %>
+<tr class="info">
+  <td>
+    <div class='col-md-8'>
+      <b><%= variant.flat_or_nested_name %></b>
+    </div>
+    <% if @order && variant.discontinued_on.nil? && variant.for_sale? %>
+      <div class='col-md-4'>
+        <div class='row'>
+          <div class="col-xs-3">
+            Quantity:
+          </div>
+          <div class="col-xs-9">
+            <% carted = @order.standing_line_items.find_by_variant_id(variant.id) %>
+            <%= fp.input "#{variant.id}", as: :integer, wrapper: false, label: false,
+              input_html: { placeholder: "#{carted.quantity.to_s + ' in cart' unless carted.blank?}",
+              id: "variant_qty_#{variant.id}", class: 'qty_input', :min => 0, tabindex: idx + 1, step: variant.step_size,
+              disabled: avv.try(:recalculating).to_i < Spree::AccountViewableVariant::RecalculatingStatus['complete'] } %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </td>
+</tr>
+<tr>
+  <td>
+    <div class='col-md-<%= col_span.to_i * 2 %>'>
+      <div class='row'>
+        <% variant.option_values.each do |ov| %>
+          <div class="col-md-6">
+            <div class="row static-info">
+              <div class="col-xs-5 name"><%= ov.option_type.try(:presentation) %>:</div>
+              <div class="col-xs-7 value"><%= ov.presentation %></div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+      <div class='row'>
+        <div class="col-md-6">
+          <% if current_vendor_view_settings.variant_sku %>
+            <div class="row static-info">
+              <div class="col-xs-5 name">SKU:</div>
+              <div class="col-xs-7 value"><%= variant.sku %></div>
+            </div>
+          <% end %>
+          <div class="row static-info">
+            <div class="col-xs-5 name">Price:</div>
+            <div class="col-xs-7 value">
+              <% if avv && avv.try(:recalculating).to_i < Spree::AccountViewableVariant::RecalculatingStatus['complete'] %>
+                Price is updating...
+                <%  if request.fullpath.include?("manage")
+                      update_url = manage_update_customized_pricing_path(avv_id: @avv.id)
+                    else
+                      update_url = update_customized_pricing_path(avv_id: @avv.id)
+                    end
+                %>
+                <%= link_to "Update Now", update_url, class: "btn btn-xs btn-success", id: "update-price-#{@avv.id}" %>
+              <% elsif variant.price %>
+                <%= display_sweet_price(avv.price, variant.currency) %>
+                <% if @vendor.show_suggested_price && avv.price.to_d < variant.price  %>
+                  <span class="suggested-price">SRP. <span class="price"><%= display_sweet_price(variant.price, @product.currency) %></span>
+                <% end %>
+              <% else %>
+                <%= link_to "Set up price", edit_manage_product_path(@product) %>
+              <% end %>
+            </div>
+          </div>
+          <% if current_vendor_view_settings.variant_lead_time %>
+            <div class="row static-info">
+              <div class="col-xs-5 name">Lead Time (Days):</div>
+              <div class="col-xs-7 value"><%= variant.lead_time %></div>
+            </div>
+          <% end %>
+        </div>
+        <div class="col-md-6">
+          <% if current_vendor_view_settings.variant_pack_size %>
+            <div class="row static-info">
+              <div class="col-xs-5">Pack/Size:</div>
+              <div class="col-xs-7 bold"><%= variant.pack_size %></div>
+            </div>
+          <% end %>
+          <div class="row static-info">
+            <div class="col-xs-5 name">Weight:</div>
+            <div class="col-xs-7 bold"><%= "#{variant.weight} #{variant.weight_units}" unless variant.weight == 0 %></div>
+          </div>
+          <div class="row static-info">
+            <div class="col-xs-5 name">Dimensions:</div>
+            <div class="col-xs-7 bold"><%= "#{variant.dimensions.join(' x ')} #{variant.dimension_units}" %></div>
+          </div>
+          <div class="row static-info">
+            <div class="col-xs-5 name">Unit Count:</div>
+            <div class="col-xs-7 bold"><%= "#{variant.pack_size_qty}" %></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </td>
+</tr>

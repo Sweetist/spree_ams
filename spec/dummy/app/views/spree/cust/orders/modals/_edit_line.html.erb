@@ -1,0 +1,76 @@
+<%= form_for order, html: {id: "modal-add-to-order-form", class: "prevent-double-submission"}, remote: true do |f| %>
+  <div class="modal-body">
+    <div class='error-container'></div>
+    <div class="row">
+      <div class="col-md-6">
+        <%= large_image(variant, itemprop: "image", class: "img-responsive") %>
+      </div>
+      <div class="col-md-6">
+        <% url = variant.is_master? ? vendor_product_path(order.vendor, variant.product) : vendor_product_path(order.vendor, variant.product)  %>
+        <h3>
+          <% if avv.recalculating < Spree::AccountViewableVariant::RecalculatingStatus['complete'] %>
+            <div id="update-price-<%= avv.id %>">
+              Price is updating...
+            </div>
+          <% elsif variant.price %>
+            <%= render partial: 'spree/cust/products/variant_price.html.erb', locals: { avv: avv, variant: variant, url: url } %>
+          <% end %>
+        </h3>
+
+        <% if line_items.count > 1 %>
+          <div>
+            <span class='help-block-italic'>
+              This item is listed as <%= line_items.count %> separate lines on your order.
+            </span>
+          </div>
+        <% end %>
+        <%
+          multiplier = [1, variant.step_size].max
+          max = 300
+          options = (0..max).map {|n| [n * multiplier, n * multiplier]}
+        %>
+        <% all_use_select = true %>
+        <%= f.fields_for :line_items, line_items do |ff| %>
+          <% if variant.text_options.present? && current_vendor.try(:use_variant_text_options) %>
+            <div class='form-group'>
+              <%= ff.label :text_option, 'Options', class: 'control-label' %>
+              <%= ff.select :text_option,
+                options_for_select(variant.text_options_arr.map{|opt| [opt,opt]}, selected: ff.object.text_option),
+                {include_blank: true}, class: 'form-control', id: 'line_item_text_option', disabled: 'disabled' %>
+            </div>
+          <% end %>
+          <div class="form-group">
+            <% use_select = (ff.object.quantity % multiplier == 0) && (ff.object.quantity < max * multiplier) %>
+            <% all_use_select = false unless use_select %>
+            <%= select_tag "item_quantity",
+                options_for_select(options, ff.object.quantity),
+                disabled: avv.try(:recalculating).to_i < Spree::AccountViewableVariant::RecalculatingStatus['complete'],
+                class: "form-control product-qty #{use_select ? 'active' : 'hidden'}",
+                data: { 'line-item-id' => "#{ff.object.id}" } %>
+            <input id="variant_qty_<%= variant.id %>" tabindex="1" type="number" name='item_quantity'
+              class="form-control product-qty <%= use_select ? 'hidden' : 'active' %>" min="0" step='<%= variant.step_size %>'
+              value='<%= ff.object.quantity %>' data-line-item-id='<%= ff.object.id %>'
+              '<%= 'disabled' if avv.try(:recalculating).to_i < Spree::AccountViewableVariant::RecalculatingStatus['complete'] %>'>
+            <%= ff.hidden_field :quantity, id:'item-quantity', data: { 'line-item-id' => "#{ff.object.id}" } %>
+          </div>
+        <% end %>
+        <div class="form-group text-right">
+          <a href="void:javascript();" class="<%= 'hidden' unless all_use_select %>" id='enter-other-qty'>
+            Enter Other Quantity
+          </a>
+        </div>
+        <div class="form-group">
+          <button class="btn btn-primary btn-block"><%= Spree.t(:update_cart) %></button>
+        </div>
+      </div>
+    </div>
+    <div>
+      <%= raw(variant.variant_description.to_s.html_safe) %>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <!-- TODO add line notes -->
+    <!-- <button type="button" class="btn btn-default btn-block" id="add-line-note">Add Item Notes</button>
+    <textarea id="line-note-text" class="form-control" style="display:none;" placeholder="Add Item Notes"></textarea> -->
+  </div>
+<% end %>

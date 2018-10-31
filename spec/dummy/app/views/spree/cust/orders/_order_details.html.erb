@@ -1,0 +1,135 @@
+<div class="col-md-6 col-sm-12" id='order-details'>
+  <div class="row static-info">
+    <div class="col-sm-4 name"> Order #:</div>
+    <div class="col-sm-8 value" id='order-number'><%= @order.display_number %></div>
+  </div>
+  <% if @order.vendor.try(:use_po_number) %>
+    <div class="row static-info" id='po-number-container'>
+      <div class="col-sm-4 name">
+        <%= label_tag(:po_number, "Purchase Order #:") %>
+      </div>
+      <div class="col-sm-8 value">
+        <% if @order.is_submitable? && !@order.approved? %>
+          <%= text_field(:order, :po_number, class: 'form-control') %>
+        <% else %>
+          <%= @order.po_number unless @order.po_number.blank? %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <% if @order.is_submitable? && !@order.approved? && (@order.account.try(:can_select_delivery?) || (@order.account.nil? && @order.vendor.try(:selectable_delivery))) %>
+    <%= render partial: 'spree/cust/orders/delivery_date_fields' %>
+  <% else %>
+    <%= render partial: 'spree/cust/orders/fixed_date_field' %>
+  <% end %>
+
+  <div class="row static-info">
+    <div class="col-sm-4 name"> Order Status: </div>
+    <div class="col-sm-8 value"> <%= @order.state == 'complete' ? 'Submitted' : @order.state.capitalize %> </div>
+  </div>
+  <% if @order.vendor.cust_can_view?('order', 'payment_state') %>
+    <% status = @order.payment_status %>
+    <% unless status.blank? %>
+      <div class="row static-info">
+        <div class="col-sm-4 name"> Payment Status: </div>
+        <div class="col-sm-4 value">
+          <label class="btn btn-xs circle payment_status <%= status %>">
+            <%= Spree.t(status, scope: :payment_statuses, default: [:missing, '']).to_s.titleize %>
+          </label>
+        </div>
+        <div class="col-sm-4 value">
+          <% if @order.payments.present? %>
+            <button class='btn btn-xs circle' id='view-details'>
+              View Details
+            </button>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+  <% if States[@order.state] >= States['shipped'] %>
+    <% @order.shipments.each do |shipment| %>
+      <div class="row static-info">
+        <div class="col-sm-4 name"> Tracking: </div>
+        <div class="col-sm-8 value"> <%= shipment.tracking %> </div>
+      </div>
+    <% end %>
+  <% end %>
+</div>
+
+<script type = "text/javascript">
+
+  $(document).ready(function() {
+    //todo, generate holidays
+    var holidays = [""
+    ]
+
+    $('#delivery-date').datepicker({
+      <% if params[:controller].include?('manage') %>
+        daysOfWeekHighlighted: "<%= @days_available[0] if @days_available %>",
+      <% else %>
+        daysOfWeekDisabled: "<%= @days_available[0] if @days_available %>",
+      <% end %>
+      todayHighlight: true,
+      autoclose: true,
+      changeMonth: true,
+      //todo global disable dates
+      datesDisabled: holidays,
+      orientation: "bottom auto"
+    });
+    <% if @days_available && @account.try(:can_select_delivery?) && @order.is_editable? && @order.is_submitable? %>
+      <% unless @order.approved? %>
+        var origin_date = $('#delivery-date').datepicker('getDate');
+        if (origin_date != null) {
+          var origin_dayOfWeek = origin_date.getUTCDay();
+        }
+        <% if params[:controller].include?('manage') %>
+          if (origin_date != null) {
+            if ("<%=@days_available[0]%>".indexOf(origin_dayOfWeek.toString()) > -1) {
+              $("#warning_delivery").removeClass("hidden");
+            } else {
+              $("#warning_delivery").addClass("hidden");
+            }
+          }
+          $("#delivery-date").on("change",function(){
+            var date = $(this).datepicker('getDate');
+            if (date != null) {
+              var dayOfWeek = date.getUTCDay();
+              if ("<%=@days_available[0]%>".indexOf(dayOfWeek.toString()) > -1) {
+                $("#warning_delivery").removeClass("hidden");
+              } else {
+                $("#warning_delivery").addClass("hidden");
+              }
+            }
+          });
+      <% else %>
+         if (origin_date != null) {
+            if ("<%=@days_available[0]%>".indexOf(origin_dayOfWeek.toString()) > -1) {
+              $("#warning_delivery").removeClass("hidden");
+              $('#delivery-date').val("");
+            } else {
+              $("#warning_delivery").addClass("hidden");
+            }
+         }
+        $("#delivery-date").on("change",function(){
+            var date = $(this).datepicker('getDate');
+            if (date != null) {
+              var dayOfWeek = date.getUTCDay();
+              if ("<%=@days_available[0]%>".indexOf(dayOfWeek.toString()) > -1) {
+                $("#warning_delivery").removeClass("hidden");
+                $('#delivery-date').val("");
+              } else {
+                $("#warning_delivery").addClass("hidden");
+              }
+            }
+          });
+        <% end %>
+      <% end %>
+    <% end %>
+    $('#view-details').click(function(evt){
+      evt.preventDefault();
+      $('.payments-table').removeClass('hidden');
+    });
+  });
+</script>

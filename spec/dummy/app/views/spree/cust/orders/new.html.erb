@@ -1,0 +1,140 @@
+<%= content_for :head_title do %>
+  Orders
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="breadcrumb">
+    <li>
+      <%= link_to "Home", root_path %>
+    </li>
+    <li>
+      <%= link_to "Orders", orders_path %>
+    </li>
+    <li>
+      <span>New Order</span>
+    </li>
+  </ul>
+  <% if false %>
+  	<div class="page-toolbar">
+      <div class="btn-group pull-right">
+  			<%= link_to "Back to All Orders", orders_path, class: "btn green" %>
+      </div>
+    </div>
+  <% end %>
+<% end %>
+
+<%= form_for @order, html:{id: "single-order-form", class: "prevent-double-submission"} do |order_form|%>
+  <div class='row'>
+  	<div class="col-md-6 col-sm-12">
+      <div class="row static-info">
+        <div class="col-sm-4 name"> Customer Account: </div>
+        <div class="col-sm-8 value">
+          <%= order_form.collection_select(:account_id, @user_accounts, :id, :vendor_account_name, {}, {id: 'order-customer-id', class: "form-control select2 select2-hidden-accessible", placeholder: "Choose Account"}) %>
+        </div>
+      </div>
+      <% if current_company.any_vendor_using_po_numbers? %>
+        <div class="row static-info" id='po-number-container'>
+          <div class="col-sm-4 name">
+            <%= order_form.label :po_number, "Purchase Order #:" %>
+          </div>
+          <div class="col-sm-8 value">
+            <%= order_form.text_field :po_number, class: 'form-control' %>
+          </div>
+        </div>
+      <% end %>
+      <% if current_customer.can_select_delivery_from_some? %>
+          <%= render partial: 'delivery_date_fields' %>
+      <% end %>
+      <%= order_form.hidden_field :ship_address_id %>
+    </div>
+    <section class="col-md-6 col-sm-12" id='account-address-info'>
+      <!-- This will populate after load -->
+    </section>
+  </div>
+
+  <div class="clearfix"></div>
+
+  <div class="single-order-buttons">
+    <%= submit_tag "Add Items to Order", class: 'btn btn-primary', id: 'update-button' %>
+  </div>
+  <div class="clearfix"></div>
+
+  <span class="caption-subject font-blue-madison bold uppercase">
+ 	  Recent Orders
+ 	</span>
+
+  <div class="table-scrollable">
+    <table class="table table-hover" id="sample_1">
+			<thead>
+				<tr>
+          <th>
+            <%= sort_link @search, :invoice_date, "Invoice Date" %>
+          </th>
+          <th>
+            <%= sort_link @search, :delivery_date, "#{@customer.vendor_order_date_text} Date" %>
+          </th>
+          <th>
+            <%= sort_link @search, :vendor_name, "Vendor Account" %>
+          </th>
+          <th>
+            <%= sort_link @search, :number, "Order #" %>
+          </th>
+          <th>
+            <%= sort_link @search, :item_count, "Total Items" %>
+          </th>
+          <th>
+            <%= sort_link @search, :total, "Total" %>
+          </th>
+          <th></th>
+				</tr>
+			</thead>
+			<tbody>
+        <% @recent_orders.each do |order| %>
+          <% url = edit_order_path(order) %>
+          <tr>
+            <td><%= link_to display_vendor_date_format(order.invoice_date, order.vendor.date_format), url %></td>
+            <td><%= link_to display_vendor_date_format(order.delivery_date, order.vendor.date_format), url %></td>
+            <td><%= link_to order.account.vendor_account_name, url %></td>
+						<td><%= link_to order.display_number, url %></td>
+						<td><%= link_to order.item_count, url %></td>
+						<td><%= link_to display_sweet_price(order.total, order.currency), url %></td>
+            <td><%= link_to "Reorder", order_generate_path(order), class: "btn btn-sm btn-primary" %></td>
+          </tr>
+        <% end %>
+			</tbody>
+		</table>
+	</div>
+<% end %>
+<div class="modal fade" id="address_modal" tabindex="-1" role="basic" aria-labelledby="myModalLabel" aria-hidden="true"></div>
+
+<div class="clear"></div>
+
+<script type = "text/javascript">
+//todo new customer order
+  var date = null;
+  var date_selected = false;
+  var account_id = $('#order-customer-id option:selected').val();
+  var getAccountDetails = function(account_id){
+    $('.value', '#customer-address-info').addClass('hidden');
+
+    $.ajax({
+       url: '/orders/user_accounts',
+      type: 'GET',
+      dataType: 'script',
+      data: {
+        account_id: account_id,
+        date_selected: date_selected
+      }
+    });
+  };
+
+  $('#order-customer-id').change(function(){
+    var account_id = $('#order-customer-id option:selected').val();
+    if(typeof account_id !== "undefined"){
+      getAccountDetails(account_id);
+    }
+  });
+
+  getAccountDetails(account_id);
+
+</script>

@@ -1,0 +1,54 @@
+<% unless current_company.subscription_includes?('basic_user_rights') %>
+  <div class='alert alert-warning'>
+    Your current subscription does not include user rights management.
+    Please contact <strong>Sweet</strong> to upgrade your plan.
+  </div>
+<% else %>
+  <%= form_for @user, url: update_permissions_manage_account_user_url(@user), html: {id: 'user_permissions_form'} do |f| %>
+    <% has_advanced = current_company.subscription_includes?('advanced_user_rights') %>
+    <div class='form-body'>
+      <h3 style='margin-top: 0px;'>Set By Permission Group</h3>
+      <div class='row'>
+        <div class="col-md-6">
+          <div class="form-group">
+            <%= f.label :permission_group_id, 'Permission Group', class: "control-label" %><br>
+            <%= f.collection_select :permission_group_id, @all_permission_groups, :id, :name, {include_blank: has_advanced ? 'Custom' : false }, {class: 'form-control'} %>
+          </div>
+        </div>
+      </div>
+      <hr>
+      <% if has_advanced %>
+        <%= render partial: "spree/manage/shared/permissions/form", locals: {f: f} %>
+      <% else %>
+        <%= render partial: 'spree/manage/shared/permissions/table', locals: {permittable: @user} %>
+      <% end %>
+    </div>
+    <div class="form-actions">
+      <button class='btn green' id='update-permissions-btn'><i class='fa fa-check'></i> <%= Spree.t(:update_permissions) %></button>
+      <%= link_to edit_manage_account_user_path(@user), class: 'btn btn-default' do %>
+        <i class='fa fa-times'></i> <%= Spree.t(:Cancel) %>
+      <% end %>
+    </div>
+  <% end %>
+<% end %>
+
+<script type='text/javascript'>
+  $('#user_permission_group_id').change(function(){
+    var permission_group_id = this.value;
+    $.ajax({
+      url: '/manage/account/users/' + '<%= @user.id %>' + '/toggle_permissions',
+      type: 'GET',
+      dataType: 'script',
+      data: {
+        permission_group_id: permission_group_id
+      }
+    });
+  });
+
+  $('.permissions').change(function(){
+    if($('#user_permission_group_id').val() !== ''){
+      $('#user_permission_group_id').val('');
+    }
+  })
+
+</script>

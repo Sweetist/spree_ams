@@ -1,0 +1,36 @@
+<h1 class="catalog-title">My Vendors</h1>
+<a href="<%= new_order_url %>" class="new-order-button">Start New Order</a>
+<div class="clear"></div>
+
+<div class="vendors-block">
+  <div class="my-vendors-list">
+    <div class="tRow header">
+      <div class='cel'>
+        Vendor
+      </div>
+      <div class='cel status'>
+      </div>
+      <div class='cel balance'>
+      </div>
+      <div class='cel'>
+
+      </div>
+    </div>
+
+    <% @my_vendors.each do |vendor| %>
+      <div class="tRow">
+        <div class='cel'>
+          <a href="<%=vendor_url(vendor)%>"><%= vendor.name %></a>
+        </div>
+        <div class='cel status'>
+        </div>
+        <div class='cel balance'>
+        </div>
+        <div class='cel'>
+          <a href="<%= vendor_products_url(vendor) %>">View Catalog</a>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+</div>

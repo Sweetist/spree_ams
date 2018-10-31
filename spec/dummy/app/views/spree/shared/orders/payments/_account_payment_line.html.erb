@@ -1,0 +1,46 @@
+<tr id="<%= dom_id(payment) %>" data-hook="payments_row" class="payment-row" data-payment-id="<%= payment.id %>">
+  <% acpay = payment.account_payment %>
+  <td><%= link_to payment.display_number, edit_manage_account_payment_path(acpay), class: 'account-payment-link' %></td>
+  <td><%= link_to sweet_full_date_time(payment.created_at, zone), edit_manage_account_payment_path(acpay), class: 'account-payment-link' %></td>
+  <td class="amount text-center"><%= link_to payment.display_amount, edit_manage_account_payment_path(acpay), class: 'account-payment-link' %></td>
+  <td class="text-center">
+    <% apm_name = payment.account_payment.payment_method.name %>
+    <%= link_to apm_name, edit_manage_account_payment_path(acpay) %>
+  </td>
+  <td class="text-center"><%= link_to payment.display_transaction_id.to_s, edit_manage_account_payment_path(acpay), class: 'account-payment-link' %></td>
+  <td class="text-center">
+    <%= link_to edit_manage_account_payment_path(acpay) do %>
+      <% payment.void? ? (ap_state = 'void') : (ap_state = acpay.state) %>
+      <label class="btn btn-xs circle payment_status <%= ap_state %>" data-payment-method="<%= payment.payment_method_id %>">
+        <%= Spree.t(ap_state, scope: :payment_states, default: ap_state.capitalize).to_s.titleize %>
+      </label>
+    <% end %>
+  </td>
+  <% if payment.editable_on_order_page? %>
+    <% if url_prefix =='/manage' &&
+          current_spree_user.can_write?('payments', 'order') &&
+          payments.any?{ |payment| !%w[void failed].include?(payment.state) } %>
+      <td class="actions actions-2 center">
+        <% acpay.actions.sort.reverse.each do |action| %>
+          <% action_btn_color = "#{action}_btn_color" %>
+          <% if action == 'credit' %>
+            <%= link_to new_refund_manage_account_payment_path(acpay), class: 'btn btn-default btn-sm pull-right tooltips refund-link',
+              data: {'original-title' => 'Refund'}, remote: true do %>
+              <i class='fa fa-minus'></i>
+            <% end %>
+          <% else %>
+            <%= link_to fire_manage_account_payment_path(acpay, e: action),
+              class: "btn btn-sm #{Spree.t(:btn_color, scope: [:payment_actions, action])} pull-right tooltips disable-after-click", data: {'original-title' => Spree.t(action)}, method: :put do %>
+              <i class="<%= Spree.t(:btn_icon, scope: [:payment_actions, action]) %>"></i>
+            <% end %>
+          <% end %>
+        <% end %>
+        <% if acpay.editable? %>
+          <%= link_to edit_manage_account_payment_path(acpay), class: 'btn btn-primary btn-sm edit-button pull-right tooltips', data: {'original-title' => 'Edit'}, method: :get do %>
+            <i class='fa fa-pencil'></i>
+          <% end %>
+        <% end %>
+      </td>
+    <% end %>
+  <% end %>
+</tr>

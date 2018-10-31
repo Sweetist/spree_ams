@@ -1,0 +1,41 @@
+<% override_action_names = {'create_adjustment' => 'create_order_adjustment'} %>
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="form-group">
+      <%= label_tag :promotion_action_type, Spree.t(:add_action_of_type) %>
+      <div class="action-selector">
+        <select class="form-control" id="promo-action-select">
+          <% Rails.application.config.spree.promotions.actions.each do |action_type| %>
+          <%= type_name = action_type.name.demodulize.underscore %>
+          <% next if type_name.downcase.include?('user') || type_name.downcase.include?('line')%>
+            <option value="<%= action_type.name %>" id='<%= type_name %>'><%= override_action_names.key?(type_name) ? override_action_names[type_name].titleize : type_name.titleize %></option>
+          <% end %>
+        </select>
+        <input id="action_type" type="hidden" name="promotion[actions][type]">
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-6">
+    <div class="form-group">
+      <a class="promo-add btn btn-primary form-control" id="add-action">Set/Change Action</a>
+    </div>
+  </div>
+</div>
+<br>
+<div class="action_types">
+  <% Rails.application.config.spree.promotions.actions.each do |action_type| %>
+    <% type_name = action_type.name.demodulize.underscore %>
+    <% next if type_name.downcase.include?("user") || type_name.downcase.include?('line')%>
+    <% action = @promotion_actions.detect{ |action| action.type == action_type.name } %>
+    <div class="action_type <%= 'hidden' if action.nil? %>">
+      <div id="action_type_<%= type_name %>">
+        <div class="portlet blue-hoki box rule_options">
+          <%= render partial: "spree/manage/promotions/actions/#{type_name}", locals: {action: action} %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>

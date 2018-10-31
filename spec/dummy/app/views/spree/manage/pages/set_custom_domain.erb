@@ -1,0 +1,47 @@
+<%= content_for :head_title do %>
+  Pages
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <span>Pages</span>
+    </li>
+  </ul>
+<% end %>
+
+<div class='content'>
+  <!-- PAGE TITLE -->
+  <h2 class="page-title">
+    This feature is only available with a custom domain
+  </h2>
+  <!-- END PAGE TITLE -->
+  <div class="row margin-bottom-20">
+    <div class="col-lg-12">
+      <div class="panel panel-info">
+        <div class="panel-heading">
+        <h4>
+          <i class="fa fa-info-circle"></i>&nbsp;&nbsp;What you're missing out on
+        </h4>
+        </div>
+        <div class="panel-body">
+        <p class="margin-top-20">
+           Our Pages feature let's you create static pages and configure it's content
+        </p>
+
+        <div class="row">
+          <div class="col-md-12">
+            <%= image_tag "spree/manage/img/static_pages.png", alt: "static pages", class: "inventory-img-size" %>
+          </div>
+        </div>
+      </div>
+      </div>
+    </div>
+    <div class="col-lg-6">
+    </div>
+  </div>
+</div>

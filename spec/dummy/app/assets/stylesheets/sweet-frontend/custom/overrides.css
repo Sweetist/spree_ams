@@ -1,0 +1,120 @@
+.page-header.navbar .menu-toggler.sidebar-toggler{
+  float:left;
+  margin: 11px;
+}
+.page-sidebar-closed.page-sidebar-closed-hide-logo .page-header.navbar .page-logo{
+  display: none;
+}
+.page-header.navbar .page-logo{
+  padding: 5px;
+}
+.page-header.navbar .page-logo a.logo-default-link {
+  float: none;
+  margin:0;
+  display: block;
+  height: 100%;
+}
+.page-header.navbar .page-logo .logo-default{
+  display: block;
+  width: auto;
+  max-width:100%;
+  height:auto;
+  max-height:100%;
+  margin:auto auto;
+}
+
+.checker{
+  display: inline-block;
+}
+
+.dropdown-menu > li > input[type="submit"] {
+  padding: 8px 16px;
+  color: #6f6f6f;
+  text-decoration: none;
+  display: block;
+  clear: both;
+  font-weight: 300;
+  line-height: 18px;
+  white-space: nowrap;
+  background: inherit;
+  border: inherit;
+  width: 100%;
+  text-align: left;
+}
+.dropdown-menu > li > input[type="submit"]:hover{
+  background: inherit;
+}
+
+.dropdown-menu > li > input[type="submit"]:hover,
+.dropdown-menu > li > input[type="submit"]:focus {
+  text-decoration: none;
+  color: #262626;
+  background-color: #e1e5ec;
+}
+.portlet.light{
+  padding: 12px 15px 15px;
+}
+.portlet.light > .portlet-title > .nav-tabs > li {
+  border-right: 1px solid #ddd;
+}
+.portlet.light > .portlet-title > .nav-tabs > li:nth-last-of-type(1) {
+  border-right: none;
+}
+.form .form-body {
+  padding-bottom: 10px;
+}
+
+.portlet.light > .portlet-title > .nav-tabs > li > a {
+  font-size: 14px;
+}
+.portlet.light > .portlet-title > .nav-tabs > li.active > a {
+  font-weight: 700;
+}
+.table-checkable tr > th:first-child, .table-checkable tr > td:first-child > ul >li{
+  text-align: left;
+}
+.table-checkable tr > th:first-child.table-checkbox{
+  text-align: center;
+}
+.form-control:focus{
+  border: 2.5px solid #93a1bb;
+}
+
+.dashboard-stat .details .dynamic-font-num{
+  font-size: 3vw;
+}
+
+.dashboard-stat .details .dynamic-font{
+  font-size: 2.6vw;
+}
+
+textarea.form-control-inline-textarea{
+  display: block;
+  width: 100%;
+  min-height: 34px;
+  height: auto;
+  margin: 0;
+  padding: 6px 12px;
+  font-size: 14px;
+  line-height: 1.42857143;
+  resize:vertical;;
+  color: #555555;
+  background-color: #fff;
+  background-image: none;
+  border: 1px solid #c2cad8;
+  border-radius: 4px;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  -webkit-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+  -o-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+  transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+}
+
+.img-responsive{
+  margin: 0 auto;
+}
+
+/*css to override styling in commontable gem*/
+.comment_form_field .mentions-input-box textarea{
+  background: white;
+}

@@ -1,0 +1,13 @@
+<% if flash[:error] %>
+  $('#payment-form-container','#payment-modal').prepend("<%= j render(partial: 'spree/shared/errors') %>");
+<% end %>
+<% if flash[:success] %>
+  $('tr[data-credit-card-id="<%= @credit_card.id %>"]').remove();
+  if($('tr.payment_boxes').length === 1){
+    $('#card_new<%= @credit_card.payment_method_id %>').click();
+  }
+  $('#payment-form-container','#payment-modal').prepend("<div class='alert alert-success alert-auto-dissapear alert-dismissable'><button type='button' class='close' data-dismiss='alert' aria-hidden='true'></button><%= flash[:success] %></div>");
+  setTimeout(function() {
+    $(".alert-auto-dissapear").fadeOut(1500);
+  },2000);
+<% end %>

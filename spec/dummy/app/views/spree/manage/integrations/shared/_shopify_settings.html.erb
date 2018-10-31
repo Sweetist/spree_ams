@@ -1,0 +1,9 @@
+<% if item.sales_channel.try(:include?, 'shopify') %>
+  <div class="row">
+    <div class="col-md-3 name"><%= I18n.t('integrations.shopify.sync_orders_to') %></div>
+    <div class="col-md-9 value">
+      <%= item.send("#{item.integration_key}_shopify_customer").try(:fully_qualified_name) || I18n.t('integrations.shopify.sync_orders_to_default') %>
+    </div>
+  </div>
+  <br>
+<% end %>

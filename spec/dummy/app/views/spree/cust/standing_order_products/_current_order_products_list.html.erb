@@ -1,0 +1,81 @@
+<% idx = 0 %>
+<% last_product_name = '' %>
+<% @account_viewable_variants.each do |avv| %>
+  <% variant = avv.variant %>
+  <% product = variant.product %>
+  <%# prod_path = order_type == 'order' ? manage_product_path(product) : manage_standing_order_product_path(@current_order, product) %>
+  <% if last_product_name != variant.product.name && !variant.is_master? %>
+    <% last_product_name = variant.product.name %>
+    <% new_product = true %>
+  <% else %>
+    <% new_product = false %>
+  <% end %>
+  <% if new_product %>
+    <tr class="<%= 'discontinued' if product.discontinued_on %>">
+      <% if @user_is_viewing_images %>
+        <%# CHECK WHETHER USER WANTS TO SEE IMAGES IN CATALOG HERE %>
+         <td>
+           <%= link_to small_image(product, itemprop: "image"), standing_order_product_path(@order, product), itemprop: 'url' %><br/>
+         </td>
+      <% else %>
+        <td style="width:20px;"></td>
+      <% end %>
+      <td> <%= link_to product.name, standing_order_product_path(@order, product) %></td>
+      <% if current_vendor_view_settings.variant_pack_size %>
+        <td></td>
+      <% end %>
+      <% if current_vendor_view_settings.variant_lead_time %>
+        <td></td>
+      <% end %>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <% idx += 1 %>
+  <% end %>
+
+  <tr class="<%= 'discontinued' if product.discontinued_on %>">
+    <% url = standing_order_product_variant_path(@order, product, variant) %>
+    <% if @user_is_viewing_images %>
+      <%# CHECK WHETHER USER WANTS TO SEE IMAGES IN CATALOG HERE %>
+       <td style="<%= 'border-top:none;' unless variant.is_master? %>">
+         <%= link_to small_image(product, itemprop: "image"), url, itemprop: 'url' %><br/>
+       </td>
+    <% else %>
+      <td style="<%= 'border-top:none;' unless variant.is_master? %>"></td>
+    <% end %>
+    <td style="<%= 'padding-left:40px;' unless variant.is_master? %>">
+      <%= link_to variant.variant_name, url %>
+    </td>
+    <% if current_vendor_view_settings.variant_sku %>
+      <td><%= link_to variant.sku, url %></td>
+    <% end %>
+    <% if current_vendor_view_settings.variant_pack_size %>
+      <td><%= link_to variant.pack_size.to_s, url %></td>
+    <% end %>
+    <% if current_vendor_view_settings.variant_lead_time %>
+      <td><%= link_to pluralize(variant.lead_time, 'day'), url %></td>
+    <% end %>
+    <td>
+      <% if avv.recalculating < Spree::AccountViewableVariant::RecalculatingStatus['complete'] %>
+        <div id="update-price-<%= avv.id %>">
+            Price is updating...
+            <%= link_to "Update Now", update_customized_pricing_path(avv_id: avv.id), class: "btn btn-xs btn-success", remote: true %>
+        </div>
+      <% else %>
+        <%= render partial: 'spree/cust/products/variant_price', locals: {avv: avv, variant: variant, url: url} %>
+      <% end %>
+    </td>
+    <td>
+      <% unless variant.discontinued_on %>
+        <% carted = @order.standing_line_items.find_by_variant_id(variant.id) %>
+        <input id="variant_qty_<%= variant.id %>" tabindex="1" type="number" name='standing_order[products][<%= variant.id %>]'
+          class="form-control product-qty" min="0" step='<%= variant.step_size %>'
+          placeholder="<%= "#{carted.quantity} in cart" unless carted.blank? %>"
+          <%= 'disabled' if avv.recalculating < Spree::AccountViewableVariant::RecalculatingStatus['complete'] %>>
+      <% end %>
+    </td>
+  </tr>
+  <% idx += 1 %>
+<% end %>

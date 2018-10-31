@@ -1,0 +1,58 @@
+<div data-hook="admin_company_form_fields">
+  <div class="panel panel-default" data-hook="company">
+    <div class="panel-heading">
+      <h1 class="panel-title">
+        <%= "Account Information" %>
+      </h1>
+    </div>
+
+    <div class="panel-body">
+      <div class="col-md-6">
+        <div data-hook="name" class="form-group">
+          <%= f.label :name, Spree.t(:name) %>
+          <%= f.text_field :name, class: 'form-control' %>
+        </div>
+        <div data-hook="email" class="form-group">
+          <%= f.label :email, Spree.t(:email) %>
+          <%= f.text_field :email, class: 'form-control' %>
+        </div>
+        <div data-hook="rate">
+          <b>Fully Qualified Name:</b> <%= @account.fully_qualified_name %>
+        </div>
+
+      </div>
+
+      <div class="col-md-6">
+        <div class="col-md-6">
+          <div>
+            <b>Customer Company</b><br>
+            <%= f.field_container :customer_id, class: ['form-group'] do %>
+            	<%= f.label :customer_id, "Company" %>
+              <input type="text" name="account[customer_id]" id="account_customer_id" class='company_id' value='<%= @account.try(:customer_id) %>'>
+              <% if @account.customer_id.present? %>
+                <% company = Spree::Company.find_by_id(@account.try(:customer_id)) %>
+                Link: <%= link_to company.try(:name), edit_admin_company_path(company) %>
+              <% end %>
+            <% end %>
+            <br>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div>
+            <b>Vendor Company</b><br>
+            <%= f.field_container :vendor_id, class: ['form-group'] do %>
+            	<%= f.label :vendor_id, "Company" %>
+              <input type="text" name="account[vendor_id]" id="account_vendor_id" class='company_id' value='<%= @account.try(:vendor_id) %>'>
+              <% if @account.customer_id.present? %>
+                <% company = Spree::Company.find_by_id(@account.try(:vendor_id)) %>
+                Link: <%= link_to company.try(:name), edit_admin_company_path(company) %>
+              <% end %>
+            <% end %>
+            <br>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

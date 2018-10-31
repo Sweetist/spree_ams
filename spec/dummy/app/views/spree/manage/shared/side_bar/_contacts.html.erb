@@ -1,0 +1,6 @@
+<li class="nav-item <%= "active" if current_controller?(['contacts']) %>">
+  <%= link_to manage_account_contacts_path, class: "nav-link" do %>
+    <i class="fa fa-list-alt"></i>
+    <span class="title">Contacts</span>
+  <% end %>
+</li>

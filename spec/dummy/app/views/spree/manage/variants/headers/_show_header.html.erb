@@ -1,0 +1,34 @@
+<%= content_for :head_title do %>
+  <%= @vendor.name %> - <%= @product.name %>
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Products", manage_products_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to @product.name, manage_product_path(@product) %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <span>Variants</span>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <span><%= @variant.full_context %></span>
+    </li>
+  </ul>
+
+  <div class="page-toolbar">
+    <div class="pull-right">
+      <%= link_to "Back to Product", manage_product_path(@product), class: 'btn btn-success' %>
+    </div>
+    <%= render partial: 'spree/manage/products/headers/view_as' %>
+  </div>
+<% end %>

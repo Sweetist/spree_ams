@@ -1,0 +1,79 @@
+<% user_can_edit = current_spree_user.can_write?('catalog', 'products') %>
+<% idx = 0 %>
+<% last_product_name = '' %>
+<% @variants.each do |variant| %>
+  <% product = variant.product %>
+  <% if last_product_name != variant.product.name && !variant.is_master? %>
+    <% last_product_name = variant.product.name %>
+    <% new_product = true %>
+  <% else %>
+    <% new_product = false %>
+  <% end %>
+  <% if new_product %>
+    <tr class="<%= 'discontinued' if product.discontinued_on %>">
+      <% if include_actions %>
+        <td>
+          <%#= ff.check_box 'action', class: 'checkboxes noUniform' %>
+          <input type='checkbox' name='company[variants_attributes][<%= idx %>][action]' class='checkboxes noUniform'>
+          <input name="company[variants_attributes][<%= idx %>][id]" type="hidden"
+          value="<%= product.master.id %>" id="company_variants_attributes_<%= idx %>_id">
+        </td>
+      <% end %>
+      <% if @user_is_viewing_images %>
+        <%# CHECK WHETHER USER WANTS TO SEE IMAGES IN CATALOG HERE %>
+         <td class='text-center'>
+           <%= link_to small_image(product, itemprop: "image"), manage_product_path(product), itemprop: 'url' %><br/>
+         </td>
+      <% end %>
+      <td> <%= link_to product.master.variant_name, manage_product_path(product) %></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <%= render partial: 'spree/manage/products/actions/product_only', locals: {product: product, user_can_edit: user_can_edit} %>
+    </tr>
+    <% idx += 1 %>
+  <% end %>
+  <tr class="<%= 'discontinued' if variant.discontinued_on %>">
+    <% if include_actions %>
+      <td style="<%= 'border-top:none;' unless variant.is_master? %>">
+        <%#= ff.check_box 'action', class: 'checkboxes noUniform' %>
+        <input type='checkbox' name='company[variants_attributes][<%= idx %>][action]' class='checkboxes noUniform'>
+        <input name="company[variants_attributes][<%= idx %>][id]" type="hidden"
+        value="<%= variant.id %>" id="company_variants_attributes_<%= idx %>_id">
+      </td>
+    <% end %>
+    <% url = variant.is_master? ? manage_product_path(product) : manage_product_variant_path(product, variant) %>
+    <% if @user_is_viewing_images %>
+      <%# CHECK WHETHER USER WANTS TO SEE IMAGES IN CATALOG HERE %>
+       <td class='text-center'>
+         <%= link_to small_image(variant, itemprop: "image"), url, itemprop: 'url' %><br/>
+       </td>
+    <% end %>
+    <td style="<%= 'padding-left:40px;' unless variant.is_master? %>">
+      <%= link_to variant.variant_name, url %>
+    </td>
+    <td>
+      <%= link_to PRODUCT_TYPES[product.product_type].to_s, url %>
+    </td>
+    <td>
+      <%= link_to variant.sku, url %>
+    </td>
+    <td>
+      <%= link_to variant.pack_size.to_s, url %>
+    </td>
+    <td>
+      <%= link_to pluralize(variant.lead_time, 'day'), url %>
+    </td>
+    <td>
+      <%= link_to display_sweet_price(variant.price, product.currency), url %>
+    </td>
+    <% if variant.is_master? %>
+      <%= render partial: 'spree/manage/products/actions/product_only', locals: {product: product, user_can_edit: user_can_edit} %>
+    <% else %>
+      <%= render partial: 'spree/manage/products/actions/variant_only', locals: {variant: variant, user_can_edit: user_can_edit} %>
+    <% end %>
+  </tr>
+  <% idx += 1 %>
+<% end %>

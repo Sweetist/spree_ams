@@ -1,0 +1,105 @@
+<div class='row'>
+  <% show_account_balance = @account.should_see_balance? %>
+  <% show_account_spend = @account.should_see_spend? %>
+  <% show_account_past_due_balance = @account.should_see_past_due_balance? %>
+  <% num_cols = [show_account_balance, show_account_spend, show_account_past_due_balance].select{|bool| bool }.count %>
+  <% col_md = num_cols == 0 ? 'col-md-12' : "col-md-#{12 / num_cols}" %>
+  <% col_sm = num_cols <= 1 ? 'col-sm-12' : 'col-sm-6' %>
+  <% if show_account_spend %>
+    <div class='<%= "#{col_md} #{col_sm}" %> col-xs-12 margin-top-10'>
+      <div class="dashboard-stat small blue">
+        <div class="visual">
+          <i class="fa fa-shopping-cart"></i>
+        </div>
+        <div class="details">
+          <div class="number"><%= display_sweet_price(@account.thirty_day_spend, @account.vendor.try(:currency)) %></div>
+          <div class="desc">30 Day Spend</div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+  <% if show_account_balance %>
+    <div class='<%= "#{col_md} #{col_sm}" %>  col-sm-6 col-xs-12 margin-top-10'>
+      <div class="dashboard-stat small blue">
+        <div class="visual">
+          <i class="fa fa-balance-scale"></i>
+        </div>
+        <div class="details">
+          <div class="number"><%= @account.display_account_balance %></div>
+          <div class="desc">Balance</div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+  <% if @account.should_see_past_due_balance? %>
+    <div class='<%= "#{col_md} #{col_sm}" %>  col-sm-6 col-xs-12 margin-top-10'>
+      <div class="dashboard-stat small blue">
+        <div class="visual">
+          <i class="fa fa-exclamation-triangle"></i>
+        </div>
+        <div class="details">
+          <div class="number"><%= display_sweet_price(@account.past_due_balance, @account.currency) %></div>
+          <div class="desc">Overdue</div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>
+<div class='row margin-top-20'>
+  <div class='col-xs-12'>
+    <span class="caption-subject font-blue-madison bold uppercase">
+      Recent Orders
+    </span>
+    <%= search_form_for @order_search, url: edit_account_path(@account), class: "form", id: "orders_search_form" do |f| %>
+      <%#= render partial: 'advanced_search', locals: {f: f} %>
+    <% end %>
+    <div class="table-scrollable">
+      <% show_payment_state = @account.vendor.try(:cva).try(:order_payment_state) %>
+      <table class="table table-hover" id="sample_1">
+        <thead>
+          <tr>
+            <th>
+              <%= sort_link @order_search, :delivery_date, "#{@account.customer.try(:vendor_order_date_text)} Date" %>
+            </th>
+            <th>
+              <%= sort_link @order_search, :due_date, "Due Date" %>
+            </th>
+            <th>
+              <%= sort_link @order_search, :number, "Order #" %>
+            </th>
+            <th>
+              <%= sort_link @order_search, :total, "Total" %>
+            </th>
+            <% if show_payment_state %>
+              <th>
+                Payment Status
+              </th>
+            <% end %>
+          </tr>
+        </thead>
+        <tbody>
+          <% @orders.each do |order| %>
+            <% url = edit_order_path(order) %>
+            <tr>
+              <td><%= link_to display_vendor_date_format(order.delivery_date, order.vendor.date_format), url %></td>
+              <td><%= link_to display_vendor_date_format(order.due_date, order.vendor.date_format), url %></td>
+              <td><%= link_to order.display_number, url %></td>
+              <td><%= link_to display_sweet_price(order.total, order.currency), url %></td>
+              <% if show_payment_state %>
+                <td>
+                  <% status = order.payment_status %>
+                  <%= link_to url do %>
+                    <span class="btn btn-xs circle payment_status <%= status %>">
+                      <%= Spree.t(status, scope: :payment_statuses, default: [:missing, '']).to_s.titleize %>
+                    </span>
+                  <% end %>
+                </td>
+              <% end %>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+      <%= paginate @orders %>
+    </div>
+  </div>
+</div>

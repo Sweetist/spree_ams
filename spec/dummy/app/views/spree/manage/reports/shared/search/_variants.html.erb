@@ -1,0 +1,6 @@
+<div class="form-group">
+  <label>Products</label>
+  <%= select_tag("variant_ids",
+    options_for_select(@vendor.variants_including_master.order(:full_display_name).pluck(:full_display_name, :id), params[:variant_ids]),
+    {style: 'width:100%', class: 'select2-tags input-large form-control', multiple: true }) %>
+</div>

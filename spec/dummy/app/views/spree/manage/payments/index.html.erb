@@ -1,0 +1,17 @@
+<%= render partial: 'spree/manage/payments/header/index' %>
+<%= render partial: 'spree/manage/payments/body_content/index', locals: {payments: @payments} %>
+<%= render partial: 'spree/shared/payments/modal/show' %>
+<%= render partial: 'spree/shared/payments/modal/new' %>
+
+<script type='text/javascript'>
+  $(document).ready(function(){
+    $('.payment-link').click(function(){
+      var orderNumber = '<%= @order.number %>'
+      var paymentId = $(this).closest('tr').data('payment-id');
+      $.ajax({
+        method: 'GET',
+        url: '/orders/'+ orderNumber + '/payments/' + paymentId +'.js',
+      });
+    });
+  });
+</script>

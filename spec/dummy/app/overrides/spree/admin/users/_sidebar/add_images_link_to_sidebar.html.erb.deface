@@ -1,0 +1,4 @@
+<!-- insert_bottom 'ul[data-hook="admin_user_tab_options"]' -->
+  <li<%== ' class="active"' if current == :images %>> 
+    <%= link_to_with_icon 'picture', Spree.t(:"images"), spree.admin_user_user_images_url(@user) %>
+  </li>

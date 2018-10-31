@@ -1,0 +1,11 @@
+<!-- insert_before "erb[loud]:contains('field_container :email')" -->
+<%= f.field_container :firstname, class: ['form-group'] do %>
+	<%= f.label :firstname, Spree.t(:firstname) %>
+ 	<%= f.text_field :firstname, :class => 'form-control' %>
+ 	<%= error_message_on :user, :firstname %>
+<% end %>
+  <%= f.field_container :lastname, class: ['form-group'] do %>
+  <%= f.label :lastname, Spree.t(:lastname) %>
+  <%= f.text_field :lastname, :class => 'form-control' %>
+	<%= error_message_on :user, :lastname %>
+<% end %>

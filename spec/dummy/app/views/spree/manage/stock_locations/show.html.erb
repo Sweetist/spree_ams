@@ -1,0 +1,84 @@
+<%= content_for :head_title do %>
+  Stock Location
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li><li>
+      <%= link_to "Stock Locations", manage_stock_locations_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+		<li>
+      <span>Stock Location</span>
+    </li>
+  </ul>
+	<div class="page-toolbar">
+    <div class="btn-group pull-right">
+      <% if current_spree_user.can_write?('stock_locations', 'inventory') %>
+        <%= link_to new_manage_stock_location_path, class: "btn green pull-right" do%>
+          <i class="fa fa-plus"></i>&nbsp;New Stock Location
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="portlet light ">
+      <div class="portlet-title">
+        <div class="caption caption-md">
+          <span class="caption-subject font-blue-madison bold uppercase">Stock Location: <%= @stock_location.name %></span>
+        </div>
+        <% if current_spree_user.can_write?('stock_locations', 'inventory') %>
+          <div class="actions">
+            <%= link_to edit_manage_stock_location_path(@stock_location), class: "btn btn-primary" do %>
+              <i class='fa fa-pencil'></i> <%= Spree.t(:edit) %>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+      <div class="portlet-body form">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="row static-info">
+              <div class="col-md-3 name">Stock Location Name:</div>
+              <div class="col-md-9 value"> <%= @stock_location.name %> </div>
+            </div>
+            <div class="row static-info">
+              <div class="col-md-3 name">Active</div>
+              <div class="col-md-9 value"> <%= @stock_location.active ? Spree.t(:say_yes) : Spree.t(:say_no) %> </div>
+            </div>
+            <div class="row static-info">
+              <div class="col-md-3 name">Default Location</div>
+              <div class="col-md-9 value"> <%= @stock_location.default ? Spree.t(:say_yes) : Spree.t(:say_no) %> </div>
+            </div>
+            <div class="row static-info">
+              <div class="col-md-3 name">Make items at this location backorderable by default</div>
+              <div class="col-md-9 value"> <%= @stock_location.backorderable_default ? Spree.t(:say_yes) : Spree.t(:say_no) %> </div>
+            </div>
+            <div class="row static-info">
+              <div class="col-md-3 name">Address: </div>
+              <div class="col-md-9 value"> <%= @stock_location.address1 %> </div>
+            </div>
+            <% unless @stock_location.address1.blank? || @stock_location.address2.blank? %>
+              <div class="row static-info">
+                <div class="col-md-3 name"> </div>
+                <div class="col-md-9 value"> <%= @stock_location.address2 %> </div>
+              </div>
+            <% end %>
+            <div class="row static-info">
+              <div class="col-md-3 name"> </div>
+              <div class="col-md-9 value">
+                <%= @stock_location.city %><%= "," unless @stock_location.city.blank? || @stock_location.state.blank? %> <%= @stock_location.state.abbr unless @stock_location.state.blank? %> <%= @stock_location.zipcode %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

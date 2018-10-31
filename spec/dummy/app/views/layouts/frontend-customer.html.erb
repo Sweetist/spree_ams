@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<!--[if IE 8]> <html lang="en" class="ie8"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9"> <![endif]-->
+<!--[if !IE]><!--><html lang="en"> <!--<![endif]-->
+  <head>
+    <%= render partial: 'layouts/shared/head' %>
+    <% if current_customer.vendors.distinct.count > 1 %>
+      <% theme_name = 'darkblue' %>
+      <%= stylesheet_link_tag "sweet-frontend/layouts/layout/themes-customer/#{theme_name}" %>
+    <% else %>
+      <% theme_name = (current_customer.vendors.first.customer_viewable_attribute.theme_name rescue "darkblue") %>
+      <% if theme_name == "custom" %>
+        <!-- darkblue css added along with custom as custom css has some specific styling only. rest is covered by darkblue -->
+        <%= stylesheet_link_tag "sweet-frontend/layouts/layout/themes-customer/darkblue" %>
+        <!-- darkblue added above inline custom style so that custom style will override darkblue specific things -->
+        <style>
+          <%= raw(current_customer.vendors.first.customer_viewable_attribute.theme_css) %>
+        </style>
+      <% else %>
+        <%= stylesheet_link_tag "sweet-frontend/layouts/layout/themes-customer/#{theme_name}" %>
+      <% end %>
+    <% end %>
+    <link rel="stylesheet" type="text/css" media="screen" href="//cdnjs.cloudflare.com/ajax/libs/fancybox/1.3.4/jquery.fancybox-1.3.4.css" />
+    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
+    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css"/>
+
+    <%= javascript_include_tag "spree/sweet-frontend/cust/cust_all" %>
+  </head>
+
+  <body class="customer page-header-fixed page-sidebar-closed-hide-logo page-content-white">
+    <!-- BEGIN PRE-HEADER -->
+    <div class="pre-header">
+      <div class="container">
+        <div class="row">
+          <!-- BEGIN TOP BAR LEFT PART -->
+          <!-- <div class="col-sm-3 col-xs-6 additional-shop-info">
+
+          </div> -->
+          <!-- END TOP BAR LEFT PART -->
+          <div class="col-sm-6 hidden-xs">
+            <% if content_for? :pre_header_left %>
+              <%= yield(:pre_header_left) %>
+            <% end %>
+          </div>
+          <!-- BEGIN TOP BAR MENU -->
+          <div class="col-sm-6 col-xs-12 additional-nav">
+            <ul class="list-unstyled list-inline pull-right">
+              <% if has_multi_vendors? && request.host == ENV['DEFAULT_URL_HOST'] %>
+                <li class="dropdown">
+                  <a class="dropdown-toggle" data-toggle="dropdown" data-target="#" href="javascript:;">
+                    <span class='hidden-xs'>
+                      Catalogs
+                    </span>
+                    <span class='visible-xs'>
+                      <i class='fa fa-shopping-cart'></i>
+                    </span>
+                  </a>
+                  <ul class="dropdown-menu pull-right">
+                    <% current_spree_user.vendors.distinct.each do |vendor| %>
+                      <%
+                        if current_controller?(['products']) && params[:vendor_id] == vendor.slug || params[:vendor_id] == vendor.id.to_s
+                          default_name = vendor.name
+                          class_name = "active"
+                        else
+                          class_name = ""
+                        end
+                      %>
+                      <li>
+                        <%= link_to vendor_products_path(vendor), class: class_name do %>
+                          <%= vendor.name %>
+                        <% end %>
+                      </li>
+                    <% end %>
+                  </ul>
+                </li>
+              <% else %>
+                <li>
+                  <% vendor = current_vendor || current_spree_user.vendors.first %>
+                  <% if vendor %>
+                    <%= link_to vendor_products_path(vendor), class: "dropdown-toggle" do %>
+                      <span class='hidden-sm hidden-xs'>
+                        Catalog
+                      </span>
+                      <span class='visible-sm visible-xs'>
+                        <i class='fa fa-shopping-cart'></i>
+                      </span>
+                    <% end %>
+                  <% end %>
+                </li>
+              <% end %>
+              <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" data-target="#" href="javascript:;">
+                  <span class='hidden-sm hidden-xs'>
+                    My Orders
+                  </span>
+                  <span class='visible-sm visible-xs'>
+                    <i class='fa fa-list'></i>
+                  </span>
+                </a>
+                <ul class="dropdown-menu pull-right">
+                  <li>
+                    <%= link_to new_order_path, class: "dropdown-link" do %>
+                      Start New Order
+                    <% end %>
+                  </li>
+                  <li>
+                    <%= link_to orders_path, class: "dropdown-link" do %>
+                      All Orders
+                    <% end %>
+                  </li>
+                  <% if false %>
+                  <li>
+                    <%= link_to standing_orders_path, class: "dropdown-link" do %>
+                      Standing Orders
+                    <% end %>
+                  </li>
+                  <li>
+                    <%= link_to standing_order_schedules_path, class: "dropdown-link" do %>
+                      Standing Order Schedules
+                    <% end %>
+                  </li>
+                  <% end %>
+                  <li>
+                    <% if current_customer.any_vendor_using_separate_invoices? %>
+                      <%= link_to invoices_path, class: "dropdown-link" do %>
+                        Invoices
+                      <% end %>
+                    <% end %>
+                  </li>
+                </ul>
+              </li>
+              <%
+                user_path = edit_my_profile_path
+                contact_path = new_message_path
+              %>
+              <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" data-target="#" href="javascript:;">
+                  <span class='hidden-sm hidden-xs'>
+                    <%= has_multi_accounts? ? 'My Accounts' : 'My Account' %>
+                  </span>
+                  <span class='visible-sm visible-xs'>
+                    <i class='fa fa-cog'></i>
+                  </span>
+                </a>
+                <ul class="dropdown-menu pull-right">
+                  <li>
+                    <%= link_to accounts_path, class: "dropdown-link" do %>
+                      <%= has_multi_accounts? ? 'All Accounts' : 'Account Info' %>
+                    <% end %>
+                  </li>
+                  <li>
+                    <%= link_to edit_my_company_path, class: "dropdown-link" do %>
+                      My Company
+                    <% end %>
+                  </li>
+                  <li>
+                    <%= link_to edit_my_profile_path, class: "dropdown-link" do %>
+                      My Profile
+                    <% end %>
+                  </li>
+                  <li>
+                    <%= link_to my_company_users_path, class: "dropdown-link" do %>
+                      Users
+                    <% end %>
+                  </li>
+                </ul>
+              </li>
+              <li style='border-right:none;'>
+                <%= link_to spree.logout_path, class: "dropdown-toggle" do %>
+                  <span class='hidden-sm hidden-xs'>
+                    Log Out
+                  </span>
+                  <span class='visible-sm visible-xs'>
+                    <i class='fa fa-sign-out'></i>
+                  </span>
+                <% end %>
+              </li>
+            </ul>
+          </div>
+          <!-- END TOP BAR MENU -->
+        </div>
+      </div>
+    </div>
+    <!-- END PRE-HEADER -->
+
+    <!-- BEGIN HEADER -->
+    <div class="header">
+      <div class="container">
+        <%= render partial: 'layouts/cust/page_logo' %>
+
+        <!-- BEGIN NAVIGATION -->
+        <% unless request.fullpath.include?("edit") %>
+          <div class="top-cart-block visible-xs visible-sm">
+            <% if current_order.try(:persisted?) && current_order.is_a?(Spree::Order) %>
+              <%= render partial: 'spree/cust/orders/cart_actions', locals: {current_order: current_order} %>
+            <% end %>
+          </div>
+        <% end %>
+
+          <% if content_for? :search_for_products %>
+            <%= yield(:search_for_products) %>
+          <% end %>
+        <!-- END NAVIGATION -->
+
+        <!-- BEGIN CART -->
+        <% unless request.fullpath.include?("edit") %>
+          <div class="top-cart-block hidden-xs hidden-sm <%= 'no-logo' if @hide_logo %> <%= 'no-search' if @hide_search_bar %>">
+            <% if current_order.try(:persisted?) && current_order.is_a?(Spree::Order) %>
+              <%= render partial: 'spree/cust/orders/cart_actions', locals: {current_order: current_order} %>
+            <% end %>
+          </div>
+        <% end %>
+        <!--END CART -->
+      </div>
+      <div class="clearfix"> </div>
+    </div>
+    <!-- Header END -->
+
+    <!-- BEGIN HEADER & CONTENT DIVIDER -->
+    <div class="clearfix"> </div>
+    <!-- END HEADER & CONTENT DIVIDER -->
+    <% if content_for? :cust_banner %>
+      <%= yield(:cust_banner) %>
+    <% end %>
+
+    <div class="main page-content-wrapper padding-top-10">
+      <div class="container page-content">
+        <!-- BEGIN PAGE BAR -->
+        <div class="page-bar-breadcrumb">
+          <%= yield(:page_bar) %>
+        </div>
+        <!-- END PAGE BAR -->
+        <%= render partial: 'layouts/shared/alert_box' %>
+        <%= yield %>
+      </div>
+
+    <!-- BEGIN PRE-FOOTER -->
+    <div class="pre-footer">
+      <div class="container">
+        <div class="row">
+          <!-- BEGIN BOTTOM ABOUT BLOCK -->
+          <div class="col-md-4 col-sm-4">
+            <% if current_vendor.present? %>
+              <h2>About us</h2>
+                <p><%= raw(current_vendor.customer_viewable_attribute.about_us) %></p>
+            <% end %>
+          </div>
+          <!-- END BOTTOM ABOUT BLOCK -->
+          <div class="col-md-4 col-sm-4">
+            <% if content_for? :static_footer %>
+              <%= yield(:static_footer) %>
+            <% end %>
+          </div>
+          <!-- BEGIN BOTTOM CONTACTS -->
+          <div class="col-md-4 col-sm-4">
+            <% if current_vendor.present? %>
+              <% address = current_vendor.bill_address || current_vendor.ship_address %>
+              <% if address.present? %>
+                <h2>Contact Us</h2>
+                <address>
+                  <%= address.address1 %><br/>
+                  <% if address.address2.present? %>
+                    <%= address.address2 %><br>
+                  <% end %>
+                  <%= address.city %>, <%= address.state.try(:abbr) %>  <%= address.zipcode %><br>
+                  <%= address.country.try(:name) %><br/>
+                  <% if address.phone.present? %>
+                  Phone: <%= address.phone %><br><br>
+                  <% end %>
+                </address>
+              <% end %>
+            <% end %>
+          </div>
+          <!-- END BOTTOM CONTACTS -->
+        </div>
+      </div>
+    </div>
+    <!-- END PRE-FOOTER -->
+
+    <!-- BEGIN FOOTER -->
+    <% if current_vendor_view_settings.nil? || current_vendor_view_settings.footer_powered_by_sweet %>
+      <div class="footer">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-6 col-sm-6 col-lg-6 padding-top-10">
+              <%= link_to getsweet_path, target: '_blank' do %>
+                <%= render partial: 'spree/shared/copyright_text' %>
+                All Rights Reserved.
+              <% end %>
+            </div>
+            <div class="col-md-2 col-sm-2 col-lg-2">
+            </div>
+            <div class="col-md-4 col-sm-4 col-lg-4 text-right">
+              <p class="powered">Powered by: <%= link_to 'Sweet', getsweet_path, target: '_blank' %></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+    <!-- END FOOTER -->
+
+    <!-- Google analytics send code -->
+    <%= render 'layouts/ga_send' %>
+
+  </body>
+</html>

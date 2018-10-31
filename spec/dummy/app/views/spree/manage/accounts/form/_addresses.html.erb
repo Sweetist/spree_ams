@@ -1,0 +1,27 @@
+<h4 class="form-section">Billing Contact and Address</h4>
+<div id='bill-address-container'>
+  <%= f.fields_for :billing_addresses, @bill_address do |ba_form| %>
+    <%= render partial: 'spree/shared/forms/address_form', locals: { f: ba_form, addr_type: 'billing' } %>
+  <% end %>
+</div>
+<h4 class="form-section">Shipping Contact and Address</h4>
+<input id="same-as-address" type="checkbox" <%= 'checked' if @bill_address && @bill_address.same_address?(@ship_address) && @bill_address.persisted? && @ship_address.persisted? %>>
+<label for="same-as-address">Same as billing address</label>
+<br><br>
+<div id='ship-address-container' class= "<%= 'hidden' if @bill_address && @bill_address.same_address?(@ship_address) && @bill_address.persisted? && @ship_address.persisted? %>">
+  <%= f.fields_for :shipping_addresses, @ship_address do |sa_form| %>
+    <%= render partial: 'spree/shared/forms/address_form', locals: { f: sa_form, addr_type: 'shipping' } %>
+  <% end %>
+</div>
+<% if !@new_form %>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="form-group">
+        <label for="special-instructions" class="control-label textarea-label">Special Instructions (will be attached to all new orders)</textarea>
+        <%= f.fields_for :note do |note| %>
+          <%= note.text_area :body %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>

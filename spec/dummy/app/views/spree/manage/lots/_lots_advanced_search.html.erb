@@ -1,0 +1,99 @@
+<div class="portlet box blue-hoki" id="search">
+  <div class="portlet-title">
+    <div class="col-xs-12 col-sm-6 col-lg-4">
+      <%= f.text_field :number_or_variant_full_display_name_cont, class: 'form-control', placeholder: 'Enter search term' %>
+      <div class="visible-xs-block" style="min-height:10px;">
+      </div>
+    </div>
+    <div class="col-xs-8 col-sm-4" id="basic-search-buttons">
+      <button type="submit" class="btn green"><i class="fa fa-search" aria-hidden="true"></i> Search</button>
+        <%= link_to manage_lots_path, class: "btn default" do %>
+          <i class='fa fa-times'></i> Reset
+        <% end %>
+    </div>
+    <div class="tools">
+      <a href="javascript:;" id='toggle-advanced-search'>Advanced <i class="fa fa-angle-down"></i></a>
+    </div>
+  </div>
+  <div class="portlet-body form hidden" id='advanced-search-form'>
+    <div class="form-body">
+      <div class='row'>
+        <div class='col-lg-3 col-md-6 col-sm-6'>
+          <div class='form-group' data-open="<%= params[:q] && params[:q].fetch(:number_cont, nil).present? %>">
+            <%= f.label :number_cont, 'Number', class: 'control-label' %>
+            <%= f.text_field :number_cont, class: 'form-control' %>
+          </div>
+        </div>
+        <div class='col-lg-3 col-md-6 col-sm-6'>
+          <div class='form-group' data-open="<%= params[:q] && params[:q].fetch(:variant_full_display_name_or_variant_sku_cont, nil).present? %>">
+            <%= f.label :variant_full_display_name_or_variant_sku_cont, 'Product', class: 'control-label' %>
+            <%= f.text_field :variant_full_display_name_or_variant_sku_cont, class: 'form-control' %>
+          </div>
+        </div>
+        <div class='col-lg-2 col-md-3 col-sm-3 col-xs-6'>
+          <div class='form-group' data-open="<%= params[:q] && params[:q].fetch(:in_stock, nil).to_bool %>">
+            <%= f.label :in_stock, 'Only In Stock', class: 'control-label' %><br>
+            <%= f.check_box :in_stock, class: 'form-control make-switch',
+              'data-size' => 'mini', checked: params.fetch(:q, {}).fetch(:in_stock, nil).to_bool %>
+          </div>
+        </div>
+        <div class='col-lg-2 col-md-3 col-sm-3 col-xs-6'>
+          <div class='form-group' data-open="<%= params[:q] && params[:q].fetch(:include_expired, nil).to_bool %>">
+            <%= f.label :include_expired, 'Include Expired', class: 'control-label' %><br>
+            <%= f.check_box :include_expired, class: 'form-control make-switch',
+              'data-size' => 'mini', checked: params.fetch(:q, {}).fetch(:include_expired, nil).to_bool %>
+          </div>
+        </div>
+        <div class='col-lg-2 col-md-3 col-sm-3 col-xs-6'>
+          <div class='form-group' data-open="<%= params[:q] && params[:q].fetch(:include_archived, nil).to_bool %>">
+            <%= f.label :include_archived, 'Include Archived', class: 'control-label' %><br>
+            <%= f.check_box :include_archived, class: 'form-control make-switch',
+              'data-size' => 'mini', checked: params.fetch(:q, {}).fetch(:include_archived, nil).to_bool %>
+          </div>
+        </div>
+      </div>
+      <div class='row'>
+        <div class='col-sm-6'>
+          <div class='form-group' data-open="<%= params[:q] && (params[:q].fetch(:created_at_gteq, nil).present? || params[:q].fetch(:created_at_lteq, nil).present?) %>">
+            <label>Created At</label>
+            <%= render partial: 'spree/shared/forms/fields/date_range', locals: {f: f, date_key: :created_at, company: @vendor} %>
+          </div>
+        </div>
+        <div class='col-sm-6'>
+          <div class='form-group' data-open="<%= params[:q] && (params[:q].fetch(:available_at_gteq, nil).present? || params[:q].fetch(:available_at_lteq, nil).present?) %>">
+            <label>Available At</label>
+            <%= render partial: 'spree/shared/forms/fields/date_range', locals: {f: f, date_key: :available_at, company: @vendor} %>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class='col-sm-6'>
+          <div class='form-group' data-open="<%= params[:q] && (params[:q].fetch(:sell_by_gteq, nil).present? || params[:q].fetch(:sell_by_lteq, nil).present?) %>">
+            <label>Sell By</label>
+            <%= render partial: 'spree/shared/forms/fields/date_range', locals: {f: f, date_key: :sell_by, company: @vendor} %>
+          </div>
+        </div>
+        <div class='col-sm-6'>
+          <div class='form-group' data-open="<%= params[:q] && (params[:q].fetch(:expires_at_gteq, nil).present? || params[:q].fetch(:expires_at_lteq, nil).present?) %>">
+            <label>Expires At</label>
+            <%= render partial: 'spree/shared/forms/fields/date_range', locals: {f: f, date_key: :expires_at, company: @vendor} %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <div class="row">
+        <div class="col-md-12">
+          <div class='btn-set pull-right'>
+            <button type="submit" class="btn green"><i class="fa fa-search" aria-hidden="true"></i> Search</button>
+              <%= link_to manage_lots_path, class: "btn default" do %>
+                <i class='fa fa-times'></i> Reset
+              <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

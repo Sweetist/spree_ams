@@ -1,0 +1,8 @@
+<%= f.field_container :company_id, class: ['form-group'] do %>
+	<%= f.label :customer_id, "Company" %>
+  <input type="text" name="user[company_id]" id="user_company_id" class='company_id' value='<%= @user.try(:company_id) %>'>
+  <% company = Spree::Company.find_by_id(@user.try(:company_id)) %>
+  <% if company %>
+    Link: <%= link_to company.try(:name), edit_admin_company_path(company) %>
+  <% end %>
+<% end %>

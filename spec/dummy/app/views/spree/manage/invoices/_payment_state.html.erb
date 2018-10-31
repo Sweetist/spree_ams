@@ -1,0 +1,24 @@
+<% status = @invoice.payment_status(true) %>
+<label class="btn btn-sm circle payment_status <%= status %> margin-right-10">
+  <%= Spree.t(status, scope: :payment_statuses, default: [:missing, '']).to_s.titleize %>
+</label>
+<% if current_spree_user.can_write?('payments', 'order') %>
+  <% if @invoice.payment_state == 'paid' %>
+    <!-- <%#= link_to mark_unpaid_manage_invoice_path(@invoice), class: 'btn btn-sm btn-outline red', method: :post, remote: true do %>
+      <i class='fa fa-undo'></i> <%#= Spree.t('payment_actions.mark.unpaid') %>
+    <%# end %> -->
+  <% elsif @invoice.payment_state == 'credit_owed' && @invoice.order_payments.empty? %>
+    <!-- <%#= link_to mark_unpaid_manage_invoice_path(@invoice), class: 'btn btn-sm btn-outline red', method: :post, remote: true do %>
+      <i class='fa fa-undo'></i>
+      <%# if @invoice.state == 'void' %>
+        <%#= Spree.t('payment_actions.mark.void') %>
+      <%# else %>
+        <%#= Spree.t('payment_actions.mark.unpaid') %>
+      <%# end %>
+    <%# end %> -->
+  <% elsif ['unpaid', 'balance_due'].include?(@invoice.payment_state) %>
+    <%= link_to mark_paid_manage_invoice_path(@invoice), class: 'btn btn-sm btn-outline green disable-after-click', method: :post, remote: true do %>
+      <i class='fa fa-check'></i> <%= Spree.t('payment_actions.mark.paid') %>
+    <% end %>
+  <% end %>
+<% end %>

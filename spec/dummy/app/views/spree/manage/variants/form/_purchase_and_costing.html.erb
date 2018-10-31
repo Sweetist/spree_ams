@@ -1,0 +1,15 @@
+<div class='row'>
+  <div class='col-xs-12'>
+    <h3 id='purchase_and_costing_title'>
+      <% if f.object.try(:for_purchase?) %>
+        Purchase and Costing
+      <% else %>
+        Costing
+      <% end %>
+    </h3>
+  </div>
+    <% if f.object.try(:for_purchase?) %>
+    <%= render partial: 'spree/manage/variants/form/purchasing', locals: {f: f} %>
+    <% end %>
+    <%= render partial: 'spree/manage/variants/form/costing', locals: {f: f} %>
+</div>

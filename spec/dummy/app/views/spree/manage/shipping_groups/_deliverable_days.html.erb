@@ -1,0 +1,102 @@
+<div class="mt-element-step form-group">
+  <div class="row">
+    <div id="sun" class="btn btn-default equal-width-buttons <%='green' if @shipping_group.delivery_on_sunday%>">
+        <%= f.hidden_field :delivery_on_sunday, id: "sun_input"%>
+        <div id="date_font" class="uppercase">Sun</div>
+    </div>
+    <div id="mon" class="btn btn-default equal-width-buttons <%='green' if @shipping_group.delivery_on_monday%>">
+        <%= f.hidden_field :delivery_on_monday, id: "mon_input"%>
+        <div id="date_font" class="uppercase">Mon</div>
+    </div>
+    <div id="tue" class="btn btn-default equal-width-buttons <%='green' if @shipping_group.delivery_on_tuesday%>">
+        <%= f.hidden_field :delivery_on_tuesday, id: "tue_input"%>
+        <div id="date_font" class="uppercase">Tue</div>
+    </div>
+    <div id="wed" class="btn btn-default equal-width-buttons <%='green' if @shipping_group.delivery_on_wednesday%>">
+        <%= f.hidden_field :delivery_on_wednesday, id: "wed_input"%>
+        <div id="date_font" class="uppercase">Wed</div>
+    </div>
+    <div id="thur" class="btn btn-default equal-width-buttons <%='green' if @shipping_group.delivery_on_thursday%>">
+        <%= f.hidden_field :delivery_on_thursday, id: "thur_input"%>
+        <div id="date_font" class="uppercase">Thr</div>
+    </div>
+    <div id="fri" class="btn btn-default equal-width-buttons <%='green' if @shipping_group.delivery_on_friday%>">
+        <%= f.hidden_field :delivery_on_friday, id: "fri_input"%>
+        <div id="date_font" class="uppercase">Fri</div>
+    </div>
+    <div id="sat" class="btn btn-default equal-width-buttons <%='green' if @shipping_group.delivery_on_saturday%>">
+        <%= f.hidden_field :delivery_on_saturday, id: "sat_input"%>
+        <div id="date_font" class="uppercase">Sat</div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+$(document).ready(function(){
+    $('#mon').click(function() {
+        if ($("#mon_input").val() === "false") {
+          $('#mon').addClass('green');
+          $('#mon_input').val('true')
+        } else {
+          $('#mon').removeClass('green');
+          $('#mon_input').val('false');
+        }
+    });
+    $('#tue').click(function() {
+        if ($("#tue_input").val() === "false") {
+          $('#tue').addClass('green');
+          $('#tue_input').val('true')
+        } else {
+          $('#tue').removeClass('green');
+          $('#tue_input').val('false');
+        }
+    });
+    $('#wed').click(function() {
+        if ($("#wed_input").val() === "false") {
+          $('#wed').addClass('green');
+          $('#wed_input').val('true')
+        } else {
+          $('#wed').removeClass('green');
+          $('#wed_input').val('false');
+        }
+    });
+    $('#thur').click(function() {
+        if ($("#thur_input").val() === "false") {
+          $('#thur').addClass('green');
+          $('#thur_input').val('true')
+        } else {
+          $('#thur').removeClass('green');
+          $('#thur_input').val('false');
+        }
+    });
+    $('#fri').click(function() {
+        if ($("#fri_input").val() === "false") {
+          $('#fri').addClass('green');
+          $('#fri_input').val('true')
+        } else {
+          $('#fri').removeClass('green');
+          $('#fri_input').val('false');
+        }
+    });
+    $('#sat').click(function() {
+        if ($("#sat_input").val() === "false") {
+          $('#sat').addClass('green');
+          $('#sat_input').val('true')
+        } else {
+          $('#sat').removeClass('green');
+          $('#sat_input').val('false');
+        }
+    });
+    $('#sun').click(function() {
+        if ($("#sun_input").val() === "false") {
+          $('#sun').addClass('green');
+          $('#sun_input').val('true')
+        } else {
+          $('#sun').removeClass('green');
+          $('#sun_input').val('false');
+        }
+    });
+
+});
+</script>

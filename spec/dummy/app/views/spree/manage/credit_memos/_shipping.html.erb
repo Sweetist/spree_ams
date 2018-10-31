@@ -1,0 +1,19 @@
+<tbody style='border-top: none;'>
+  <tr class="adjustment">
+    <td colspan="<%= colspan_left %>"></td>
+    <td colspan="<%= colspan_right %>">
+      <% if available_methods.present? %>
+        Shipment via:
+          <%= collection_select :credit_memo, :shipping_method_id, available_methods, :id, :name, {include_blank: true}, {class: 'form-control'} %>
+      <% else %>
+        Shipping:
+      <% end %>
+    </td>
+    <td>
+      <div class='price-input margin-top-20'>
+        <label class="currency-label shipment-currency"><%= currency_symbol(currency) %></label>
+        <%= number_field_tag 'credit_memo[shipment_total]', number_with_precision(@credit_memo.shipment_total, precision: 2), step: 0.01, class: 'form-control price-field line-item-price', id: 'credit_memo_shipment_total' %>
+      </div>
+    </td>
+  </tr>
+</tbody>

@@ -1,0 +1,11 @@
+<% if flash[:errors] %>
+  $('#modal-errors').html("<%= j(render(partial: 'spree/shared/errors.html.erb')) %>");
+
+<% else %>
+  <% @discount_accounts = @vendor.chart_accounts.where(chart_account_category_id: Spree::ChartAccountCategory.find_by_name('Discount Account').try(:id)) %>
+  $('#chart_account_name').val('');
+  $('#modal-errors').empty();
+  $('.integration_item_qbo_discount_account_id').replaceWith("<%= j(render(partial: 'spree/manage/integrations/qbo/discount_accounts.html.erb')) %>");
+  $('.integration_item_qbd_discount_account_id').replaceWith("<%= j(render(partial: 'spree/manage/integrations/qbd/discount_accounts.html.erb')) %>")
+  $('#new-chart-account-modal').modal('hide');
+<% end %>

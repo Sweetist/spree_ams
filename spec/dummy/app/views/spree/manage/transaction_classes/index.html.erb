@@ -1,0 +1,56 @@
+<%= content_for :head_title do %>
+  Classes
+<% end %>
+
+<%= content_for :page_title do %>
+  Classes
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Configuration", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <span>Classes</span>
+    </li>
+  </ul>
+  <div class="page-toolbar">
+    <%= link_to new_manage_transaction_class_path, class: "btn green pull-right" do%>
+      <i class="fa fa-plus"></i>&nbsp;New Class
+    <% end %>
+  </div>
+<% end %>
+
+<div class="content">
+  <%= search_form_for [:manage, @search] do |f| %>
+    <%= render partial: 'advanced_search', locals: {f: f} %>
+  <% end %>
+  <table class="table table-striped table-hover">
+    <thead>
+        <tr>
+          <th class='no-sort delete-column'></th>
+          <th>
+          </th>
+        </tr>
+    </thead>
+    <tbody>
+      <% @txn_classes.each do |txn_class| %>
+        <tr id="transaction-class-<%= txn_class.id %>">
+          <td class='delete-column'>
+            <%= link_to manage_transaction_class_path(txn_class), method: :delete, data: {confirm: "Are you sure?"},
+              class: 'btn btn-xs red delete-row-btn close-button', remote: true do %>
+              <i class='fa fa-times'></i>
+            <% end %>
+          </td>
+          <td><%= link_to txn_class.fully_qualified_name, edit_manage_transaction_class_path(txn_class.id) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

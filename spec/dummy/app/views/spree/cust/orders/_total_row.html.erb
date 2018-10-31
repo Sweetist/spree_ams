@@ -1,0 +1,76 @@
+<tbody id='totals-row'>
+  <% colspan = 2 %>
+  <% colspan += 1 if @order.vendor.try(:include_total_weight) %>
+  <tr class="totals" id='totals-row'>
+    <td colspan="<%= colspan_left %>"></td>
+    <td><strong>Total:</strong></td>
+    <% if @order.shipped? || @order.received? %>
+      <td><%= @order.line_items.sum(:ordered_qty) %></td>
+      <% colspan += 1 %>
+      <% if @order.vendor.try(:receive_orders) %>
+        <td><%= @order.line_items.sum(:shipped_qty) %></td>
+        <% colspan += 1 %>
+      <% end %>
+    <% end %>
+    <td><strong> <%= @order.line_items.sum(:quantity) %></strong></td>
+    <% if @order.vendor.try(:include_total_weight) %>
+      <td>
+        <strong><%= @order.display_total_weight_in(@order.vendor.weight_units) %><strong>
+      </td>
+    <% end %>
+    <td>
+      <strong>
+        <span class='total-price'>
+          <%= display_sweet_price(@order.total, @order.currency) %>
+        </span>
+      </strong>
+    </td>
+  </tr>
+  <% if @order.vendor && @order.vendor.cust_can_view?('order', 'payment_state') || @order.account.payment_due_before_submit? %>
+    <tr class="totals">
+      <td colspan='<%= colspan_left %>'></td>
+      <td colspan='<%= colspan %>'>
+        Paid:
+      </td>
+      <td>
+        <% if @order.payments.present? %>
+          <%= link_to display_sweet_price(@order.paid_or_pending_balance, @order.currency), '#payments', data:{toggle: 'modal', target:'#payments-modal'} %>
+        <% else %>
+          <%= display_sweet_price(@order.payment_total + @order.pending_balance, @order.currency) %>
+        <% end %>
+      </td>
+    </tr>
+    <tr class="totals">
+      <td colspan='<%= colspan_left %>'></td>
+      <td colspan='<%= colspan %>'>
+        Balance Due:
+      </td>
+      <td>
+        <%= display_sweet_price(@order.remaining_balance, @order.currency) %>
+      </td>
+    </tr>
+    <% unless @order.vendor.payment_methods.active.none? || @order.paid? || @order.final_payments_pending? || States[@order.state] < States['cart'] %>
+      <tr class="totals">
+        <td colspan='<%= colspan_left %>'></td>
+        <td colspan='<%= colspan + 1 %>'>
+          <%= link_to '#payment', data:{toggle: 'modal', target:'#payment-modal'}, class: 'btn green-jungle pull-right margin-bottom-20 new-payment-btn' do %>
+            <i class='fa fa-plus'></i> New Payment
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  <% end %>
+</tbody>
+
+<script type='text/javascript'>
+  var shippingMethod = <%= @order.active_shipping_calculator %>
+  $('.new-payment-btn').click(function(){
+    $.ajax({
+      method: 'GET',
+      url: '<%= new_order_payment_path(@order) %>' + '.js',
+      data: {
+        order_id: '<%= @order.id %>'
+      }
+    });
+  });
+</script>

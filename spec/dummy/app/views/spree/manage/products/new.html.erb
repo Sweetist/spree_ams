@@ -1,0 +1,100 @@
+<%= content_for :head_title do %>
+  <%= @vendor.name %> - New Product
+<% end %>
+
+<%= content_for :page_title do %>
+  New Product
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Products", manage_products_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <span class="font-blue-madison bold uppercase">
+        New Product
+      </span>
+    </li>
+  </ul>
+
+<% end %>
+<div class="portlet light no-padding">
+  <%= form_for [:manage, @product], url: manage_products_path, method: "post", html: {class: 'product_form'} do |f| %>
+    <div class="portlet-body form">
+      <div class="form-body">
+        <%= render partial: 'spree/manage/products/form', locals: {f: f} %>
+      </div>
+      <div class="form-actions">
+        <div class="links pull-right">
+          <%= link_to manage_products_path, class: 'btn btn-default' do %>
+          <i class='fa fa-times'></i> Cancel
+          <% end %>
+          <button class="btn btn-primary">
+            <i class='fa fa-check'></i> Save
+          </button>
+          <%#= hidden_field_tag("product[sub_list]", "", id: "sub_list") %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>
+<%= render partial: 'spree/manage/option_types/modal/edit' %>
+<script type='text/javascript'>
+var toggleCostPrice = function(){
+  var costingMethod = $('#variant_costing_method').val();
+  $('.cost-price-container').each(function(){
+    if($(this).attr('id') === (costingMethod + '-cost-price-container')){
+      $(this).show();
+    }else{
+      $(this).hide();
+    }
+  });
+}
+
+$(document).ready(function(){
+  var ot0 = $('#product_product_option_types_attributes_0_option_type_id').val();
+  var ot1 = $('#product_product_option_types_attributes_1_option_type_id').val();
+  var ot2 = $('#product_product_option_types_attributes_2_option_type_id').val();
+  var ot3 = $('#product_product_option_types_attributes_3_option_type_id').val();
+
+  $('.option-type-select').change(function(){
+    handleOptionTypeChange(ot0, ot1, ot2, ot3, this);
+  });
+
+  toggleCostPrice();
+  initAssembly();
+  // $('a.parent-details').click(function(e){
+  //   e.preventDefault();
+  //   $('.parent-details').toggleClass('hidden');
+  // });
+  $('a.toggle-variants').click(function(e){
+    e.preventDefault();
+    $('.toggle-variants').toggleClass('hidden');
+    var $selectedTab = $('.long-tabs-link.active');
+    if($(this).data('use-variants')){
+      $('#variants-tab-link').trigger('click');
+    }else{
+      $('#general-tab-link').trigger('click');
+    }
+  });
+  $('#variant_costing_method').change(toggleCostPrice);
+
+  $('#product_master_attributes_preferred_vendor_account_id').change(function(){
+    if($(this).val() === ''){
+      $('#add-to-vendor-list-msg').addClass('hidden');
+      return;
+    }
+    if($('#product_master_attributes_vendor_account_ids').val().indexOf($(this).val()) === -1){
+      $('#add-to-vendor-list-msg').removeClass('hidden');
+    }else{
+      $('#add-to-vendor-list-msg').addClass('hidden');
+    }
+  });
+});
+</script>

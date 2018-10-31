@@ -1,0 +1,55 @@
+<div class="col-md-6 col-sm-12" id='order-details'>
+  <div class="portlet blue-hoki box">
+    <div class="portlet-title">
+      <div class="caption">
+        <i class="fa fa-cogs"></i><%= @order.customer.name %>
+      </div>
+    </div>
+      <div class="portlet-body">
+        <div class="row static-info">
+          <div class="col-md-5 name"> Purchase Order #:</div>
+          <div class="col-md-7 value" id='order-number'><%= @order.po_display_number %></div>
+          <span class='hidden' id='full-order-number'><%= @order.number %></span>
+        </div>
+        <div class="row static-info">
+          <div class="col-md-5 name"> Purchase Order Date:</div>
+          <div class="input-icon right col-md-7 value">
+            <input data-provide="datepicker" type="text" name="order[invoice_date]"
+              value="<%= display_vendor_date_format(@order.delivery_date, @order.customer.date_format) unless @order.delivery_date.blank? %>"
+              class="form-control date-picker" data-date-format="<%= @order.customer.date_format %>" id="purchase-date">
+          </div>
+        </div>
+        <% @order.custom_attrs.keys.each do |channel| %>
+          <%= render partial: "spree/shared/orders/channel/#{channel.downcase}/order_details", locals: {f: f} %>
+        <% end %>
+        <div class="row static-info">
+          <div class="col-md-5 name"> Order Status: </div>
+          <div class="col-md-7 value"> <%= @order.state_text %> </div>
+        </div>
+        <div class="row static-info">
+          <div class="col-md-5 name"> Item Count: </div>
+          <div class="col-md-7 value"><span class='item-count'><%= @order.item_count %></span> </div>
+        </div>
+        <div class="row static-info">
+          <div class="col-md-5 name"> Total: </div>
+          <div class="col-md-7 value"> <span class='total-price'><%= display_sweet_price(@order.total, @order.currency) %></span> </div>
+        </div>
+        <div class="row static-info" id='tracking-fields'>
+          <%= render partial: 'spree/shared/purchase_orders/tracking_fields' %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <script type = "text/javascript">
+
+$(document).ready(function() {
+  $('#purchase-date').datepicker({
+    todayHighlight: true,
+    autoclose: true,
+    changeMonth: true,
+    orientation: "bottom auto"
+  });
+});
+</script>

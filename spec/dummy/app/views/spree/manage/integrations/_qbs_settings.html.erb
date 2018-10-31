@@ -1,0 +1,56 @@
+<div class="portlet-body form">
+  <div class="form-body">
+    <div class="row static-info">
+      <div class="row">
+        <div class="col-md-3 name">Password</div>
+        <div class="col-md-9 value">
+        <%= @integration.qbs_password %>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-3 name">Match Quickbooks Item Name to</div>
+        <div class="col-md-9 value">
+        <%= @integration.qbs_match_with_name ? 'Product Name in Sweet' : 'Product SKU in Sweet' %>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-3 name">Send Order as</div>
+        <div class="col-md-9 value">
+        <%= @integration.qbs_send_as_invoice ? 'Invoice' : 'SalesOrder' %>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-3 name">Send Order changes as Credit Memo</div>
+        <div class="col-md-9 value">
+        <%= @integration.qbs_send_order_changes_as_memo ? 'Yes' : 'No' %>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-3 name">Create Customers & Products</div>
+        <div class="col-md-9 value">
+        <%= @integration.qbs_create_related_objects ? 'Yes' : 'No' %>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-3 name">Overwrite conflicts in</div>
+        <div class="col-md-9 value">
+        <%= @integration.qbs_sweet_is_master ? 'Quickbooks' : 'Sweet' %>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-3 name">Use Multi-site Inventory</div>
+        <div class="col-md-9 value">
+        <%= @integration.qbs_use_multi_site_inventory ? 'Yes' : 'No' %>
+        </div>
+      </div>
+      <br>
+      <%= render partial: "spree/manage/integrations/shared/settings", locals: { item: @integration } %>
+    </div>
+  </div>
+</div>

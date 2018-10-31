@@ -1,0 +1,171 @@
+<%= content_for :head_title do %>
+  Shipping Methods
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li><li>
+      <%= link_to "Shipping Methods", manage_shipping_methods_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+		<li>
+      <span><%= @shipping_method.name %></span>
+    </li>
+  </ul>
+	<div class="page-toolbar">
+    <div class="btn-group pull-right">
+      <% if current_spree_user.can_write?('shipping_methods', 'settings') %>
+  		  <%= link_to new_manage_shipping_method_path, class: "btn green pull-right" do%>
+          <i class="fa fa-plus"></i>&nbsp;New Shipping Method
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
+<div class='row'>
+  <div class="portlet light">
+
+    <div class="portlet-title">
+      <div class="caption">
+        <span class="caption-subject font-blue-madison bold uppercase">
+          Shipping Method: <%= @shipping_method.name %>
+        </span>
+      </div>
+      <% if current_spree_user.can_write?('shipping_methods', 'settings') %>
+  		  <%= link_to edit_manage_shipping_method_path(@shipping_method), class: "btn btn-primary pull-right" do%>
+          <i class="fa fa-pencil"></i>&nbsp;Edit
+        <% end %>
+      <% end %>
+    </div>
+
+    <div class="portlet-body form">
+      <div class="form-body">
+        <div class='row'>
+          <div class="col-md-6">
+            <div class="row static-info">
+              <div class="col-md-5 name">Name:</div>
+              <div class="col-md-7 value"><%= @shipping_method.name %></div>
+            </div>
+            <div class="row static-info">
+              <div class="col-md-5 name">Code:</div>
+              <div class="col-md-7 value"><%= @shipping_method.code %></div>
+            </div>
+            <div class="row static-info">
+              <div class="col-md-5 name">Tax Category:</div>
+              <div class="col-md-7 value">
+                <%= @shipping_method.tax_category.try(:name) %>
+              </div>
+            </div>
+            <div class="row static-info">
+              <div class="col-md-5 name">Set Shipping Rate as 'TBD':</div>
+              <div class="col-md-7 value">
+                <%= @shipping_method.rate_tbd ? Spree.t(:say_yes) : Spree.t(:say_no) %>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class='row'>
+          <div class="col-md-4">
+            <h3 class="form-section">Shipping Categories</h3>
+            <div class="row static-info">
+              <div class="col-md-12 value">
+                <%= raw @shipping_method.shipping_categories.pluck(:name).join(" <i class='fa fa-circle' style='font-size: 5px; vertical-align: middle;'></i> ") %>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <h3 class="form-section">Shipping Zones</h3>
+            <div class="row static-info">
+              <div class="col-md-12 value">
+                <%= raw @shipping_method.zones.pluck(:name).join(" <i class='fa fa-circle' style='font-size: 5px; vertical-align: middle;'></i> ") %>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <h3 class="form-section">Shipping Calculator</h3>
+            <div class="row static-info">
+              <div class="col-md-3 name">Calculator:</div>
+              <% @calc_type = @shipping_method.calculator.display_description %>
+                <div class="col-md-9 value"><%= @calc_type %></div>
+            </div>
+
+            <div id="show-calculator-preference">
+              <% if @calc_type == 'flat_rate' %>
+                <div id="flat_rate">
+                  <div class="row static-info">
+                    <div class="col-md-3 name">Amount:</div>
+                    <div class="col-md-9 value"><%= display_sweet_price(@shipping_method.calculator.preferences[:amount], @shipping_method.calculator.preferences[:currency]) %></div>
+                  </div>
+                </div>
+              <% elsif @calc_type == 'flexi_rate' %>
+                <div id="flexi_rate">
+                  <div class="row static-info">
+                    <div class="col-md-3 name">First Item:</div>
+                    <div class="col-md-9 value"><%= @shipping_method.calculator.preferences[:first_item] %></div>
+                  </div>
+                  <div class="row static-info">
+                    <div class="col-md-3 name">Additional Item:</div>
+                    <div class="col-md-9 value"><%= @shipping_method.calculator.preferences[:additional_item] %></div>
+                  </div>
+                  <div class="row static-info">
+                    <div class="col-md-3 name">Max Items;</div>
+                    <div class="col-md-9 value"><%= @shipping_method.calculator.preferences[:max_items] %></div>
+                  </div>
+                </div>
+              <% elsif @calc_type == 'per_item' %>
+                <div id="per_item">
+                  <div class="row static-info">
+                    <div class="col-md-3 name">Amount:</div>
+                    <div class="col-md-9 value">
+                      <%= display_sweet_price(@shipping_method.calculator.preferences[:amount], @shipping_method.calculator.preferences[:currency]) %>
+                    </div>
+                  </div>
+                </div>
+              <% elsif @calc_type == 'price_sack' %>
+                <div id="price_sack">
+                  <div class="row static-info">
+                    <div class="col-md-3 name">Minimal Amount:</div>
+                    <div class="col-md-9 value">
+                      <%= @shipping_method.calculator.preferences[:minimal_amount] %>
+                    </div>
+                  </div>
+                  <div class="row static-info">
+                    <div class="col-md-3 name">Normal Amount:</div>
+                    <div class="col-md-9 value">
+                      <%= @shipping_method.calculator.preferences[:normal_amount] %>
+                    </div>
+                  </div>
+                  <div class="row static-info">
+                    <div class="col-md-3 name">Discount Amount:</div>
+                    <div class="col-md-9 value">
+                      <%= @shipping_method.calculator.preferences[:discount_amount] %>
+                    </div>
+                  </div>
+                </div>
+              <% elsif @calc_type == 'flat_percent_item_total' %>
+                <div id="flat_percent_item_total" class="<%= 'hidden' unless @calc_type == 'flat_percent_item_total' %>">
+                  <div class="row static-info">
+                    <div class="col-md-3 name">Percent</div>
+                    <div class="col-md-9 value">
+                      <%= @shipping_method.calculator.preferences[:flat_percent] %>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+              <div class="row static-info">
+                <div class="col-md-3 name">Currency:</div>
+                <div class="col-md-9 value">
+                  <%= @shipping_method.calculator.preferences[:currency] || @vendor.currency %>
+                </div>
+              </div>
+            </div><!--/#show-calculator-preference -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

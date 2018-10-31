@@ -1,0 +1,28 @@
+<table>
+  <tr>
+    <td>
+      <p class="lede">
+        Dear <%= @order.vendor.name %>,
+      </p>
+
+      <p>
+        You have an order via Sweet!<br>
+        Below is the order information. Please retain it for your records.<br>
+      </p>
+      <p>
+        Click <%= link_to "here", edit_manage_order_url(@order, host: @order.vendor.domain, protocol: 'https') %> to view additional order details.<br>
+      </p>
+
+      <!-- Order Summary -->
+      <%= render partial: 'mailers/spree/shared/vendor_mailer_order_summary_table' %>
+
+      <!-- Order Items Summary -->
+      <%= render partial: 'mailers/spree/shared/mailer_line_items_table' %>
+
+      <p>
+        Thank you for your business!
+      </p>
+    </td>
+    <td class="expander"></td>
+  </tr>
+</table>

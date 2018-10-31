@@ -1,0 +1,13 @@
+<tbody>
+  <tr>
+    <td colspan='<%= colspan_left %>'></td>
+    <td colspan='<%= colspan_right %>'><strong>Total:</strong></td>
+    <td>
+      <strong>
+        <span class='total-price'>
+          <%= display_sweet_price(@credit_memo.total, @credit_memo.currency) %>
+        </span>
+      </strong>
+    </td>
+  </tr>
+</tbody>

@@ -1,0 +1,90 @@
+<% payment = account_order.payments.new() %>
+<%= fields_for 'payments_attributes[]', payment do |ff| %>
+  <tr data-order-id="<%= account_order.id %>">
+    <td>
+    <%= ff.hidden_field :order_id %>
+    <%= ff.hidden_field :payment_method_id, value: inner_payment_method.id %>
+      <input type='checkbox' name='payments_attributes[][check]' class='checkboxes noUniform'>
+    </td>
+    <td>
+      <%= link_to edit_manage_order_path(account_order), target: '_blank' do %>
+        <%= account_order.display_order_and_invoice_number %>
+      <% end %>
+    </td>
+    <td><%= display_vendor_date_format(account_order.delivery_date, @vendor.date_format) %></td>
+    <td><%= display_vendor_date_format(account_order.due_date, @vendor.date_format) %></td>
+    <td><%= display_sweet_price(account_order.total, account_order.currency) %></td>
+    <td><%= display_sweet_price(account_order.outstanding_balance, account_order.currency) %></td>
+    <td>
+      <div class='price-input'>
+        <label class="currency-label"><%= currency_symbol(account_order.currency) %></label>
+        <%= ff.number_field :amount, in: 0..account_order.outstanding_balance, step: '0.01', class: 'form-control price-field payment-amount' %>
+      </div>
+    </td>
+  </tr>
+<% end %>
+<script>
+  var currency = '<%= currency_symbol(@vendor.currency) %>';
+  $(document).ready(function(){
+    top.countCheck = 0;
+    var formatNumber = function(num) {
+      return currency + num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
+    }
+
+    $('#order-body input:checkbox').click(function(event){
+      top.countCheck += 1;
+      event.stopImmediatePropagation();
+      var amount = $('#account_payment_amount');
+      var credit_to_apply = $('#account_payment_credit_to_apply').val();
+      var chRow = $('#order-body tr').filter(':has(:checkbox:checked)');
+      var unchRow = $('#order-body tr').filter(':has(:checkbox:not(:checked))');
+      var total = 0;
+      unchRow.each(function(){
+        $(this).find('.payment-amount').val(0);
+      });
+      chRow.each(function(index){
+        if ($(this).find('.payment-amount').val() != 0) {
+          total += parseFloat($(this).find('.payment-amount').val());
+        } else {
+          total += parseFloat(this.cells[5].innerText.substring(1).replace(/,/g, ''));
+          $(this).find('.payment-amount').val(parseFloat(chRow[index].cells[5].innerText.substring(1).replace(/,/g, '')));
+        }
+      });
+      if (top.amountToApply > 0) {
+        atc = parseFloat(amount.val()) + parseFloat(credit_to_apply) - total.toFixed(2);
+        if (atc > 0) {
+          $('.amount-to-credit')[0].innerText = currency + parseFloat(atc).toFixed(2);
+        } else {
+          $('.amount-to-credit')[0].innerText = currency + parseFloat(0).toFixed(2);
+        };
+        return;
+      }
+      amount.val(total.toFixed(2));
+      amountToCredit = parseFloat(amount.val()) + parseFloat(credit_to_apply) - total.toFixed(2);
+      $('.amount-to-credit')[0].innerText = currency + parseFloat(amountToCredit).toFixed(2);
+      $('.amount-to-apply')[0].innerText = formatNumber((parseFloat(total.toFixed(2))+parseFloat(credit_to_apply)).toFixed(2));
+    });
+    $('.payment-amount').change(function(event){
+      event.stopImmediatePropagation();
+      total = 0;
+      var amount = $('#account_payment_amount');
+      var credit_to_apply = $('#account_payment_credit_to_apply').val();
+      var amount2 = $(".payment-amount");
+      for (var i = 0; i < amount2.length; i++) {
+        var balance = parseFloat($('#order-body tr')[i].cells[5].innerText.substring(1));
+        if (amount2[i].value > 0) {
+          total += parseFloat(amount2[i].value);
+          $("[name='payments_attributes[][check]']")[i].checked = true;
+        } else {
+          $("[name='payments_attributes[][check]']")[i].checked = false;
+        }
+      }
+      amountToCredit = parseFloat(amount.val()) + parseFloat(credit_to_apply) - total.toFixed(2);
+      if (amountToCredit > 0) {
+        $('.amount-to-credit')[0].innerText = currency + parseFloat(amountToCredit).toFixed(2);
+      } else {
+        $('.amount-to-credit')[0].innerText = currency + parseFloat(0).toFixed(2);
+      };
+    });
+  });
+</script>

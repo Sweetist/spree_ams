@@ -1,0 +1,31 @@
+<table>
+  <tr>
+    <td>
+      <p>
+        Dear <%= @vendor.name %>,
+        <br>
+      </p>
+      <% if @errors.present? %>
+        <p>
+          The following <%= pluralize(@errors.length, 'error') %> occurred while trying to delete your data:
+        </p>
+        <ul>
+          <% @errors.each do |error| %>
+            <li><%= error %></li>
+          <% end %>
+        </ul>
+
+        <p>
+          If you require assistance, please reach out to the Sweet Support Team over chat or at help@getsweet.com
+        </p>
+      <% else %>
+        <p>
+          Your data has been successfully deleted.
+        </p>
+      <% end %>
+
+      <br>
+    </td>
+    <td class="expander"></td>
+  </tr>
+</table>

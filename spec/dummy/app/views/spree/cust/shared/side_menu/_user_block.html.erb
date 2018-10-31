@@ -1,0 +1,15 @@
+<div class="app-user-block">
+  <!-- <div class="photo online"> -->
+  <div class="photo">
+    <%=image_tag("frontend/avatar.png")%>
+  </div>
+
+  <div class="info tablet-hide">
+    <p class="user-name"><%= current_spree_user.firstname.capitalize %> <%= current_spree_user.lastname.capitalize %></p>
+    <% if current_spree_user.position %>
+      <p class="user-role"><%= current_spree_user.position.capitalize %></p>
+    <% end %>
+  </div>
+
+  <div class="clear"></div>
+</div>

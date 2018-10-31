@@ -1,0 +1,114 @@
+<div class='form-container one-column-form'>
+  <% if flash[:notice] %>
+    <div class="alert alert-info alert-auto-dissapear">
+      <%= flash[:notice] %>
+    </div>
+  <% end %>
+  <% if flash[:warning] %>
+    <div class="alert alert-warning alert-dismissable">
+      <button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
+      <%= flash[:warning] %>
+    </div>
+  <% end %>
+  <% if flash[:success] %>
+    <div class="alert alert-success alert-auto-dissapear">
+      <%= flash[:success] %>
+    </div>
+  <% end %>
+  <% if flash[:error] %>
+    <div class="alert alert-danger alert-dismissable">
+      <button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
+      <%= flash[:error] %>
+    </div>
+  <% end %>
+  <%= render partial: 'spree/shared/errors' %>
+
+  <h4>Complete your registration below</h4>
+
+  <hr style='border-top: 1px solid #dde3ec;'>
+  <div class="contact-form">
+    <%= form_for @user, url: sign_up_path(@user), html: {class: "horizontal-form"} do |f| %>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group">
+            <%= f.label :firstname, 'First Name', class: "control-label" %><br>
+            <%= f.text_field :firstname, :value => @user.firstname, class: "form-control" %>
+          </div>
+        </div>
+        <div class="col-md-12">
+          <div class="form-group">
+            <%= f.label :lastname, 'Last Name', class: "control-label" %><br>
+            <%= f.text_field :lastname, :value => @user.lastname, class: "form-control" %>
+          </div>
+        </div>
+        <div class="col-md-12">
+          <div class="form-group">
+            <%= f.label :email, class: "control-label" %><br>
+            <%= f.text_field :email, :value => @user.email, class: "form-control" %>
+          </div>
+        </div>
+        <div class="col-md-12">
+          <div class="form-group">
+            <%= f.label :phone, class: "control-label" %><br>
+            <%= f.text_field :phone, :value => @user.phone, class: "form-control" %>
+          </div>
+        </div>
+        <div class="col-md-12">
+          <div class="form-group">
+            <%= f.label :company_name, class: "control-label" %><br>
+            <%= f.text_field :company_name, :value => @contact.accounts.try(:first).try(:customer).try(:name), class: "form-control", readonly: true %>
+          </div>
+        </div>
+        <div class="col-md-6" style="display:none;">
+          <div class="form-group">
+            <%= f.label :id, class: "control-label" %><br>
+            <%= f.text_field :id, :value => @contact.id, class: "form-control" %>
+          </div>
+        </div>
+
+        <div class="col-md-12">
+          <div class="form-group">
+            <%= f.label :password, class: "control-label" %>
+            <%= f.password_field :password, class: "form-control" %>
+          </div>
+        </div>
+        <div class="col-md-12">
+          <div class="form-group">
+            <%= f.label :password_confirmation, class: "control-label" %>
+            <%= f.password_field :password_confirmation, class: "form-control" %>
+          </div>
+        </div>
+      </div>
+
+      <div class='row'>
+        <div class='col-md-12'>
+          <div class='form-group' style='border-top: 1px solid #dde3ec;'>
+            <div class='pull-right'>
+              <button class='btn btn-primary join-btn margin-top-20'><i class='fa fa-check'></i>
+                <%= Spree.t(:Join) %>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+
+<script type='text/javascript'>
+
+  $( document ).ready(function() {
+    $(".join-btn").click(function(event){
+      event.preventDefault();
+      if ($("#user_password").val() !== $("#user_password_confirmation").val() ) {
+        alert("Passwords did not match.");
+      }else if ($("#user_password").val().length < 6 || $("#user_password_confirmation").val().length < 6 ) {
+        alert("Password is less than 6 characters.");
+      }else{
+        $(this).unbind().click();
+      }
+    });
+  });
+
+</script>

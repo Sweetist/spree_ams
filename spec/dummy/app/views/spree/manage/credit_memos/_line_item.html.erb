@@ -1,0 +1,85 @@
+<% variant = line_item.variant %>
+<% line_is_editable = true %>
+<%= credit_memo_form.fields_for :credit_line_items, line_item do |item_form| %>
+  <% url = variant.is_master ? manage_product_path(variant.product) : manage_product_variant_path(variant.product, variant) %>
+
+  <tbody id="line_item_<%= line_item.id %>" data-formlineid="<%= item_form.index %>" data-id="<%= line_item.id %>" data-pos="<%= line_item.position %>" class="line-item-row">
+    <tr data-formlineid="<%= item_form.index %>" data-id="<%= line_item.id %>" class="line-item-row">
+      <td style='width: 20px; padding-right: 0px;'><i class="fa fa-reorder"></i></td>
+      <td style='width: 20px;'>
+        <% if line_is_editable %>
+          <div class="cel">
+            <%= link_to raw("<i class='fa fa-times'></i>"), {format: :js, action: :unpopulate, credit_memo_id: @credit_memo.id, line_item_id: line_item.id, item_form_idx: item_form.index},
+              class: 'btn btn-xs red delete-input-row-btn close-button', id: "delete-item-button-#{line_item.id}", method: :post, remote: true %>
+          </div>
+        <% end %>
+      </td>
+      <td>
+        <% if line_is_editable %>
+          <%= item_form.text_area :item_name, value: line_item.item_name, rows: '1', class: 'form-control-inline-textarea autoresize' %>
+        <% else %>
+          <%= link_to line_item.item_name, url %>
+        <% end %>
+      </td>
+      <td>
+        <a href="<%= url %>" class="cel"><%= line_item.sku %></a>
+      </td>
+      <td>
+        <% if line_is_editable %>
+          <%= item_form.text_field :lot_number, class: 'form-control line-item-area' %>
+        <% else %>
+          <a href="<%= url %>" class="cel"><%= line_item.lot_number %></a>
+        <% end %>
+      </td>
+      <td width="150px">
+        <%= link_to line_item.pack_size.to_s, url %>
+      </td>
+      <% if @vendor.try(:include_unit_weight) %>
+        <td>
+          <%= link_to variant.display_weight, url %>
+        </td>
+      <% end %>
+      <td width="100px" class='price-input'>
+        <% if line_is_editable %>
+          <label class="currency-label"><%= currency_symbol(@vendor.currency) %></label><%= item_form.number_field :price, value: number_with_precision(line_item.price, precision: 2), class: "form-control price-field line-item-price", tabindex: 1, step: 0.01 %>
+        <% else %>
+          <%= link_to display_sweet_price(line_item.price, line_item.currency) %>
+        <% end %>
+      </td>
+      <td>
+        <%= item_form.number_field :quantity, min: 0, step: :any,
+          class: "form-control line-item-qty line-item-number", tabindex: 1,
+          data:{id: item_form.options[:child_index], 'line-id' => line_item.id, quantity: line_item.quantity } %>
+      </td>
+
+      <% if @credit_memo.vendor.try(:include_total_weight) %>
+        <td>
+          <%= link_to line_item.display_weight, url %>
+        </td>
+      <% end %>
+      <td>
+        <%= link_to display_sweet_price(line_item.amount, line_item.currency), url %>
+      </td>
+      <% if @credit_memo.vendor.track_line_item_class? %>
+        <td>
+          <%= item_form.collection_select :txn_class_id, @vendor.transaction_classes, :id, :fully_qualified_name, {include_blank: true}, class: "form-control" %>
+        </td>
+      <% end %>
+    </tr>
+
+    <% if line_item.variant.is_bundle? %>
+      <%= render partial: 'spree/manage/credit_memos/shared/line_item_bundle_parts',
+                 locals: { line_item: line_item,
+                           line_qty: line_item.quantity }  %>
+    <% end %>
+    <% if line_item.variant.is_assembly? && line_item.variant.should_show_parts? %>
+      <%= render partial: 'spree/manage/credit_memos/shared/line_item_assembly_parts',
+                 locals: { line_item: line_item,
+                           line_qty: line_item.quantity }  %>
+    <% end %>
+  </tbody>
+<% end %>
+
+<script type='text/javascript'>
+  resizeTextArea();
+</script>

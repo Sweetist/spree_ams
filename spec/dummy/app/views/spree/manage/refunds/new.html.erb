@@ -1,0 +1,15 @@
+<%= render partial: 'spree/manage/refunds/header/new' %>
+<div class="portlet light">
+  <div class="portlet-title">
+    <div class="caption">
+      <span class="caption-subject font-blue-soft bold uppercase">Refund for Payment: <%= @payment.display_number %></span>
+    </div>
+  </div>
+  <div class='portlet-body'>
+    <div class='row'>
+      <div class='col-md-6'>
+        <%= render partial: 'spree/manage/refunds/body_content/new' %>
+      </div>
+    </div>
+  </div>
+</div>

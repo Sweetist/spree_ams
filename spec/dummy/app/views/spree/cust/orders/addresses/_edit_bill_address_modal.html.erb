@@ -1,0 +1,22 @@
+<%= form_for @account_address_bill, url: order_edit_bill_address_path(order_id: @order.id), method: :post, remote: true do |f| %>
+<div class="modal fade" id="edit-bill-address-modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div id="address_form" class="modal-content">
+      <div class="modal-header">
+        <div class='alert-address-modal'></div>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+        <span class="caption-subject font-blue-madison bold uppercase">Edit Billing Address</span>
+      </div>
+      <div id="address_form" class="modal-body">
+        <%= render partial: "/spree/shared/forms/address_form", locals: {f: f, addr_type: 'billing'} %>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">
+          <i class='fa fa-times'></i> Cancel
+        </button>
+        <%= f.submit "Save Address", class: "btn btn-primary" %>
+      </div>
+    </div>
+  </div>
+</div>
+<% end %>

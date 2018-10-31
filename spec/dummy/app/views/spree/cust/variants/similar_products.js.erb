@@ -1,0 +1,5 @@
+<% if current_vendor_variant_nest_name? %>
+  $('#similar_products').replaceWith("<%= j (render(partial: 'spree/cust/variants/page_content/similar_products.html.erb', locals: {products: @similar_products, variant: @variant})) %>");
+<% else %>
+  $('#similar_products').replaceWith("<%= j (render(partial: 'spree/cust/variants/page_content/similar_avvs.html.erb', locals: {avvs: @similar_products, variant: @variant})) %>");
+<% end %>

@@ -1,0 +1,38 @@
+<%= content_for :head_title do %>
+  Shipments
+<% end %>
+
+<%= content_for :page_title do %>
+  Shipments for Order #<%= @order.display_number %>
+<% end %>
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Orders", manage_orders_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Order ##{@order.display_number}", edit_manage_order_path(@order) %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>Shipments</li>
+  </ul>
+  <div class="page-toolbar">
+    <div class="btn-group pull-right">
+      <%= link_to 'Back to Order', edit_manage_order_path(@order), class: 'btn green btn-sm' %>
+    </div>
+  </div>
+<% end %>
+
+<div class='content'>
+  <%= form_for @order, url: update_all_manage_order_shipments_path, html: {class: 'prevent-double-submission'} do |f| %>
+    <%= f.fields_for :shipments do |ff| %>
+      <%= render partial: 'shipment_options', locals: {f: ff} %>
+    <% end %>
+    <%= f.submit Spree.t(:update), class: 'btn btn-primary' %>
+  <% end %>
+</div>

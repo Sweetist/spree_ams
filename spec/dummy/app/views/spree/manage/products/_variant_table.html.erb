@@ -1,0 +1,114 @@
+<% @discount_price = avv ? avv.price : variant.price %>
+<% can_edit = current_spree_user.can_write?('catalog', 'products') %>
+<% if order_type == 'standing_order' %>
+  <% url = manage_standing_order_product_variant_path(@current_order, @product, variant) %>
+<% else %>
+  <% url = params[:action] == 'edit' ? edit_manage_product_variant_path(@product, variant) : manage_product_variant_path(@product, variant) %>
+<% end %>
+<% col_span = inventory_on ? '4' : '6' %>
+<tr>
+  <td>
+    <%= link_to variant.sku.to_s, url %>
+  </td>
+  <% if use_display_name %>
+    <td>
+      <%= link_to variant.display_name.to_s, url %>
+    </td>
+  <% end %>
+  <% pot_idx = 0 %>
+  <% @product.product_option_types.includes(:option_type).order('spree_product_option_types.position ASC').pluck(:option_type_id).each do |ot_id| %>
+    <td>
+      <%= link_to variant.option_values.where(option_type_id: ot_id).first.try(:presentation).to_s, url %>
+    </td>
+    <% pot_idx += 1 %>
+  <% end %>
+  <% if ['edit', 'update'].include?(params[:action]) %>
+    <% until pot_idx >= Sweet::Application.config.x.max_option_types %>
+      <td></td>
+      <% pot_idx += 1 %>
+    <% end %>
+  <% end %>
+  <td>
+    <%= link_to variant.pack_size.to_s, url %>
+  </td>
+  <% if inventory_on %>
+    <% total_committed = variant.total_committed %>
+    <% total_available = variant.total_available %>
+    <% total_on_hand = [total_committed + total_available, 0].max %>
+    <td>
+      <%= link_to total_on_hand, url %>
+    </td>
+    <td>
+      <%= link_to total_available, url %>
+    </td>
+    <td>
+      <%= link_to total_committed, url %>
+    </td>
+  <% end %>
+  <td>
+    <%= link_to url do %>
+      <%= display_sweet_price(@discount_price, @product.currency) %>
+      <% if @vendor.show_suggested_price && @discount_price.to_d < variant.price  %>
+        <span class="suggested-price">SRP. <span class="price"><%= display_sweet_price(variant.price, @product.currency) %></span>
+      <% end %>
+    <% end %>
+  </td>
+  <td>
+    <%= link_to variant.minimum_order_quantity.to_s, url %>
+  </td>
+  <% if @vendor.lot_tracking %>
+    <td class='track-lot-container'>
+      <% if can_edit && %w[edit update].include?(params[:action])%>
+        <%= check_box_tag :lot_tracking, variant.id, variant.lot_tracking?, class: 'active-switch-lt make-switch', 'data-size' => 'mini' %>
+      <% else %>
+        <%= variant.lot_tracking ? Spree.t(:say_yes) : Spree.t(:say_no) %>
+      <% end %>
+    </td>
+  <% end %>
+
+
+
+  <% if @current_order && variant.discontinued_on.nil? && variant.for_sale? %>
+    <td class='modal-hide'>
+      <% carted = @current_order.line_items.where(variant_id: variant.id).sum(:quantity) %>
+      <input id="variant_qty_<%= variant.id %>" tabindex="1" type="number" name='<%= order_type %>[products][<%= variant.id %>]'
+        class="form-control product-qty" min="0" step='<%= variant.step_size %>'
+        placeholder="<%= "#{carted} in cart" unless carted.zero? %>"
+        <%= 'disabled' if avv.recalculating < Spree::AccountViewableVariant::RecalculatingStatus['complete'] %>>
+    </td>
+  <% end %>
+
+  <% can_build = (can_edit && @vendor.subscription_includes?('assemblies') && variant.parts_variants.present? && variant.variant_type == 'inventory_assembly' && variant.should_track_inventory?) %>
+  <% num_actions = 1 %>
+  <% num_actions += 1 if can_build %>
+  <td class='actions-<%= num_actions %>'>
+    <div class='div-right'>
+      <% if can_build %>
+        <%= link_to '#build_assembly', {data:{toggle: 'modal', target:'#build-assembly-modal', 'variant-id' => "#{variant.id}"}, class: 'btn-build-assembly btn btn-sm green build-btn-square load-parts'} do %>
+          <i class='fa fa-sitemap'></i>
+        <% end %>
+      <% end %>
+      <%= link_to '#variant-modal', {data:{toggle: 'modal', target:'#variant-modal', action: 'edit', 'variant-id' => "#{variant.id}", 'product-id' => "#{variant.product_id}", 'account-id' => "#{@account.try(:id)}"}, class: 'btn btn-sm btn-primary variant-modal-btn', style: 'display:inline;'} do %>
+        <i class='fa fa-pencil'></i>
+      <% end %>
+    </div>
+  </td>
+</tr>
+
+
+<% if @vendor.lot_tracking %>
+  <script type="text/javascript">
+    $('.active-switch-lt').off('switchChange.bootstrapSwitch').on('switchChange.bootstrapSwitch',function() {
+      return $.ajax({
+        url: '/manage/variants/' + this.value + '/toggle_lot_tracking',
+        type: 'PATCH',
+        data: {
+          lot_tracking: $(this).prop('checked'),
+          product_id: <%= @product.id %>
+        },
+        success: function() {
+        }
+      });
+    });
+  </script>
+<% end %>

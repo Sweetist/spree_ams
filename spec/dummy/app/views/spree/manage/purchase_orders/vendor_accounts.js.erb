@@ -1,0 +1,21 @@
+<% if @account.nil? %>
+  $('#account-address-info').replaceWith("<section id='account-address-info' class='alert alert-warning alert-dismissable'> <button type='button' class='close' data-dismiss='alert' aria-hidden='true'></button> Could not find account</section>");
+<% else %>
+  <% if !@account.can_select_delivery? %>
+    $('#delivery_date').empty();
+  <% else %>
+    $('#delivery_date').replaceWith("<%= escape_javascript(render(partial: 'delivery_date_fields')) %>");
+  <% end %>
+  $('#account-address-info').replaceWith("<%= escape_javascript(render(partial: 'account_address_fields')) %>");
+  $('#contact-user').removeClass('hidden');
+  <% if @users.blank? %>$('#contact-user').addClass('hidden');<% end %>
+  $('#variant-select-cell').replaceWith("<%= escape_javascript(render(partial: 'variant_search_row.html.erb')) %>");
+  $('#new-line-item-select').select2({width: '100%'});
+
+  $('#new-line-item-qty').keydown(function(e){
+    if(e.which === 13){ //Enter key
+      e.preventDefault();
+      $('#add-new-line-item-button').click();
+    }
+  });
+<% end %>

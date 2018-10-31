@@ -1,0 +1,179 @@
+<%= content_for :head_title do %>
+  <%= @current_user ? 'My Profile' : 'User Profile' %>
+<% end %>
+
+<%= content_for :page_bar do %>
+<ul class="page-breadcrumb">
+  <li>
+    <%= link_to "Home", root_path %>
+    <i class="fa fa-circle"></i>
+  </li>
+  <li>
+    <span><%= @current_user ? 'My Profile' : 'User Profile' %></span>
+  </li>
+</ul>
+
+
+
+<% end %>
+
+<div class="content">
+  <div class="row">
+    <div class="col-md-12">
+      <!-- BEGIN PROFILE SIDEBAR -->
+      <div class="profile-sidebar">
+          <!-- PORTLET MAIN -->
+        <div class="portlet light profile-sidebar-portlet ">
+          <%= link_to manage_account_user_user_images_path(@user) do %>
+            <!-- SIDEBAR USERPIC -->
+            <div class="profile-userpic">
+              <% if @user.images.any? %>
+                <% image = @user.images.find_by(position:1) %>
+                <%= image_tag image.attachment.url(:product), class: "img-responsive", alt: image.alt %>
+              <% else %>
+                <%= image_tag "spree/manage/img/single-user.png", class: "img-responsive", alt: "user image" %>
+              <% end %>
+              <div class="img-block-overlay">
+                <div class="btn btn-primary btn-xs">
+                  <i class='fa fa-pencil'></i> Edit Image
+                </div>
+              </div>
+            </div>
+          <% end %>
+          <!-- END SIDEBAR USERPIC -->
+          <!-- SIDEBAR USER TITLE -->
+          <div class="profile-usertitle">
+            <div class="profile-usertitle-name">
+              <%= @user.name %>
+            </div>
+          </div>
+          <!-- END SIDEBAR USER TITLE -->
+        </div>
+          <!-- END PORTLET MAIN -->
+      </div>
+        <!-- END BEGIN PROFILE SIDEBAR -->
+        <!-- BEGIN PROFILE CONTENT -->
+      <div class="profile-content">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="portlet light">
+              <div class="portlet-title tabbable-line">
+                <div class="caption caption-md">
+                  <i class="icon-globe theme-font hide"></i>
+                  <span class="caption-subject font-blue-madison bold uppercase">Account Details</span>
+                </div>
+                <div class="btn-group pull-left hidden-md hidden-lg" style="width:100%">
+                  <button type="button" class="btn green dropdown-toggle dropdown-btn-text" data-toggle="dropdown"  style = "width:100%">
+                    <label>Information</label>&nbsp;
+                    <i class="fa fa-angle-down"></i>
+                  </button>
+                  <ul class="dropdown-menu pull-left" style="width:100%" role="menu">
+                    <li class="tab-link">
+                      <a href="#general_info_tab" data-toggle="tab">Information</a>
+                    </li>
+                    <li class="tab-link">
+                      <a href="#comm_settings_tab" data-toggle="tab">Communication Settings</a>
+                    </li>
+                    <% if @current_user %>
+                      <li class="tab-link">
+                        <a href="#change_password_tab" data-toggle="tab">Change Password</a>
+                      </li>
+                    <% end %>
+                    <% if @user_adjust || @current_user%>
+                      <li class= "tab-link">
+                        <a href="#permissions_tab" data-toggle="tab">Permissions</a>
+                      </li>
+                    <% end %>
+                  </ul>
+                </div>
+                <ul class="nav nav-tabs hidden-xs hidden-sm">
+                  <li class="active long-tabs-link">
+                    <a href="#general_info_tab" data-toggle="tab">Information</a>
+                  </li>
+                  <li class="long-tabs-link">
+                    <a href="#comm_settings_tab" data-toggle="tab">Communication Settings</a>
+                  </li class="long-tabs-link">
+                  <% if @current_user %>
+                    <li class="long-tabs-link">
+                      <a href="#change_password_tab" data-toggle="tab">Change Password</a>
+                    </li>
+                  <% end %>
+                  <% if @user_adjust || @current_user%>
+                     <li class="long-tabs-link">
+                      <a href="#permissions_tab" data-toggle="tab">Permissions</a>
+                    </li>
+                  <% end %>
+                </ul>
+              </div>
+              <div class="portlet-body">
+                <div class="tab-content">
+                  <!-- PERSONAL INFO TAB -->
+                  <div class="tab-pane form active" id="general_info_tab">
+                    <%= form_for @user, url: manage_account_user_url(@user), html: {id: 'user_general_info_form'} do |f| %>
+                      <div class='form-body'>
+                        <%= render partial: "form", locals: {f: f} %>
+                      </div>
+                      <div class="form-actions">
+                        <%= f.submit "Update Profile", class: "btn green" %>
+                      </div>
+                    <% end %>
+                  </div>
+                  <!-- END PERSONAL INFO TAB -->
+                  <!-- COMMUNICATION SETTINGS TAB -->
+                  <div class="tab-pane form" id="comm_settings_tab">
+                    <%= form_for @user, url: update_comm_settings_manage_account_user_url(@user), html: {id: 'user_comm_settings_form'} do |f| %>
+                      <div class='form-body'>
+                        <%= render partial: "comm_settings_form", locals: {f: f} %>
+                      </div>
+                      <div class="form-actions">
+                        <%= f.submit "Update Communication Settings", class: "btn green" %>
+                      </div>
+                    <% end %>
+                  </div>
+                  <!-- END COMMUNICATION SETTINGS TAB -->
+                  <!-- CHANGE PASSWORD TAB -->
+                  <% if @current_user %>
+                    <div class="tab-pane form" id="change_password_tab">
+                      <%= form_for @user, url: update_password_manage_account_user_url(@user), html: {id: 'user_password_form'} do |f| %>
+                        <div class='form-body'>
+                          <div class="form-group">
+                            <%= f.label :current_password, class: "control-label" %>
+                            <%= f.password_field :current_password, class: "form-control" %>
+                          </div>
+                          <div class="form-group">
+                            <%= f.label :password, class: "control-label" %>
+                            <%= f.password_field :password, class: "form-control" %>
+                          </div>
+                          <div class="form-group">
+                            <%= f.label :password_confirmation, class: "control-label" %>
+                            <%= f.password_field :password_confirmation, class: "form-control" %>
+                          </div>
+                        </div>
+                        <div class="form-actions">
+                          <%= f.submit "Change Password", class: "btn default" %>
+                        </div>
+                      <% end %>
+                    </div>
+                  <% end %>
+                  <!-- END CHANGE PASSWORD TAB -->
+                  <!-- BEGIN CHANGE PERMISSIONS TAB -->
+                  <% if @user_adjust %>
+                    <div class="tab-pane form <%= 'active' if params[:permission_group_id].present? %>" id="permissions_tab">
+                      <%= render partial: 'permissions_form' %>
+                    </div>
+                  <% elsif @current_user %>
+                    <div class="tab-pane form <%= 'active' if params[:permission_group_id].present? %>" id="permissions_tab">
+                      <%= render partial: 'spree/manage/shared/permissions/table', locals: {permittable: @user} %>
+                    </div>
+                  <% end %>
+                  <!-- END CHANGE PERMISSIONS TAB -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- END PROFILE CONTENT -->
+    </div>
+  </div>
+</div>

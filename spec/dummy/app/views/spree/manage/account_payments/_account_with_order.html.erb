@@ -1,0 +1,37 @@
+<% payment = account_with_order.payments.new() %>
+<%= fields_for 'payments_attributes[]', payment do |ff| %>
+  <tr data-order-id="<%= account_with_order.id %>">
+    <td>
+    <%= ff.hidden_field :order_id %>
+    <% if account_with_order.id == order.id %>
+      <input type='checkbox' name='payments_attributes[][check]' class='checkboxes noUniform' checked>
+    <% else %>
+      <input type='checkbox' name='payments_attributes[][check]' class='checkboxes noUniform'>
+    <% end %>
+    </td>
+    <% if @vendor.use_separate_invoices && account_with_order.display_number == account_with_order.invoice.try(:number) %>
+      <% order_number_date = "#{account_with_order.display_number}"%>
+      <td><%= link_to order_number_date, edit_manage_order_path(account_with_order) %></td>
+    <% elsif @vendor.use_separate_invoices %>
+      <% order_number_date = "#{account_with_order.display_number}/#{account_with_order.invoice.try(:number)}" %>
+      <td><%= link_to order_number_date, edit_manage_order_path(account_with_order) %></td>
+    <% else %>
+      <% order_number_date = "#{account_with_order.display_number}" %>
+      <td><%= link_to order_number_date, edit_manage_order_path(account_with_order) %></td>
+    <% end %>
+    <td><%= display_vendor_date_format(account_order.delivery_date, @vendor.date_format) %></td>
+    <td><%= display_vendor_date_format(account_order.due_date, @vendor.date_format) %></td>
+    <td><%= display_sweet_price(account_with_order.total, account_with_order.currency) %></td>
+    <td><%= display_sweet_price(account_with_order.outstanding_balance, account_with_order.currency) %></td>
+    <td>
+      <div class='price-input'>
+        <label class="currency-label"><%= currency_symbol(account_with_order.currency) %></label>
+        <% if account_with_order.id == order.id %>
+          <%= ff.number_field :amount, value: account_with_order.outstanding_balance, in: 0..account_with_order.outstanding_balance, step: '0.01', class: 'form-control price-field payment-amount' %>
+        <% else %>
+          <%= ff.number_field :amount, in: 0..account_with_order.outstanding_balance, step: '0.01', class: 'form-control price-field payment-amount' %>
+        <% end %>
+      </div>
+    </td>
+  </tr>
+<% end %>

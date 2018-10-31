@@ -1,0 +1,13 @@
+<tr id="shipping_group_<%= group.id %>">
+  <td width="10px" class="delete">
+  </td>
+  <td><%= group.name %></td>
+  <td>
+    <%= group.deliverable_days_text %>
+  </td>
+  <td>
+    <% if group.is_default? %>
+      <i class='fa fa-check'></i>
+    <% end %>
+  </td>
+</tr>

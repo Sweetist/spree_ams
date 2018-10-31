@@ -1,0 +1,179 @@
+<%= content_for :head_title do %>
+  Contacts
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Contacts", manage_account_contacts_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <span>
+        <%= @contact.first_name %>
+        <%= @contact.last_name %></span>
+    </li>
+  </ul>
+  <div class="page-toolbar">
+    <%= link_to new_manage_account_contact_path, class: "btn green pull-right" do%>
+      <i class="fa fa-plus"></i>&nbsp;New Contact
+    <% end %>
+  </div>
+<% end %>
+
+<div class="content">
+  <div class="row">
+    <!-- BEGIN PROFILE CONTENT -->
+    <div class="profile-content">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="portlet light ">
+            <div class="portlet-title">
+              <div class="caption caption-md">
+                <i class="icon-globe theme-font hide"></i>
+                <span class="caption-subject font-blue-madison bold uppercase">
+                  <%= @contact.name %>
+                </span>
+                <% if current_spree_user.can_write?('basic_options', 'users') %>
+                  <%= link_to edit_manage_account_contact_path(@contact), class: "btn btn-primary" do %>
+                    <i class="fa fa-pencil"></i>&nbsp;Edit
+                  <% end %>
+                <% end %>
+                <% if @contact.can_resend_invite? %>
+                  <%= link_to invite_email_manage_account_contact_path(@contact), class: "btn green-meadow" do %>
+                    <i class="fa fa-user-plus"></i>&nbsp;Resend Invite
+                  <% end %>
+                <% elsif @contact.can_invite? %>
+                  <%= link_to invite_email_manage_account_contact_path(@contact), class: "btn green-meadow" do %>
+                    <i class="fa fa-user-plus"></i>&nbsp;Invite
+                  <% end %>
+                <% elsif @contact.can_mark_invited? %>
+                  <%= link_to mark_invited_manage_account_contact_path(@contact), class: "btn green-meadow", method: :patch do %>
+                    <i class="fa fa-check"></i>&nbsp;Mark Invited
+                  <% end %>
+                  <i style="float: right; margin-top: 1px; margin-left: 2px; font-size: 16px;" class="fa fa-info-circle tooltips" data-original-title="This contact already has access to accounts. Marking as invited will allow you edit which account(s) they have access to." data-container="body">
+                  </i>
+                <% elsif !@contact.user_has_access? %>
+                  <a class="btn green-meadow" id="no-invite" disabled>
+                    <i class="fa fa-user-plus"></i>&nbsp;Invite
+                  </a>
+                  <i style="float: right; margin-top: 1px; margin-left: 2px; font-size: 16px;" class="fa fa-info-circle tooltips" data-original-title="<%= @contact.invited_at.present? ? 'This contact has already been invited' : 'Please specify an email address and account(s) to invite contact' %>" data-container="body">
+                  </i>
+                <% end %>
+              </div>
+            </div>
+            <div class="portlet-body">
+              <div class="row static-info">
+                <div class="col-sm-2 col-xs-3 name">
+                  Accounts:
+                </div>
+                <div class="col-sm-6 col-xs-9 value">
+                  <% @contact.accounts.each_with_index do |account, idx| %>
+                    <% unless idx == 0 %>
+                      <i class='fa fa-circle' style='font-size: 5px; vertical-align: middle;'></i>
+                    <% end %>
+                    <%= link_to account.fully_qualified_name, manage_customer_account_path(account.customer, account) %>
+                  <% end %>
+                  <% if @contact.user %>
+                    <br>
+                    <span class='help-block-italic'>
+                      <% accounts_count = @contact.accessible_accounts.count %>
+                      User has access to <%= pluralize(accounts_count, 'account') %>
+                    </span>
+                  <% end %>
+                </div>
+              </div>
+              <div class="row static-info">
+                <div class="col-sm-2 col-xs-3 name">
+                  Position:
+                </div>
+                <div class="col-sm-6 col-xs-9 value order-email">
+                  <%= @contact.position %>
+                </div>
+              </div>
+              <div class="row static-info">
+                <div class="col-sm-2 col-xs-3 name">
+                  Email:
+                </div>
+                <div class="col-sm-6 col-xs-9 value">
+                  <%= @contact.email %>
+                </div>
+              </div>
+              <div class="row static-info">
+                <div class="col-sm-2 col-xs-3 name">
+                  Phone:
+                </div>
+                <div class="col-sm-6 col-xs-9 value">
+                  <%= @contact.phone %>
+                </div>
+              </div>
+              <div class="row static-info">
+                <div class="col-sm-2 col-xs-3 name">
+                  Invited At:
+                </div>
+                <div class="col-sm-6 col-xs-9 value">
+                  <%= sweet_full_date_time(@contact.invited_at) rescue '' %>
+                </div>
+              </div>
+              <div class="row static-info">
+                <div class="col-sm-2 col-xs-3 name">
+                  Sign Up Url:
+                </div>
+                <div class="col-sm-6 col-xs-9 value">
+                  <%= link_to 'Get link', 'void:javascript();', id: 'show-sign-up-link' %>
+                  <div class='hidden input-group' id='sign-up-link-container'>
+
+                    <input type='text' id='sign-up-link' class='form-control'
+                      value="<%= new_sign_up_url(id: @contact.id, vendor: current_company.slug, host: current_company.domain, protocol: 'https') rescue '' %>">
+                    <span class='input-group-addon copy-btn btn green'
+                      data-original-title='Copied.' data-container='body'
+                      data-clipboard-target="#sign-up-link">
+                      <i class='fa fa-copy'></i>
+                    </span>
+
+                  </div>
+                </div>
+              </div>
+              <div class="row static-info">
+                <div class="col-sm-2 col-xs-3 name">
+                  Last Login:
+                </div>
+                <div class="col-sm-6 col-xs-9 value">
+                  <%= sweet_full_date_time(@contact.user.last_sign_in_at) rescue "<p style='color: #c29d0b;'>Not logged in yet.</p>".html_safe %>
+                </div>
+              </div>
+              <div class="row static-info">
+                <div class="col-sm-2 name">
+                  Notes:
+                </div>
+                <div class="col-sm-6 col-xs-12 value">
+                  <%= @contact.notes %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- END PROFILE CONTENT -->
+  </div>
+</div>
+
+<script type="text/javascript">
+  $( document ).ready(function() {
+    $('#no-invite').mouseover(function(event) {
+      $("#popup").fadeIn(500);
+    }).mouseout(function() {
+      $("#popup").delay(300).fadeOut(700);
+    });
+
+    $('#show-sign-up-link').click(function(){
+      $(this).hide();
+      $('#sign-up-link-container').removeClass('hidden');
+    });
+  });
+</script>

@@ -1,0 +1,17 @@
+<div class="header-navigation col-md-6 col-sm-6 col-xs-12 margin-top-10 <%= 'hidden' unless current_vendor_view_settings.catalog_search_bar %>">
+  <div class="menu-search">
+    <%= search_form_for @search, url: vendor_products_path(@vendor.id), class: "form" do |f| %>
+      <% if @vendor.nest_variant_names? %>
+        <%= f.text_field :variant_full_display_name_or_variant_sku_or_variant_product_taxons_name_or_variant_taxons_name_cont, class: 'form-control search-text', placeholder: 'Enter search term' %>
+      <% else %>
+        <%= f.text_field :variant_default_display_name_or_variant_sku_or_variant_product_taxons_name_or_variant_taxons_name_cont, class: 'form-control search-text', placeholder: 'Enter search term' %>
+      <% end %>
+      <%= f.hidden_field :variant_product_taxons_id_or_variant_taxons_id_in, id: 'hidden-search-text'%>
+      <%= f.hidden_field :account_id_eq, id: 'hidden-account-view'%>
+      <button type="submit" id="cust_search_btn" class="btn btn btn-primary"><i class="fa fa-search" aria-hidden="true"></i></button>
+      <%= link_to vendor_products_path(@vendor), class: "btn default cust_reset_btn" do %>
+        <i class='fa fa-times'></i> Reset
+      <% end %>
+    <% end %>
+  </div>
+</div>

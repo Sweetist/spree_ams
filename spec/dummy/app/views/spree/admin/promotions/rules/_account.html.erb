@@ -1,0 +1,12 @@
+<h1>This is supposed to be where the accounts are selected!</h1>
+<div class="panel-body">
+  <div class="form-group no-marginb">
+    <%= label_tag 'choose_accounts' %>
+    <!-- <input type='hidden' name='<%= param_prefix %>[account_ids_string]' class='user_picker' value='<%= promotion_rule.account_ids.join(",") %>'> -->
+    <select name='<%= param_prefix %>[account_ids_string]'>
+      <% Spree::Account.each do |account| %>
+        <option value="<%= account.id %>"> <%= account.fully_qualified_name %></option>
+      <% end %>
+    </select>
+  </div>
+</div>

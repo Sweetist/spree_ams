@@ -1,0 +1,22 @@
+<tr>
+  <td id='unassigned' data-order-number='<%= @order.number %>'>
+    Unassigned
+  </td>
+  <td id='unassigned-count'><%= unassigned_count %></td>
+  <td>
+    <% stock_location = @order.shipments.first.try(:stock_location) %>
+    <% lot_opts = @line_item.possible_lots.includes(:stock_item_lots).map { |lot| [lot.number, lot.id] } %>
+    <%= select_tag 'add_to_lot[id]', options_for_select(lot_opts), prompt: "Select Lot",
+      class: 'form-control add-to-lot-field', id: 'add_to_lot_id' %>
+  </td>
+  <td>
+    <% initial_qty = [@line_item.quantity - line_item_lots.sum(:count).to_d, 0].max %>
+    <%= number_field_tag 'add_to_lot[qty]', initial_qty, class: 'form-control', id: 'add_to_lot_qty',
+      step_size: :any, min: 0.00001, max: unassigned_count %>
+  </td>
+  <td>
+    <%= link_to 'void:javascript();', id: 'assign-lots-btn', class: 'btn green-jungle no-margin' do %>
+      Assign
+    <% end %>
+  </td>
+</tr>

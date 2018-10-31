@@ -1,0 +1,319 @@
+<%= content_for :head_title do %>
+  Payments
+<% end %>
+
+<%= content_for :page_title do %>
+  <span class="account-payment-id">
+    Payment
+  </span>
+<% end %>
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Payments", manage_account_payments_path %>
+      <!--<i class="fa fa-circle"></i>-->
+    </li>
+  </ul>
+  <div class="page-toolbar">
+    <div class="btn-group pull-right">
+      <%= link_to "Back to All Payments", manage_account_payments_path, class: "btn green" %>
+    </div>
+  </div>
+<% end %>
+
+<div class="content">
+  <div class="row">
+    <%= form_for [:manage, @account_payment], remote: true do |account_payment_form| %>
+      <div class="col-md-6 col-sm-12" id='account-details'>
+        <div class="portlet blue-hoki box">
+          <div class="portlet-title">
+            <div class="caption">
+              <i class="fa fa-cogs"></i>Customer Information
+            </div>
+          </div>
+          <div class="portlet-body">
+            <div class="row static-info">
+              <div class="col-md-5 name"> Customer Name: </div>
+              <div class="col-md-7 value">
+                <%= account_payment_form.collection_select(:account_id, @vendor.customer_accounts.active.order('fully_qualified_name ASC'), :id, :fully_qualified_name, {include_blank: true}, {id: 'order-customer-id', class: "form-control select2 select2-hidden-accessible", placeholder: "Choose Customer", readonly: true}) %>
+              </div>
+            </div>
+
+            <%= render partial: 'account_address_fields' %>
+            <button id='save-account' class='btn pull-right btn-primary hidden'><i class='fa fa-check'></i>Save</button>
+            <div class='clearfix'></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6 col-sm-12" id='account-details'>
+        <div class="portlet blue-hoki box">
+          <div class="portlet-title">
+            <div class="caption">
+              <i class="fa fa-cogs"></i>Payment Information
+            </div>
+          </div>
+          <div class="portlet-body">
+            <div class="row static-info">
+              <div class="col-md-5 name"> Payment #:</div>
+              <div class="col-md-7 value" id='account-payment-number' data-account-payment-number='<%= @account_payment.number %>'><%= @account_payment.display_number %></div>
+            </div>
+            <div class="row static-info">
+              <div class="col-md-5 name"> Status:</div>
+              <div class="col-md-7 value" id='account-payment-state' data-account-payment-state='<%= @account_payment.state %>'></div>
+            </div>
+            <div class="row static-info">
+              <div class="col-md-5 name"> <%= account_payment_form.label :payment_method_id, Spree.t(:payment_method) %>: </div>
+              <div class="col-md-7 value">
+                <div class="form-group">
+                  <%= account_payment_form.collection_select :payment_method_id, @payment_methods, :id,  :name, {include_blank: true}, {class: 'form-control', required: true} %>
+                </div>
+              </div>
+            </div>
+            <div class="row static-info">
+              <div class="col-md-5 name">
+                <%= account_payment_form.label :credit_to_apply, Spree.t(:used_credit) %>:
+                <div id="account_available_credit">
+                  <%= render partial: 'account_credit',
+                             locals: { account: @account, currency: @vendor.currency } %>
+                </div>
+              </div>
+              <div class="col-md-7 value">
+                <div class="price-input">
+                  <label class="currency-label"><%= currency_symbol(@account_payment.vendor.currency) %></label>
+                  <%= account_payment_form.number_field :credit_to_apply, value: '0.00', step: '0.01', class: 'form-control price-field', disabled: true %>
+                </div>
+              </div>
+            </div>
+            <div class="row static-info">
+              <div class="col-md-5 name">
+                <%= account_payment_form.label :amount, Spree.t(:amount) %>:
+              </div>
+              <div class="col-md-7 value">
+                <div class="price-input">
+                  <label class="currency-label"><%= currency_symbol(@account_payment.vendor.currency) %></label>
+                    <%= account_payment_form.number_field :amount, step: '0.01', required: true, class: 'form-control price-field' %>
+                </div>
+              </div>
+            </div>
+            <div class='clearfix' id='payment-source'></div>
+          </div>
+        </div>
+      </div>
+
+      <%= render partial: 'payment_buttons' %>
+
+      <div class='col-md-12'>
+        <div class="table-scrollable">
+          <table class="table table-striped table-hover table-checkable" id="sample_1">
+            <thead>
+              <%#= search_form_for [:manage, @search], class: "form" do |f| %>
+              <tr>
+                <th></th>
+                <% if @vendor.use_separate_invoices %>
+                  <th><%= "Order/Invoice #" %></th>
+                <% else %>
+                  <th><%= "Order #" %></th>
+                <% end %>
+                <th><%= "Delivery Date" %></th>
+                <th><%= "Due Date" %></th>
+                <th><%= "Original Amount" %></th>
+                <th><%= "Open Balance" %></th>
+                <th><%= "Payment" %></th>
+              </tr>
+              <tr role="row" class="filter">
+
+              </tr>
+            </thead>
+              <tbody id="order-body">
+                <%= render partial: 'account_with_order', collection: @orders, locals: {inner_payment_method: @inner_payment_method, order: @order} %>
+              </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="row"></div>
+      <div class="col-md-7"></div>
+      <div class="col-md-3"><strong>Amount to Apply: &nbsp;&nbsp;&nbsp;&nbsp;</strong><span class="amount-to-apply"><%= display_sweet_price(@account_payment.amount, @account_payment.vendor.currency) %></span></div>
+      <br />
+      <div class="col-md-7"></div>
+      <div class="col-md-3"><strong>Amount to Credit: &nbsp;&nbsp;&nbsp;</strong><span class="amount-to-credit"><%= display_sweet_price(0, @account_payment.vendor.currency) %></span></div>
+      <br />
+
+      <div class='col-md-12'>
+        <%= paginate @orders %>
+      </div>
+
+      <%= render partial: 'payment_buttons' %>
+      <%= render 'edit_modal' %>
+
+    <% end %>
+  </div>
+</div>
+<script>
+  var currency = '<%= currency_symbol(@vendor.currency) %>';
+  var getAccountDetails = function(account_id){
+    $.ajax({
+      url: '/manage/account_payments/vendor_accounts' ,
+      type: 'GET',
+      dataType: 'script',
+      data: {
+        account_id: account_id
+      }
+    });
+    // $('#order-customer-id').select2('enable', false);
+  };
+  $('#new_account_payment').keypress(function(e) {
+    return e.which !== 13;
+  });
+  var formatNumber = function(num) {
+    return currency + num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
+  }
+  var checkNegativeAtc = function(amount, credit_to_apply, total) {
+    atc = parseFloat(amount) + parseFloat(credit_to_apply) - total.toFixed(2);
+    if (atc > 0) {
+      $('.amount-to-credit')[0].innerText = currency + parseFloat(atc).toFixed(2);
+    } else {
+      $('.amount-to-credit')[0].innerText = currency + parseFloat(0).toFixed(2);
+    };
+  };
+  var amountToApply = 0;
+  var countCheck = 0;
+
+  $(document).ready(function(){
+    $('#order-customer-id').change(function(){
+      var account_id = $('#order-customer-id option:selected').val();
+      if (typeof account_id !== "undefined") {
+        getAccountDetails(account_id);
+      }
+    });
+    $('#account_payment_amount').change(function(){
+      amountToApply += 1;
+      var amount = $('#account_payment_amount').val();
+      var credit_to_apply = $('#account_payment_credit_to_apply').val();
+      if (countCheck > 0) {
+        total = 0;
+        var amount2 = $(".payment-amount");
+        for (var i = 0; i < amount2.length; i++) {
+          if (amount2[i].value > 0) {
+            total += parseFloat(amount2[i].value);
+          };
+        };
+        checkNegativeAtc(amount, credit_to_apply, total);
+        $('.amount-to-apply')[0].innerText = formatNumber((parseFloat(amount)+parseFloat(credit_to_apply)).toFixed(2));
+        return;
+      }
+      $('.amount-to-apply')[0].innerText = formatNumber((parseFloat(amount)+parseFloat(credit_to_apply)).toFixed(2));
+      var amount2 = $(".payment-amount");
+      for (var i = 0; i < amount2.length; i++) {
+        if (amount == 0) {
+          amount2[i].value = parseFloat(0).toFixed(2);
+          $("[name='payments_attributes[][check]']")[i].checked = false;
+          continue;
+        }
+        var balance = parseFloat($('#order-body tr')[i].cells[5].innerText.substring(1).replace(/,/g, ''));
+        if (amount < balance) {
+          amount2[i].value = parseFloat(amount).toFixed(2);
+          $("[name='payments_attributes[][check]']")[i].checked = true;
+          amount = 0;
+        } else {
+          amount2[i].value = parseFloat(balance).toFixed(2);
+          amount = amount - balance;
+          $("[name='payments_attributes[][check]']")[i].checked = true;
+        }
+      }
+    });
+    $(':checkbox').click(function(event){
+      countCheck += 1;
+      event.stopImmediatePropagation();
+      var amount = $('#account_payment_amount');
+      var credit_to_apply = $('#account_payment_credit_to_apply').val();
+      var chRow = $('#order-body tr').filter(':has(:checkbox:checked)');
+      var unchRow = $('#order-body tr').filter(':has(:checkbox:not(:checked))');
+      var total = 0;
+      unchRow.each(function(){
+        $(this).find('.payment-amount').val(0);
+      });
+      chRow.each(function(index){
+        if ($(this).find('.payment-amount').val() != 0) {
+          total += parseFloat($(this).find('.payment-amount').val());
+        } else {
+          total += parseFloat(this.cells[5].innerText.substring(1).replace(/,/g, ''));
+          $(this).find('.payment-amount').val(parseFloat(chRow[index].cells[5].innerText.substring(1).replace(/,/g, '')));
+        }
+      });
+      if (top.amountToApply > 0) {
+        atc = parseFloat(amount.val()) + parseFloat(credit_to_apply) - total.toFixed(2);
+        if (atc > 0) {
+          $('.amount-to-credit')[0].innerText = currency + parseFloat(atc).toFixed(2);
+        } else {
+          $('.amount-to-credit')[0].innerText = currency + parseFloat(0).toFixed(2);
+        };
+        return;
+      }
+      amount.val(total.toFixed(2));
+      amountToCredit = parseFloat(amount.val()) + parseFloat(credit_to_apply) - total.toFixed(2);
+      $('.amount-to-credit')[0].innerText = currency + parseFloat(amountToCredit).toFixed(2);
+      $('.amount-to-apply')[0].innerText = formatNumber((parseFloat(total.toFixed(2))+parseFloat(credit_to_apply)).toFixed(2));
+    });
+    $('.payment-amount').change(function(event){
+      event.stopImmediatePropagation();
+      total = 0;
+      var amount = $('#account_payment_amount');
+      var credit_to_apply = $('#account_payment_credit_to_apply').val();
+      var amount2 = $(".payment-amount");
+      for (var i = 0; i < amount2.length; i++) {
+        var balance = parseFloat($('#order-body tr')[i].cells[5].innerText.substring(1));
+        if (amount2[i].value > 0) {
+          total += parseFloat(amount2[i].value);
+          $("[name='payments_attributes[][check]']")[i].checked = true;
+        } else {
+          $("[name='payments_attributes[][check]']")[i].checked = false;
+        }
+      }
+      amountToCredit = parseFloat(amount.val()) + parseFloat(credit_to_apply) - total.toFixed(2);
+      if (amountToCredit > 0) {
+        $('.amount-to-credit')[0].innerText = currency + parseFloat(amountToCredit).toFixed(2);
+      } else {
+        $('.amount-to-credit')[0].innerText = currency + parseFloat(0).toFixed(2);
+      };
+    });
+    $('#account_payment_credit_to_apply').change(function(){
+      var amount = $('#account_payment_amount').val();
+      var credit_to_apply = $('#account_payment_credit_to_apply').val();
+      $('.amount-to-apply')[0].innerText = formatNumber((parseFloat(amount)+parseFloat(credit_to_apply)).toFixed(2));
+      total = 0;
+      var amount2 = $(".payment-amount");
+      for (var i = 0; i < amount2.length; i++) {
+        if (amount2[i].value > 0) {
+          total += parseFloat(amount2[i].value);
+        };
+      };
+      checkNegativeAtc(amount, credit_to_apply, total);
+    });
+    $('.new-payment-btn').click(function(){
+      $('#myModal').modal('hide');
+    });
+  });
+
+  $(document).ready(function(){
+    $('#account_payment_payment_method_id').change(function(){
+      var payment_method = $('#account_payment_payment_method_id option:selected').val();
+      var account_id = $('#order-customer-id option:selected').val();
+      if (typeof payment_method !== "undefined") {
+        $.ajax({
+          url: '/manage/account_payments/new_payment',
+          type: 'GET',
+          dataType: 'script',
+          data: {
+            account_id: account_id,
+            payment_method_id: payment_method
+          }
+        });
+      }
+    });
+  });
+</script>

@@ -1,0 +1,58 @@
+<div class="form-group">
+  <%= f.check_box :stop_all_emails, class: 'make-switch', "data-size" =>'mini' %>
+  <%= f.label :stop_all_emails,
+    Spree.t(:label, scope: [:user_comms_settings, :stop_all_emails]),
+    class: 'margin-left-20' %>
+</div>
+<div id='individual-mailers'>
+  <% individual_mailers = %i[
+    order_confirmed
+    order_approved
+    order_received
+    order_review
+    order_finalized
+    order_canceled
+    so_edited
+    so_reminder
+    so_create_error
+    discontinued_products
+    daily_shipping_reminder
+    low_stock
+    daily_summary
+    ] %>
+
+  <% individual_mailers.each do |mailer| %>
+    <div class="form-group">
+      <%= f.check_box mailer, class: 'make-switch', "data-size" =>'mini' %>
+      <% label_text = Spree.t(:label, scope: [:user_comms_settings, mailer], default: '') %>
+      <% helper_text = Spree.t(:helper, scope: [:user_comms_settings, mailer], default: '') %>
+      <% if helper_text.present? %>
+        <%= f.label mailer,
+          raw("#{label_text}
+          <i class='fa fa-info-circle tooltips'
+          data-original-title='#{helper_text}'
+          data-container='body'></i>"), class: 'margin-left-20' %>
+      <% else %>
+        <%= f.label mailer, label_text, class: 'margin-left-20' %>
+      <% end %>
+    </div>
+  <% end %>
+
+</div>
+
+<script type='text/javascript'>
+  var toggleUserCommSwitches = function(){
+    if($('#user_stop_all_emails').bootstrapSwitch('state')){
+      $('.make-switch','#individual-mailers').bootstrapSwitch('state',false);
+      $('.make-switch','#individual-mailers').bootstrapSwitch('readonly',true);
+    }else{
+      $('.make-switch','#individual-mailers').bootstrapSwitch('readonly',false);
+    }
+  }
+
+  $('#user_stop_all_emails').on('switchChange.bootstrapSwitch', function (event, state) {
+    toggleUserCommSwitches();
+  });
+  $(document).ready(toggleUserCommSwitches);
+
+</script>

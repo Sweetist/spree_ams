@@ -1,0 +1,56 @@
+<div class="modal fade bs-modal-lg" id="build-assembly-modal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+
+      <div class="portlet light" style='margin-bottom:0px;'>
+        <div class="alert-modal"></div>
+        <div class="portlet-title">
+          <div class="caption">
+            <span class="caption-subject font-blue-madison bold uppercase">
+              Build Assembly <span id='product-name'></span>
+            </span>
+          </div>
+          <div class="actions">
+            <button type="button" class="close modal-close" data-dismiss="modal" aria-hidden="true"></button>
+          </div>
+        </div>
+        <div class="portlet-body form">
+
+          <div id='modal-errors'></div>
+          <div id='loading-message'>
+            Loading Parts <%= image_tag 'frontend/loading.gif' %>
+          </div>
+          <%= form_for :build_assembly, url: build_inventory_manage_stock_transfers_path, method: "post", html: {id: 'build-assembly-form', class: 'prevent-double-submission'} do |f| %>
+            <div class='form-body' id='modal-form-container'>
+              <!-- this section is populated by ajax request -->
+            </div>
+            <% if @vendor.has_integration?('qbd') %>
+              <div>
+                <span class='help-block-italic'>
+                  <strong>Note:</strong> You may only build an assembly from parts in the same location as the final assembly.
+                  Please create a separate stock transfer if you need to increase the stock of one the parts at a source location.
+                </span>
+              </div>
+            <% end %>
+            <div class='form-actions' style='margin-bottom:0px;'>
+              <div class="pull-right">
+                <%= link_to '#', class: "btn btn-default modal-close", 'data-dismiss'=>"modal", 'aria-hidden'=>"true" do %>
+                  <i class='fa fa-times'></i> Cancel
+                <% end %>
+                <button class="btn btn-primary" id='build-assembly-btn'>
+                  <i class='fa fa-check'></i> Build
+                </button>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type='text/javascript'>
+  $('#build-assembly-modal').on('hidden.bs.modal', function(){
+    $('#build-assembly-btn').prop('disabled', false);
+  });
+</script>

@@ -1,0 +1,164 @@
+<div class="portlet light portlet-fit bordered payment-box">
+  <div class="portlet-title">
+    <span class="caption-subject font-black sbold uppercase">Choose a payment method</span>
+  </div>
+  <div class="portlet-body">
+      <div class="table-scrollable table-scrollable-borderless table-sizing">
+          <table class="table table-hover table-light">
+              <thead>
+                <form>
+                  <thead>
+                      <tr>
+                        <div>
+                          <th> </th>
+                          <th> Type </th>
+                          <th> Last 4 digit </th>
+                          <th> Name </th>
+                          <th> Expires </th>
+                        </div>
+                      </tr>
+                  </thead>
+                  <% @credit_cards.each do |credit_card| %>
+                    <tr class="payment_boxs" id="payment_<%= credit_card.id %>">
+                      <td>
+                        <div class="radio">
+                          <label class="label_radio" for= "<%= credit_card %>">
+                            <input type="radio" id="<%= credit_card.id %>">
+                            <td> <%= credit_card.cc_type %> </td>
+                            <td> <%= credit_card.display_number %> </td>
+                            <td> <%= credit_card.name %> </td>
+                            <td> <%= credit_card.display_expiry %></td>
+                          </label>
+                        </div>
+                    </td>
+                  </tr>
+                  <% end %>
+                </form>
+              </tbody>
+          </table>
+      </div>
+      <a class="btn green-jungle" id="add-card-modal">+ Add New Credit Card</a>
+  </div>
+</div>
+<input type="hidden" name="credit_card_id" id="credit-card-value" value="">
+
+<div class="modal fade" id="credit-cards-modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" data-id="<%= @order.id %>" >
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                <h4 class="modal-title">Create New Credit Card</h4>
+            </div>
+            <div class="modal-message" style="margin: 12px; line-height: 150%;">
+              <fieldset data-id="credit-card">
+                  <div class="form-group" data-hook="previous_cards">
+                    <div id="card_form" class="margint" data-hook><% param_prefix = "payment_source[]" %>
+                      <div data-hook="card_number" class="form-group">
+                        <%= hidden_field_tag "[cc_type]", '', {class: 'ccType'} %>
+                        <%= label_tag "card_number", raw(Spree.t(:card_number) + content_tag(:span, ' *', class: 'required')) %>
+                        <%= text_field_tag "[number]", '', class: 'required form-control cardNumber', id: "card_number", maxlength: 19 %>
+                        <span id="card_type" style="display:none;">
+                          (<span id="looks_like" ><span id="type"></span></span>
+                          <span id="unrecognized"></span>)
+                        </span>
+                      </div>
+                      <div data-hook="card_name" class="form-group">
+                        <%= label_tag "card_name", raw(Spree.t(:name) + content_tag(:span, ' *', class: 'required')) %>
+                      <%= text_field_tag "[name]", '', id: "card_name", class: 'required form-control', maxlength: 19 %>
+                      </div>
+                      <div data-hook="card_expiration" class="form-group">
+                        <%= label_tag "card_expiry", raw(Spree.t(:expiration) + content_tag(:span, ' *', class: 'required')) %><br>
+                        <%= text_field_tag "[expiry]", '', id: "card_expiry", class: "required cardExpiry form-control", placeholder: "MM / YY" %>
+                      </div>
+                      <div data-hook="card_code" class="form-group">
+                      <%= label_tag "card_code", raw(Spree.t(:CVV_CODE) + content_tag(:span, ' *', class: "required")) %>
+                      <%= text_field_tag "[verification_value]", '', id: "card_code", class: 'required form-control cardCode', size: 5 %>
+                      <a href="/content/cvv" class="info cvvLink" target="_blank">
+                        (<%= Spree.t(:what_is_this) %>)
+                      </a>
+                    </div>
+                    <div data-hook="card_zip" class="form-group">
+                      <%= label_tag "card_zip", raw(Spree.t(:BILLING_ZIPCODE) + content_tag(:span, ' *', class: 'required')) %>
+                      <%= text_field_tag "[zip]", '', id: "card_zip", class: 'required form-control', maxlength: 5 %>
+                    </div>
+                    <%= image_tag 'credit_cards/credit_card.gif', class: 'credit-card-image' %>
+                  </div>
+              </fieldset>
+            </div>
+            <button class="btn yellow-lemon" id="submit-card">Add Credit Card</button>
+            <button class="btn grey-steel" id="cancel-card">Cancel</button>
+            <div class="clear"></div>
+            <br>
+        </div>
+    </div>
+    <input id="credit_cards_id" name="credit_cards_id_input" type="hidden" value="" />
+</div>
+
+<style media="screen">
+  .table-sizing{
+    margin: 0;
+  }
+  .payment-box{
+    width: 100%;
+  }
+  .radio label, .checkbox label{
+    margin-bottom: 12px;
+  }
+  #add-card-modal{
+    margin: 10px;
+  }
+</style>
+
+<script type="text/javascript">
+
+  $(document).ready(function() {
+    // click on box area to click on radio btn
+    let payments = $(".payment_boxs");
+    for (var p=0; p<payments.length; p++) {
+      let paymentBox = payments[p];
+      $(paymentBox).bind( "click", function() {
+        let targetRadio = $(this).find("input")[0].id;
+        $(payments).find("input").prop("checked", false );
+        $(this).find("input").prop("checked", true );
+        $("#credit-card-value").val(targetRadio);
+        // set credit card id input for payment
+        $("#credit_cards_id").val(targetRadio);
+      });
+    };
+    // show modal
+    $('#add-card-modal').click(function(){
+      $('#credit-cards-modal').modal('show');
+    });
+    // cancel btn
+    $("#cancel-card").click(function(e){
+      e.preventDefault();
+      $('#credit-cards-modal').modal('hide');
+    });
+    // sumbit btn
+    $("#submit-card").click(function(e){
+      let orderId = $(".modal-header").attr("data-id");
+      let cardNumber = $("#card_number").val();
+      let name = $("#card_name").val();
+      let expiry = $("#card_expiry").val();
+      let verification = $("#card_code").val();
+      e.preventDefault();
+      $.ajax({
+        type: "POST",
+        url: "/orders/"+orderId+"/credit_card_create",
+        data: {"credit_card_info":
+          {
+          "number": cardNumber,
+          "expiry": expiry.substring(0, 2)+"/"+expiry.substring(3, 5),
+          "verification_value": verification,
+          "cc_type": "",
+          "name": name
+          }
+        }
+      }).done(function( d ) {
+        if (d) {location.reload()};
+      });
+    });
+
+  });
+
+</script>

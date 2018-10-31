@@ -1,0 +1,82 @@
+<table>
+  <tr>
+    <td>
+      <p class="lede">
+				Dear <%= @order.account_handle %>,
+      </p>
+      <p>Don’t forget to finalize your <%= @order.vendor.name %> order
+        <% if @order.account.try(:can_select_delivery?) %>
+        for <b><%= DateHelper.sweet_date(@schedule.deliver_at, @schedule.standing_order.vendor.time_zone) %>.</b></p>
+        <% end %>
+        <% if @order.vendor.include_website_url_in_emails %>
+          Click <%= link_to "here", edit_order_url(@order, host: @order.vendor.domain, protocol: 'https') %> review the order and submit it.
+        <% end %>
+        <% if @order.account.try(:can_select_delivery?) %>
+          Remember, the order cutoff time is <%= @order.vendor.order_cutoff_time %>, so please get your order in beforehand, to make sure we can fulfill it.</p>
+        <% end %>
+      <p>
+        Order Summary<br/>
+        Account number: <b><%= @account.number %></b><br/>
+        Vendor: <b><%= @order.vendor.name %></b><br/>
+        <% if @order.account.try(:can_select_delivery?) %>
+          <%= "#{@order.vendor.order_date_text.to_s.capitalize} Date".strip %>: <b><%= DateHelper.sweet_date(@schedule.deliver_at, @schedule.standing_order.vendor.time_zone) %></b><br/>
+        <% else %>
+          Order date: <b><%= DateHelper.sweet_date(@schedule.deliver_at, @schedule.standing_order.vendor.time_zone) %></b><br/>
+        <% end %>
+        Delivery address:<br/>
+
+        <% @address_state = Spree::State.find_by(id: @address.try(:state_id)).try(:abbr) %>
+        <b><%= "#{@address.try(:firstname)} #{@address.try(:lastname)}" %><br/>
+        <%= "#{@address.try(:address1)}" %><br/>
+        <% if @address.try(:address2).present? %><%= @address.address2 %><br/><% end %>
+        <% if @address.try(:city).present? && @address_state.present? %>
+          <%= "#{@address.city}, #{@address_state} #{@address.try(:zipcode)}" %><br/>
+        <% else %>
+          <%= "#{@address.try(:city)} #{@address_state} #{@address.try(:zipcode)}".lstrip %>
+        <% end %>
+        </b><br/>
+        Phone: <b><%= "#{@address.try(:phone)}"%></b><br/>
+      </p>
+
+      <table>
+        <tr><td colspan=4><strong>Order Details</strong></td></tr>
+				<tr>
+					<th class="order-table item-name">Item Name</th>
+					<th class="order-table price">Price</th>
+					<th class="order-table qty">Qty</th>
+					<th class="order-table subtotal">Subtotal</th>
+				</tr>
+        <% order_total = 0 %>
+        <% @order.standing_line_items.includes(variant: :product).each do |line_item| %>
+          <%
+            variant = line_item.variant
+            product = variant.product
+            avv = @order.account.account_viewable_variants.find_by(variant_id: line_item.variant_id)
+            price = avv.try(:price) || variant.price
+            line_total = price * line_item.quantity.to_f
+            order_total += line_total
+           %>
+          <tr>
+            <td>
+              <%= variant.flat_or_nested_name %>
+            </td>
+						<td class="center"><%= display_sweet_price(price, product.currency) %></td>
+            <td class="center"><%= line_item.quantity %></td>
+						<td class="center"><%= display_sweet_price(line_total, product.currency) %></td>
+          </tr>
+        <% end %>
+        <tr>
+          <td class="right" colspan=3>
+            <%= Spree.t('order_mailer.confirm_email.subtotal') %>
+          </td>
+          <td class="center">
+            <%= display_sweet_price(order_total, @order.vendor.currency) %>
+          </td>
+        </tr>
+      </table>
+
+      <p>Thanks for ordering from <%= @order.vendor.name %>!</p>
+
+    </td>
+  </tr>
+</table>

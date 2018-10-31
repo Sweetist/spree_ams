@@ -1,0 +1,25 @@
+<div class="btn-group input-group-sm select2-bootstrap-prepend" id='view-as-form'>
+  <p><%= Spree.t('cust.viewing_as') %>: </p>
+  <div id='view-as-account-wrapper'>
+    <select name="vendor_account_id" class="select2" id="view-as-account">
+      <!-- for viewing as the buyer -->
+      <% current_spree_user.vendor_accounts.where(vendor_id: @vendor.try(:id)).includes(:vendor).order('fully_qualified_name asc').each do |account| %>
+        <% if account.id == session[:vendor_account_id].to_i%>
+          <option selected value="<%= account.id %>">
+            <%= "#{account.vendor.name} - #{account.display_name_and_number}" %>
+          </option>
+        <% else %>
+          <option value="<%= account.id %>">
+            <%= "#{account.vendor.name} - #{account.display_name_and_number}" %>
+          </option>
+        <% end %>
+      <% end %>
+    </select>
+  </div>
+</div>
+<script type='text/javascript'>
+  $('#view-as-form').change(function(){
+    $('#hidden-account-view').val($('#view-as-account-wrapper').find(":selected").val());
+    $('.form').submit();
+  });
+</script>

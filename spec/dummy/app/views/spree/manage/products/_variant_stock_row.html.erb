@@ -1,0 +1,26 @@
+<% product.showable_variants.active.each_with_index do |variant| %>
+  <tr>
+    <td>
+      <% if variant.variant_type == 'inventory_assembly' && variant.should_track_inventory? %>
+        <%= link_to '#build_assembly', {data:{toggle: 'modal', target:'#build-assembly-modal', 'variant-id' => "#{variant.id}"}, class: 'btn-build-assembly btn btn-circle btn-outline btn-primary build-btn load-parts'} do %>
+          <i class='fa fa-sitemap'></i>
+        <% end %>
+      <% end %>
+    </td>
+    <td><%= variant.full_display_name %></td>
+    <td><%= variant.sku %></td>
+    <% variant.stock_items.includes(:stock_location).order('spree_stock_locations.name ASC').each do |stock_item| %>
+      <td>
+        <%= stock_item.count_on_hand %>
+      </td>
+      <td>
+        <input type='checkbox' name='stock_item[backorderable][<%= stock_item.id %>]' <%= 'checked' if stock_item.backorderable %>>
+        <% if @vendor.lot_tracking && (stock_item.lots.count != 0 || stock_item.lots.uninitialized.present?)%>
+          <button type="button" class="lot_info btn btn-info btn-xs" data-toggle="modal" data-target="#lot_modal">View Lot(s)</button>
+        <% end %>
+      </td>
+    <% end %>
+  </tr>
+<% end %>
+
+<%= render partial: 'lot_info_modal' %>

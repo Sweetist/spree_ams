@@ -1,0 +1,198 @@
+<%= content_for :head_title do %>
+  <%= @vendor.name %> Product Catalog
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <span>Products</span>
+    </li>
+  </ul>
+  <div class="page-toolbar">
+    <%= link_to new_manage_order_path, class: "btn green-jungle pull-right" do %>
+      <i class="fa fa-plus"></i>&nbsp;<%= Spree.t(:new_sales_order) %>
+    <% end %>
+    <div class="btn-group input-group-sm select2-bootstrap-prepend pull-right" id='view-as-form'>
+      <p><%= Spree.t('manage.viewing_as') %>:</p>
+      <div id='view-as-account-wrapper'>
+        <select name="account_id" class="select2" id="view-as-account" placeholder="<%= @vendor.name %>">
+          <option <%= 'selected' if session[:account_id].blank? %> value='0'><%= @vendor.name %> (View All Products)</option>
+          <% @vendor.customer_accounts.order('fully_qualified_name asc').each do |account| %>
+            <option <%= 'selected' if session[:account_id] == account.id.to_s %> value="<%= account.id %>">
+              <%= account.fully_qualified_name %>
+            </option>
+          <% end %>
+        </select>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<div class="content">
+  <%= search_form_for [:manage, @search], url: manage_products_path, class: "form", id: 'products-search-form' do |f| %>
+    <%= render partial: 'advanced_search', locals: {f: f} %>
+  <% end %>
+
+  <div class="row hidden">
+    <div id="source-dt-buttons">
+      <% include_actions = current_spree_user.can_write?('catalog', 'products') \
+        && ( @vendor.try(:track_inventory) || !@vendor.try(:set_visibility_by_price_list)) %>
+      <% if include_actions %>
+        <div class="btn-group margin-right-10">
+          <div class="btn btn-default">
+            <input type="checkbox" class="group-checkable">
+          </div>
+          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"> Actions
+            <i class="fa fa-angle-down"></i>
+          </button>
+          <ul class="dropdown-menu" role="menu">
+            <% if @vendor.try(:track_inventory) %>
+              <li>
+                <%= submit_tag Spree.t(:enable_backorderable), form: 'products-list-form' %>
+              </li>
+              <li>
+                <%= submit_tag Spree.t(:disable_backorderable), form: 'products-list-form' %>
+              </li>
+            <% end %>
+            <!-- allow showing to all only -->
+            <li>
+              <%= submit_tag Spree.t(:show_products_to_all), form: 'products-list-form' %>
+            </li>
+            <% unless @vendor.try(:set_visibility_by_price_list) %>
+              <li>
+                <%= submit_tag Spree.t(:hide_products_from_all), form: 'products-list-form' %>
+              </li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+      <% if current_spree_user.can_write?('catalog', 'products') %>
+        <%= link_to new_manage_product_path, class: "btn btn-default" do %>
+          <i class="fa fa-plus"></i>&nbsp;New Product
+        <% end %>
+      <% end %>
+    </div><!--/.col-md-12 -->
+  </div><!--/.row -->
+
+  <% if params.fetch(:q, {}).fetch(:include_inactive, false).to_bool %>
+    <% total_variants_count = @vendor.showable_variants.count %>
+  <% else %>
+    <% total_variants_count = @vendor.showable_variants.active.count %>
+  <% end %>
+  <div class='hidden'>
+    <p>
+      You have selected all <strong><%= @variants.count %></strong> products on this page. <a id='select-all-products'>Select all <%= total_variants_count %></a> in the catalog.
+    </p>
+  </div>
+  <div class='hidden'>
+    <p>
+      All <strong><%= total_variants_count %> products</strong> in the catalog are selected. <a id='unselect-all-products'>Clear selection</a>
+    </p>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <%= form_for @vendor, html: {id: "products-list-form"}, url: actions_router_manage_products_path, method: :patch do |f| %>
+        <input type='hidden' name='all_variants' value='false' id='all-variants-input'>
+        <div class="">
+          <table class="table table-hover <%= 'table-checkable' if include_actions %>" id="product-catalog">
+            <thead>
+              <tr>
+                <% if include_actions %>
+                  <th class="table-checkbox sorting_disabled dt-no-settings-visible" width="2%">
+                  </th>
+                <% end %>
+               <% if @user_is_viewing_images %>
+                <%# CHECK WHETHER USER WANTS TO SEE IMAGES IN CATALOG HERE %>
+                <th class="sorting_disabled dt-no-settings-visible"></th>
+               <% end %>
+               <th>
+                 <%= sort_link @search, :full_display_name, "Name" %>
+               </th>
+               <th>
+                 <%= sort_link @search, :variant_type, "Type" %>
+               </th>
+               <th>
+                 <%= sort_link @search, :sku, "SKU" %>
+               </th>
+               <th>
+                 <%= sort_link @search, :pack_size, "Pack Size" %>
+               </th>
+               <th>
+                 <%= sort_link @search, :lead_time, "Lead Time" %>
+               </th>
+               <th>
+                 <%= sort_link @search, :prices_amount, "Price" %>
+               </th>
+                <th class="dt-no-settings-visible">
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <%= render partial: 'product_list', locals: {f:f, include_actions: include_actions} %>
+            </tbody>
+          </table>
+        </div>
+      <% end %>
+      <%= paginate @variants %>
+    </div>
+  </div>
+</div>
+<%= render partial: 'spree/manage/products/modal/product_modal' %>
+<%= render partial: 'spree/manage/variants/modal/variant_modal' %>
+<%= render partial: 'spree/manage/inventories/build_assembly_modal' %>
+<%= render partial: 'spree/manage/option_types/modal/edit' %>
+
+<script type='text/javascript'>
+  $('.group-checkable').click(function(event) {
+    if(this.checked === true){
+      $('#select-all-products').parent().parent().removeClass('hidden');
+      $('.checkboxes:checkbox').each(function() {
+        this.checked = true;
+      });
+    }else{
+      $('#all-variants-input').val('false');
+      if(!$('#select-all-products').parent().parent().hasClass('hidden')){
+        $('#select-all-products').parent().parent().addClass('hidden');
+      }
+      if(!$('#unselect-all-products').parent().parent().hasClass('hidden')){
+        $('#unselect-all-products').parent().parent().addClass('hidden');
+      }
+      $('.checkboxes:checkbox').each(function() {
+        this.checked = false;
+      });
+    }
+  });
+
+  $('#select-all-products').click(function(){
+    $('#all-variants-input').val('true');
+    $(this).parent().parent().addClass('hidden');
+    $('#unselect-all-products').parent().parent().removeClass('hidden');
+  });
+
+  $('#unselect-all-products').click(function(){
+    $(this).parent().parent().addClass('hidden');
+    $('#all-variants-input').val('false');
+    $('.group-checkable:checkbox')[0].checked = false;
+
+    $('.checkboxes:checkbox').each(function() {
+      this.checked = false;
+    });
+  });
+
+  $('.checkboxes').click(function(){
+    $('.group-checkable:checkbox')[0].checked = false;
+    if(!$('#select-all-products').parent().parent().hasClass('hidden')){
+      $('#select-all-products').parent().parent().addClass('hidden');
+    }
+    if(!$('#unselect-all-products').parent().parent().hasClass('hidden')){
+      $('#unselect-all-products').parent().parent().addClass('hidden');
+    }
+    $('#all-variants-input').val('false');
+  });
+
+</script>

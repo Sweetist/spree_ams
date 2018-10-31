@@ -1,0 +1,2 @@
+$('.modal-content', '#add-to-cart-modal').replaceWith("<%= j render(partial: 'spree/cust/orders/modals/variant_content', locals: {avv: @avv, variant: @variant, order: @order, line_items: @line_items}) %>");
+initPreventDoubleSubmission();

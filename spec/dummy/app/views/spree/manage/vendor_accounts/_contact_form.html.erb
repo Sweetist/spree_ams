@@ -1,0 +1,73 @@
+<%= form_for @contact, url: create_new_contact_manage_vendor_vendor_account_path(id: @account.id, account_ids: @account.id, company_id: @account.id), method: :post, remote: true do |f| %>
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+    <span class="caption-subject font-blue-madison bold uppercase">New Contact</span>
+  </div>
+
+  <div class="modal-body">
+    <div class="content" id="alert">
+      <%= render partial: 'spree/shared/errors' %>
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <div class="form-group">
+          <%= f.label :first_name, 'First Name', class: "control-label" %>
+          <%= f.text_field :first_name, class: "form-control" %>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <%= f.label :last_name, 'Last Name', class: "control-label" %>
+          <%= f.text_field :last_name, class: "form-control" %>
+        </div>
+      </div>
+    </div>
+<!-- // -->
+    <div class="row">
+      <!-- <div class="col-md-6">
+        <div class='form-group'>
+          <%= f.label :account_ids, "Accounts" %>
+          <%= f.collection_select :account_ids, @vendor.customer_accounts.where(customer_id: @account.customer_id), :id, :fully_qualified_name, {selected: [@account.id], name: 'contact[account_ids][]'}, { class: 'form-control select2-multiple select2-hidden-accessible', multiple: true} %>
+
+        </div>
+      </div> -->
+      <div class="col-md-12">
+        <div class="form-group">
+          <%= f.label :position, class: "control-label" %>
+          <%= f.text_field :position, class: "form-control" %>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6">
+        <div class="form-group">
+          <%= f.label :email, class: "control-label" %>
+          <%= f.email_field :email, class: "form-control" %>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <%= f.label :phone, class: "control-label" %>
+          <%= f.text_field :phone, class: "form-control" %>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6">
+        <div class="form-group">
+          <%= f.label :notes, class: "control-label" %>
+          <%= f.text_area :notes, class: "form-control" %>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal">
+      <i class='fa fa-times'></i> Cancel
+    </button>
+    <%= f.submit "Create Contact", class: "btn btn-primary" %>
+  </div>
+<% end %>

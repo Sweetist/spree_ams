@@ -1,0 +1,4 @@
+<% if flash[:errors] %>
+  $('#payment-form-container','#payment-modal').prepend("<%= j(render(partial: 'spree/shared/errors')) %>");
+<% end %>
+reEnableForm();

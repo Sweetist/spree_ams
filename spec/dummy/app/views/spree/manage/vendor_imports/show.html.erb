@@ -1,0 +1,235 @@
+<%= content_for :head_title do %>
+  <%= "#{@vendor_import.file_file_name} - #{sweet_time(@vendor_import.created_at)}"%>
+<% end %>
+
+<%= content_for :page_title do %>
+<%= "#{@vendor_import.file_file_name} - #{sweet_time(@vendor_import.created_at)}"%>
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Vendor Imports", manage_vendor_imports_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <span><%= "#{@vendor_import.file_file_name} - #{sweet_time(@vendor_import.created_at)}"%></span>
+    </li>
+  </ul>
+  <div class="page-toolbar">
+    <% if @vendor_import.status == 0 || @vendor_import.status == 3 %>
+      <%= link_to "Verify", manage_vendor_import_verify_path(@vendor_import), method: :post, class: "btn btn-sm btn-success" %>
+    <% end %>
+    <% if @vendor_import.status == 2 %>
+      <%= link_to "Import", manage_vendor_import_import_path(@vendor_import), method: :post, class: "btn btn-sm btn-success" %>
+    <% end %>
+    <% if @vendor_import.status != 1 and @vendor_import.status != 5 and @vendor_import.status != 6 %>
+      <%= link_to "Delete", manage_vendor_import_path(@vendor_import), method: :delete, data: {confirm: "Are you sure?"}, class: "btn btn-sm btn-danger" %>
+    <% end %>
+  </div>
+<% end %>
+
+<div class="content">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="portlet blue-hoki box col-md-9">
+        <div class="portlet-title">
+          <div class="caption">Import Details</div>
+        </div>
+        <div class="portlet-body">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="row static-info">
+                <div class="col-md-5 name">File:</div>
+                <div class="col-md-7 value"><%= @vendor_import.file_file_name %></div>
+              </div>
+            </div>
+          </div>
+          <hr/>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="row static-info">
+                <div class="col-md-5 name">Status:</div>
+                <div class="col-md-7 value"><%= @vendor_import.status_message %></div>
+              </div>
+              <div class="row static-info">
+                <div class="col-md-5 name">Import after successful verification:</div>
+                <div class="col-md-7 value"><%= @vendor_import.proceed ? "<span class=\"label label-danger\">Yes</span>".html_safe : "<span class=\"label label-info\">No</span>".html_safe %></div>
+              </div>
+              <div class="row static-info">
+                <div class="col-md-5 name">Import valid vendors after failed verification:</div>
+                <div class="col-md-7 value"><%= @vendor_import.proceed_verified ? "<span class=\"label label-info\">Yes</span>".html_safe : "<span class=\"label label-danger\">No</span>".html_safe %></div>
+              </div>
+              <div class="row static-info">
+                <div class="col-md-5 name">Encoding:</div>
+                <div class="col-md-7 value"><%= @vendor_import.encoding %></div>
+              </div>
+              <div class="row static-info">
+                <div class="col-md-5 name">Delimiter:</div>
+                <div class="col-md-7 value"><%= @vendor_import.delimer %></div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="row static-info">
+                <div class="col-md-5 name">Created:</div>
+                <div class="col-md-7 value"><%= sweet_time(@vendor_import.created_at) %></div>
+              </div>
+              <div class="row static-info">
+                <div class="col-md-5 name">Last Update:</div>
+                <div class="col-md-7 value"><%= sweet_time(@vendor_import.updated_at) %></div>
+              </div>
+            </div>
+          </div>
+          <hr/>
+          <div class="row">
+            <% if @vendor_import.status >= 2 %>
+              <div class="col-md-6">
+                <div class="row static-info">
+                  <div class="col-md-5 name">Valid:</div>
+                  <div class="col-md-7 value"><%= @vendor_import.verify_result.select {|p| p["valid"]}.count rescue "" %></div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="row static-info">
+                  <div class="col-md-5 name">Invalid:</div>
+                  <div class="col-md-7 value"><%= @vendor_import.verify_result.select {|p| !p["valid"]}.count rescue "" %></div>
+                </div>
+              </div>
+            <% end %>
+            <% if @vendor_import.status == 6 %>
+              <div class="col-md-6">
+                <div class="row static-info">
+                  <div class="col-md-5 name">Imported:</div>
+                  <div class="col-md-7 value"><%= @vendor_import.import_result.select {|p| p["imported"]}.count rescue "" %></div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="row static-info">
+                  <div class="col-md-5 name">Failed:</div>
+                  <div class="col-md-7 value"><%= @vendor_import.import_result.select {|p| !p["imported"]}.count rescue "" %></div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <% if @vendor_import.status == 10 %>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="alert alert-danger alert-dismissable">
+          <button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
+          <%= @vendor_import.exception_message %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <%= form_for @vendor_import, url: manage_vendor_import_path(@vendor_import), method: :patch do |f| %>
+    <% if @vendor_import.status == 2 || @vendor_import.status == 3 %>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="table-scrollable">
+            <table class="table table-striped table-hover">
+              <thead>
+                <tr>
+                  <th>Valid</th>
+                  <th>Vendor</th>
+                  <th>Account Email</th>
+                  <th>First Name</th>
+                  <th>Last Name</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @vendor_import.verify_result.each_with_index do |hash_vendor, idx| %>
+                  <% vendor = hash_vendor["vendor"] %>
+                  <% account = hash_vendor["account"] %>
+                  <% contact = hash_vendor["contact"] %>
+                  <% address = hash_vendor["bill_address"] %>
+                  <tr>
+                    <td>
+                      <% if hash_vendor['valid'] %>
+                        <span class="label label-success"><i class="fa fa-check"></i></span>
+                      <% else %>
+                        <span class="label label-danger"><i class="fa fa-times"></i></span>
+                      <% end %>
+                    </td>
+                    <td><%= account['name'] rescue "" %></td>
+                    <td><%= account['email'] rescue "" %></td>
+                    <td><%= address['firstname'] rescue "" %></td>
+                    <td><%= address['lastname'] rescue "" %></td>
+                    <td></td>
+                  </tr>
+                  <% unless hash_vendor["errors"].empty? %>
+                    <tr>
+                      <td colspan="6">
+                        <%= debug hash_vendor["errors"] %>
+                      </td>
+                      <td>
+                        <%# if hash_vendor["errors"].all?{|error| error.include?('was found')} %>
+                          <!-- <input type='checkbox' name="vendor[<%= vendor['name'] %>]"> -->
+                        <%# end %>
+                      </td>
+                    </tr>
+                  <% end %>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+  <% if @vendor_import.status == 6 %>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="table-scrollable">
+          <table class="table table-striped table-hover">
+            <thead>
+              <tr>
+                <th>Imported</th>
+                <th>Vendor</th>
+                <th>Account Email</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @vendor_import.import_result.each do |hash_vendor| %>
+                <% vendore = hash_vendor["vendor"] %>
+                <% contact = hash_vendor["contact"] %>
+                <% account = hash_vendor['account'] %>
+                <% address = hash_vendor["bill_address"] %>
+                <tr>
+                  <td>
+                    <% if hash_vendor["imported"] %>
+                      <span class="label label-success"><i class="fa fa-check"></i></span>
+                    <% else %>
+                      <span class="label label-danger"><i class="fa fa-times"></i></span>
+                    <% end %>
+                  </td>
+                  <td><%= account['name'] rescue "" %></td>
+                  <td><%= account['email'] rescue "" %></td>
+                  <td><%= address['firstname'] rescue "" %></td>
+                  <td><%= address['lastname'] rescue "" %></td>
+                </tr>
+                <% unless hash_vendor["errors"].empty? %>
+                  <tr>
+                    <td colspan="7"><%= debug hash_vendor["errors"] %></td>
+                  </tr>
+                <% end %>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>

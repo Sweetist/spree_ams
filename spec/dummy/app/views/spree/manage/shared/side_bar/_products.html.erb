@@ -1,0 +1,124 @@
+<li class="nav-item <%= "active open" if current_controller?(['products',
+                                                              'option_types',
+                                                              'taxons',
+                                                              'inventories',
+                                                              'stock_transfers',
+                                                              'lots',
+                                                              'product_imports']) %>">
+  <a href="#" class="nav-link nav-toggle">
+    <i class="fa fa-folder-open"></i>
+    <span class="title">Products</span>
+    <span class="arrow <%= "open" if current_controller?(['products', 'option_types', 'taxons', 'inventories', 'stock_transfers', 'lots']) %>"></span>
+  </a>
+  <ul class="sub-menu">
+    <% if current_spree_user.can_read?('catalog', 'products') %>
+      <li class="nav-item <%= "active" if current_controller?(['products']) %>">
+        <%= link_to manage_products_path, class: "nav-link" do %>
+          <span class="title">Catalog</span>
+        <% end %>
+      </li>
+    <% else %>
+      <li class="nav-item">
+        <%= link_to 'void:javascript();', class: "nav-link" do %>
+          <span class="title">Catalog</span>
+          <i class='fa fa-lock'></i>
+        <% end %>
+      </li>
+    <% end %>
+    <% if current_spree_user.can_read?('categories', 'products')%>
+      <li class="nav-item <%= "active" if current_controller?(['taxons']) %>">
+        <%= link_to manage_taxons_path, class: "nav-link" do %>
+          <span class="title">Categories</span>
+        <% end %>
+      </li>
+    <% else %>
+      <li class="nav-item">
+        <%= link_to 'void:javascript();', class: "nav-link" do %>
+          <span class="title">Categories</span>
+          <i class='fa fa-lock'></i>
+        <% end %>
+      </li>
+    <% end %>
+    <% if current_spree_user.company.try(:allow_variants) %>
+      <% if current_spree_user.can_read?('option_values', 'products') %>
+        <li class="nav-item <%= "active" if current_controller?(['option_types']) %>">
+          <%= link_to manage_option_types_path, class: "nav-link" do %>
+            <span class="title">Option Types</span>
+          <% end %>
+        </li>
+      <% else %>
+        <li class="nav-item">
+          <%= link_to 'void:javascript();', class: "nav-link" do %>
+            <span class="title">Option Types</span>
+            <i class='fa fa-lock'></i>
+          <% end %>
+        </li>
+      <% end %>
+    <% end %>
+    <% if current_spree_user.can_read?('basic_options', 'inventory') %>
+      <li class="nav-item <%= "active" if current_controller?(['inventories']) %>">
+        <%= link_to manage_inventory_path, class: "nav-link" do %>
+          <span class="title">Inventory</span>
+          <% unless current_company.subscription_includes?('inventory') %>
+            <i class="fa fa-lock"></i>
+          <% end %>
+        <% end %>
+      </li>
+    <% else %>
+      <li class="nav-item">
+        <%= link_to 'void:javascript();', class: "nav-link" do %>
+          <span class="title">Inventory</span>
+          <i class="fa fa-lock"></i>
+        <% end %>
+      </li>
+    <% end %>
+
+    <% if current_spree_user.can_read?('basic_options', 'inventory') %>
+      <li class="nav-item <%= "active" if current_controller?(['stock_transfers']) %>">
+        <%= link_to manage_stock_transfers_path, class: "nav-link" do %>
+          <span class="title">Stock Transfers</span>
+          <% unless current_company.subscription_includes?('inventory') %>
+            <i class="fa fa-lock"></i>
+          <% end %>
+        <% end %>
+      </li>
+    <% else %>
+      <li class="nav-item">
+        <%= link_to 'void:javascript();', class: "nav-link" do %>
+          <span class="title">Stock Transfers</span>
+          <i class="fa fa-lock"></i>
+        <% end %>
+      </li>
+    <% end %>
+    <% if current_company.lot_tracking %>
+      <% if current_spree_user.can_read?('basic_options', 'inventory') %>
+        <li class="nav-item <%= "active" if current_controller?(['lots']) %>">
+          <%= link_to manage_lots_path, class: "nav-link" do %>
+            <span class="title">Lots</span>
+          <% end %>
+        </li>
+      <% else %>
+        <li class="nav-item">
+          <%= link_to 'void:javascript();', class: "nav-link" do %>
+            <span class="title">Lots</span>
+            <i class="fa fa-lock"></i>
+          <% end %>
+        </li>
+      <% end %>
+    <% end %>
+    <% if current_spree_user.can_write?('catalog', 'products') %>
+      <li class="nav-item <%= "active" if current_controller?(['product_imports']) %>">
+        <%= link_to manage_product_imports_path, class: "nav-link" do %>
+          <span class="title">Product Import</span>
+        <% end %>
+      </li>
+    <% else %>
+      <li class="nav-item">
+        <%= link_to 'void:javascript();', class: "nav-link" do %>
+          <span class="title">Product Import</span>
+          <i class="fa fa-lock"></i>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+</li>

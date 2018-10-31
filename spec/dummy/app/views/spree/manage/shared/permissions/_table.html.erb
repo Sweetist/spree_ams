@@ -1,0 +1,157 @@
+<div class="row">
+  <div class='col-md-12'>
+    <table class="table table-bordered">
+      <tbody>
+        <tr class="info">
+          <td colspan="2"><b> Invoice </b></td>
+        </tr>
+        <tr>
+          <td> Invoice </td>
+          <td><%= pw(permittable.permission_invoice) %></td>
+        </tr>
+        <tr class="info">
+          <td colspan="2"><b> Orders</b> </td>
+        </tr>
+        <tr>
+          <td> Basic Options </td>
+          <td> <%= pw(permittable.permission_order_basic_options) %></td>
+        </tr>
+        <tr>
+          <td> Edit Line Item </td>
+          <td> <%= hb(permittable.permission_order_edit_line_item) %></td>
+        </tr>
+        <tr>
+          <td> Approve, Ship and Receive Orders </td>
+          <td> <%= hb(permittable.permission_order_approve_ship_receive) %></td>
+        </tr>
+        <tr>
+          <td> Manual Order Adjustment </td>
+          <td> <%= hb(permittable.permission_order_manual_adjustment) %></td>
+        </tr>
+        <tr>
+          <td> Payments </td>
+          <td> <%= pw(permittable.permission_order_payments, {'1'=>'Read/Create', '2'=>"Edit"}) %></td>
+        </tr>
+        <tr class="info">
+          <td colspan="2"><b> Purchase Orders </b></td>
+        </tr>
+        <tr>
+          <td> Basic Options </td>
+          <td> <%= pw(permittable.permission_purchase_orders_basic_options) %></td>
+        </tr>
+        <tr>
+          <td> Vendors </td>
+          <td> <%= pw(permittable.permission_purchase_orders_vendors) %></td>
+        </tr>
+        <tr class="info">
+          <td colspan="2"><b> Standing Orders </b></td>
+        </tr>
+        <tr>
+          <td> Basic Options </td>
+          <td> <%= pw(permittable.permission_standing_orders_basic_options) %></td>
+        </tr>
+        <tr>
+          <td> Edit Schedules </td>
+          <td> <%= pw(permittable.permission_standing_orders_standing_orders_schedule) %></td>
+        </tr>
+        <tr class="info">
+          <td colspan="2"><b> Products</b> </td>
+        </tr>
+        <tr>
+          <td> Catalog </td>
+          <td> <%= pw(permittable.permission_products_catalog) %></td>
+        </tr>
+        <tr>
+          <td> Categories </td>
+          <td> <%= pw(permittable.permission_products_categories) %></td>
+        </tr>
+        <tr>
+          <td> Option Types/Values </td>
+          <td> <%= pw(permittable.permission_products_option_values) %></td>
+        </tr>
+        <tr class="info">
+          <td colspan="2"><b> Inventory</b> </td>
+        </tr>
+        <tr>
+          <td> Basic Options </td>
+          <td> <%= pw(permittable.permission_inventory_basic_options) %></td>
+        </tr>
+        <tr>
+          <td> Stock Locations </td>
+          <td> <%= pw(permittable.permission_inventory_stock_locations) %></td>
+        </tr>
+        <tr class="info">
+          <td colspan="2"><b> Customers </b></td>
+        </tr>
+        <tr>
+          <td> Basic Options </td>
+          <td> <%= pw(permittable.permission_customers_basic_options) %></td>
+        </tr>
+        <tr>
+          <td> Customer Users </td>
+          <td> <%= pw(permittable.permission_customers_users) %></td>
+        </tr>
+        <tr class="info">
+          <td colspan="2"><b> Users </b></td>
+        </tr>
+        <tr>
+          <td> Basic Options </td>
+          <td> <%= pw(permittable.permission_users_basic_options) %></td>
+        </tr>
+        <tr>
+          <td> User Adjust</td>
+          <td> <%= hb(permittable.permission_users_user_adjust) %></td>
+        </tr>
+        <tr class="info">
+          <td colspan="2"><b> Pricing Adjustments </b></td>
+        </tr>
+        <tr>
+          <td> Basic Options </td>
+          <td> <%= pw(permittable.permission_promotions) %></td>
+        </tr>
+        <tr class="info">
+          <td colspan="2"><b> Reports </b></td>
+        </tr>
+        <tr>
+          <td> Sales Reports </td>
+          <td> <%= pw(permittable.permission_reports_basic_options) %></td>
+        </tr>
+        <tr>
+          <td> Production Reports </td>
+          <td> <%= pw(permittable.permission_reports_production_reports) %></td>
+        </tr>
+        <tr class="info">
+          <td colspan="2"><b> Settings Access</b> </td>
+        </tr>
+        <tr>
+          <td> Company </td>
+          <td> <%= pw(permittable.permission_company) %></td>
+        </tr>
+        <tr>
+          <td> Integrations </td>
+          <td> <%= pw(permittable.permission_settings_integrations) %></td>
+        </tr>
+        <tr>
+          <td> Shipping Categories </td>
+          <td> <%= pw(permittable.permission_settings_shipping_categories) %></td>
+        </tr>
+        <tr>
+          <td> Shipping Methods </td>
+          <td> <%= pw(permittable.permission_settings_shipping_methods) %></td>
+        </tr>
+        <tr>
+          <td> <%= "#{current_vendor.display_shipping_group_class}s" %> </td>
+          <td> <%= pw(permittable.permission_settings_shipping_methods) %></td>
+        </tr>
+        <tr>
+          <td> Tax Categories </td>
+          <td> <%= pw(permittable.permission_settings_tax_categories) %></td>
+        </tr>
+        <tr>
+          <td> Payments </td>
+          <td> <%= pw(permittable.permission_settings_payment_methods) %></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

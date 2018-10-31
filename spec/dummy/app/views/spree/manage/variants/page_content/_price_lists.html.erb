@@ -1,0 +1,45 @@
+<div class='row'>
+  <div class='col-xs-12'>
+    <div class="table-scrollable">
+      <table class="table table-hover table-striped" id='price-lists-table'>
+        <thead>
+          <th>Price List</th>
+          <th>Cost Price</th>
+          <th>Sales Price</th>
+          <th>Adjusted Price</th>
+        </thead>
+        <tbody>
+          <% variant_price_lists = variant.variant_price_lists.includes(:price_list) %>
+          <% if variant_price_lists.present? %>
+            <% variant_price_lists.each do |variant_price_list| %>
+              <% price_list = variant_price_list.price_list %>
+              <tr>
+                <td>
+                  <% if current_spree_user.can_write?('promotions') %>
+                    <%= link_to price_list.name, edit_manage_price_list_path(price_list) %>
+                  <% else %>
+                    <%= price_list.name %>
+                  <% end %>
+                </td>
+                <td> <%= display_sweet_price(variant.current_cost_price, current_company.currency) %> </td>
+                <td> <%= display_sweet_price(variant.price, current_company.currency) %> </td>
+                <td>
+                  <%= display_sweet_price(variant_price_list.price, current_company.currency) %>
+                </td>
+              </tr>
+            <% end %>
+          <% else %>
+            <tr>
+              <td colspan="100%">
+                <span class='help-block-italic nowrap'>
+                  This <%= variant.is_master? ? 'product' : 'variant' %> is not on any <%= link_to 'price lists', manage_price_lists_path, class: 'inline' %>.
+                </span>
+              </td>
+            </tr>
+          <% end %>
+
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

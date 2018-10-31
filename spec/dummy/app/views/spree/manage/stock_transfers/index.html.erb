@@ -1,0 +1,59 @@
+<%= content_for :head_title do %>
+  Stock Transfers
+<% end %>
+
+<%= content_for :page_title do %>
+  Stock Transfers
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+		<li>
+      <span>Stock Transfers</span>
+    </li>
+  </ul>
+	<div class="page-toolbar">
+    <% if current_spree_user.can_write?('basic_options', 'inventory') %>
+      <%= link_to new_manage_stock_transfer_path, class: "btn green pull-right #{'disabled' unless @vendor.track_inventory}", disabled: !@vendor.track_inventory do%>
+        <i class="fa fa-plus"></i>&nbsp;New Stock Transfer
+      <% end %>
+    <% end %>
+  </div>
+<% end %>
+
+<div class='content'>
+  <%= render partial: 'spree/manage/shared/not_tracking_inventory', locals: {vendor: @vendor} %>
+  <div class="row">
+    <div class="col-md-12">
+      <table class="table table-hover table-striped" id="production" data-title='Stock Transfer History' data-sortcol='0' data-sortdir='desc'>
+        <thead>
+          <tr>
+            <th>Transfer Date</th>
+            <th>Number</th>
+            <th>Source</th>
+            <th>Destination</th>
+            <th>Reference</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @vendor.stock_transfers.includes(:source_location, :destination_location).each do |transfer| %>
+            <tr>
+              <td data-order="<%=transfer.created_at%>">
+                <%= link_to @vendor.to_vendor_date(transfer.created_at), manage_stock_transfer_path(transfer) %>
+              </td>
+              <td><%= link_to transfer.number, manage_stock_transfer_path(transfer) %></td>
+              <td><%= link_to transfer.source_location.try(:name) || ("Assembly" if transfer.transfer_type == 'build') || 'Adjustment', manage_stock_transfer_path(transfer) %></td>
+              <td><%= link_to transfer.destination_location.try(:name).to_s, manage_stock_transfer_path(transfer) %></td>
+              <td><%= link_to transfer.try(:reference).to_s, manage_stock_transfer_path(transfer) %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>

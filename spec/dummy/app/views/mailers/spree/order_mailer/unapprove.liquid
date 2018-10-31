@@ -1,0 +1,15 @@
+---
+subject: 'Your order from {{my_company.name}} has been unapproved ({{order.number}})'                   # REQUIRED
+from: ''   # optional
+cc: ''     # optional
+bcc: ''     # optional
+---
+<p>
+Dear {{order.customer.name}},
+</p>
+<p>We cannot complete this order at this time. Apologies for any confusion. Please contact us directly if you have any questions. Thank you,
+</p>
+<p>
+	Thank you,<br>
+  {{my_company.name}}
+</p>

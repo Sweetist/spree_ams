@@ -1,0 +1,9 @@
+$('#address-select-modal').modal('hide');
+
+$('#alert').html("<div class='alert alert-success alert-auto-dissapear'><%= flash[:success] %></div>");
+
+$('#account-address-info').replaceWith("<%= escape_javascript(render(partial: 'spree/cust/orders/new_order_addresses')) %>");
+
+setTimeout(function() {
+$(".alert-auto-dissapear").fadeOut(1500);
+},2000);

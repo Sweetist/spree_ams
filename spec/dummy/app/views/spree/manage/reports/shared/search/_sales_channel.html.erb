@@ -1,0 +1,5 @@
+ <div class="form-group">
+
+    <%= select_tag "q[channel_in][]",
+        options_for_select(@vendor.sales_channels, params.dig('q', 'channel_in')), { style: 'width:100%', class: 'select2-tags input-large form-control', multiple: true } %>
+</div>

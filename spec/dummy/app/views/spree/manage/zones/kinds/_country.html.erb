@@ -1,0 +1,13 @@
+<div class='row'>
+  <div class='col-md-12' id='country'>
+    <div class="form-group">
+      <%= label_tag :country_ids, Spree.t(:countries), class: 'control-label' %><br>
+      <%= collection_select :zone, :country_ids, Spree::Country.all.order('name ASC'), :id, :name, {include_blank: true}, {name: 'zone[country_ids][]', multiple: true, class: 'select2 select2-multiple select2-hidden-accessible form-control'} %>
+    </div>
+  </div>
+</div>
+<script type='text/javascript'>
+  $(document).ready(function(){
+    $('#zone_country_ids').select2({width: '100%'});
+  });
+</script>

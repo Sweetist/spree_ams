@@ -1,0 +1,121 @@
+  <%= content_for :head_title do %>
+  Vendors
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Vendor Accounts", manage_vendor_accounts_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <span><%= @account.fully_qualified_name %></span>
+    </li>
+  </ul>
+  <div class="page-toolbar">
+    <div class="btn-group pull-right">
+      <%= link_to new_manage_purchase_order_path, class: 'btn green-jungle margin-right-10' do%>
+      <i class ="fa fa-plus"></i>&nbsp;New Purchase Order
+      <% end %>
+      <%= link_to new_manage_account_path, class: "btn green margin-right-10" do %>
+        <i class= "fa fa-plus"></i>&nbsp;New Vendor
+      <% end %>
+      <!-- <button type="button" class="btn green dropdown-toggle" data-toggle="dropdown"> Actions
+        <i class="fa fa-angle-down"></i>
+      </button>
+      <ul class="dropdown-menu pull-right" role="menu">
+        <li>
+         <%#= link_to 'Back to vendor list', manage_vendor_accounts_path %>
+        </li>
+      </ul> -->
+    </div>
+  </div>
+<% end %>
+
+<!-- BEGIN CONTENT -->
+<div class="profile-content">
+  <div class="row">
+    <div class="portlet light ">
+      <div class="portlet-title tabbable-line">
+        <div class="caption caption-md">
+          <i class="icon-globe theme-font hide"></i>
+          <span class="caption-subject font-blue-madison bold uppercase"><%= @account.fully_qualified_name %></span>
+        </div>
+        <div class="btn-group hidden-md hidden-lg pull-left" style = "width:100%">
+          <button type="button" class="btn green dropdown-toggle dropdown-btn-text" data-toggle="dropdown" style = "width:100%">
+            <label>Account Info </label>&nbsp;
+            <i class="fa fa-angle-down"></i>
+          </button>
+          <ul class="dropdown-menu pull-left" style="width:100%" role="menu">
+            <li class="tab-link <%= 'active' if params[:users].blank? %>">
+              <a href="#account_info_tab" data-toggle="tab" aria-expanded="true" >Account Info</a>
+            </li>
+            <!--
+             Contacts tab is hiidden because we wanted to create one common route for customers and vendors contacts,
+             instead of having create_new_contact_manage_customer_account and create_new_contact_manage_vendor_vendor_account
+
+            <li class="tab-link <%= 'active' if !params[:users].blank? %>">
+              <a href="#users_tab" data-toggle="tab" aria-expanded="<%= !params[:users].blank? %>">Contacts</a>
+            </li>
+            -->
+          </ul>
+        </div>
+        <ul class="nav nav-tabs hidden-xs hidden-sm">
+          <li class="long-tabs-link <%= 'active' if params[:users].blank? %>">
+            <a href="#account_info_tab" data-toggle="tab" aria-expanded="true">Account Info</a>
+          </li>
+          <!--
+           Contacts tab is hiidden because we wanted to create one common route for customers and vendors contacts,
+           instead of having create_new_contact_manage_customer_account and create_new_contact_manage_vendor_vendor_account
+
+           <li class="long-tabs-link <%= 'active' if !params[:users].blank? %>">
+            <a href="#users_tab" data-toggle="tab" aria-expanded="<%= !params[:users].blank? %>">Contacts</a>
+          </li>
+          -->
+        </ul>
+      </div>
+      <div class="portlet-body form">
+        <div class="tab-content">
+          <div class="tab-pane <%= 'active' if params[:users].blank? %>" id="account_info_tab">
+            <%= form_for @account, url: manage_vendor_vendor_account_path, html: {class:"horizontal-form", id:'account-form'} do |f| %>
+              <div class="form-body">
+                <% if @account.inactive? %>
+                  <%= render partial: 'inactive_account_message' %>
+                <% else %>
+                  <%= render partial: 'active_account_message', locals: {f: f} %>
+                <% end %>
+              </div>
+              <%= render partial: "account_form", locals: {f: f, edit: true} %>
+
+              <div class="form-actions right">
+               <br><br><br>
+                <%= link_to 'Cancel', manage_vendor_vendor_account_path(@vendor, @account), class: "btn default" %>
+                <button class="btn btn-primary"><i class="fa fa-check"></i>Update</button>
+              </div>
+            <% end %>
+          </div>
+
+          <div class="tab-pane <%= 'active' if !params[:users].blank? %>" id="users_tab">
+            <%= render partial: "users_table", locals: {edit: true} %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <hr>
+  <%= commontator_thread(@account) %>
+</div>
+
+<script type='text/javascript'>
+  $(document).on('ready', function(){
+    $('#deactivate-account-btn').click(function(){
+      $(this).addClass('hidden');
+      $('#account-activity').removeClass('hidden');
+    });
+
+  });
+</script>

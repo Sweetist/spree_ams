@@ -1,0 +1,160 @@
+<div class="portlet-body form">
+  <div class="form-body">
+    <div class="row static-info">
+      <div class="row">
+        <div class="col-md-3 name">Access Key</div>
+        <div class="col-md-9 value">
+        <%= @integration.sweetist_access_key %>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-3 name">Send / Receive Data from Your Sweetist Account</div>
+        <div class="col-md-9 value">
+        <%= @integration.sweetist_integration_state ? 'Yes' : 'No' %>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-3 name">Send Automated Emails</div>
+        <div class="col-md-9 value">
+        <%= @integration.sweetist_send_automated_emails ? 'Yes' : 'No' %>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-3 name">Overwrite conflicts in</div>
+        <div class="col-md-9 value">
+        <%= @integration.sweetist_overwrite_conflicts_in %>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-3 name">Customer / Account</div>
+        <div class="col-md-9 value">
+        <%= @integration.sweetist_account_name %>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-3 name">Stock Location</div>
+        <div class="col-md-9 value">
+        <%= @integration.sweetist_stock_location_id %>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-3 name">Default Product Weight Units</div>
+        <div class="col-md-9 value">
+        <%= @integration.sweetist_weight_units %>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-3 name">Default Product Dimension Units</div>
+        <div class="col-md-9 value">
+        <%= @integration.sweetist_dimension_units %>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-3 name">Minimum Order Req.</div>
+        <div class="col-md-9 value">
+        <%= @integration.sweetist_min_order_reqmt %>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-3 name">Email</div>
+        <div class="col-md-9 value">
+        <%= @integration.sweetist_email %>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-3 name">Phone</div>
+        <div class="col-md-9 value">
+        <%= @integration.sweetist_phone %>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-3 name">Address</div>
+        <div class="col-md-9 value">
+        <%= @integration.sweetist_address %>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-3 name">City</div>
+        <div class="col-md-9 value">
+        <%= @integration.sweetist_city %>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-3 name">State</div>
+        <div class="col-md-9 value">
+        <%= @integration.sweetist_state %>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-3 name">Country</div>
+        <div class="col-md-9 value">
+        <%= @integration.sweetist_country %>
+        </div>
+      </div>
+      <br>
+      <h4 class="form-section">Hours Of Operation</h4>
+      <div class="row">
+        <div class="col-md-3 name">Sunday</div>
+        <div class="col-md-9 value">
+        <%= @integration.sweetist_open_su %> - <%= @integration.sweetist_closed_su %>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-3 name">Monday</div>
+        <div class="col-md-9 value">
+        <%= @integration.sweetist_open_mo %> - <%= @integration.sweetist_closed_mo %>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-3 name">Tuesday</div>
+        <div class="col-md-9 value">
+        <%= @integration.sweetist_open_tu %> - <%= @integration.sweetist_closed_tu %>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-3 name">Wednesday</div>
+        <div class="col-md-9 value">
+        <%= @integration.sweetist_open_we %> - <%= @integration.sweetist_closed_we %>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-3 name">Thursday</div>
+        <div class="col-md-9 value">
+        <%= @integration.sweetist_open_th %> - <%= @integration.sweetist_closed_th %>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-3 name">Friday</div>
+        <div class="col-md-9 value">
+        <%= @integration.sweetist_open_fr %> - <%= @integration.sweetist_closed_fr %>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-3 name">Saturday</div>
+        <div class="col-md-9 value">
+        <%= @integration.sweetist_open_sa %> - <%= @integration.sweetist_closed_sa %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

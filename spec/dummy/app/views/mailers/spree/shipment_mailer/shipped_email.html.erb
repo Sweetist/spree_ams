@@ -1,0 +1,12 @@
+<table>
+  <tr>
+    <td>
+      <%= @body.try(:html_safe) %>
+      <br>
+
+      <!-- partial for shipment line items table -->
+      <%= render partial: 'mailers/spree/shared/ship_mailer_line_items_table' %>
+    </td>
+    <td class="expander"></td>
+  </tr>
+</table>

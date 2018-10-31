@@ -1,0 +1,26 @@
+<div class="form-body">
+
+  <div class='row'>
+    <div class='col-md-4'>
+      <div class='form-group'>
+        <%= f.label :name, Spree.t(:name), class: 'control-label' %>
+        <%= f.text_field :name, class: 'form-control' %>
+      </div>
+    </div>
+  </div>
+
+  <h4 class='form-section'>Option Values</h4>
+
+  <div class='row' id=#option_values>
+    <div class='col-md-12'>
+      <%= f.fields_for :option_values do |ff| %>
+        <%= render partial: 'option_value_fields', locals: {f: ff} %>
+      <% end %>
+
+      <div class="links col-sm-5 col-xs-12">
+        <%= link_to_add_association raw("<i class='fa fa-plus'></i> Option Value"), f, :option_values, class: "btn green-jungle"  %>
+      </div>
+    </div>
+  </div>
+
+</div>

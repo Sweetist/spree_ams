@@ -1,0 +1,20 @@
+<tbody id='variants_by_<%= category %>' data-next-row='0' class='active'>
+  <% idx = 0 %>
+  <% price_list_variants.each do |price_list_variant| %>
+    <% variant = price_list_variant.variant %>
+    <%= render partial: 'spree/manage/price_lists/form/variant_row', locals: {variant: variant, price_list_variant: price_list_variant, currency: currency, idx: idx, category: category} %>
+
+    <% idx += 1 %>
+  <% end %>
+  <% variants.each_with_index do |variant, idx| %>
+    <%= render partial: 'spree/manage/price_lists/form/variant_row', locals: {variant: variant, price_list_variant: nil, currency: currency, idx: idx, category: category} %>
+    <% idx += 1 %>
+  <% end %>
+  <% if price_list_variants.blank? && variants.blank? && category != 'individual' %>
+    <tr>
+      <td colspan="100%">
+        There are no active products with the selected category.
+      </td>
+    </tr>
+  <% end %>
+</tbody>

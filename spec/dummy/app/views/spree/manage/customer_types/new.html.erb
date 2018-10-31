@@ -1,0 +1,48 @@
+<%= content_for :head_title do %>
+  New Customer Type
+<% end %>
+
+<%= content_for :page_title do %>
+	<span class="order-id">
+		New Customer Type
+	</span>
+<% end %>
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+		<li>
+      <%= link_to 'Customer Types', manage_customer_types_path %>
+    </li>
+  </ul>
+	<div class="page-toolbar">
+    <div class="btn-group pull-right">
+      <%= link_to "Back to All Customer Types", manage_customer_types_path, class: 'btn green btn-sm' %>
+    </div>
+  </div>
+<% end %>
+
+<div class='content'>
+  <div class="portlet box light">
+    <div class="portlet-title">
+      <div class="caption">
+
+      </div>
+    </div>
+    <div class="portlet-body form">
+      <%= form_for [:manage, @customer_type] do |f| %>
+        <div class="form-body">
+          <%= render partial: 'form', locals: {f: f} %>
+        </div>
+        <div class="form-actions">
+          <div class='pull-right'>
+            <button class="btn btn-primary"><i class="fa fa-check"></i> Save</button>
+            <%= link_to Spree.t(:Cancel), manage_customer_types_path, class: "btn btn-default" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

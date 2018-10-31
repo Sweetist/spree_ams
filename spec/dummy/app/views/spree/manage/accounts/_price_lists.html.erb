@@ -1,0 +1,49 @@
+<h4 class='form-section'>Price Lists</h4>
+<div class="table-scrollable">
+  <table class="table table-striped table-hover" id="sample_1">
+    <thead>
+      <tr>
+        <th>
+          Name
+        </th>
+        <th>
+          Customer Type
+        </th>
+        <th>
+          Product Category
+        </th>
+        <th>
+          # of Products
+        </th>
+        <th>
+          Active
+        </th>
+      </tr>
+    </thead>
+    <% can_edit_pl = current_spree_user.can_write?('promotions') %>
+    <% @account.price_lists.order(:name).each do |price_list| %>
+      <tr>
+        <% url = can_edit_pl ? edit_manage_price_list_path(price_list) : 'void:javascript();' %>
+        <td>
+          <%= link_to price_list.name, url %>
+        </td>
+        <td>
+          <%= link_to price_list.customer_type.try(:name).to_s, url %>
+        </td>
+        <td>
+          <% unless ['all', 'individual'].include? price_list.select_variants_by %>
+            <%= link_to current_company.taxons.find_by_id(price_list.select_variants_by.to_s).try(:pretty_name).to_s, url %>
+          <% end %>
+        </td>
+        <td>
+          <%= link_to price_list.price_list_variants.count, url %>
+        </td>
+        <td>
+          <% if price_list.active? %>
+            <%= link_to raw("<i class='fa fa-check'></i>"), url %>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </table>
+</div>

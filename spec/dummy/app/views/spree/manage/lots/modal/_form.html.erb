@@ -1,0 +1,52 @@
+<% company = current_company %>
+<div class="row">
+  <div class="col-md-12">
+    <div class="portlet light ">
+      <div class="portlet-body form">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <%= label_tag "lot_number", "Number", {class: 'control-label'} %>
+              <%= text_field_tag "lot_number", "", {class: 'form-control'} %>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <%= label_tag "lot_expires", "Expires At", class: "control-label" %>
+              <input type="text" id="lot_expires" name="lot[expires_at]" autocomplete='off'
+                value="<%= display_vendor_date_format(@lot.expires_at, company.date_format) unless @lot.expires_at.blank? %>"
+                class="form-control date-picker" data-date-format="<%= company.date_format %>" id="expires_at" placeholder="<%= company.date_format %>">
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <%= label_tag "lot_available", "Available At", class: "control-label" %>
+              <input type="text" id= "lot_available" name="lot[available_at]" autocomplete='off'
+                value="<%= display_vendor_date_format(@lot.available_at, company.date_format) unless @lot.available_at.blank? %>"
+                class="form-control date-picker" data-date-format="<%= company.date_format %>" id="available_at" placeholder="<%= company.date_format %>">
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <%= label_tag "lot_sell", "Sell By", class: "control-label" %>
+              <input type="text" id= "lot_sell_by" name="lot[sell_by]" autocomplete='off'
+                value="<%= display_vendor_date_format(@lot.sell_by, company.date_format) unless @lot.sell_by.blank? %>"
+                class="form-control date-picker" data-date-format="<%= company.date_format %>" id="sell_by" placeholder="<%= company.date_format %>">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <%= label_tag "lot_variant", "Variant", class: 'control-label' %>
+              <%= collection_select("lot", "variant", @variants, :id, :full_context, {include_blank: true}, {class: "form-control select2"}) %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

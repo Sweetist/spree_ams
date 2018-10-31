@@ -1,0 +1,5 @@
+$('#payment-form-container','#payment-modal').html("<%= j(render(partial: 'spree/manage/payments/body_content/new.html.erb')) %>");
+$('#payment-form').attr('data-remote', true);
+$('#payment-form-container','#payment-modal').prepend("<%= j(render(partial: 'spree/shared/errors')) %>");
+enableFormButtons();
+$('.tooltips').tooltip();

@@ -1,0 +1,25 @@
+<% unless @hide_logo %>
+  <%
+    @vendor ||= current_vendor
+    if @vendor.nil? && current_customer.vendors.distinct.count == 1
+      @vendor = current_customer.vendors.first
+    end
+    if @vendor.present?
+      img = @vendor.logo
+      @size = @vendor.cva.try(:logo_size)
+      @size = nil if @size.to_s.empty?
+      @alignment = @vendor.cva.try(:logo_alignment)
+    else
+      img = nil
+    end
+  %>
+  <div class="page-logo <%= @size %> <%= @alignment %>">
+    <%= link_to root_path, class: 'logo-default-link' do %>
+      <% if img %>
+        <%= image_tag(img.attachment.url(@size), class: "logo-default") %>
+      <% else %>
+        <%= image_tag("sweet.png", class: "logo-default") %>
+      <% end %>
+    <% end %>
+  </div>
+<% end %>

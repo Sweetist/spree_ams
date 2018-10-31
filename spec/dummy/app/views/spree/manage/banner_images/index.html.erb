@@ -1,0 +1,95 @@
+<%= content_for :head_title do %>
+  <%= @account.name %>
+<% end %>
+
+<%= content_for :page_title do %>
+<%= @account.name %>
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", root_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Account", edit_manage_account_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <span>Banner Images</span>
+    </li>
+  </ul>
+
+  <div class="page-toolbar">
+    <div class="btn-group pull-right">
+      <%= link_to "Back to Account",  edit_manage_account_url, class: "btn green" %>
+    </div>
+  </div>
+
+<% end %>
+
+<div class="content">
+  <div class="row">
+    <div class="col-md-12">
+
+      <% if @banner_images.blank? %>
+        <div class="alert alert-warning">
+          <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::Image)) %>.
+        </div>
+      <% else %>
+        <div class="table-scrollable">
+          <table class="index sortable table table-hover" data-hook="images_table" data-sortable-link="<%= update_positions_manage_account_banner_images_url(@account) %>">
+            <thead>
+              <tr data-hook="images_header">
+                <th></th>
+                <th>
+                  <%= Spree.t(:thumbnail) %>
+                </th>
+                <th>
+                  <%= Spree.t(:alt_text) %>
+                </th>
+                <th>Active</th>
+                <th class="actions"></th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <% active_banner_id = @account.customer_viewable_attribute.banner_image_id %>
+              <% @banner_images.each do |banner_image| %>
+                <tr id="<%= spree_dom_id banner_image %>" data-hook="images_row">
+                  <td class="move-handle text-center">
+                    <% if can? :edit, banner_image %>
+                      <span class="icon icon-move handle"></span>
+                    <% end %>
+                  </td>
+                  <td class="image">
+                    <%= link_to image_tag(banner_image.attachment.url(:mini)), banner_image.attachment.url(:large) %>
+                  </td>
+                  <td><%= banner_image.alt %></td>
+                  <td>
+                    <% if banner_image.id == active_banner_id %>
+                      <i class='fa fa-check'></i>
+                    <% end %>
+                  </td>
+                  <td class="delete">
+                    <%= link_to raw("<i class='fa fa-times'></i>"), manage_account_banner_image_path(banner_image),
+                        method: :delete, data: { confirm: 'Are you sure?' },
+                        class: 'btn btn-xs red delete-button delete-row-btn' %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+
+<% if spree_current_user.can_write?('company') %>
+  <%= link_to new_manage_account_banner_image_path, class: "btn btn-primary" do%>
+    <i class="fa fa-plus"></i>&nbsp;New Image
+  <% end %>
+<% end %>

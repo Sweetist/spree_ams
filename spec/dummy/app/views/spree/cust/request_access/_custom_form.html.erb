@@ -1,0 +1,34 @@
+<h3 class="form-title" style='color:<%= @form_title_color %>'>
+  <%= @form.title || 'Request An Account' %>
+</h3>
+<% if @form.instructions.present? %>
+  <p><%= raw(@form.instructions) %></p>
+<% end %>
+<% if flash[:error] %>
+  <div class="alert alert-danger alert-dismissable">
+    <button type='button' class='close' data-dismiss='alert' aria-hidden='true'></button>
+    <span><%= flash[:error] %></span>
+  </div>
+<% end %>
+<section class='form-body' id="user_form">
+  <div class="row">
+    <% @form.fields.each do |field| %>
+      <% field_name = field.label.squish.underscore.gsub(' ', '_').to_sym %>
+      <% cols = (12 / @form.num_columns ) * field.num_columns %>
+      <div class='col-sm-<%= cols %>'>
+        <div class='form-group'>
+          <%= f.method(field.field_type).call field_name,
+            value: params[:spree_user].try(:[], field_name),
+            class: "form-control placeholder-no-fix #{'required' if field.required?}",
+            autocomplete: "off", placeholder: "#{field.label} #{'*' if field.required?}".strip %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</section>
+<section id="user_submit">
+  <div class="form-actions">
+    <%= link_to "Back", root_path, class: "btn btn-default", id: "back-btn" %>
+    <%= f.submit @form.submit_text, class: "btn btn-primary uppercase pull-right" %>
+  </div>
+</section>

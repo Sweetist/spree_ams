@@ -1,0 +1,18 @@
+
+.dt-button-collection li.buttons-columnVisibility a:before {
+  content:' ';
+  margin-top:-11px;
+  margin-right: 20px;
+  text-align:center;
+}
+
+.dt-button-collection li.buttons-columnVisibility.active a:before {
+  content:'\2714';
+  margin-top:-11px;
+  margin-right: 8px;
+  text-align:center;
+}
+
+.dt-button-collection li.buttons-columnVisibility a {
+  background-color: white;
+}

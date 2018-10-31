@@ -1,0 +1,28 @@
+$('#alert').empty();
+
+<% if !@saved %>
+    $('#alert').append("<div class='alert alert-danger alert-dismissable'>Lot creation has errors: <%= safe_join(@lot.errors.full_messages, ', ')%><button type='button' class='close' data-dismiss='alert' aria-hidden='true'></button></div>");
+<% else %>
+  $('#alert').append("<div class='alert alert-success'>Lot <%=@lot.number%> has been created.<button type='button' class='close' data-dismiss='alert' aria-hidden='true'></button></div>");
+<% end %>
+
+<% if @source_stock.nil?  && !@destination_stock.nil? %>
+  variantIdStr = '<%= "#variant_#{@variant.id}" %>';
+  if($(variantIdStr).length > 0){
+    $(variantIdStr).remove();
+  }
+  $('.source-lot-header').remove()
+  $('.destination-lot-header').html("Destination lot")
+  $('#variant-search-row').before("<%= escape_javascript(render(partial: 'adjustment_row.html.erb')) %>")
+<% elsif @destination_stock.present? && @source_stock.present? %>
+  variantIdStr = '<%= "#variant_#{@variant.id}" %>';
+  if($(variantIdStr).length > 0){
+    $(variantIdStr).remove();
+  }
+  $('.source-lot-header').html("Source lot")
+  $('.destination-lot-header').html("Destination lot")
+  $('#variant-search-row').before("<%= escape_javascript(render(partial: 'transfer_row.html.erb')) %>")
+<% end %>
+
+
+lotChangeHandler() //new.html.erb

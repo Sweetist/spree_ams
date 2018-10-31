@@ -1,0 +1,25 @@
+<h8 class='margin-top-20'>Invoice Summary</h8>
+
+<table class='top-bottom-border'>
+  <tbody>
+    <tr>
+      <td class='table-label'>Invoice #</td>
+      <td> <%= @invoice.number %></td>
+    </tr>
+    <tr>
+      <td class='table-label'>Invoice Date</td>
+      <td><%= "#{display_vendor_date_format(@invoice.invoice_date, @invoice.vendor.date_format)}" %></td>
+    </tr>
+    <tr>
+      <td class='table-label'>Due Date</td>
+      <td><%= "#{display_vendor_date_format(@invoice.due_date, @invoice.vendor.date_format)}" %></td>
+    </tr>
+    <tr>
+      <td class='table-label'>Amount Due</td>
+      <td> <%= display_sweet_price(@invoice.outstanding_balance, @invoice.vendor.currency) %></td>
+    </tr>
+  </tbody>
+</table>
+
+<p class='margin-bottom-20'>The complete invoice has been provided as an attachment to this email.</p>
+<br>

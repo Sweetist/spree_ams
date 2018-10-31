@@ -1,0 +1,50 @@
+<div id="lot_qty_div" data-variant-id='<%= @line_item.variant_id %>' data-line-item-id='<%= @line_item.id %>' >
+  <div>
+    <% if @line_item.variant.is_bundle? %>
+      <%= render partial: 'spree/manage/orders/lots/bundle_lot_selection_table' %>
+    <% else %>
+      <%= render partial: 'spree/manage/orders/lots/lot_selection_table' %>
+    <% end %>
+  </div>
+
+  <script type='text/javascript'>
+    $('#more-lot-options').click(function(e){
+      e.preventDefault();
+      $(this).hide();
+      $('tr.hidden', '#existing-line-item-lots').removeClass('hidden');
+    });
+    $('#unsellable-lot-options').click(function(e){
+      e.preventDefault();
+      $(this).hide();
+      $('tr.hidden', '#unsellable-for-date-lots').removeClass('hidden');
+    });
+    var orderCreateLot = function(lot_number, lot_expires, lot_available, lot_sell_by, lot_variant, line_item_id){
+      $.ajax({
+        url: '/manage/orders/create_lot',
+        type: 'POST',
+        dataType: 'script',
+        data: {
+          line_item_id: line_item_id,
+          lot: {
+            number: lot_number,
+            expires_at: lot_expires,
+            available_at: lot_available,
+            sell_by: lot_sell_by,
+            variant_id: lot_variant
+          }
+        }
+      });
+    };
+
+    $('#create-lot-button').off('click').click(function(e) {
+      e.preventDefault();
+      var lot_number = $('#lot_number').val();
+      var lot_expires = $('#lot_expires').val();
+      var lot_available = $('#lot_available').val();
+      var lot_sell_by = $('#lot_sell_by').val();
+      var lot_variant = $('#lot_variant').val();
+      var line_item_id = $('#lot_qty_div').data('line-item-id');
+      orderCreateLot(lot_number, lot_expires, lot_available, lot_sell_by, lot_variant, line_item_id);
+    });
+  </script>
+</div>

@@ -1,0 +1,61 @@
+<div class="col-md-12">
+  <div class="table" style = "margin-top: 70px;">
+    <table class="table table-hover" id="products-report">
+      <thead>
+        <tr>
+          <th>
+            Account #
+          </th>
+          <th>
+            Name
+          </th>
+          <th>
+            Active
+          </th>
+          <th>
+            Last Delivery
+          </th>
+          <th>
+            Payment Terms
+          </th>
+          <th>
+            30 Day Spend
+          </th>
+          <% if false %>
+          <!-- Removing until we can caluculate a meaningful balance -->
+            <th>
+              <%#= sort_link @search, :balance, "Balance" %>
+            </th>
+          <% end %>
+        </tr>
+
+      </thead>
+      <tbody>
+        <% current_spree_user.vendor_accounts.each do |account| %>
+          <tr>
+            <% url = edit_my_company_account_path(account) %>
+            <td><%= link_to account.number.to_s, url %></td>
+            <td><%= link_to account.fully_qualified_name.to_s, url %></td>
+            <td>
+              <% if account.active? %>
+                <%= link_to url do %><i class='fa fa-check'></i><% end %>
+              <% end %>
+            </td>
+            <td>
+              <%= link_to url do %>
+                <% last_delivery_date = account.orders.where("delivery_date < ?", Time.current).approved.order('delivery_date DESC').pluck(:delivery_date).first %>
+                <%= display_vendor_date_format(last_delivery_date, account.vendor.date_format) if last_delivery_date %>
+              <% end %>
+            </td>
+            <td><%= link_to account.payment_terms.try(:name).to_s, url %></td>
+            <td>
+              <%= link_to url do %>
+                <%= display_sweet_price(account.orders.where('delivery_date BETWEEN ? AND ?', Time.current.to_date - 30.days, Time.current.to_date).approved.sum(:total), account.vendor.currency) %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

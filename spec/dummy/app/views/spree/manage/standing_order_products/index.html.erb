@@ -1,0 +1,131 @@
+<%= content_for :head_title do %>
+  Standing Order: <%= @current_order.name %> - <%= @vendor.name %> Product Catalog
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Orders", manage_orders_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Standing Orders", manage_standing_orders_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to @current_order.name, edit_manage_standing_order_path(@current_order) %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <span>Products</span>
+    </li>
+  </ul>
+  <div class="page-toolbar">
+    <div class="btn-group input-group-sm select2-bootstrap-prepend pull-right" id="view-as-form">
+      <p><%= Spree.t('manage.viewing_as') %>:</p>
+      <p class=""> <%= @current_order.account.fully_qualified_name %></p>
+      <select name='account_show_all' class="select2" id="account-show-all">
+        <option value="true" <%= 'selected' if session[:account_show_all] =='true' %>>All Products</option>
+        <option value="false" <%= 'selected' if session[:account_show_all] =='false' || session[:account_show_all].blank? %>>Account Only</option>
+      </select>
+    </div>
+  </div>
+<% end %>
+
+<div class='row'>
+  <div class="current-order-block col-sm-8">
+    <%= link_to edit_manage_standing_order_path(@current_order) do %>
+      <h5>Order: <%= @current_order.name %></h5>
+      <h5>Customer Account: <%= @current_order.account.fully_qualified_name %></h5>
+    <% end %>
+  </div>
+</div>
+
+<div class="content">
+  <%= search_form_for @search, url: manage_standing_order_products_path(@current_order), class: "form", id: 'products-search-form' do |f| %>
+    <%= render partial: 'advanced_search', locals: {f: f} %>
+    <input type='hidden' name='account_show_all' value='' id='account-viewing-all'>
+  <% end %>
+
+  <% unless @account.account_viewable_variants.count == @vendor.variants_including_master.count %>
+    <div class="alert alert-warning alert-dismissable">
+    <button type='button' class='close' data-dismiss='alert' aria-hidden='true'></button>
+    The customized catalog for <%= @account.try(:fully_qualified_name) %> is still updating. Some of the products may not be available yet.</div>
+  <% end %>
+  <% unless @account.account_viewable_variants.visible.any? %>
+    <div class="alert alert-warning alert-dismissable">
+    <button type='button' class='close' data-dismiss='alert' aria-hidden='true'></button>
+    <%= @account.vendor.try(:name) %> has not shared any products yet</div>
+  <% end %>
+
+  <div class="row">
+    <div class="col-md-12">
+      <div class="table-scrollable">
+        <%= form_for @current_order, url: manage_standing_order_products_path(@current_order), method: 'post', html: {id: "add-to-order-form"} do |f| %>
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th></th>
+                <th>
+                  <%= sort_link @search, :variant_full_display_name, "Name" %>
+                </th>
+                <th>
+                  <%= sort_link @search, :variant_variant_type, "Type" %>
+                </th>
+                <th>
+                  <%= sort_link @search, :variant_sku, "SKU" %>
+                </th>
+                <th>
+                  <%= sort_link @search, :variant_pack_size, "Pack Size" %>
+                </th>
+                <th>
+                  <%= sort_link @search, :variant_lead_time, "Lead Time" %>
+                </th>
+                <th>
+                  <%= sort_link @search, :price, "Price" %>
+                </th>
+                <th>
+                  Quantity
+                </th>
+                <th class='actions-2'>
+                </th>
+              </tr>
+              <% if @account_viewable_variants.count > 8 %>
+                <tr>
+                  <th colspan="<%= @user_is_viewing_images ? 7 : 7 %>"></th>
+                  <th>
+                    <button class="btn btn-primary pull-right" id="add-to-cart"> Add To Standing Order</button>
+                  </th>
+                  <th class='actions-2'>
+                  </th>
+                </tr>
+              <% end %>
+            </thead>
+            <tbody>
+              <%= render partial: 'spree/manage/products/current_order_products_list', locals: {f: f, order_type: 'standing_order'} %>
+              <% unless @account_viewable_variants.blank? %>
+                <tr>
+                  <td colspan="<%= @user_is_viewing_images ? 7 : 7 %>"></td>
+                  <td>
+                    <button class="btn btn-primary pull-right" id="add-to-cart2" tabindex="1"> Add To Standing Order</button>
+                  </td>
+                  <td class='actions-2'>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        <% end %>
+      </div>
+      <%= paginate @account_viewable_variants %>
+    </div>
+  </div>
+</div>
+
+<%= render partial: 'spree/manage/products/modal/product_modal' %>
+<%= render partial: 'spree/manage/variants/modal/variant_modal' %>
+<%= render partial: 'spree/manage/inventories/build_assembly_modal' %>

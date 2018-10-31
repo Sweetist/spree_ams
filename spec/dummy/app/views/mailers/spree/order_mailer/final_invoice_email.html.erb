@@ -1,0 +1,12 @@
+<table>
+  <tr>
+    <td>
+      <%= @body.try(:html_safe) %>
+      <br>
+
+      <!-- Order Items Summary -->
+      <%= render partial: 'mailers/spree/shared/mailer_all_line_items_table' %>
+    </td>
+    <td class="expander"></td>
+  </tr>
+</table>

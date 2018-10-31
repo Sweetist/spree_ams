@@ -1,0 +1,272 @@
+<div class="row">
+  <div class="col-md-6">
+    <div class="form-group">
+      <%= f.label :name, "Account Name", class: "control-label" %>
+      <%= f.text_field :name, class: 'form-control' %>
+    </div>
+  </div>
+  <div class='col-md-6'>
+    <div class='row'>
+      <% if @account.persisted? %>
+        <div class='col-sm-12'>
+          <% if @account.parent_id %>
+            <%= f.label :parent_id, 'Parent Account' %>
+            <%= f.text_field :parent_id, value: @account.parent_account.try(:fully_qualified_name), disabled: true, class: 'form-control' %>
+          <% end %>
+        </div>
+      <% else %>
+        <div class='col-sm-3'>
+          <label for='make-sub-account' class='control-label'>Is sub account?</label>
+          <%= check_box_tag '', "1", @account.parent_id.present?, id: 'make-sub-account' %>
+        </div>
+        <div id='account-parent-id-container' class="col-sm-9 <%= 'hidden' unless @account.parent_id %>">
+          <%= f.label :parent_id, 'Parent Account' %>
+          <%= f.collection_select :parent_id,
+              @vendor.customer_accounts.where('parent_id IS NULL'),
+              :id, :fully_qualified_name, {include_blank: true}, class: "form-control select2 select2-allow-clear" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-6">
+    <div class="form-group">
+      <%= f.label :display_name, "Display Name", class: "control-label" %>
+      <%= f.text_field :display_name, class: 'form-control' %>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="form-group">
+      <%= f.label :email, "Email", class: "control-label" %>
+      <%= f.text_field :email, class: 'form-control' %>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-6">
+    <div class="form-group">
+      <%= f.label :number, "Account #", class: "control-label" %>
+      <%= f.text_field :number, class: 'form-control' %>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="form-group">
+      <%= f.label :shipment_email, "Shipment Email", class: "control-label" %>
+      <%= f.text_field :shipment_email, class: 'form-control' %>
+    </div>
+  </div>
+</div>
+<div class='row'>
+  <div class="col-md-6">
+    <div class="form-group">
+      <%= f.label :payment_terms_id, "Payment Terms", class: "control-label" %>
+      <%= f.collection_select :payment_terms_id, Spree::PaymentTerm.all, :id, :name_with_required, {include_blank: true}, {class: "form-control"} %>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="form-group">
+      <%= f.label :send_mail, "Send Emails To", class: "control-label" %>
+      <%= f.select :send_mail, Spree::Account.mail_to_settings, {}, {class: 'form-control'} %>
+    </div>
+  </div>
+</div>
+
+<div class='row'>
+  <div class='col-md-6'>
+    <div class='form-group'>
+      <%= f.label :rep_id, 'Sales Rep', class: 'control-label' %>
+      <%= f.collection_select(:rep_id, @vendor.reps.order('name ASC'), :id, :name, {include_blank: true}, {class: 'form-control select2 select2-allow-clear'}) %>
+    </div>
+  </div>
+  <div class='col-md-6'>
+    <div class='form-group'>
+      <%= f.label :default_stock_location_id, 'Default stock location', class: 'control-label' %>
+      <%= f.collection_select(:default_stock_location_id, @vendor.stock_locations, :id, :name, {include_blank: false}, {class: 'form-control'}) %>
+    </div>
+  </div>
+</div>
+
+<div class='row'>
+  <div class='col-md-6'>
+    <div class='form-group'>
+      <%= f.label :customer_type_id, 'Customer Type', class: 'control-label' %>
+      <%= f.collection_select(:customer_type_id, @vendor.customer_types, :id, :name, {include_blank: true}, {class: 'form-control select2 select2-allow-clear'}) %>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class='row'>
+      <div class='col-sm-6'>
+        <div class="form-group">
+          <% @available_shipping_methods = @account.available_shipping_methods %>
+          <%= f.label :default_shipping_method_id, "Default Shipping Method", class: "control-label" %>
+          <%= f.collection_select(:default_shipping_method_id, @available_shipping_methods, :id, :name, {include_blank: true}, {class: 'form-control'}) %>
+          <% if @available_shipping_methods.empty? %>
+            <span class='help-block-italic'>There are no shipping methods available for the address provided.</span>
+          <% end %>
+        </div>
+      </div>
+      <div class='col-sm-6'>
+        <div class="form-group">
+          <%= f.label :default_shipping_method_only, "Limit Customer to This Method" %></br>
+          <%= f.check_box :default_shipping_method_only, class: 'make-switch', data: {size: 'mini'} %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class='row'>
+  <% if @vendor.line_item_tax_categories %>
+    <div class='col-sm-3'>
+      <div class='form-group'>
+        <%= f.label :tax_category_id, 'Default Tax Category', class: 'control-label' %>
+        <%= f.collection_select(:tax_category_id, current_company.tax_categories.order(:name),
+          :id, :name, {include_blank: true}, class: 'form-control') %>
+      </div>
+    </div>
+  <% end %>
+  <div class='col-sm-3'>
+    <div class='form-group'>
+      <%= f.label :taxable, 'Taxable', class: 'control-label' %><br>
+      <%= f.check_box :taxable, class: 'make-switch', data: {size: 'mini'} %>
+    </div>
+  </div>
+  <div class='col-sm-3'>
+    <div class='form-group'>
+      <%= f.label :tax_exempt_id, 'Tax Exemption Number', class: 'control-label' %>
+      <%= f.text_field :tax_exempt_id, class: 'form-control' %>
+    </div>
+  </div>
+  <div class='col-sm-3'>
+    <div class='form-group'>
+      <%= f.label :credit_limit, 'Credit Limit', class: 'control-label' %>
+      <div class="price-input">
+      <label class="currency-label"><%= currency_symbol(@account.currency) %></label>
+      <%= f.number_field :credit_limit, step: '0.01', class: 'form-control price-field' %>
+      </div>
+    </div>
+  </div>
+  <% if @account.vendor.track_order_class? %>
+    <div class='col-md-6'>
+      <div class='form-group'>
+        <%= f.label :default_txn_class_id, 'Class', class: 'control-label' %>
+        <%= f.collection_select :default_txn_class_id, @vendor.transaction_classes, :id, :fully_qualified_name, {include_blank: true}, class: "form-control" %>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<script type="text/javascript">
+  var disableShippingMethodLimiter = function() {
+    if($('#account_default_shipping_method_id').val() === ''){
+      $('#account_default_shipping_method_only').bootstrapSwitch('state',false);
+      $('#account_default_shipping_method_only').bootstrapSwitch('disabled',true);
+    }else{
+      $('#account_default_shipping_method_only').bootstrapSwitch('disabled',false);
+    }
+  }
+  $(document).ready(function(){
+    disableShippingMethodLimiter();
+    $('#account_default_shipping_method_id').change(disableShippingMethodLimiter);
+
+    $('#make-sub-account').change(function(e){
+      if(this.checked){
+        $('#account-parent-id-container').removeClass('hidden');
+      }else{
+        $("#account_parent_id").select2("val", "");
+        $('#account-parent-id-container').addClass('hidden');
+      }
+    });
+    $('.country-select').change(function(){
+      $.ajax({
+        url: '/manage/customers/update_states',
+        type: 'GET',
+        dataType: 'script',
+        data: {
+          address_type: $(this).data('type'),
+          country_id: this.value
+        }
+      });
+    });
+    $('#same-as-address').change(function(){
+      if (this.checked === true) {
+        $('#account_shipping_addresses_attributes_0_firstname').val($('#account_billing_addresses_attributes_0_firstname').val());
+        $('#account_shipping_addresses_attributes_0_lastname').val($('#account_billing_addresses_attributes_0_lastname').val());
+        $('#account_shipping_addresses_attributes_0_company').val($('#account_billing_addresses_attributes_0_company').val());
+        $('#account_shipping_addresses_attributes_0_phone').val($('#account_billing_addresses_attributes_0_phone').val());
+        $('#account_shipping_addresses_attributes_0_address1').val($('#account_billing_addresses_attributes_0_address1').val());
+        $('#account_shipping_addresses_attributes_0_address2').val($('#account_billing_addresses_attributes_0_address2').val());
+        $('#account_shipping_addresses_attributes_0_city').val($('#account_billing_addresses_attributes_0_city').val());
+        $('#account_shipping_addresses_attributes_0_zipcode').val($('#account_billing_addresses_attributes_0_zipcode').val());
+        $('#account_shipping_addresses_attributes_0_country_id').val($('#account_billing_addresses_attributes_0_country_id').val());
+        $('#account_shipping_addresses_attributes_0_country_id').trigger('change');
+        $('#available-states-shipping').val($('#available-states-billing').val());
+
+        if(!$('#ship-address-container').hasClass('hidden')){
+          $('#ship-address-container').addClass('hidden');
+          $('#ship-address-select').addClass('hidden');
+        }
+      } else {
+        $('#ship-address-container').removeClass('hidden');
+        $('#ship-address-select').removeClass('hidden');
+      }
+    });
+
+
+    $('#account_billing_addresses_attributes_0_firstname').keyup(function(){
+      if($('#same-as-address').is(':checked')){
+        $('#account_shipping_addresses_attributes_0_firstname').val($('#account_billing_addresses_attributes_0_firstname').val());
+      }
+    });
+    $('#account_billing_addresses_attributes_0_lastname').keyup(function(){
+      if($('#same-as-address').is(':checked')){
+        $('#account_shipping_addresses_attributes_0_lastname').val($('#account_billing_addresses_attributes_0_lastname').val());
+      }
+    });
+    $('#account_billing_addresses_attributes_0_company').keyup(function(){
+      if($('#same-as-address').is(':checked')){
+        $('#account_shipping_addresses_attributes_0_company').val($('#account_billing_addresses_attributes_0_company').val());
+      }
+    });
+    $('#account_billing_addresses_attributes_0_phone').keyup(function(){
+      if($('#same-as-address').is(':checked')){
+        $('#account_shipping_addresses_attributes_0_phone').val($('#account_billing_addresses_attributes_0_phone').val());
+      }
+    });
+    $('#account_billing_addresses_attributes_0_address1').keyup(function(){
+      if($('#same-as-address').is(':checked')){
+        $('#account_shipping_addresses_attributes_0_address1').val($('#account_billing_addresses_attributes_0_address1').val());
+      }
+    });
+    $('#account_billing_addresses_attributes_0_address2').keyup(function(){
+      if($('#same-as-address').is(':checked')){
+        $('#account_shipping_addresses_attributes_0_address2').val($('#account_billing_addresses_attributes_0_address2').val());
+      }
+    });
+    $('#account_billing_addresses_attributes_0_city').keyup(function(){
+      if($('#same-as-address').is(':checked')){
+        $('#account_shipping_addresses_attributes_0_city').val($('#account_billing_addresses_attributes_0_city').val());
+      }
+    });
+    $('#account_billing_addresses_attributes_0_zipcode').keyup(function(){
+      if($('#same-as-address').is(':checked')){
+        $('#account_shipping_addresses_attributes_0_zipcode').val($('#account_billing_addresses_attributes_0_zipcode').val());
+      }
+    });
+    $('#account_billing_addresses_attributes_0_country_id').change(function(){
+      if($('#same-as-address').is(':checked')){
+        $('#account_shipping_addresses_attributes_0_country_id').val($('#account_billing_addresses_attributes_0_country_id').val());
+        $('#account_shipping_addresses_attributes_0_country_id').trigger('change');
+      }
+    });
+    $('#available-states-billing').change(function(){
+      if($('#same-as-address').is(':checked')){
+        $('#available-states-shipping').val($('#available-states-billing').val());
+      }
+    });
+  });
+</script>

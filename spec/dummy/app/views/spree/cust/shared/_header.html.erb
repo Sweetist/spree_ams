@@ -1,0 +1,25 @@
+<header class="header">
+  <%= link_to vendors_path do %>
+    <div class="logo"></div>
+  <% end %>
+  <div class="header-nav">
+    <div class="nav-ico"></div>
+    <div id="sb-search" class="search-ico sb-search" style="display: none">
+      <form>
+        <span class="sb-icon-search"><i class="fa fa-search sb-icon-search"></i> </span>
+        <input class="sb-search-input" placeholder="Enter your search term..." type="text" value="" name="search" id="search">
+        <input class="sb-search-submit" type="submit" value="">
+      </form>
+    </div>
+    <div class="exit-ico">
+			 <%= link_to "", spree.logout_path, class: "icon fa fa-sign-out" %>
+		</div>
+    <div class="settings-ico"><i class="fa fa-cog"></i></div>
+    <% if current_order %>
+      <a href="<%= order_url(current_order) %>" id="shopping-cart">
+        <i class="fa fa-shopping-cart"></i>
+        ( <%= current_order.item_count == 0 ? "Empty" : display_sweet_price(current_order.item_total, current_order.currency) %> )
+      </a>
+    <% end %>
+  </div>
+</header>

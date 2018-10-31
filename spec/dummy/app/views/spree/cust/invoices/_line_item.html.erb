@@ -1,0 +1,35 @@
+
+  <tr>
+    <td><%= line_item.item_name %></td>
+    <% if current_vendor_view_settings.variant_sku %>
+      <td><%= line_item.sku %></td>
+    <% end %>
+    <% if current_vendor_view_settings.line_item_lot_number %>
+      <td><%= line_item.lot_number %></td>
+    <% end %>
+    <% if current_vendor_view_settings.variant_pack_size %>
+      <td><%= line_item.pack_size %></td>
+    <% end %>
+    <% if current_vendor.try(:include_unit_weight) %>
+      <td><%= line_item.variant.display_weight %></td>
+    <% end %>
+    <td><%= display_sweet_price(line_item.discount_price, line_item.currency) %></td>
+    <td><%= line_item.quantity %></td>
+    <% if current_vendor.try(:include_total_weight) %>
+      <td>
+        <%= line_item.display_weight %>
+      </td>
+    <% end %>
+    <td><%= display_sweet_price(line_item.amount, line_item.currency) %></td>
+  </tr>
+  <% if line_item.variant.is_bundle? && line_item.variant.should_show_parts? %>
+    <%= render partial: 'spree/cust/orders/shared/line_item_bundle_parts',
+               locals: { line_item: line_item,
+                         line_qty: line_item.quantity }  %>
+
+  <% end %>
+  <% if line_item.variant.is_assembly? && line_item.variant.should_show_parts? %>
+    <%= render partial: 'spree/cust/orders/shared/line_item_assembly_parts',
+               locals: { line_item: line_item,
+                         line_qty: line_item.quantity }  %>
+  <% end %>

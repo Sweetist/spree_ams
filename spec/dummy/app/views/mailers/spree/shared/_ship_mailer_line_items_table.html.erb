@@ -1,0 +1,56 @@
+      <!-- Order Items Summary -->
+      <table>
+        <tr><td colspan=4><strong>
+          <%= Spree.t('shipment_mailer.shipped_email.shipment_summary') %>
+        </strong></td></tr>
+        <tr>
+          <th class="order-table item-name">Item Name</th>
+          <% if @order.state == "invoice" || @order.shipments.first.try(:state) == "received" %>
+            <th class="order-table qty">Ordered</th>
+            <th class="order-table qty">Shipped</th>
+            <th class="order-table qty">Received</th>
+          <% elsif @order.state == "shipped" %>
+            <th class="order-table qty">Ordered</th>
+            <th class="order-table qty">Shipped</th>
+          <% end %>
+        </tr>
+        <% @order.line_items.each do |item| %>
+          <tr>
+            <!--<td><%#= item.variant.sku %></td>-->
+            <td>
+              <%= item.item_name %>
+            </td>
+            <% if @order.state == "invoice" || @order.shipments.first.try(:state) == "received" %>
+              <td class="center"><%= item.ordered_qty %></td>
+              <td class="center"><%= item.shipped_qty %></td>
+              <td class="center"><%= item.quantity %></td>
+            <% elsif @order.state == "shipped" %>
+              <td class="center"><%= item.ordered_qty %></td>
+              <td class="center"><%= item.quantity %></td>
+            <% end %>
+          </tr>
+        <% end %>
+        <tr>
+          <td class="right" colspan=1>
+            <strong><%= Spree.t('shipment_mailer.shipped_email.count') %></strong>
+          </td>
+          <% if @order.state == "invoice" || @order.shipments.first.try(:state) == "received" %>
+            <td class="center">
+              <%= @ordered_item_count %>
+            </td>
+            <td class="center">
+              <%= @shipped_item_count %>
+            </td>
+            <td class="center">
+              <strong><%= @order.item_count %></strong>
+            </td>
+          <% elsif @order.state == "shipped" %>
+            <td class="center">
+              <%= @ordered_item_count %>
+            </td>
+            <td class="center">
+              <strong><%= @order.item_count %></strong>
+            </td>
+          <% end %>
+        </tr>
+      </table>

@@ -1,0 +1,20 @@
+  <div class="row">
+    <div class="col-md-6">
+      <div class="form-group">
+        <%# not exposing qccount name currently %>
+        <%#= f.label :name, "Account Name", class: "control-label" %>
+        <%#= f.text_field :name, class: 'form-control' %>
+
+        <%= f.label :name, raw("<span class='required'>*</span> Customer Company Name"), class: "control-label" %>
+        <%= f.text_field :name, class: 'form-control' %>
+          <!-- <span class="help-block"> This is inline help </span> -->
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="form-group"> <!-- use class: "has-error to highlight field with error" -->
+        <%= f.label :time_zone, raw("<span class='required'>*</span> Time Zone"), class: "control-label" %>
+        <%= f.time_zone_select(:time_zone, ActiveSupport::TimeZone.us_zones, {include_blank: true}, {class: 'form-control'}) %>
+        <!-- <span class="help-block"> This field has error. </span> -->
+      </div>
+    </div>
+  </div>

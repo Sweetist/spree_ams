@@ -1,0 +1,26 @@
+<div class='row'>
+  <div class='col-xs-12'>
+    <h3>Selling Rules</h3>
+  </div>
+  <div class='col-sm-6'>
+    <div class="form-group">
+      <%= f.label :lead_time, class: "control-label" do %>
+      <%= Spree.t(:lead_time) %> <span class='required'>*</span>
+      <% end %>
+      <%= f.number_field :lead_time, min: 0, class: "form-control" %>
+    </div>
+  </div>
+  <div class='col-sm-6'>
+    <div class="form-group">
+      <%= f.label :incremental_order_quantity, Spree.t('variant.step_size'), class: "control-label" %>
+      <%= f.number_field :incremental_order_quantity, class: "form-control", min: 0, step: 'any' %>
+    </div>
+  </div>
+  <div class='col-sm-6'>
+    <div class="form-group">
+      <%= f.label :minimum_order_quantity, class: "control-label" %>
+      <%= f.number_field :minimum_order_quantity, class: "form-control", min: 0 %>
+      <span class="help-block-italic">Setting the value to 0 means there is no minimum order quantity required.</span>
+    </div>
+  </div>
+</div>

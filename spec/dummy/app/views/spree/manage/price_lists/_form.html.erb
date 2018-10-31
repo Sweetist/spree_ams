@@ -1,0 +1,83 @@
+<div class="form-body">
+  <div class="row">
+    <div class="col-sm-4">
+      <div class="form-group">
+        <%= f.label :name, class: "control-label" %>
+        <%= f.text_field :name, class: 'form-control' %>
+      </div>
+    </div>
+    <div class="col-sm-4">
+      <div class="form-group">
+        <%= f.label :active, class: "control-label" %><br>
+        <%= f.check_box :active, class: 'make-switch', data: {size: 'mini'} %>
+      </div>
+    </div>
+    <div class='col-sm-4'>
+      <% if current_company.set_visibility_by_price_list %>
+        <p class='important-clarifier margin-top-20'>
+          <strong>Note:</strong> Customers will only see products in the price list(s) that they are assigned to or have been explicitly made visible to all customers.
+        </p>
+      <% end %>
+    </div>
+  </div>
+
+  <div class='row'>
+    <div class="portlet light ">
+      <div class="portlet-title tabbable-line">
+        <ul class="nav nav-tabs pull-left">
+          <li class="active long-tabs-link">
+            <a href="#customers" data-toggle="tab">Customers</a>
+          </li>
+          <li class="long-tabs-link">
+            <a href="#products" data-toggle="tab">Products</a>
+          </li>
+        </ul>
+      </div>
+      <div class="portlet-body">
+        <div class="tab-content">
+          <div class='row'>
+            <div class='col-sm-4'>
+              <div class='form-group'>
+                <%= f.label :adjustment_method, Spree.t('price_list.adjustment_method.label'), class: 'control-label' %>
+                <%= f.select :adjustment_method,
+                  options_for_select(Spree::PriceList.adjustment_method_opts, selected: f.object.adjustment_method),
+                  {include_blank: false}, {class: 'form-control'} %>
+              </div>
+            </div>
+            <div class='col-sm-4 hide_for_custom_adjustment'>
+              <div class='form-group'>
+                <%= f.label :adjustment_operator, Spree.t('price_list.adjustment_operator.label'), class: 'control-label' %>
+                <%= f.select :adjustment_operator,
+                options_for_select(Spree::PriceList.adjustment_operator_opts, selected: f.object.adjustment_operator),
+                {include_blank: false}, {class: 'form-control'} %>
+              </div>
+            </div>
+            <div class='col-sm-4 hide_for_custom_adjustment'>
+              <div class='form-group input-group input-group-with-label'>
+                <div class='price-input-with-label'>
+                  <%= f.label :adjustment_value, Spree.t('price_list.adjustment_value.label'), class: 'control-label' %>
+                  <label class="flat_or_percent currency-label">
+                    <%= currency_symbol(current_company.currency) %>
+                  </label>
+                  <label class="flat_or_percent percent-label">%</label>
+                  <%= f.number_field :adjustment_value, step: 'any', class: 'form-control price-field' %>
+                  <div class='clearfix'></div>
+                </div>
+                <div class="input-group-btn">
+                  <button class='btn btn-primary' id='apply-adjustment'>Apply</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tab-pane active" id="customers">
+            <%= render partial: 'spree/manage/price_lists/form/accounts', locals: {f: f} %>
+          </div>
+          <div class="tab-pane" id="products">
+            <%= render partial: 'spree/manage/price_lists/form/variants', locals: {f: f} %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

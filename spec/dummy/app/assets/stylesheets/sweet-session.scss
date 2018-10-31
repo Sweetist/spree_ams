@@ -1,0 +1,30 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
+ * or any plugin's vendor/assets/stylesheets directory can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the bottom of the
+ * compiled file so the styles you add here take precedence over styles defined in any styles
+ * defined in the other CSS/SCSS files in this directory. It is generally better to create a new
+ * file per style scope.
+ *
+ */
+@import "commontator/application";
+@import "sweet-frontend/bootstrap";
+@import "disable-animations";
+
+@import "sweet-frontend/global/theme_components";
+@import "sweet-frontend/global/theme_plugins";
+@import "sweet-frontend/layouts/layout/layout";
+@import "sweet-frontend/global/plugins/select2/css/select2.min";
+@import "sweet-frontend/global/plugins/select2/css/select2-bootstrap.min";
+@import "sweet-frontend/global/plugins/bootstrap-daterangepicker/daterangepicker.min";
+@import "sweet-frontend/global/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.min";
+@import 'sweet-frontend/global/plugins/bootstrap-timepicker/css/bootstrap-timepicker.min';
+
+
+@import "sweet-frontend/custom/custom";
+@import "sweet-frontend/custom/overrides";
+@import "sweet-frontend/pages/login"

@@ -1,0 +1,28 @@
+<tr class="line_item_parts<%= line_item.id %>" class="line-item-part-row">
+  <td colspan="2" style='border-top:none;'></td>
+  <td colspan="90%">
+    <table class="table table-condensed">
+      <thead>
+        <th width="30%">Part Name</th>
+        <th width="20%">SKU</th>
+        <th width="20%">Part Qty / Unit</th>
+        <th width="20%">Quantity</th>
+      </thead>
+      <tbody>
+        <% line_item.variant.parts.each do |part_variant| %>
+          <%
+          part_line_options = {
+            part_variant: part_variant,
+            part_name: part_variant.flat_or_nested_name,
+            part_sku: part_variant.sku,
+            part_qty: line_item.variant.count_for_(part_variant),
+            part_total: line_qty * line_item.variant.count_for_(part_variant)
+          }
+          %>
+          <%= render partial: "spree/manage/credit_memos/shared/line_item_part",
+            locals: part_line_options %>
+        <% end %>
+      </tbody>
+    </table>
+  </td>
+</tr>

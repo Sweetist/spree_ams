@@ -1,0 +1,2 @@
+$('#accounts').append("<%= j render(partial: 'spree/manage/price_lists/form/accounts_by_type_table_body', locals: {price_list_accounts: @price_list_accounts, accounts: @accounts, customer_type: @customer_type_id} ) %>")
+$('#loading-accounts').addClass('hidden');

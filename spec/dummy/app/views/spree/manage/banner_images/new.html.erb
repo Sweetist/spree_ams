@@ -1,0 +1,57 @@
+<%= content_for :head_title do %>
+  <%= @account.name %>
+<% end %>
+
+<%= content_for :page_title do %>
+<%= @account.name %>
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", root_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Account", edit_manage_account_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Banner Images", manage_account_banner_images_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      New
+    </li>
+  </ul>
+
+  <div class="page-toolbar">
+    <div class="btn-group pull-right">
+      <%= link_to "Back to Banner Images",  manage_account_banner_images_path, class: "btn btn-success btn-sm" %>
+    </div>
+  </div>
+
+<% end %>
+
+<div class="portlet box blue-hoki">
+
+  <div class="portlet-title">
+    <div class="caption">
+      Upload New Image
+    </div>
+  </div>
+
+  <div class="portlet-body form">
+    <%= form_for [:manage, @account, @banner_image], url: manage_account_banner_images_url, html: { multipart: true } do |f| %>
+      <div class="form-body">
+        <%= render partial: 'form', locals: { f: f } %>
+      </div>
+
+      <div class="form-actions right">
+        <%= button_link_to Spree.t('actions.cancel'), spree.manage_account_banner_images_url, icon: 'delete', id: 'cancel_link' %>
+        <%= button Spree.t('actions.update'), 'save', class: "btn btn-primary" %>
+      </div>
+    <% end %>
+  </div>
+</div>
+<%#= render partial: 'spree/admin/shared/error_messages', locals: { target: @vendor } %>

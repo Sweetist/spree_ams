@@ -1,0 +1,241 @@
+<%
+  @permissions = {"None" => 0, "Read" => 1, "Write" => 2}
+  @boolean = {"Yes" => true, "No" => false}
+%>
+<h3>Invoices </h3>
+<div class="row">
+  <div class="col-md-6">
+    <div class='form-group'>
+      <%= f.label :permission_invoice, 'Invoice', class: "control-label" %>
+      <%= f.select :permission_invoice, [['None', 0],['Read/Write', 2]], {}, {class: "form-control permissions"} %>
+    </div>
+  </div>
+</div>
+
+<hr>
+<h3>Orders </h3>
+<div class= "row">
+  <div class="col-md-6">
+    <div class='form-group'>
+      <%= f.label "Basic Options", class: "control-label" %>
+      <%= f.select :permission_order_basic_options, [['None', 0],['Read/Write', 2]], {}, {class: "form-control permissions"} %>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class='form-group'>
+      <%= f.label "Edit Line Item", class: "control-label" %>
+      <%= f.select :permission_order_edit_line_item, @boolean, {}, {class: "form-control permissions"} %>
+    </div>
+  </div>
+</div>
+<div class = "row">
+  <div class="col-md-6">
+    <div class='form-group'>
+      <%= f.label "Approve, Ship and Receive Orders", class: "control-label" %>
+      <%= f.select :permission_order_approve_ship_receive, @boolean, {}, {class: "form-control permissions"} %>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class='form-group'>
+      <%= f.label "Manual Order Adjustment", class: "control-label" %>
+      <%= f.select :permission_order_manual_adjustment, @boolean, {}, {class: "form-control permissions"} %>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-6">
+    <div class='form-group'>
+      <%= f.label :permission_order_payments, 'Payments', class: "control-label" %>
+      <%= f.select :permission_order_payments, [['None', 0],['Read/Create', 1], ['Edit', 2]], {}, {class: "form-control permissions"} %>
+      <span class='help-block-italic'>This also applies to Invoices</span>
+    </div>
+  </div>
+  <div class="col-md-6">
+
+  </div>
+</div>
+<hr>
+<h3>Standing Orders </h3>
+<div class= "row">
+  <div class="col-md-6">
+    <div class='form-group'>
+      <%= f.label "Basic Options", class: "control-label" %>
+      <%= f.select :permission_standing_orders_basic_options, [['None', 0],['Read/Write', 2]], {}, {class: "form-control permissions"} %>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class='form-group'>
+      <%= f.label "Edit Schedules", class: "control-label" %>
+      <%= f.select :permission_standing_orders_standing_orders_schedule, [['None', 0],['Read/Write', 2]], {}, {class: "form-control permissions"} %>
+    </div>
+  </div>
+</div>
+<hr>
+<h3>Purchase Orders </h3>
+<div class= "row">
+  <div class="col-md-6">
+    <div class='form-group'>
+      <%= f.label "Basic Options", class: "control-label" %>
+      <%= f.select :permission_purchase_orders_basic_options, [['None', 0],['Read/Write', 2]], {}, {class: "form-control permissions"} %>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class='form-group'>
+      <%= f.label "Vendors", class: "control-label" %>
+      <%= f.select :permission_purchase_orders_vendors, @permissions, {}, {class: "form-control permissions"} %>
+    </div>
+  </div>
+</div>
+<hr>
+<h3>Products</h3>
+<div class= "row">
+  <div class="col-md-6">
+    <div class='form-group'>
+      <%= f.label "Catalog", class: "control-label" %>
+      <%= f.select :permission_products_catalog, @permissions, {}, {class: "form-control permissions"} %>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class='form-group'>
+      <%= f.label "Categories", class: "control-label" %>
+      <%= f.select :permission_products_categories, @permissions, {}, {class: "form-control permissions"} %>
+    </div>
+  </div>
+</div>
+<div class='row'>
+  <div class="col-md-6">
+    <div class='form-group'>
+      <%= f.label "Option Types/Values", class: "control-label" %>
+      <%= f.select :permission_products_option_values, @permissions, {}, {class: "form-control permissions"} %>
+    </div>
+  </div>
+</div>
+<hr>
+<h3>Inventory</h3>
+<div class= "row">
+  <div class="col-md-6">
+    <div class='form-group'>
+      <%= f.label "Basic Options", class: "control-label" %>
+      <%= f.select :permission_inventory_basic_options, @permissions, {}, {class: "form-control permissions"} %>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class='form-group'>
+      <%= f.label "Stock Locations", class: "control-label" %>
+      <%= f.select :permission_inventory_stock_locations, @permissions, {}, {class: "form-control permissions"} %>
+    </div>
+  </div>
+</div>
+<hr>
+<h3>Customers</h3>
+<div class= "row">
+  <div class="col-md-6">
+    <div class='form-group'>
+      <%= f.label "Basic Options", class: "control-label" %>
+      <%= f.select :permission_customers_basic_options, @permissions, {}, {class: "form-control permissions"} %>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class='form-group'>
+      <%= f.label "Customer Users", class: "control-label" %>
+      <%= f.select :permission_customers_users, @permissions, {}, {class: "form-control permissions"} %>
+    </div>
+  </div>
+</div>
+<hr>
+<h3>Users</h3>
+<div class= "row">
+  <div class="col-md-6">
+    <div class='form-group'>
+      <%= f.label "Basic Options", class: "control-label" %>
+      <%= f.select :permission_users_basic_options, @permissions, {}, {class: "form-control permissions"} %>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class='form-group'>
+      <%= f.label "User Permissions", class: "control-label" %>
+      <%= f.select :permission_users_user_adjust, @boolean, {}, {class: "form-control permissions"} %>
+    </div>
+  </div>
+</div>
+<hr>
+<h3>Pricing Adjustments</h3>
+<div class= "row">
+  <div class="col-md-6">
+    <div class='form-group'>
+      <%= f.label "Basic Options", class: "control-label" %>
+      <%= f.select :permission_promotions, @permissions, {}, {class: "form-control permissions"} %>
+    </div>
+  </div>
+</div>
+<hr>
+<h3>Reports</h3>
+<div class= "row">
+  <div class="col-md-6">
+    <div class='form-group'>
+      <%= f.label "Sales Reports", class: "control-label" %>
+      <%= f.select :permission_reports_basic_options, [['None', 0],['Read/Write', 2]], {}, {class: "form-control permissions"} %>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class='form-group'>
+      <%= f.label "Production Reports", class: "control-label" %>
+      <%= f.select :permission_reports_production_reports, [['None', 0],['Read/Write', 2]], {}, {class: "form-control permissions"} %>
+    </div>
+  </div>
+</div>
+<hr>
+<h3>Settings Access</h3>
+<div class= "row">
+  <div class="col-md-6">
+    <div class='form-group'>
+      <%= f.label 'Company', class: "control-label" %>
+      <%= f.select :permission_company, @permissions, {}, {class: "form-control permissions"} %>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class='form-group'>
+      <%= f.label "Integrations", class: "control-label" %>
+      <%= f.select :permission_settings_integrations, @permissions, {}, {class: "form-control permissions"} %>
+    </div>
+  </div>
+</div>
+<div class= "row">
+  <div class="col-md-6">
+    <div class='form-group'>
+      <%= f.label "Shipping Categories", class: "control-label" %>
+      <%= f.select :permission_settings_shipping_categories, @permissions, {}, {class: "form-control permissions"} %>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class='form-group'>
+     <%= f.label "Shipping Methods", class: "control-label" %>
+     <%= f.select :permission_settings_shipping_methods, @permissions, {}, {class: "form-control permissions"} %>
+   </div>
+ </div>
+</div>
+<div class='row'>
+  <div class="col-md-6">
+    <div class='form-group'>
+      <%= f.label "#{current_vendor.display_shipping_group_class}s", class: 'control-label' %>
+      <%= f.select :permission_settings_shipping_groups, @permissions, {}, {class: 'form-control permissions'} %>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class='form-group'>
+      <%= f.label "Tax Rates & Categories", class: "control-label" %>
+      <%= f.select :permission_settings_tax_categories, @permissions, {}, {class: "form-control permissions"} %>
+    </div>
+  </div>
+</div>
+<div class='row'>
+  <div class="col-md-6">
+    <div class='form-group'>
+      <%= f.label "Payments", class: 'control-label' %>
+      <%= f.select :permission_settings_payment_methods, @permissions, {}, {class: 'form-control permissions'} %>
+    </div>
+  </div>
+  <div class="col-md-6">
+
+  </div>
+</div>

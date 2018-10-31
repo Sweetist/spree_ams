@@ -1,0 +1,56 @@
+<%= content_for :head_title do %>
+  Edit <%= @display_shipping_group_class %>
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+		<li>
+      <%= link_to "#{current_vendor.display_shipping_group_class}s", manage_shipping_groups_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <span><%= @shipping_group.name %></span>
+    </li>
+  </ul>
+	<div class="page-toolbar">
+    <div class="btn-group pull-right">
+			<%= link_to new_manage_shipping_group_path, class: "btn green" do %>
+        <i class='fa fa-plus'></i> New <%= @display_shipping_group_class %>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
+<div class="portlet light">
+  <div class="portlet-title">
+    <div class="caption">
+      <span class="caption-subject font-blue-madison bold uppercase">
+        Edit <%= @display_shipping_group_class %>: <%= @shipping_group.name %>
+      </span>
+    </div>
+  </div>
+  <div class="portlet-body form">
+    <%= form_for [:manage, @shipping_group] do |f| %>
+      <div class="form-body">
+        <%= render partial: 'form', locals: {f:f} %>
+      </div>
+      <div class="form-actions">
+        <%= link_to manage_shipping_group_path(@shipping_group.id), data:{:confirm => "Are you sure you want to delete this #{@display_shipping_group_class}?"}, :method => :delete, class: "btn red btn-default" do %>
+          <i class="fa fa-times"></i> Delete <%= @display_shipping_group_class %>
+        <% end %>
+        <div class="pull-right">
+          <%= link_to manage_shipping_groups_path, class: "btn btn-default" do %>
+            <i class='fa fa-times'></i> <%= Spree.t(:Cancel) %>
+          <% end %>
+          <button class="btn btn-primary">
+            <i class='fa fa-check'></i> <%= Spree.t(:update) %>
+          </button>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

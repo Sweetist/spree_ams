@@ -1,0 +1,158 @@
+<% show_components_section = f.object.can_have_parts? && @vendor.subscription_includes?('assemblies') %>
+<div class='row'>
+  <div class="portlet light no-margin no-padding-bottom">
+    <div class="portlet-title tabbable-line">
+      <ul class="nav nav-tabs pull-left">
+        <li class="active long-tabs-link">
+          <a href="#variant_details" data-toggle="tab">Variant Details</a>
+        </li>
+        <% if show_components_section  %>
+          <li class="long-tabs-link">
+            <a href="#components" data-toggle="tab">Components</a>
+          </li>
+        <% end %>
+        <% if f.object.persisted? && f.object.should_track_inventory? %>
+          <li class="long-tabs-link">
+            <a href="#stock" data-toggle="tab">Stock</a>
+          </li>
+        <% end %>
+        <% if current_company.try(:use_price_lists) %>
+          <li class="long-tabs-link">
+            <a href="#price_lists" data-toggle="tab">Price Lists</a>
+          </li>
+        <% end %>
+        <% f.object.custom_attrs.keys.each do |channel| %>
+            <li class="long-tabs-link">
+              <a href="#<%= channel.underscore %>" data-toggle="tab"><%= channel.titleize %></a>
+            </li>
+        <% end %>
+      </ul>
+    </div>
+
+    <div class="portlet-body form">
+      <div class="horizontal-form">
+        <div class="tab-content">
+          <% unless current_spree_user.can_write?('catalog', 'products') %>
+            <div class='alert alert-info'>
+              You do not have permission to edit products
+            </div>
+          <% end %>
+          <% if @variant.discontinued_on && !(@variant.is_master && current_controller?(['products'])) %>
+            <div class='alert alert-danger'>
+              This item has been <%= Spree.t('variant.deactivated') %>.
+            </div>
+          <% end %>
+
+          <div class="tab-pane active" id="variant_details">
+            <div class='row'>
+              <div class='col-md-9 border-right-light'>
+                <h3>Variant Details</h3>
+                <%= render partial: 'spree/manage/variants/form/option_types', locals: {f: f} %>
+                <%= render partial: 'spree/manage/variants/form/variant_details', locals: {f: f} %>
+                <%= render partial: 'spree/manage/variants/form/purchase_and_costing', locals: {f: f} %>
+                <%= render partial: 'spree/manage/variants/form/selling_rules', locals: {f: f} %>
+                <% if current_company.try(:use_variant_text_options) %>
+                  <%= render partial: 'spree/manage/variants/form/custom_fields', locals: {f: f} %>
+                <% end %>
+              </div>
+              <div class='col-md-3'>
+                <div class='row'>
+                  <div class='col-xs-12 text-center'>
+                    <%= render partial: 'spree/manage/variants/page_content/image' %>
+                  </div>
+                </div>
+                <%= render partial: 'spree/manage/variants/form/switches', locals: {f: f} %>
+              </div>
+            </div>
+          </div>
+          <!-- END GENERAL TAB -->
+
+          <!-- BEGIN PARTS TAB -->
+          <% if show_components_section %>
+            <div class="tab-pane" id="components">
+              <div class='row'>
+                <div class='col-md-12'>
+                  <h3 class=''>Components</h3>
+                  <%= render partial: 'spree/manage/variants/page_content/parts', locals: {f: f, variant: f.object } %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+          <!-- END PARTS TAB -->
+          <% if f.object.persisted? && f.object.should_track_inventory? %>
+            <div class="tab-pane" id="stock">
+              <div class='row'>
+                <div class='col-md-12'>
+                  <h3>Stock Details</h3>
+                  <%= render partial: 'stock_items_form', locals: {f: f} %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+          <% if current_company.try(:use_price_lists) %>
+            <div class='tab-pane' id='price_lists'>
+              <div class='row'>
+                <div class='col-md-12'>
+                  <h3>Price List</h3>
+                  <%= render partial: 'price_lists_form', locals: {f: f} %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+          <% f.object.custom_attrs.keys.each do |channel| %>
+            <div class='tab-pane' id='<%= channel.underscore %>'>
+              <div class='row'>
+                <div class='col-md-12'>
+                  <h3 class=''><%= "#{channel.to_s.capitalize} Attributes" %></h3>
+                  <div class="row">
+                    <%= render partial: "spree/manage/products/channels/#{channel}/variant_form", locals: {f: f} %>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+
+  var openOptionTypeModal = function(optionTypeId, variantId){
+    $('#option-type-modal').modal('show');
+    loadOptionType(optionTypeId, variantId);
+  }
+  var toggleCostPrice = function(){
+    var costingMethod = $('#variant_costing_method').val();
+    $('.cost-price-container').each(function(){
+      if($(this).attr('id') === (costingMethod + '-cost-price-container')){
+        $(this).show();
+      }else{
+        $(this).hide();
+      }
+    });
+  }
+
+  $(document).ready(function(){
+    initAssembly();
+    toggleCostPrice();
+    $('.option-val-select').change(function(){
+      if (this.value === 'new'){
+        openOptionTypeModal($(this).find(':selected').data('option-type-id'), $(this).data('variant-id'));
+      }
+    });
+    $('#variant_costing_method').change(toggleCostPrice);
+    $('#variant_preferred_vendor_account_id').change(function(){
+      if($(this).val() === ''){
+        $('#add-to-vendor-list-msg').addClass('hidden');
+        return;
+      }
+      if($('#variant_vendor_account_ids').val().indexOf($(this).val()) === -1){
+        $('#add-to-vendor-list-msg').removeClass('hidden');
+      }else{
+        $('#add-to-vendor-list-msg').addClass('hidden');
+      }
+    });
+  });
+</script>

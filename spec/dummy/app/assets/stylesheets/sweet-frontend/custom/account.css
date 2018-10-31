@@ -1,0 +1,16 @@
+.address-block {
+  border: solid 0.25px lightgrey;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  min-height: 210.5px;
+}
+
+ul.address-listing {
+  list-style: none;
+  padding-left: 20px;
+  min-height: 120px;
+}
+
+li.font-weight-bold {
+  font-weight: bold;
+}

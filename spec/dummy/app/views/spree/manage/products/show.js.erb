@@ -1,0 +1,7 @@
+$('.portlet', '#product-modal').html("<%= j render(partial: 'spree/manage/products/page_content/show_body.html.erb') %>");
+$('.portlet-title', '#product-modal').first().prepend("<div class='margin-bottom-20'><button type='button' class='close modal-close' data-dismiss='modal' aria-hidden='true'></button></div>")
+$('.make-switch', '#product-modal').bootstrapSwitch();
+$(document).ready(function(){
+  initLoadAssemblyForm();
+  initVariantModal();
+});

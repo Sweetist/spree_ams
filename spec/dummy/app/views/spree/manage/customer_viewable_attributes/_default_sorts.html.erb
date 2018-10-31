@@ -1,0 +1,53 @@
+<div class='row'>
+  <div class='col-sm-6'>
+    <div class='form-group'>
+      <div class='row'>
+        <div class='col-xs-8'>
+          <%= f.label "#{base}_primary_sort_column", 'Default Primary Sort' %>
+          <%= select_tag "#{base}_primary_sort_column", options_for_select(@cva.method("#{base}_columns").call.to_a, @cva.default_sort_column("#{base}", 0)),
+              {include_blank: true, class: 'form-control'} %>
+        </div>
+        <div class='col-xs-4'>
+          <%= f.label "#{base}_primary_sort_direction", 'Direction' %>
+          <%= select_tag "#{base}_primary_sort_direction", options_for_select([['Ascending', 'asc'],['Descending', 'desc']], @cva.default_sort_dir("#{base}", 0)),
+              {include_blank: false, class: 'form-control'} %>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class='col-sm-6'>
+    <div class='form-group'>
+      <div class='row'>
+        <div class='col-xs-8'>
+          <%= f.label "#{base}_secondary_sort_column", 'Default Secondary Sort' %>
+          <%= select_tag "#{base}_secondary_sort_column", options_for_select(@cva.method("#{base}_columns").call.to_a, @cva.default_sort_column("#{base}", 1)),
+              {include_blank: true, class: 'form-control'} %>
+        </div>
+        <div class='col-xs-4'>
+          <%= f.label "#{base}_secondary_sort_direction", 'Direction' %>
+          <%= select_tag "#{base}_secondary_sort_direction", options_for_select([['Ascending', 'asc'],['Descending', 'desc']], @cva.default_sort_dir("#{base}", 1)),
+              {include_blank: false, class: 'form-control'} %>
+        </div>
+      </div>
+    </div>
+  </div>
+  <input type='hidden' name='<%= "customer_viewable_attribute[#{base}_default_sort]" %>' id='<%= "#{base}_default_sort" %>' value=''>
+</div>
+
+<script type='text/javascript'>
+  $(document).ready(function(){
+    var base = '<%= base %>';
+    $('#' + base + '_primary_sort_column').change(function(){
+      if($(this).val() === $('#' + base + '_secondary_sort_column').val()){
+        $('#' + base + '_secondary_sort_column').val('');
+        $('#' + base + '_secondary_sort_direction option[value="desc"]').prop('disabled', false);
+      }
+    });
+    $('#' + base + '_secondary_sort_column').change(function(){
+      if($(this).val() === $('#' + base + '_primary_sort_column').val()){
+        $('#' + base + '_primary_sort_column').val('');
+        $('#' + base + '_primary_sort_direction option[value="desc"]').prop('disabled', false);
+      }
+    });
+  });
+</script>

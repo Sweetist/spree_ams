@@ -1,0 +1,40 @@
+<%= content_for :head_title do %>
+  Inventory
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+		<li>
+      <span>Inventory</span>
+    </li>
+  </ul>
+	<div class="page-toolbar">
+    <% if current_spree_user.can_write?('basic_options', 'inventory') %>
+      <%= link_to new_manage_stock_transfer_path, class: "btn green pull-right #{'disabled' unless @vendor.track_inventory}", disabled: !@vendor.track_inventory do %>
+        <i class ="fa fa-plus"></i>&nbsp;New Stock Transfer
+      <% end %>
+    <% end %>
+  </div>
+<% end %>
+
+<div class='content'>
+  <%= render partial: 'spree/manage/shared/not_tracking_inventory', locals: {vendor: @vendor} %>
+  <%= search_form_for [:manage, @search], url: manage_inventory_path, class: "form", id: 'products-search-form' do |f| %>
+    <%= render partial: 'spree/manage/products/advanced_search', locals: {f: f} %>
+  <% end %>
+  <div class="row hidden">
+    <div id="source-dt-buttons">
+      <%= link_to Spree.t(:export_inventory), download_csv_manage_inventory_path, class: "btn btn-default" %>
+    </div>
+  </div>
+
+  <%= render partial: 'table' %>
+
+</div>
+<%= render partial: 'build_assembly_modal' %>
+
+<%= paginate @variants %>

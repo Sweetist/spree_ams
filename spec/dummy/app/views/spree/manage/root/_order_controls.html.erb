@@ -1,0 +1,30 @@
+<div class="portlet-title" id='order-controls'>
+  <div class="caption">
+    <span class="caption-subject font-green bold uppercase">
+      <%= current_spree_user.company.selectable_delivery ? 'Outgoing Orders' : 'Incoming Orders' %>
+    </span>
+  </div>
+  <div class="btn-group pull-right">
+    <%= link_to manage_orders_path('q[delivery_date_gteq]' => overview_date, 'q[delivery_date_lteq]' => overview_date), class: "btn red btn-outline btn-circle btn-sm margin-right-10" do %>
+      <i class='fa fa-search'></i> More Details
+    <% end %>
+    <button type="button" class="btn red btn-outline btn-circle btn-sm dropdown-toggle" data-toggle="dropdown">
+      <i class='fa fa-file-pdf-o'></i> Packing Slips / BOL
+      <i class="fa fa-angle-down"></i>
+    </button>
+    <ul class="dropdown-menu pull-right" role="menu">
+      <li>
+        <%= link_to "Bills of Lading (All)", daily_bills_of_lading_manage_orders_path(format: :pdf, 'overview-date': overview_date), target: '_blank', class: 'open-pdf', data:{'approved-only' => false} %>
+      </li>
+      <li>
+        <%= link_to "Bills of Lading (Approved Only)", daily_bills_of_lading_manage_orders_path(format: :pdf, 'overview-date': overview_date, approved_only: true), target: '_blank', class: 'open-pdf', data:{'approved-only' => true} %>
+      </li>
+      <li>
+        <%= link_to "Packing Slips (All)", daily_packing_slips_manage_orders_path(format: :pdf, 'overview-date': overview_date), target: '_blank', class: 'open-pdf', data:{'approved-only' => false} %>
+      </li>
+      <li>
+        <%= link_to "Packing Slips (Approved Only)", daily_packing_slips_manage_orders_path(format: :pdf, 'overview-date': overview_date, approved_only: true), target: '_blank', class: 'open-pdf', data:{'approved-only' => true} %>
+      </li>
+    </ul>
+  </div>
+</div>

@@ -1,0 +1,73 @@
+<%= content_for :head_title do %>
+  Shipping Methods
+<% end %>
+
+<%= content_for :page_title do %>
+  New Shipping Method
+<% end %>
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li><li>
+      <%= link_to "Shipping Methods", manage_shipping_methods_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+		<li>
+      New Shipping Method
+    </li>
+  </ul>
+	<div class="page-toolbar">
+    <div class="btn-group pull-right">
+
+    </div>
+  </div>
+<% end %>
+
+<div class="portlet box blue-hoki">
+
+  <div class="portlet-title">
+    <div class="caption">
+      New Shipping Method Form
+    </div>
+  </div>
+
+  <div class="portlet-body form">
+    <%= form_for [:manage, @shipping_method], html: {id: "shipping-method-form"} do |f| %>
+      <div class="form-body">
+        <%= render partial: 'form', locals: {f: f} %>
+      </div>
+
+      <div class="form-actions right">
+        <%= link_to "Cancel", manage_shipping_methods_path, class: "btn btn-default" %>
+        <button class="btn btn-primary">Save</button>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<script type="text/javascript">
+
+  $('#calculator-select').change(function(e){
+    var calc = e.target.value.split('::');
+    var calc_id = calc[calc.length - 1].replace(/([A-Z])/g, function($1){return "_"+$1.toLowerCase();});
+    calc_id = calc_id.slice(1, calc_id.length);
+
+
+    $('.preference-group').each(function(){
+      if (!$(this).hasClass('hidden')){
+        $(this).addClass('hidden');
+      }
+      $('input', '.preference-group').val('');
+    });
+
+    $('#' + calc_id).removeClass('hidden');
+  });
+  $('#shipping-method-form').submit(function(e){
+    if(!$('#flat_rate').hasClass('hidden')){
+      $('.amount', '#per_item').val($('.amount', '#flat_rate').val());
+    }
+  });
+
+</script>

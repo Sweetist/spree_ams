@@ -1,0 +1,15 @@
+if($('.account-row[data-account-id="<%= @account.id %>"]', '#customers_by_individual').length){
+  var $accountRow = $('.account-row[data-account-id="<%= @account.id %>"]', '#customers_by_individual');
+  $accountRow.remove();
+  $('#customers_by_individual').append($accountRow);
+
+  $accountRow.show();
+  $accountRow.find('input.destroy').val('false');
+  var $tr = $(this).closest('tr');
+  var idx = $tr.data('idx');
+  $('input[name="price_list[price_list_accounts_attributes][' + idx + '][_destroy]"]', '#customers_by_individual').val('true');
+  $tr.hide();
+}else{
+  $('#customers_by_individual').append("<%= j render(partial: 'spree/manage/price_lists/form/account_row', locals: {account: @account, idx: @idx, price_list_account: @price_list_account, customer_type: 'individual'}) %>");
+}
+$('#add-account-btn').removeProp('disabled');

@@ -1,0 +1,115 @@
+<div class="portlet box blue-hoki" id='shipping_calculator_box'>
+
+  <div class="portlet-title">
+    <div class="caption">
+      Calculator
+    </div>
+  </div>
+
+  <div class="portlet-body">
+
+    <div class="col-md-12">
+
+      <div class="row" id="calculator-select">
+        <select name="calculator[type]" class="form-control" id='shipping_calculator_name'>
+          <% Spree::ShippingMethod.calculators.each do |calculator| %>
+            <% next unless calculator.valid_credentials?(@vendor) %>
+            <% if (@shipping_method.calculator.type.nil? && calculator.to_s == "Spree::Calculator::Shipping::FlatRate") || @shipping_method.calculator.type == calculator.to_s %>
+              <option value="<%= calculator.to_s %>" selected>
+                <%= calculator.display_description %>
+              </option>
+              <% @calc_type = calculator.to_s.demodulize.underscore %>
+            <% else %>
+              <option value="<%= calculator.to_s %>">
+                <%= calculator.display_description %>
+              </option>
+            <% end %>
+          <% end %>
+        </select>
+      </div>
+      <br>
+
+
+      <div class="row calculator-preferences">
+        <div id="flat_rate" class="form-group preference-group price-input-with-label <%= 'hidden' unless @calc_type == 'flat_rate' %>">
+          <label class="control-label">Amount</label>
+          <label class="currency-label"><%= currency_symbol(@vendor.currency) %></label>
+          <input class="form-control price-field amount" type="number" step="0.01" name="calculator[preferences][amount]"
+            value="<%= @shipping_method.calculator.preferences[:amount] %>">
+        </div>
+
+        <div id="flexi_rate" class="preference-group <%= 'hidden' unless @calc_type == 'flexi_rate' %>">
+          <div class='form-group price-input-with-label'>
+            <label class="control-label">First Item</label>
+            <label class="currency-label"><%= currency_symbol(@vendor.currency) %></label>
+            <input class="form-control price-field" type="number" step='0.01' name="calculator[preferences][first_item]"
+              value="<%= @shipping_method.calculator.preferences[:first_item] %>">
+          </div>
+          <div class='form-group price-input-with-label'>
+            <label class="control-label">Additional Item</label>
+            <label class="currency-label"><%= currency_symbol(@vendor.currency) %></label>
+            <input class="form-control price-field" type="number" step='0.01' name="calculator[preferences][additional_item]"
+              value="<%= @shipping_method.calculator.preferences[:additional_item] %>">
+          </div>
+          <div class='form-group'>
+            <label class="control-label">Max Items</label>
+            <input class="form-control" type="number" name="calculator[preferences][max_items]"
+              value="<%= @shipping_method.calculator.preferences[:max_items] %>">
+          </div>
+        </div>
+
+        <div id="per_item" class="form-group price-input-with-label preference-group <%= 'hidden' unless @calc_type == 'per_item' %>">
+          <label class="control-label">Amount</label>
+          <label class="currency-label"><%= currency_symbol(@vendor.currency) %></label>
+          <input class="form-control amount price-field" type="number" step='0.01' name="calculator[preferences][amount]"
+            value="<%= @shipping_method.calculator.preferences[:amount] %>">
+        </div>
+
+        <div id="price_sack" class="preference-group <%= 'hidden' unless @calc_type == 'price_sack' %>">
+          <div class='form-group price-input-with-label'>
+            <label class="control-label">Minimal Amount</label>
+            <label class="currency-label"><%= currency_symbol(@vendor.currency) %></label>
+            <input class="form-control price-field" type="number" name="calculator[preferences][minimal_amount]"
+              value="<%= @shipping_method.calculator.preferences[:minimal_amount] %>">
+          </div>
+          <div class='form-group price-input-with-label'>
+            <label class="control-label">Normal Amount</label>
+            <label class="currency-label"><%= currency_symbol(@vendor.currency) %></label>
+            <input class="form-control price-field" type="number" name="calculator[preferences][normal_amount]"
+              value="<%= @shipping_method.calculator.preferences[:normal_amount] %>">
+          </div>
+          <div class='form-group price-input-with-label'>
+            <label class="control-label">Discount Amount</label>
+            <label class="currency-label"><%= currency_symbol(@vendor.currency) %></label>
+            <input class="form-control price-field" type="number" name="calculator[preferences][discount_amount]"
+              value="<%= @shipping_method.calculator.preferences[:discount_amount] %>">
+          </div>
+        </div>
+
+        <div id="flat_percent_item_total" class="form-group preference-group <%= 'hidden' unless @calc_type == 'flat_percent_item_total' %>">
+          <label class="control-label">Percent</label>
+          <input class="form-control" type="number" name="calculator[preferences][flat_percent]"
+            value="<%= @shipping_method.calculator.preferences[:flat_percent] %>">
+        </div>
+        <input type='hidden' name='calculator[preferences][currency]' value='<%= @vendor.currency %>'>
+
+      </div>
+
+    </div>
+
+    <div class="clearfix"></div>
+
+  </div>
+</div>
+
+
+
+
+<div class="form-group">
+  <div class="fields">
+
+
+
+
+  </div>
+</div>

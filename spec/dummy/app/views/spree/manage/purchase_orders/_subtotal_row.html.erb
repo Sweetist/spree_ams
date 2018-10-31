@@ -1,0 +1,30 @@
+<tr class="totals" id='subtotals-row'>
+  <% colspan = 5 %>
+  <% colspan += 1 if current_company.try(:po_include_unit_weight) %>
+  <td colspan="<%= colspan %>"></td>
+  <td>Subtotal:</td>
+  <!-- <%# if @order.approved? %> -->
+  <% if States[@order.state] >= States['complete'] %>
+    <td><%= @order.line_items.sum(:ordered_qty) %></td>
+    <td><%= @order.line_items.sum(:quantity) %></td>
+  <% else %>
+    <td><%= @order.line_items.sum(:quantity) %></td>
+  <% end %>
+  <!-- <%# if @order.state == 'invoice' || (@order.vendor.try(:receive_orders) && (@order.shipped? || @order.received?)) %> -->
+    <!-- <td><%#= @order.line_items.sum(:shipped_qty) %></td> -->
+
+  <!-- <%# end %> -->
+  <!-- <td><%#= @order.item_count %></td> -->
+  <% if current_company.try(:po_include_total_weight) %>
+    <td>
+      <span class='nowrap'>
+        <%= @order.display_total_weight_in(current_company.try(:weight_units)) %>
+      </span>
+    </td>
+  <% end %>
+  <td>
+    <span class='subtotal-price'>
+      <%= display_sweet_price(@order.item_total, @order.currency) %>
+    </span>
+  </td>
+</tr>

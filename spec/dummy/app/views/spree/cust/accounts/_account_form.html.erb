@@ -1,0 +1,100 @@
+<%#= form_for @account, url: account_path(@account) do |f| %>
+  <div class='row'>
+    <div class='col-md-6'>
+      <div class='form-group'>
+        <%= f.label :vendor, class: 'control-label' %>
+        <%= f.text_field :vendor, class:'form-control', value: @account.vendor.name, disabled:true %>
+      </div>
+    </div>
+    <div class='col-md-6'>
+      <div class='form-group'>
+        <%= f.label :default_display_name, 'Name', class: 'control-label' %>
+        <%= f.text_field :default_display_name, class:'form-control', disabled:true %>
+      </div>
+    </div>
+  </div>
+
+  <div class='row'>
+    <div class='col-md-6'>
+      <div class='form-group'>
+        <%= f.label :number, class: 'control-label' %>
+        <%= f.text_field :number, class:'form-control', disabled:true %>
+      </div>
+    </div>
+    <div class='col-md-6'>
+      <div class='form-group'>
+        <%= f.label :email, class: 'control-label' %>
+        <%= f.text_field :email, class:'form-control' %>
+      </div>
+    </div>
+  </div>
+
+  <div class='row'>
+    <div class='col-md-6'>
+      <div class='form-group'>
+        <%= f.label :payment_terms_id, class: 'control-label' %>
+        <%= f.text_field :payment_terms_id, class:'form-control', value: @account.payment_terms.try(:name), disabled: true %>
+      </div>
+    </div>
+    <div class='col-md-6'>
+      <div class='form-group'>
+        <%= f.label :default_shipping_method_id, class: 'control-label' %>
+        <%= f.text_field :default_shipping_method_id, class:'form-control', value: @account.default_shipping_method.try(:name), disabled: true %>
+      </div>
+    </div>
+  </div>
+  <div class='row'>
+    <div class='col-md-6'>
+      <div class='form-group'>
+        <%= f.label :tax_exempt_id, 'Tax Exemption Number', class: 'control-label' %>
+        <%= f.text_field :tax_exempt_id, class: 'form-control', disabled: true %>
+      </div>
+    </div>
+  </div>
+  <hr>
+  <div class='row'>
+    <div class='col-md-12'>
+      <div class='form-group'>
+        <%= f.fields_for :note do |note| %>
+          <%= note.label :body, 'Delivery Instructions' %>
+          <%= note.text_area :body %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  <hr>
+
+    <%= f.label :deliverable_days, 'Permitted Delivery Days' %>
+    <div class="mt-element-step form-group">
+      <div id="sun" class="btn btn-default disabled equal-width-buttons <%='green' if @account.delivery_on_sunday%>">
+          <%= f.hidden_field :delivery_on_sunday, id: "sun_input"%>
+          <div id="date_font" class="uppercase">Sun</div>
+      </div>
+      <div id="mon" class="btn btn-default disabled equal-width-buttons <%='green' if @account.delivery_on_monday%>">
+          <%= f.hidden_field :delivery_on_monday, id: "mon_input"%>
+          <div id="date_font" class="uppercase">Mon</div>
+      </div>
+      <div id="tue" class="btn btn-default disabled equal-width-buttons <%='green' if @account.delivery_on_tuesday%>">
+          <%= f.hidden_field :delivery_on_tuesday, id: "tue_input"%>
+          <div id="date_font" class="uppercase">Tue</div>
+      </div>
+      <div id="wed" class="btn btn-default disabled equal-width-buttons <%='green' if @account.delivery_on_wednesday%>">
+          <%= f.hidden_field :delivery_on_wednesday, id: "wed_input"%>
+          <div id="date_font" class="uppercase">Wed</div>
+      </div>
+      <div id="thur" class="btn btn-default disabled equal-width-buttons <%='green' if @account.delivery_on_thursday%>">
+          <%= f.hidden_field :delivery_on_thursday, id: "thur_input"%>
+          <div id="date_font" class="uppercase">Thr</div>
+      </div>
+      <div id="fri" class="btn btn-default disabled equal-width-buttons <%='green' if @account.delivery_on_friday%>">
+          <%= f.hidden_field :delivery_on_friday, id: "fri_input"%>
+          <div id="date_font" class="uppercase">Fri</div>
+      </div>
+      <div id="sat" class="btn btn-default disabled equal-width-buttons <%='green' if @account.delivery_on_saturday%>">
+          <%= f.hidden_field :delivery_on_saturday, id: "sat_input"%>
+          <div id="date_font" class="uppercase">Sat</div>
+      </div>
+    </div>
+
+
+<%# end %>

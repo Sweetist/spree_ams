@@ -1,0 +1,305 @@
+<%= content_for :head_title do %>
+  Payments
+<% end %>
+
+<%= content_for :page_title do %>
+  <span class="account-payment-id">
+    Payment
+  </span>
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Payments", manage_account_payments_path %>
+      <!--<i class="fa fa-circle"></i>-->
+    </li>
+  </ul>
+  <div class="page-toolbar">
+    <div class="btn-group pull-right">
+      <%= link_to "Back to All Payments", manage_account_payments_path, class: "btn green" %>
+    </div>
+  </div>
+<% end %>
+
+<div class="content">
+  <div class="row">
+    <%= form_for [:manage, @account_payment], html: {class: 'prevent-double-submission'} do |account_payment_form| %>
+      <div class="col-md-6 col-sm-12" id='account-details'>
+        <div class="portlet blue-hoki box">
+          <div class="portlet-title">
+            <div class="caption">
+              <i class="fa fa-cogs"></i>Customer Information
+            </div>
+          </div>
+          <div class="portlet-body">
+            <div class="row static-info">
+              <div class="col-md-5 name"> Customer Name: </div>
+              <div class="col-md-7 value">
+                <%= account_payment_form.collection_select :account_id, @vendor.customer_accounts.active.order('fully_qualified_name ASC'), :id, :fully_qualified_name, {}, {id: 'order-customer-id', class: "form-control", disabled: 'disabled' } %>
+              </div>
+            </div>
+
+            <%= render 'account_address_fields' %>
+            <button id='save-account' class='btn pull-right btn-primary hidden'><i class='fa fa-check'></i>Save</button>
+            <div class='clearfix'></div>
+          </div>
+        </div>
+      </div>
+
+      <%= render 'payment_information', account_payment_form: account_payment_form %>
+
+      <div class='col-md-12'>
+        <div class="table-scrollable">
+          <table class="table table-striped table-hover table-checkable" id="sample_1">
+            <thead>
+              <%#= search_form_for [:manage, @search], class: "form" do |f| %>
+              <tr>
+                <th></th>
+                <% if @vendor.use_separate_invoices %>
+                  <th><%= "Order/Invoice #" %></th>
+                <% else %>
+                  <th><%= "Order #" %></th>
+                <% end %>
+                <th><%= "Delivery Date" %></th>
+                <th><%= "Due Date" %></th>
+                <th><%= "Original Amount" %></th>
+                <th><%= "Open Balance" %></th>
+                <th><%= "Payment" %></th>
+              </tr>
+              <tr role="row" class="filter">
+
+              </tr>
+            </thead>
+              <tbody id="order-body">
+                <%= render partial: 'edit_order', collection: @orders, locals: {inner_payment_method: @inner_payment_method} %>
+              </tbody>
+          </table>
+        </div>
+      </div>
+      <%= account_payment_form.hidden_field :edit_with_capture %>
+      <%= paginate @orders %>
+      <%= render partial: 'credit_memos', locals: { vendor: @vendor, account_payment: @account_payment, credit_memos: @credit_memos || [] } %>
+      <div class="row"></div>
+      <div class="col-md-7"></div>
+      <div class="col-md-3" style="margin: 10px 0 10px 0;"><strong>Amount to Apply: &nbsp;&nbsp;&nbsp;&nbsp;</strong><span class="amount-to-apply"><%= display_sweet_price(@account_payment.amount_after_refund, @account_payment.vendor.currency) %></span></div>
+      <br />
+      <div class="col-md-7"></div>
+      <div class="col-md-3"><strong>Amount to Credit: &nbsp;&nbsp;&nbsp;</strong><span class="amount-to-credit"><%= display_sweet_price(0, @account_payment.vendor.currency) %></span></div>
+      <br />
+      <!-- <div class='row'> -->
+      <div class='col-md-12 single-order-buttons'>
+        <% if @account_payment.editable? %>
+          <%= link_to 'Cancel', manage_account_payments_path,
+              class: 'btn btn-default warn-before-action' %>
+          <button class='btn green-jungle' id='update-payment'>
+            Update
+          </button>
+        <% end %>
+        <% @account_payment.actions.sort.reverse.each do |action| %>
+          <% action_btn_color = "#{action}_btn_color" %>
+          <% if action == 'credit' %>
+            <%= link_to 'Refund', new_refund_manage_account_payment_path,
+                class: "btn btn-default prevent-double-submission disable-after-click", remote: true %>
+          <% else %>
+            <%= link_to fire_manage_account_payment_path(@account_payment, e: action),
+              id: "#{action}-payment",
+              class: "btn #{Spree.t(:btn_color, scope: [:payment_actions, action])} prevent-double-submission disable-after-click", data: {'original-title' => Spree.t(action)}, method: :put do %>
+              <%= action.titleize %>
+            <% end %>
+          <% end %>
+        <% end %>
+      </div>
+
+      <%= render 'edit_modal' %>
+
+    <% end %>
+    <%= render partial: 'spree/manage/refunds/modal/new' %>
+  </div>
+</div>
+
+<script>
+  var currency = '<%= currency_symbol(@vendor.currency) %>';
+  $('#alert').html("<%= j(render(partial: 'spree/shared/errors')) %>");
+  $(document).ready(function(){
+    var formatNumber = function(num) {
+      return currency + num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
+    };
+    var checkNegativeAtc = function(amount, credit_to_apply, total) {
+      atc = parseFloat(amount) + parseFloat(credit_to_apply) - total.toFixed(2);
+      if (atc > 0) {
+        $('.amount-to-credit')[0].innerText = currency + parseFloat(atc).toFixed(2);
+      } else {
+        $('.amount-to-credit')[0].innerText = currency + parseFloat(0).toFixed(2);
+      };
+    };
+    var amountToApply = 0;
+    var countCheck = 0;
+
+    $('#order-body input:checkbox').click(function(event){
+      countCheck += 1;
+      event.stopImmediatePropagation();
+      var amount = $('#account_payment_amount');
+      var credit_to_apply = $('#account_payment_credit_to_apply').val();
+      var chRow = $('#order-body tr').filter(':has(:checkbox:checked)');
+      var unchRow = $('#order-body tr').filter(':has(:checkbox:not(:checked))');
+      var total = 0;
+      unchRow.each(function(){
+        $(this).find('.payment-amount').val(0);
+      });
+      chRow.each(function(index){
+        if ($(this).find('.payment-amount').val() != 0) {
+          total += parseFloat($(this).find('.payment-amount').val());
+        } else {
+          total += parseFloat(this.cells[5].innerText.substring(1).replace(/,/g, ''));
+          $(this).find('.payment-amount').val(parseFloat(chRow[index].cells[5].innerText.substring(1).replace(/,/g, '')));
+        }
+      });
+      if (top.amountToApply > 0) {
+        atc = parseFloat(amount.val()) + parseFloat(credit_to_apply) - total.toFixed(2);
+        if (atc > 0) {
+          $('.amount-to-credit')[0].innerText = currency + parseFloat(atc).toFixed(2);
+        } else {
+          $('.amount-to-credit')[0].innerText = currency + parseFloat(0).toFixed(2);
+        };
+        return;
+      }
+      amount.val(total.toFixed(2));
+      amountToCredit = parseFloat(amount.val()) + parseFloat(credit_to_apply) - total.toFixed(2);
+      $('.amount-to-credit')[0].innerText = currency + parseFloat(amountToCredit).toFixed(2);
+      $('.amount-to-apply')[0].innerText = formatNumber((parseFloat(total.toFixed(2))+parseFloat(credit_to_apply)).toFixed(2));
+    });
+
+    $('.payment-amount').change(function(event){
+      event.stopImmediatePropagation();
+      total = 0;
+      var amount = $('#account_payment_amount');
+      var credit_to_apply = $('#account_payment_credit_to_apply').val();
+      var amount2 = $(".payment-amount");
+      for (var i = 0; i < amount2.length; i++) {
+        var balance = parseFloat($('#order-body tr')[i].cells[5].innerText.substring(1));
+        if (amount2[i].value > 0) {
+          total += parseFloat(amount2[i].value);
+          $("[name='payments_attributes[][check]']")[i].checked = true;
+        } else {
+          $("[name='payments_attributes[][check]']")[i].checked = false;
+        }
+      }
+      amountToCredit = parseFloat(amount.val()) + parseFloat(credit_to_apply) - total.toFixed(2);
+      if (amountToCredit > 0) {
+        $('.amount-to-credit')[0].innerText = currency + parseFloat(amountToCredit).toFixed(2);
+      } else {
+        $('.amount-to-credit')[0].innerText = currency + parseFloat(0).toFixed(2);
+      };
+    });
+
+    $('#account_payment_amount').change(function(){
+      amountToApply += 1;
+      var amount = $('#account_payment_amount').val();
+      var credit_to_apply = $('#account_payment_credit_to_apply').val();
+      if (countCheck > 0) {
+        total = 0;
+        var amount2 = $(".payment-amount");
+        for (var i = 0; i < amount2.length; i++) {
+          if (amount2[i].value > 0) {
+            total += parseFloat(amount2[i].value);
+          };
+        };
+        checkNegativeAtc(amount, credit_to_apply, total);
+        $('.amount-to-apply')[0].innerText = formatNumber((parseFloat(amount)+parseFloat(credit_to_apply)).toFixed(2));
+        return;
+      }
+      $('.amount-to-apply')[0].innerText = formatNumber((parseFloat(amount)+parseFloat(credit_to_apply)).toFixed(2));
+      var amount2 = $(".payment-amount");
+      for (var i = 0; i < amount2.length; i++) {
+        if (amount == 0) {
+          amount2[i].value = parseFloat(0).toFixed(2);
+          $("[name='payments_attributes[][check]']")[i].checked = false;
+          continue;
+        }
+        var balance = parseFloat($('#order-body tr')[i].cells[5].innerText.substring(1).replace(/,/g, ''));
+        if (amount < balance) {
+          amount2[i].value = parseFloat(amount).toFixed(2);
+          $("[name='payments_attributes[][check]']")[i].checked = true;
+          amount = 0;
+        } else {
+          amount2[i].value = parseFloat(balance).toFixed(2);
+          amount = amount - balance;
+          $("[name='payments_attributes[][check]']")[i].checked = true;
+        }
+      }
+    });
+
+    $('#account_payment_credit_to_apply').change(function(){
+      var amount = $('#account_payment_amount').val();
+      var credit_to_apply = $('#account_payment_credit_to_apply').val();
+      $('.amount-to-apply')[0].innerText = formatNumber((parseFloat(amount)+parseFloat(credit_to_apply)).toFixed(2));
+      total = 0;
+      var amount2 = $(".payment-amount");
+      for (var i = 0; i < amount2.length; i++) {
+        if (amount2[i].value > 0) {
+          total += parseFloat(amount2[i].value);
+        };
+      };
+      checkNegativeAtc(amount, credit_to_apply, total);
+    });
+
+    $('#account_payment_payment_method_id').change(function(){
+      $("div[data-hook='admin_payment_form_fields']").html('')
+      var payment_method = $('#account_payment_payment_method_id option:selected').val();
+      var account_id = $('#order-customer-id option:selected').val();
+      if (typeof payment_method !== "undefined") {
+        $.ajax({
+          url: '/manage/account_payments/new_payment',
+          type: 'GET',
+          dataType: 'script',
+          data: {
+            account_id: account_id,
+            payment_method_id: payment_method
+          }
+        });
+      }
+    });
+
+    $('#update-payment').click(function(evt){
+      $('#order-customer-id').prop('disabled', false);
+      paymentChange = 0;
+      $('.payment-amount').each(function(){
+        if (this.value !== this.defaultValue) {
+          paymentChange += 1;
+        }
+      });
+      if (paymentChange > 0) {
+        evt.preventDefault();
+        $("#myModal").modal();
+      }
+    });
+    $('#capture-payment').click(function(evt){
+      $('#account_payment_edit_with_capture').val(1);
+      $('#order-customer-id').prop('disabled', false);
+      paymentChange = 0;
+      creditUsed = document.getElementById('account_payment_credit_to_apply').defaultValue;
+      amountToApply = document.getElementById('account_payment_amount').defaultValue;
+      $('.payment-amount').each(function(){
+        if (this.value !== this.defaultValue) {
+          paymentChange += 1;
+        }
+      });
+      if ($('#account_payment_credit_to_apply').val() !== creditUsed){
+        paymentChange += 1;
+      };
+      if ($('#account_payment_amount').val() !== amountToApply){
+        paymentChange += 1;
+      };
+      if (paymentChange > 0) {
+        evt.preventDefault();
+        evt.stopImmediatePropagation();
+        $("#myModal").modal();
+      }
+    });
+  });
+</script>

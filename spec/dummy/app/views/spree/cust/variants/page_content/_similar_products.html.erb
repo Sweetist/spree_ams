@@ -1,0 +1,32 @@
+<% @count = 0 %>
+<% products.each do |product| %>
+  <% prices = product.avvs.where(account: @current_vendor_account).visible.pluck(:price) %>
+  <% min_price = prices.min %>
+  <% max_price = prices.max %>
+  <% if product.has_variants? %>
+    <% url = vendor_product_path(@vendor, product) %>
+  <% else %>
+    <% url = vendor_product_variant_path(@vendor, product, product.master) %>
+  <% end %>
+  <% @count += 1 %>
+  <div>
+    <h3 class="slick-image-container">
+      <%= link_to url, style: 'text-decoration:none' do %>
+        <%= product_image(product, itemprop: "image", class: "slick-image") %>
+        <h4><%= product.default_display_name.to_s %></h4>
+        <h5><b>
+        <% if min_price == max_price %>
+          <%= display_sweet_price(product.price, product.currency) %>
+        <% else %>
+          <%= display_sweet_price(min_price, product.currency) %>-<%= display_sweet_price(max_price, product.currency) %>
+        <% end %>
+        </b></h5>
+      <% end %>
+    </h3>
+  </div>
+<% end %>
+<% if @count > 4 %>
+  <% (4 - @count % 4).times do %>
+    <div><h3 class="slick-image-container empty-slide"></h3></div>
+  <% end %>
+<% end %>

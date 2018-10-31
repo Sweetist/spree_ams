@@ -1,0 +1,10 @@
+$('#invoice_payment_state').html("<%= j render(partial: 'spree/manage/invoices/payment_state') %>");
+<% if flash[:errors] %>
+  $('#alert').html("<div class='alert alert-danger alert-dismissable'><button type='button' class='close' data-dismiss='alert' aria-hidden='true'></button><%= flash[:errors] %></div>");
+<% end %>
+<% if flash[:success] %>
+  $('#alert').html("<div class='alert alert-success alert-auto-dissapear'><%= flash[:success] %></div>");
+  setTimeout(function() {
+    $(".alert-auto-dissapear").fadeOut(1500);
+  },2000);
+<% end %>

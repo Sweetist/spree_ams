@@ -1,0 +1,19 @@
+<div class="modal fade bs-modal-lg" id="product-modal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+
+    <div class="modal-content">
+      <div id='modal-errors'></div>
+      <div class="portlet light" style='margin-bottom:0px;'>
+        <%= render partial: 'spree/manage/products/modal/default_content' %>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script type='text/javascript'>
+  $('#product-modal').on('hidden.bs.modal', function(){
+    $('.portlet', '#product-modal').empty();
+    $('.portlet', '#product-modal').append("<%= j(render(partial: 'spree/manage/products/modal/default_content.html.erb')) %>");
+  });
+</script>

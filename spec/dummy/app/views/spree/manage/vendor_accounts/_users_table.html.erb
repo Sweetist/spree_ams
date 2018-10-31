@@ -1,0 +1,31 @@
+<div class="portlet-body">
+  <% if edit %>
+    <%= link_to new_user_manage_vendor_vendor_account_path(@vendor, @account), class: "btn btn-primary btn-green pull-right" do %>
+      <i class='fa fa-plus'></i> Add Contact
+    <% end %>
+  <% end %>
+  <table class="table table-hover" id='basic-table-no-buttons'>
+    <thead>
+      <tr>
+        <th><i class="fa"></i>First Name</th>
+        <th><i class="fa"></i>Last Name</th>
+        <th><i class="fa"></i>Position</th>
+        <th><i class="fa"></i>Email</th>
+        <th><i class="fa"></i>Phone</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @account.users.where(company_id: @account.customer_id).each do |u| %>
+        <% unless u.has_spree_role?("admin") %>
+          <tr>
+            <td><%= u.firstname %></a></td>
+            <td><%= u.lastname %></td>
+            <td><%= u.position %></a></td>
+            <td><%= u.email %></a></td>
+            <td><%= u.phone %></a></td>
+          </tr>
+        <% end %>
+      <% end %>
+    </tbody>
+  </table>
+</div>

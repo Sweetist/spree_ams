@@ -1,0 +1,43 @@
+<%= content_for :head_title do %>
+  <%= @product.name %>
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Products", manage_products_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <span><%= @product.name %></span>
+    </li>
+  </ul>
+  <div class="page-toolbar">
+    <div class="pull-right">
+      <%= link_to "Back to Catalog", manage_products_path, class: 'btn btn-success' %>
+    </div>
+    <%= render partial: 'spree/manage/products/headers/view_as' %>
+  </div>
+<% end %>
+<% if @current_order %>
+  <div class='row'>
+    <div class="current-order-block col-sm-8">
+      <%= link_to edit_manage_order_path(@current_order), id: 'current-order-link' do %>
+        <h3>Order #<span id="order-number"><%= @current_order.display_number %></span></h3>
+        <h5>Customer: <%= @current_order.customer.name %></h5>
+        <% if @current_order.account.try(:can_select_delivery?) %>
+          <h5><%= "#{@vendor.order_date_text.to_s.capitalize} Date".strip %>: <%= @current_order.delivery_date.to_date.to_formatted_s(:long) %></h5>
+        <% end %>
+      <% end %>
+    </div>
+    <% unless @product.has_variants? %>
+      <div class='col-sm-4'>
+        <%= render partial: 'spree/manage/variants/page_content/add_to_cart', locals: {variant: @product.master} %>
+      </div>
+    <% end %>
+  </div>
+<% end %>

@@ -1,0 +1,16 @@
+<tr class="totals" id='totals-row'>
+  <% colspan = 5 %>
+  <% colspan += 1 if current_company.try(:po_include_unit_weight) %>
+  <td colspan="<%= colspan %>"></td>
+  <td><strong>Total:</strong></td>
+  <% if States[@order.state] >= States['complete'] %>
+    <td><%= @order.line_items.sum(:ordered_qty) %></td>
+    <td><%= @order.line_items.sum(:quantity) %></td>
+  <% else %>
+    <td><%= @order.line_items.sum(:quantity) %></td>
+  <% end %>
+  <% if current_company.try(:po_include_total_weight) %>
+    <td><strong><%= @order.display_total_weight_in(current_company.try(:weight_units)) %></strong></td>
+  <% end %>
+  <td><strong><span class='total-price'><%= display_sweet_price(@order.total, @order.currency) %></span></strong></td>
+</tr>

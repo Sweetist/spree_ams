@@ -1,0 +1,52 @@
+<%= content_for :head_title do %>
+  Pages
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <span>Pages</span>
+    </li>
+  </ul>
+  <div class="page-toolbar">
+      <%= link_to new_manage_page_path, class: "btn green pull-right" do %>
+        <i class="fa fa-plus"></i>&nbsp;New Page
+      <% end %>
+  </div>
+<% end %>
+
+<% if @pages.any? %>
+  <table class="table sortable" id="listing_pages" data-hook data-sortable-link="<%= update_positions_manage_pages_url %>">
+    <thead>
+      <tr>
+        <th class="no-border"></th>
+        <th><%= Spree::Page.human_attribute_name(:title) %></th>
+        <th><%= Spree.t(:link, scope: :static_content) %></th>
+        <th class="text-center"><%= Spree::Page.human_attribute_name(:visible) %></th>
+        <th class="actions"></th>
+      </tr>
+    </thead>
+    <tbody class="ui-sortable">
+      <% @pages.each do |page| %>
+        <tr id="<%= spree_dom_id page %>" data-hook="pages_row">
+          <td class="move-handle">
+            <i class="fa fa-reorder handle ui-sortable-handle"></i>
+          </td>
+          <td><%= page.title %></td>
+          <td><%= link_to page.link, page.link, target: '_blank' %></td>
+          <td class="text-center"><%= content_tag(:i, '', class: 'fa fa-check') if page.visible %></td>
+          <td class="actions text-right">
+            <%= link_to manage_page_path(page), data:{:confirm => "Are you sure you want to delete this page?"}, :method => :delete, class: "btn red btn-sm pull-right", remote: true do %>
+              <i class='fa fa-times' aria-hidden='true'></i>
+            <% end %>
+            <%= link_to raw("<i class='fa fa-pencil' aria-hidden='true'></i>"), edit_manage_page_path(page.id), class: 'btn btn-primary btn-sm pull-right' %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>

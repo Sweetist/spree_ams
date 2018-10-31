@@ -1,0 +1,29 @@
+<% object = object %>
+<div class="mt-element-step form-group">
+  <div class="row">
+    <div id="sun" class="btn btn-default equal-width-buttons <%='green' if object.delivery_on_sunday%>">
+      <div id="date_font" class="uppercase">Sun</div>
+    </div>
+    <div id="mon" class="btn btn-default equal-width-buttons <%='green' if object.delivery_on_monday%>">
+      <div id="date_font" class="uppercase">Mon</div>
+    </div>
+    <div id="tue" class="btn btn-default equal-width-buttons <%='green' if object.delivery_on_tuesday%>">
+      <div id="date_font" class="uppercase">Tue</div>
+    </div>
+    <div id="wed" class="btn btn-default equal-width-buttons <%='green' if object.delivery_on_wednesday%>">
+      <div id="date_font" class="uppercase">Wed</div>
+    </div>
+    <div id="thur" class="btn btn-default equal-width-buttons <%='green' if object.delivery_on_thursday%>">
+      <div id="date_font" class="uppercase">Thr</div>
+    </div>
+    <div id="fri" class="btn btn-default equal-width-buttons <%='green' if object.delivery_on_friday%>">
+      <div id="date_font" class="uppercase">Fri</div>
+    </div>
+    <div id="sat" class="btn btn-default equal-width-buttons <%='green' if object.delivery_on_saturday%>">
+      <div id="date_font" class="uppercase">Sat</div>
+    </div>
+  </div>
+  <% if edit %>
+    <span class='help-block-italic'>Must choose 'Custom' <%= current_vendor.display_shipping_group_class %> to change these.<span>
+  <% end %>
+</div>

@@ -1,0 +1,11 @@
+<% if @taxon %>
+  $("#taxon_<%= @taxon.id %>").remove();
+  <% if @taxon.parent.children.count == 0 %>
+    $('.fa-chevron-down', '#taxon_<%= @taxon.parent_id %>').remove();
+  <% end %>
+<% else %>
+  $("#alert").append("<div class='alert alert-danger alert-auto-dissapear'>Could not delete category</div>");
+  setTimeout(function() {
+    $(".alert-auto-dissapear").fadeOut(1500);
+  },2000);
+<% end %>

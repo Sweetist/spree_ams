@@ -1,0 +1,20 @@
+<%= content_for :head_title do %>
+  Accounts
+<% end %>
+
+
+
+<%= content_for :page_bar do %>
+  <ul class="breadcrumb">
+    <li>
+      <%= link_to "Home", root_path %>
+    </li>
+    <li>
+      <span>Accounts</span>
+    </li>
+  </ul>
+<% end %>
+
+<div class='row content'>
+  <%= render partial: 'accounts_table' %>
+</div>

@@ -1,0 +1,98 @@
+<%= content_for :head_title do %>
+  Standing Order: <%= @order.name %> - <%= @vendor.name %>: <%= @product.name %>
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", root_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Orders", orders_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Standing Orders", standing_orders_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to @order.name, standing_order_path(@order) %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Products", standing_order_products_path(@order) %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <span><%= @product.name %></span>
+    </li>
+  </ul>
+
+<% end %>
+
+<div class="content">
+  <% if @product.discontinued_on %>
+    <div class='alert alert-danger'>
+      This product has been <%= Spree.t('variant.deactivated') %>.
+    </div>
+  <% end %>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="row">
+        <div class="col-md-12">
+          <%= render partial: 'spree/manage/products/image' %>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <% if @product.taxons.any? %>
+          <div class="col-md-12 name">
+            <label class="control-label">
+              Product Categories:
+            </label>
+          </div>
+          <div class="col-md-9 value">
+            <ul class="list-unstyled">
+                <% @product.taxons.order('name ASC').each do |taxon| %>
+                  <li data-id='<%= taxon.id %>'><%= taxon.pretty_name %></li>
+                <% end %>
+            </ul>
+          </div>
+        <% end %>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="row">
+        <%= raw(@product.description.to_s.html_safe) %>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <%= simple_form_for @order, url: standing_order_products_path, method: :post, html: {id: "add-to-order-form"} do |f| %>
+        <%= f.simple_fields_for :products do |fp| %>
+          <% if @product.has_variants? %>
+            <% @avvs.each_with_index do |avv, idx| %>
+              <% next if avv.variant.is_master? %>
+              <table class="table table-bordered">
+                <tbody>
+                  <%= render partial: 'variant_list', locals: {fp: fp, avv: avv, variant: avv.variant, idx: idx} %>
+                </tbody>
+              </table>
+            <% end %>
+          <% else %>
+            <table class="table table-bordered">
+              <tbody>
+                <%= render partial: 'variant_list', locals: {fp: fp, avv: @avv, variant: @product.master, idx: 0} %>
+              </tbody>
+            </table>
+          <% end %>
+        <% end %>
+        <% unless @product.discontinued_on %>
+          <%= f.submit "Add to Order", class: "btn btn-primary pull-right", id: "add-to-cart", style: 'max-width: 300px;' %>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</div>

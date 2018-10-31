@@ -1,0 +1,84 @@
+
+<div class='form-group'>
+
+
+  <label for='order-status'>Order Status</label>
+  <select name='filter[status]' id='order-status'>
+    <% if params[:controller].include?('invoices') %>
+      <% statuses = %w{shipped received canceled} %>
+    <% elsif params[:controller].include?('orders') %>
+      <% statuses = %w{cart pending ready shipped received canceled} %>
+    <% else %>
+      <% statuses = %w{pending ready shipped received canceled} %>
+    <% end %>
+
+    <option value='any'>Any Status</option>
+    <% statuses.each do |status| %>
+      <% if status == @status %>
+        <option value='<%= status %>' selected><%= status.capitalize %></option>
+      <% else %>
+        <option value='<%= status %>'><%= status.capitalize %></option>
+      <% end %>
+    <% end %>
+  </select>
+</div>
+
+<!-- <div class='form-group'>
+  <label for='vendor'>vendor</label>
+  <select name='filter[vendor_id]' id='vendor'>
+    <option value="all">All</option>
+      <% @vendors.each do |vendor| %>
+        <% if vendor.id == @current_vendor_id.to_i %>
+          <option value='<%= vendor.id %>' selected><%= vendor.name %></option>
+        <% else %>
+          <option value='<%= vendor.id %>'><%= vendor.name %></option>
+        <% end %>
+      <% end %>
+  </select>
+</div> -->
+
+<div class='form-group'>
+  <label for='order_number'>Order Number</label>
+  <input type="text" name='filter[order_number]' value='<%= @order_number %>' id='order_number'>
+</div>
+
+<div class="clear"></div>
+<div class='form-group'>
+  <label for='total_from'>Total($) From</label>
+  <input type="number" name="filter[total_from]" value="<%= @total_from %>" id='total_from'>
+  <label for='total_to'>Total($) To</label>
+  <input type="number" name="filter[total_to]" value="<%= @total_to %>" id='total_to'>
+</div>
+
+<div class='form-group'>
+  <label for='delivery-start-date'>Delivery (Begin)</label>
+    <input type="date" name=filter[delivery_start_date] value="<%= @delivery_start_date %>" id='delivery-start-date'>
+
+  <label for='delivery-end-date'>Delivery (End)</label>
+    <input type="date" name=filter[delivery_end_date] value="<%= @delivery_end_date %>" id='delivery-end-date'>
+</div>
+
+<div class='form-group'>
+  <label for='completed-start-date'>Completed At (Begin)</label>
+    <input type="date" name=filter[completed_start_date] value="<%= @completed_start_date %>" id='completed-start-date'>
+
+  <label for='completed-end-date'>Completed At (End)</label>
+    <input type="date" name=filter[completed_end_date] value="<%= @completed_end_date %>" id='completed-end-date'>
+</div>
+
+<div class='form-group'>
+    <label for='incomplete'>Include Incomplete</label>
+    <input type='checkbox' name='filter[incomplete]' value=<%= @show_incomplete %> checked if <%= @show_incomplete %>>
+</div>
+
+<div class='form-group'>
+  <button id="filter-button">Filter</button>
+</div>
+<div class='form-group'>
+  <a href='' id="clear-filter">Reset Filters</a>
+</div>
+
+<div class="clear"></div>
+<div class='form-group'>
+  <a href='' id="basic-search">Close</a>
+</div>

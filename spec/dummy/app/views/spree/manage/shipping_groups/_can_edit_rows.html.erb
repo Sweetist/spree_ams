@@ -1,0 +1,18 @@
+<tr id="shipping_group_<%= group.id %>">
+  <td width="10px" class="delete">
+    <%= link_to raw("<i class='fa fa-times'></i>"), manage_shipping_group_path(format: 'js', id: group.id),
+        data: {:confirm => "Are you sure you want to delete this #{current_vendor.display_shipping_group_class.downcase}?"},
+        :method => :delete, remote: true %>
+  </td>
+  <td><%= link_to group.name, edit_manage_shipping_group_path(group.id) %></td>
+  <td>
+    <%= link_to edit_manage_shipping_group_path(group.id) do %>
+      <%= group.deliverable_days_text %>
+    <% end %>
+  </td>
+  <td>
+    <% if group.is_default? %>
+      <%= link_to raw("<i class='fa fa-check'></i>"), edit_manage_shipping_group_path(group.id) %>
+    <% end %>
+  </td>
+</tr>

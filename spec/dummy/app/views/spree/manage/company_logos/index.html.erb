@@ -1,0 +1,96 @@
+<%= content_for :head_title do %>
+  <%= @account.name %>
+<% end %>
+
+<%= content_for :page_title do %>
+<%= @account.name %>
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", root_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Account", edit_manage_account_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <span>Logos</span>
+    </li>
+  </ul>
+
+  <div class="page-toolbar">
+    <div class="btn-group pull-right">
+      <%= link_to "Back to Account",  edit_manage_account_url, class: "btn green" %>
+    </div>
+  </div>
+
+<% end %>
+
+<div class="content">
+  <div class="row">
+    <div class="col-md-12">
+
+      <% unless @account.logos.any? %>
+        <% if current_spree_user.can_write?('company') %>
+          <div class="alert alert-warning alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button>
+            <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::Image)) %>.
+          </div>
+        <% else %>
+          <div class="alert alert-warning">
+            <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::Image)) %>.
+          </div>
+        <% end %>
+      <% else %>
+      <div class="table-scrollable">
+          <table class="index sortable table table-striped table-hover table-checkable" data-hook="images_table" data-sortable-link="<%= update_positions_manage_account_logos_url(@account) %>">
+            <thead>
+              <tr data-hook="images_header">
+                <th colspan="2">
+                  <%= Spree.t(:thumbnail) %>
+                </th>
+                <th>
+                  <%= Spree.t(:alt_text) %>
+                </th>
+                <th class="actions"></th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <% (@account.logos).each do |logo| %>
+                <tr id="<%= spree_dom_id logo %>" data-hook="images_row">
+                  <td class="move-handle text-center">
+                    <% if can? :edit, logo %>
+                      <span class="icon icon-move handle"></span>
+                    <% end %>
+                  </td>
+                  <td class="image">
+                    <%#= link_to image_tag(logo.attachment.url(:mini)), logo.attachment.url(:product) %>
+                    <%= link_to image_tag(logo.attachment.url(:mini)), logo.attachment.url(:medium) %>
+                  </td>
+                  <td><%= logo.alt %></td>
+                 <td class="actions">
+                    <%#= link_to_with_icon 'edit', Spree.t(:edit), edit_manage_account_account_image_url(image), :data => {:action => 'edit'} %>
+                    <%= link_to 'delete', manage_account_logo_path(logo),
+                                  method: :delete,
+                                                data: { confirm: 'Are you sure?' } %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+
+<% if current_spree_user.can_write?('company') %>
+  <%= link_to new_manage_account_logo_path, class: "btn btn-primary" do%>
+    <i class = "fa fa-plus"></i>&nbsp;New Image
+  <% end %>
+<% end %>

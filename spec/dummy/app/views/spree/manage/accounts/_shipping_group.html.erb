@@ -1,0 +1,44 @@
+<h3 class="form-section"> <% if edit %>Select<% end %> <%= "#{@vendor.order_date_text.to_s.capitalize} Schedule".strip %> </h3>
+<% if edit %>
+  <div class='row'>
+    <div class="col-md-6">
+      <div class='form-group'>
+        <%= f.collection_select :shipping_group_id, @vendor.shipping_groups, :id, :name, {include_blank: 'Custom'}, {class: 'form-control'} %>
+      </div>
+    </div>
+  </div>
+<% else %>
+  <div class="row static-info margin-bottom-20">
+    <div class="col-md-6">
+      <div class='row'>
+        <div class="col-md-12 value" id='account_shipping_group_id' value='<%= @account.shipping_group_id %>'>
+          <%= @account.try(:shipping_group).try(:name) || "Custom" %>:
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<div id='shipping-container'>
+
+</div>
+
+<script type='text/javascript'>
+  $('#account_shipping_group_id').change(function(){
+    getDeliverableDays();
+  });
+  var getDeliverableDays = function(){
+    var shipping_group_id = $('#account_shipping_group_id').val();
+    if ( shipping_group_id === ''){
+      $('#shipping-container').html("<%= escape_javascript(render(partial: 'blackout_dates', locals: {f: f, edit: edit})) %>");
+    }else {
+      $('#shipping-container').empty();
+      $.ajax({
+        url: '/manage/shipping_groups/' + shipping_group_id,
+        type: 'GET',
+        dataType: 'script'
+      });
+    }
+  }
+  getDeliverableDays();
+</script>

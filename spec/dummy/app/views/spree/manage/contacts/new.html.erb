@@ -1,0 +1,48 @@
+<%= content_for :head_title do %>
+  Contacts
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Contacts", manage_account_contacts_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+     <span>New</span>
+    </li>
+  </ul>
+<% end %>
+
+<div class="portlet light">
+  <div class="portlet-title row">
+    <div class="caption caption-md">
+      <i class="icon-globe theme-font hide"></i>
+      <span class="caption-subject font-blue-madison bold uppercase">Contact Details</span>
+    </div>
+  </div>
+
+  <div class="portlet-body form">
+      <!-- BEGIN FORM-->
+    <div class='row'>
+      <%= form_for @contact, url: manage_account_contacts_path(@contact) do |f| %>
+        <div class='form-body'>
+          <%= render partial: "form", locals: {f: f} %>
+        </div>
+        <div class="form-actions">
+          <div class='pull-right'>
+            <%= link_to manage_account_contacts_path, class: "btn btn-default" do %>
+              <i class='fa fa-times'></i> Cancel
+            <% end %>
+            <button class='btn btn-primary'><i class='fa fa-check'></i> Save</button>
+          </div>
+        </div>
+      <% end %>
+    </div>
+    <!-- END FORM-->
+  </div>
+</div>

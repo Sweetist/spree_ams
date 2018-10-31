@@ -1,0 +1,33 @@
+<br/>
+<h1 class="catalog-title">Integrations</h1>
+<a href="<%=  %>" class="new-integration-button">New Integration</a>
+<div class="clear"></div>
+
+<br/><hr/><br/><br/>
+
+
+
+<% if @items.blank? %>
+  <div class="div-roundbox">
+    No items
+  </div>
+<% else %>
+  <% @items.each do |item| %>
+    <div class="div-roundbox">
+      <div class="col-md-1">
+        <%=image_tag('spree/manage/img/qb-ico.png', width: '48')%>
+      </div>
+      <div class="col-md-8">
+        <h4>
+          <%= item.item_name %>
+        </h4>
+        <p>
+          <%= item.item_description %>
+        </p>
+      </div>
+      <div class="col-md-3">
+        <a href="<%=  %>" class="new-integration-button item-integration-button"><%= item.configured == 'f'? ? 'Set up >' : 'Configured > ' %></a>
+      </div>
+    </div>
+  <% end %>
+<% end %>

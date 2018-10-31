@@ -1,0 +1,115 @@
+<h4 class='form-section'>Order Settings</h4>
+<div class='row'>
+  <div class='col-sm-4'>
+    <div class="form-group">
+      <%= f.label :order_date_text, "Use Delivery or Ship Date", class: 'control-label' %>
+      <i style = "margin-right: 12px;" class="fa fa-info-circle tooltips"
+      data-original-title='You can customize Sweet to allow selection of “Delivery date” or a “Ship date” during order creation.
+      Your respective selection will also appear on invoices and packing slips.
+      If you select “None”, you, will still be able to select a specific date for your order/invoice.'
+      data-container="body"></i>
+      <%= f.select :order_date_text, [['Delivery', 'delivery'], ['Ship', 'ship'], ['None', '']],{}, class: 'form-control' %>
+    </div>
+  </div>
+  <div class='col-sm-4'>
+    <div class="form-group">
+      <%= f.label :last_editable_order_state, "Order can be edited through order state", class: 'control-label' %>
+      <%= f.select :last_editable_order_state, States.map{|k,v| [k.capitalize, v] if v >= States['approved']}.compact, {}, class: 'form-control' %>
+    </div>
+  </div>
+  <div class='col-sm-4'>
+    <div class="form-group">
+      <%= f.label :receive_orders, "Orders must be received" %>
+      <br>
+      <%= f.check_box :receive_orders, class: 'make-switch', 'data-size' => 'mini'  %>
+    </div>
+  </div>
+</div>
+<div class='row'>
+  <div class='col-sm-4'>
+    <div class="form-group">
+      <%= f.label :order_prefix, 'Order # Prefix', class: 'control-label' %>
+      <%= f.text_field :order_prefix, value: f.object.order_prefix || 'R', class: 'form-control' %>
+    </div>
+  </div>
+  <div class='col-sm-4'>
+    <div class="form-group">
+      <%= f.label :order_next_number, 'Next Order Number', class: "control-label" %><br />
+      <%= f.number_field :order_next_number, class: "form-control" %>
+      <span class='help-block-italic'>Set this to 0 to use the default order number generator</span>
+    </div>
+  </div>
+  <div class='col-sm-4'>
+    <div class="form-group">
+      <%= f.label :auto_approve_orders, 'Auto approve orders' %>
+      <i style = "margin-right: 12px;" class="fa fa-info-circle tooltips"
+      data-original-title="Automatically approve submitted orders. This does not apply to orders generated from standing orders."
+      data-container="body"></i>
+      <br>
+      <%= f.check_box :auto_approve_orders, class: 'make-switch', 'data-size' => 'mini' %>
+      <span class='help-block-italic'>Orders submitted after the cutoff time will NOT be automatically approved</span>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-sm-4">
+    <div class="form-group">
+      <%= f.label :include_unit_weight, "Show Product Weight", class: 'control-label' %><br>
+      <%= f.check_box :include_unit_weight, class: 'make-switch', 'data-size' => 'mini' %>
+    </div>
+  </div>
+  <div class="col-sm-4">
+    <div class="form-group">
+      <%= f.label :include_total_weight, "Show Aggregate Weights", class: 'control-label' %><br>
+      <%= f.check_box :include_total_weight, class: 'make-switch', 'data-size' => 'mini' %>
+    </div>
+  </div>
+  <div class='col-sm-4'>
+    <div class="form-group">
+      <%= f.label "Weight Units", class: "control-label" %>
+      <%= f.select :weight_units, Sweet::Application.config.x.weight_units, {include_blank: false}, {class: 'form-control'} %>
+    </div>
+  </div>
+</div>
+<div class='row'>
+  <div class='col-sm-4'>
+    <div class="form-group">
+      <%= f.label :txn_class_type, "Track Classes", class: 'control-label' %>
+      <%= f.select :txn_class_type, [['None', 'none'], ['On orders / customers', 'orders'], ['On each line item / products', 'line_items']],{}, class: 'form-control' %>
+    </div>
+  </div>
+  <div class='col-sm-4'>
+    <div class="form-group">
+      <%= f.label Spree.t('company_settings.hard_cutoff_time.label'), class: "control-label" %>
+      <%= f.check_box :hard_cutoff_time, class: 'make-switch', 'data-size' => 'mini' %><br>
+      <span class='help-block-italic'>
+        <%= Spree.t('company_settings.hard_cutoff_time.helper') %>
+      </span>
+    </div>
+  </div>
+  <div class='col-sm-4'>
+    <div class="form-group">
+      <%= f.label Spree.t('company_settings.hard_lead_time.label'), class: "control-label" %>
+      <%= f.check_box :hard_lead_time, class: 'make-switch', 'data-size' => 'mini' %><br>
+      <span class='help-block-italic'>
+        <%= Spree.t('company_settings.hard_lead_time.helper') %>
+      </span>
+    </div>
+  </div>
+</div>
+<div class='row'>
+  <div class='col-sm-4'>
+    <div class="form-group">
+      <%= f.label :use_po_number, Spree.t('company_settings.use_po_number.label'), class: 'control-label' %><br>
+      <%= f.check_box :use_po_number,  class: 'make-switch', 'data-size' => 'mini' %>
+    </div>
+  </div>
+  <div class='col-sm-4'>
+    <div class="form-group">
+      <%= f.label :resubmit_orders, Spree.t('company_settings.resubmit_orders.label'), class: 'control-label' %><br>
+      <%= f.select :resubmit_orders, [['Never', 'never'],['Submitted (not approved)', 'complete'],['Submitted or Approved', 'approved']],
+        {include_blank: false}, class: 'form-control' %>
+    </div>
+  </div>
+</div>
+<input type='hidden' name='update_carts' value='false' id='update_carts'>

@@ -1,0 +1,25 @@
+<section class='col-md-6 hidden' id='minimum-order-details'>
+  <a style="float:right;" id='expand-order-details'>Show Details <i class="fa fa-expand" aria-hidden="true"></i></a>
+  <% if params[:controller].include?('manage') %>
+    <p>Customer: <%= @invoice.account.customer.name %></p>
+  <% else %>
+    <p>Vendor: <%= @invoice.vendor.name %></p>
+  <% end %>
+  <p>Date: <%= @invoice.display_date %></p>
+</section>
+
+<section id='order-details-expanded'>
+  <a style="float:right;" id='minimize-order-details'>Hide Details <i class="fa fa-compress" aria-hidden="true"></i></a>
+
+  <div class="clearfix"></div>
+  <div class='row'>
+    <% if request.fullpath.include?("manage") %>
+      <%= render partial: 'spree/manage/invoices/invoice_details' %>
+    <% else %>
+      <%= render partial: 'spree/cust/invoices/invoice_details' %>
+    <% end %>
+    <%= render partial: 'spree/shared/invoices/customer_details' %>
+  </div>
+
+  <div class="clearfix"></div>
+</section>

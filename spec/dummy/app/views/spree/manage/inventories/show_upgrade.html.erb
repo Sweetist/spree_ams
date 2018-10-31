@@ -1,0 +1,111 @@
+<%= content_for :head_title do %>
+  Inventory
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+		<li>
+      <span>Inventory</span>
+    </li>
+  </ul>
+	<div class="page-toolbar">
+    <% if current_spree_user.can_write?('basic_options', 'inventory') %>
+      <%= link_to new_manage_stock_location_path, class: "btn green pull-right disabled" do%>
+        <i class ="fa fa-plus"></i>&nbsp;New Stock Location
+      <% end %>
+    <% end %>
+  </div>
+<% end %>
+
+<div class='content'>
+  <!-- PAGE TITLE -->
+  <h2 class="page-title">
+    This feature isn't available for your current plan
+    <br>
+    <%= link_to new_manage_message_path(subject: 'Upgrade Plan') do%>
+      <small><strong>Upgrade</strong> your plan today to start using the Inventory feature!</small>
+    <% end %>
+  </h2>
+  <!-- END PAGE TITLE -->
+  <div class="row margin-bottom-20">
+    <div class="col-lg-12">
+      <div class="panel panel-info">
+        <div class="panel-heading">
+        <h4>
+          <i class="fa fa-info-circle"></i>&nbsp;&nbsp;What you're missing out on
+        </h4>
+        </div>
+        <div class="panel-body">
+        <p class="margin-top-20">
+           Our inventory feature lets you manage your finished goods inventory using Sweet and reduce stock-outs and holding costs. You can also transfer or add finished goods stock, and view a history of stock movements over time. Upgrade your plan to get access to to all these features!
+        </p>
+        <div class="row">
+          <div class="col-lg-3 col-md-6">
+            <div class="portlet light">
+              <div class="card-icon">
+                <i class="fa fa-bar-chart font-blue inventory-info"></i>
+              </div>
+              <div class="card-title card-desc-font">
+                <span>Inventory Tracking</span>
+              </div>
+              <div class="card-desc">
+                <span>Track inventory and place back-orders for products.</span>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-6">
+            <div class="portlet light">
+              <div class="card-icon">
+                <i class="fa fa-map-marker font-green-haze inventory-info"></i>
+              </div>
+              <div class="card-title card-desc-font">
+                <span>Multiple stock locations</span>
+              </div>
+              <div class="card-desc">
+                <span>Manage your inventory for multiple stock locations.</span>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-6">
+            <div class="portlet light">
+              <div class="card-icon">
+                <i class="fa fa-line-chart font-red-sunglo inventory-info"></i>
+              </div>
+              <div class="card-title card-desc-font">
+                <span>Real time updates</span>
+              </div>
+              <div class="card-desc">
+                <span>Stock for that item is reserved and the stock on shelf is reduced by the quantity ordered.</span>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-6">
+            <div class="portlet light">
+              <div class="card-icon">
+                <i class="fa fa-exclamation-triangle font-purple-wisteria inventory-info"></i>
+              </div>
+              <div class="card-title card-desc-font">
+                <span>Low stock warning</span>
+              </div>
+              <div class="card-desc">
+                <span>Get alerts when your stock levels get low.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <%= image_tag "spree/manage/img/inventory_management_1.png", alt: "inventory managemnt", class: "inventory-img-size" %>
+          </div>
+        </div>
+      </div>
+      </div>
+    </div>
+    <div class="col-lg-6">
+    </div>
+  </div>
+</div>

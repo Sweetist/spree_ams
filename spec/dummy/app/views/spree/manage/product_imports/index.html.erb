@@ -1,0 +1,101 @@
+<%= content_for :head_title do %>
+  Product Import
+<% end %>
+
+<%= content_for :page_title do %>
+  Product Import
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <span>Product Imports</span>
+    </li>
+  </ul>
+  <div class="page-toolbar">
+    <%= link_to new_manage_product_import_path, class: "btn green pull-right" do%>
+      <i class="fa fa-plus"></i>&nbsp;New Import
+    <% end %>
+  </div>
+<% end %>
+
+<div class="content">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="table-scrollable">
+        <table class="table table-striped table-hover">
+          <thead>
+            <tr>
+              <th>
+                ID
+              </th>
+              <th>
+                File Name
+              </th>
+              <th>
+                Status
+              </th>
+              <th>
+                Last Update
+              </th>
+              <th>
+                Created
+              </th>
+              <th>
+                Encoding
+              </th>
+              <th>
+                Delimiter
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @imports.each do |import| %>
+              <tr>
+                <td>
+                  <%= link_to manage_product_import_path(import), class: "orders-list-order-link cel" do %>
+                    <%= import.id %>
+                  <% end %>
+                </td>
+                <td>
+                  <%= link_to manage_product_import_path(import), class: "orders-list-order-link cel" do %>
+                    <%= import.file_file_name %>
+                  <% end %>
+                </td>
+                <td>
+                  <%= link_to manage_product_import_path(import), class: "orders-list-order-link cel" do %>
+                    <%= import.status_message %>
+                  <% end %>
+                </td>
+                <td>
+                  <%= link_to manage_product_import_path(import), class: "orders-list-order-link cel" do %>
+                    <%= sweet_time(import.updated_at) %>
+                  <% end %>
+                </td>
+                <td>
+                  <%= link_to manage_product_import_path(import), class: "orders-list-order-link cel" do %>
+                    <%= sweet_time(import.created_at) %>
+                  <% end %>
+                </td>
+                <td>
+                  <%= link_to manage_product_import_path(import), class: "orders-list-order-link cel" do %>
+                    <%= import.encoding %>
+                  <% end %>
+                </td>
+                <td>
+                  <%= link_to manage_product_import_path(import), class: "orders-list-order-link cel" do %>
+                    <%= import.delimer %>
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,9 @@
+<% content_for :page_title do %>
+  <%= link_to @country.name, admin_country_states_path(@country) %> / <%= link_to @state.name, edit_admin_country_state_path(@country, @state) %> - Cities
+<% end %>
+
+<%= image_tag "spinner.gif", plugin: "spree", style: "display:none", id: 'busy_indicator' %>
+
+<div id="city-list">
+  <%= render partial: 'city_list'%>
+</div>

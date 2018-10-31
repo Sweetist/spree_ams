@@ -1,0 +1,71 @@
+<div class='row'>
+  <div class='col-md-12 col-sm-6 col-xs-6'>
+    <div class='form-group' id='product-active-container'>
+      <%= f.label :active, 'Active', class: 'control-label' %><br>
+      <%= f.check_box :active, class: 'make-switch', 'data-size' => 'mini' %>
+    </div>
+  </div>
+  <div class='col-md-12 col-sm-6 col-xs-6'>
+    <div class='form-group' id='product-for-sale-container'>
+      <%= f.label :for_sale, 'Sell this to Customers', class: 'control-label' %><br>
+      <%= f.check_box :for_sale, class: 'make-switch', 'data-size' => 'mini' %>
+    </div>
+  </div>
+  <div class='col-md-12 col-sm-6 col-xs-6'>
+    <div class='form-group' id='product-for-purchase-container'>
+      <%= f.label :for_purchase, 'Buy this from Vendor', class: 'control-label' %><br>
+      <%= f.check_box :for_purchase, class: 'make-switch', 'data-size' => 'mini' %>
+    </div>
+  </div>
+  <div class='col-md-12 col-sm-6 col-xs-6'>
+    <div class='form-group' id='product-can-be-part-container'>
+      <%= f.label :can_be_part, class: 'control-label'%><br>
+      <%= f.check_box :can_be_part, class: 'make-switch', 'data-size'=>'mini' %>
+    </div>
+  </div>
+  <% unless @product.has_variants? %>
+    <%= f.fields_for :master do |ff| %>
+      <% if ff.object.is_bundle? || ff.object.is_assembly? %>
+        <div class='col-md-12 col-sm-6 col-xs-6'>
+          <% display_show_text = ff.object.is_bundle? ? 'Display Bundle Parts' : 'Display Assembly Parts'%>
+          <div class="form-group">
+            <%= ff.label :show_parts, display_show_text, class: "control-label" %><br>
+            <%= ff.check_box :show_parts, class: 'make-switch', data: {size: 'mini'} %>
+          </div>
+        </div>
+      <% end %>
+      <% if @vendor.lot_tracking %>
+        <div class='col-md-12 col-sm-6 col-xs-6'>
+          <div class="form-group track-lot-container">
+            <%= ff.label :lot_tracking, 'Advanced Lot Tracking', class: "control-label" %><br>
+            <%= ff.check_box :lot_tracking, class: 'make-switch', data: {size: 'mini'} %>
+          </div>
+        </div>
+      <% end %>
+      <div class='col-md-12 col-sm-6 col-xs-6'>
+        <div class='form-group'>
+          <%= ff.label :visible_to_all, 'Visible To All Accounts', class: 'control-label' %><br>
+          <%= ff.check_box :visible_to_all, class: 'make-switch', data: {size: 'mini'} %>
+          <% if @vendor.try(:set_visibility_by_price_list) %>
+            <br>
+            <span class='help-block-italic' id='visibility-clarifier'>
+              Visibility will be set by price lists
+            </span>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+</div>
+<script type='text/javascript'>
+  var toggleVisibilityClarifier = function(){
+    if($('#product_master_attributes_visible_to_all').bootstrapSwitch('state')){
+      $('#visibility-clarifier').hide();
+    }else{
+      $('#visibility-clarifier').show();
+    }
+  }
+
+  $(document).ready(toggleVisibilityClarifier);
+  $('#product_master_attributes_visible_to_all').on('switchChange.bootstrapSwitch',toggleVisibilityClarifier);
+</script>

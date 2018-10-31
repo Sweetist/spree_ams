@@ -1,0 +1,101 @@
+<% transaction_controller = current_controller?([
+    'orders', 'shippings', 'standing_orders', 'standing_order_products',
+    'standing_order_schedules', 'purchase_orders', 'invoices', 'account_payments',
+    'credit_memos'
+    ])
+%>
+<li class="nav-item <%= "active open" if transaction_controller %>">
+  <a href="#" class="nav-link nav-toggle">
+    <i class="fa fa-shopping-cart"></i>
+    <span class="title">Transactions</span>
+    <span class="arrow <%= "open" if transaction_controller %>"></span>
+  </a>
+  <ul class="sub-menu">
+    <% if current_spree_user.can_read?('basic_options', 'order') %>
+      <li class="nav-item <%= "active" if current_controller?(['orders']) %>">
+        <%= link_to manage_orders_path, class: "nav-link" do %>
+          <span class="title">Sales Orders</span>
+        <% end %>
+      </li>
+    <% else %>
+      <li class="nav-item">
+        <%= link_to 'void:javascript();', class: "nav-link" do %>
+          <span class="title">Sales Orders</span>
+          <i class='fa fa-lock'></i>
+        <% end %>
+      </li>
+    <% end %>
+    <% if current_company.use_separate_invoices %>
+      <% if current_spree_user.can_read?('invoice') %>
+        <li class="nav-item  <%= "active" if current_controller?(['invoices']) %>">
+          <%= link_to manage_invoices_path, class: "nav-link" do %>
+            <span class="title">Invoices</span>
+          <% end %>
+        </li>
+      <% else %>
+        <li class="nav-item">
+          <%= link_to 'void:javascript();', class: "nav-link" do %>
+            <span class="title">Invoices</span>
+            <i class='fa fa-lock'></i>
+          <% end %>
+        </li>
+      <% end %>
+    <% end %>
+
+    <% if current_spree_user.can_read?('basic_options', 'standing_orders') %>
+      <li class="nav-item <%= "active" if current_controller?(['standing_orders', 'standing_order_products']) %>">
+        <%= link_to manage_standing_orders_path, class: "nav-link" do %>
+          <span class="title">Standing Orders</span>
+        <% end %>
+      </li>
+    <% else %>
+      <li class="nav-item">
+        <%= link_to 'void:javascript();', class: "nav-link" do %>
+        <span class="title">Standing Orders</span>
+        <i class='fa fa-lock'></i>
+        <% end %>
+      </li>
+    <% end %>
+    <% if current_spree_user.can_read?('standing_orders_schedule', 'standing_orders')%>
+      <li class="nav-item <%= "active" if current_controller?(['standing_order_schedule']) %>">
+        <%= link_to manage_standing_order_schedules_path, class: "nav-link" do %>
+          <span class="title">Standing Order Schedules</span>
+        <% end %>
+      </li>
+    <% else %>
+      <li class="nav-item">
+        <%= link_to 'void:javascript();', class: "nav-link" do %>
+          <span class="title">Standing Order Sched.</span>
+          <i class='fa fa-lock'></i>
+        <% end %>
+      </li>
+    <% end %>
+    <% if current_spree_user.can_read?('basic_options', 'purchase_orders') %>
+      <li class="nav-item <%= "active" if current_controller?(['purchase_orders']) %>">
+        <%= link_to manage_purchase_orders_path, class: "nav-link" do %>
+          <span class="title">Purchase Orders</span>
+        <% end %>
+      </li>
+    <% else %>
+      <li class="nav-item">
+        <%= link_to 'void:javascript();', class: "nav-link" do %>
+          <span class="title">Purchase Orders</span>
+          <i class='fa fa-lock'></i>
+        <% end %>
+      </li>
+    <% end %>
+    <li class="nav-item <%= "active" if current_controller?(['account_payments']) %>">
+      <%= link_to manage_account_payments_path, class: "nav-link" do %>
+        <span class="title">Payments</span>
+      <% end %>
+    </li>
+    <% if current_spree_user.is_admin? %>
+      <li class="nav-item <%= "active" if current_controller?(['credit_memos']) %>">
+        <%= link_to manage_credit_memos_path, class: "nav-link" do %>
+          <span class="title">Credit Memos</span>
+        <% end %>
+      </li>
+    <% end %>
+
+  </ul>
+</li>

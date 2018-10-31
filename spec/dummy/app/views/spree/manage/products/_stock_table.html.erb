@@ -1,0 +1,30 @@
+<%= link_to 'Transfer Stock', new_manage_stock_transfer_path, class: 'btn btn-sm btn-success pull-right' %>
+<div class="row">
+  <div class="col-md-12">
+    <div class="table-scrollable">
+      <table class="table table-hover table-striped" id="basic-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>
+              Name
+            </th>
+            <th>
+              SKU
+            </th>
+            <% @vendor.stock_locations.order('spree_stock_locations.name ASC').each do |location| %>
+              <th colspan="2">
+                <%= location.name %> <br>
+                Count on Hand / <%= Spree.t(:backorderable) %>
+              </th>
+            <% end %>
+
+          </tr>
+        </thead>
+        <tbody>
+          <%= render partial: 'variant_stock_row', locals: {product: @product} %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

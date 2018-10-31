@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="<%= I18n.locale %>">
+  <head data-hook="manage_inside_head">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    <%= render partial: 'spree/manage/shared/head' %>
+  </head>
+
+  <body class="admin">
+    <div class="sweet_app wrapper">
+  		<div class="app_ui-wrapper">
+
+<% if nil %>
+10/18/15 -- TEMPORARILY REMOVING
+    <%#-------------------------------------------------%>
+    <%# Loading progress bars                           %>
+    <%#-------------------------------------------------%>
+
+		<div id="progress">
+      <div class="alert alert-info alert-progress">
+        <div class="spinner"><%= Spree.t(:loading) %>...</div>
+        <div class="progress-message"><%= Spree.t(:loading) %>...</div>
+      </div>
+    </div>
+<% end %>
+
+    <%#-------------------------------------------------%>
+    <%# Header navbar                                   %>
+    <%#-------------------------------------------------%>
+    <header class="header">
+      <%= render 'spree/manage/shared/header' %>
+    </header>
+    <%#-------------------------------------------------%>
+    <%# Main content                                    %>
+    <%#-------------------------------------------------%>
+    <!-- <div id="wrapper" class="container-fluid <%= wrapper_classes %>"> -->
+      <!-- <div class="row"> -->
+
+        <%#-------------------------------------------------%>
+        <%# Sidebar                                         %>
+        <%#-------------------------------------------------%>
+        <!-- <div class="col-sm-3 col-md-2 hidden-xs sidebar" id="main-sidebar" data-hook="admin_tabs"> -->
+        <!-- <div class="relative"> -->
+          <%= render 'spree/manage/shared/side_menu/side_menu' %>
+        <!-- </div> -->
+
+        <%#-------------------------------------------------%>
+        <%# Content                                         %>
+        <%#-------------------------------------------------%>
+        <div class="<%#= main_part_classes %> main" id="main-part">
+          <div class="app_ui-block active">
+          <%#-------------------------------------------------%>
+          <%# Content header (page title/actions)             %>
+          <%#-------------------------------------------------%>
+          <%#= render partial: 'spree/admin/shared/content_header' %>
+
+          <div class="row">
+            <%#-------------------------------------------------%>
+            <%# Alerts                                          %>
+            <%#-------------------------------------------------%>
+            <div id="alert">
+              <%= flash_alert(flash) %>
+            </div>
+            <%#= render partial: 'spree/admin/shared/alert', collection: session[:alerts] %>
+
+            <%#-------------------------------------------------%>
+            <%# Main content                                    %>
+            <%#-------------------------------------------------%>
+            <div class="<%= content_for?(:sidebar) ? 'with-sidebar col-md-9 col-sm-8' : 'col-sm-12'  %>" id="content" data-hook>
+              <%#= render partial: 'spree/admin/shared/table_filter' if content_for?(:table_filter)%>
+              <%= yield %>
+            </div>
+
+            <%#-------------------------------------------------%>
+            <%# Inner aside                                     %>
+            <%#-------------------------------------------------%>
+            <% if content_for?(:sidebar) %>
+              <div class="col-md-3 col-sm-4">
+                <%= render partial: 'spree/admin/shared/sidebar' %>
+              </div>
+            <% end %>
+          </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+    <%#-------------------------------------------------%>
+    <%# Insert footer scripts here                      %>
+    <%#-------------------------------------------------%>
+    <!-- <div data-hook="admin_footer_scripts"> -->
+      <!-- <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script> -->
+    	<!-- Form styler -->
+    	<!-- <script src="assets/spree/manage/js/jquery.formstyler.min.js"></script> -->
+      <%= javascript_include_tag "spree/frontend/frontend" %>
+      <%#= javascript_include_tag "spree/manage/js/jquery.formstyler.min.js" %>
+    	<script>
+    		setTimeout(function() {
+    		  $('select').styler({
+    				selectSearch: false,
+    				fileBrowse: 'Choose',
+						selectPlaceholder: 'Choose',
+    	    		selectSearchPlaceholder: 'Search',
+    	    		singleSelectzIndex: '20',
+    			});
+    		}, 100)
+    	</script>
+    	<!-- // -->
+      <!-- Popup -->
+      <%#= javascript_include_tag "spree/manage/js/jquery.simplemodal.js" %>
+      <script>
+        jQuery(function ($) {
+          $('#basic-modal').click(function (e) {
+            e.preventDefault();
+            $('#basic-modal-content').modal();
+            return false;
+          });
+        });
+      </script>
+      <!-- // -->
+      <!-- Search field -->
+
+      <%#= javascript_include_tag "spree/manage/js/classie.js" %>
+
+      <%#= javascript_include_tag "spree/manage/js/uisearch.js" %>
+      <%#= javascript_include_tag "spree/manage/js/jquery.pickmeup.min.js" %>
+    	<script>
+    		new UISearch( document.getElementById( 'sb-search' ) );
+    	</script>
+    	<!-- // -->
+    	<!-- Scripts -->
+      <%#= javascript_include_tag "spree/scripts.js" %>
+    	<!-- // -->
+    <!-- </div> -->
+
+  </body>
+</html>

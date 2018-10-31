@@ -1,0 +1,53 @@
+<%= content_for :head_title do %>
+  Classes
+<% end %>
+
+<%= content_for :page_title do %>
+  Edit Class
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Classes", manage_transaction_classes_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      Edit Class
+    </li>
+  </ul>
+  <div class="page-toolbar">
+    <div class="btn-group pull-right">
+      <%= link_to 'Back to Classes', manage_transaction_classes_path, class:'btn btn-sm green' %>
+    </div>
+  </div>
+<% end %>
+
+<div class="portlet light">
+  <div class="portlet-title">
+    <div class="caption">
+      <span class="caption-subject font-blue-madison bold uppercase">
+        Edit Class
+      </span>
+    </div>
+  </div>
+  <div class="portlet-body form">
+    <%= form_for @txn_class, url: manage_transaction_class_path(@txn_class), method: "put" do |f| %>
+      <div class="form-body">
+        <%= render partial: 'form', locals: {f:f} %>
+      </div>
+      <div class="form-actions">
+        <div class="pull-right">
+          <%= link_to manage_transaction_classes_path, class: "btn btn-default" do %>
+            <i class='fa fa-times'></i> Cancel
+          <% end %>
+          <button class="btn btn-primary"><i class='fa fa-check'></i> Update</button>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

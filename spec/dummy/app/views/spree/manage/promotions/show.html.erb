@@ -1,0 +1,237 @@
+<%= content_for :head_title do %>
+  Pricing Adjustments
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+		<li>
+      <%= link_to "Pricing Adjustments", manage_promotions_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <span><%= "#{@promotion.name}" %></span>
+    </li>
+  </ul>
+  <% if current_spree_user.can_write?('promotions') %>
+  	<div class="page-toolbar">
+      <div class="btn-group pull-right">
+  			<%= link_to new_manage_promotion_path, class: "btn green" do %>
+          <i class='fa fa-plus'></i> New Pricing Adjustment
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+<% end %>
+
+<div class="portlet light">
+  <div class="portlet-title">
+      <div class="caption">
+        <span class="caption-subject font-blue-madison bold uppercase">
+          Pricing Adjustment: <%= @promotion.name %>
+        </span>
+      </div>
+      <% if current_spree_user.can_write?('promotions') %>
+        <%= link_to edit_manage_promotion_path(@promotion), class: "btn btn-primary pull-right" do %>
+          <i class='fa fa-pencil'></i> <%= Spree.t(:edit) %>
+        <% end %>
+      <% end %>
+  </div>
+
+  <div class="portlet-body form">
+    <div class="form-body">
+    <!--/row-->
+    <div class="row">
+      <div class="col-md-6">
+        <h3 class="form-section">Rules</h3>
+        <div class="row static-info">
+          <div class="col-xs-3 name">Matching policy:</div>
+          <div class="col-xs-9 value"><%= @promotion.match_policy %></div>
+        </div>
+
+        <% override_rule_names = {'taxon' => 'category', 'item_total' => 'order_subtotal'} %>
+        <% @promotion.rules.each do |rule| %>
+          <% name = rule.type.demodulize.underscore %>
+          <% name = override_rule_names.key?(name) ? override_rule_names[name] : name %>
+          <h4 class="form-section">
+            <%= name.titleize %> Rule
+          </h4>
+
+          <% case name %>
+          <% when "first_order" %>
+            <div class="row static-info">
+              <div class="col-xs-3 name"></div>
+              <div class="col-xs-9 value">Must be customer's first order</div>
+            </div>
+          <% when "account" %>
+            <div class="row static-info">
+              <div class="col-xs-3 name">Accounts:</div>
+              <div class="col-xs-9 value">
+                <%= raw rule.accounts.pluck(:fully_qualified_name).join(" <i class='fa fa-circle' style='font-size: 5px; vertical-align: middle;'></i> ") %>
+              </div>
+            </div>
+          <% when "item_total" %>
+            <div class="row static-info">
+              <div class="col-xs-9 name">Greater than<%= rule.preferences[:operator_min] == "gt" ? "" : " or equal to" %>:</div>
+              <div class="col-xs-3 value"><%= display_sweet_price(rule.preferences[:amount_min], rule.preferences[:currency]) %></div>
+            </div>
+            <div class="row static-info">
+              <div class="col-xs-9 name">Less than<%= rule.preferences[:operator_max] == "lt" ? "" : " or equal to" %>:</div>
+              <div class="col-xs-3 value"><%= display_sweet_price(rule.preferences[:amount_max], rule.preferences[:currency]) %></div>
+            </div>
+          <% when "product" %>
+            <div class="row static-info">
+              <div class="col-xs-3 name"></div>
+              <div class="col-xs-9 value">Order must contain <%= rule.preferences[:match_policy] %> amount of these products</div>
+            </div>
+            <div class="row static-info">
+              <div class="col-xs-3 name">Products:</div>
+              <div class="col-xs-9 value">
+                <%= raw current_company.variants_including_master.where(is_master: true, product_id: rule.product_ids).pluck(:full_display_name).join(" <i class='fa fa-circle' style='font-size: 5px; vertical-align: middle;'></i> ") %>
+              </div>
+            </div>
+          <% when "variant" %>
+            <div class="row static-info">
+              <div class="col-xs-3 name"></div>
+              <div class="col-xs-9 value">Order must contain <%= rule.preferences[:match_policy] %> amount of these variants</div>
+            </div>
+            <div class="row static-info">
+              <div class="col-xs-3 name">Variants:</div>
+              <div class="col-xs-9 value">
+                <%= raw rule.variants.includes(:option_values).map{|variant| variant.full_context}.join(" <i class='fa fa-circle' style='font-size: 5px; vertical-align: middle;'></i> ") %>
+              </div>
+            </div>
+          <% when "category" %>
+            <div class="row static-info">
+              <div class="col-xs-3 name"></div>
+              <div class="col-xs-9 value">Order must contain <%= rule.preferences[:match_policy] %> amount of these categories</div>
+            </div>
+            <div class="row static-info">
+              <div class="col-xs-3 name">Categories:</div>
+              <div class="col-xs-9 value">
+                <%= raw rule.taxons.includes(:parent, :children).where.not(parent_id: nil).select(:id, :parent_id, :lft, :rgt, :name).map {|taxon| taxon.pretty_name}.join(" <i class='fa fa-circle' style='font-size: 5px; vertical-align: middle;'></i> ") %>
+              </div>
+            </div>
+          <% end %><!-- end rules if statement -->
+        <% end %><!-- end @promotion.rules.each -->
+      </div>
+
+      <!-- Begin Actions -->
+      <% override_action_names = {'create_adjustment' => 'create_order_adjustment'} %>
+
+      <div class="col-md-6">
+        <h3 class="form-section">Actions</h3>
+        <% @promotion.actions.each do |action| %>
+          <% type_name = action.type.demodulize.underscore %>
+          <div class="row static-info">
+            <div class="col-xs-3 name">Action type:</div>
+            <div class="col-xs-9 value">
+              <%= override_action_names.key?(type_name) ? override_action_names[type_name].titleize : type_name.titleize %>
+            </div>
+          </div>
+          <% case type_name %>
+          <% when 'create_adjustment' %>
+            <% if action.calculator.type == "Spree::Calculator::FlatPercentItemTotal" %>
+              <div class="row static-info">
+                <div class="col-xs-3 name">Calculator:</div>
+                <div class="col-xs-9 value">Flat Percent</div>
+              </div>
+              <div class="row static-info">
+                <div class="col-xs-3 name">Percent:</div>
+                <div class="col-xs-9 value">
+                  <%= action.calculator.preferences[:flat_percent] %>
+                </div>
+              </div><!--/.row-->
+            <% else %>
+              <div class="row static-info">
+                <div class="col-xs-3 name">Calculator:</div>
+                <div class="col-xs-9 value">Flat Rate</div>
+              </div>
+              <div class="row static-info">
+                <div class="col-xs-3 name">Amount:</div>
+                <div class="col-xs-9 value">
+                  <%= display_sweet_price(action.calculator.preferences[:amount], action.calculator.preferences[:currency]) %>
+                </div>
+              </div><!--/.row-->
+            <% end %>
+          <% when 'create_item_adjustments' %>
+            <% if action.calculator.type == "Spree::Calculator::PercentOnLineItem" %>
+              <div class="row static-info">
+                <div class="col-xs-3 name">Calculator:</div>
+                <div class="col-xs-9 value">Percent Per Item</div>
+              </div>
+              <div class="row static-info">
+                <div class="col-xs-3 name">Percent:</div>
+                <div class="col-xs-9 value">
+                  <%= action.calculator.preferences[:percent] %>
+                </div>
+              </div><!--/.row-->
+            <% else %>
+              <div class="row static-info">
+                <div class="col-xs-3 name">Calculator:</div>
+                <div class="col-xs-9 value">Flat Rate</div>
+              </div>
+              <div class="row static-info">
+                <div class="col-xs-3 name">Amount:</div>
+                <div class="col-xs-9 value">
+                  <%= display_sweet_price(action.calculator.preferences[:amount], action.calculator.preferences[:currency]) %>
+                </div>
+              </div><!--/.row-->
+            <% end %>
+          <% end %>
+        <% end %> <!-- end @promotion.action.each -->
+      </div><!--/col-md-6-->
+    </div><!--/row-->
+
+    <h3 class="form-section">General Info</h3>
+    <div class="row">
+      <div class="col-md-6">
+        <div class="row static-info">
+          <div class="col-xs-5 name">Name:</div>
+          <div class="col-xs-7 value"><%= @promotion.name %></div>
+        </div>
+        <div class="row static-info">
+          <div class="col-xs-5 name">Starts at:</div>
+          <div class="col-xs-7 value">
+            <%= display_vendor_date_format(@promotion.starts_at, @promotion.vendor.date_format) %>
+          </div>
+        </div>
+        <div class="row static-info">
+          <div class="col-xs-5 name">Expires at:</div>
+          <div class="col-xs-7 value">
+            <%= display_vendor_date_format(@promotion.expires_at, @promotion.vendor.date_format) %>
+          </div>
+        </div>
+        <div class="row static-info">
+          <div class="col-xs-5 name">Usage limit:</div>
+          <div class="col-xs-7 value"><%= @promotion.usage_limit %></div>
+        </div>
+        <% if @promotion.type %>
+          <div class="row static-info">
+            <div class="col-xs-5 name">Pricing adjustment type:</div>
+            <div class="col-xs-7 value"><%= @promotion.type %></div>
+          </div>
+        <% end %>
+      </div>
+      <div class="col-md-6">
+        <div class="row static-info">
+          <div class="col-xs-5 name">Category:</div>
+          <div class="col-xs-7 value"><%= @promotion.promotion_category.try(:name) %></div>
+        </div>
+        <div class="row static-info">
+          <div class="col-xs-5 name">Displayed price:</div>
+          <div class="col-xs-7 value"><%= @promotion.advertise == true ? "Base price" : "Discounted price" %></div>
+        </div>
+        <div class="row static-info">
+          <div class="col-xs-5 name">Description:</div>
+          <div class="col-xs-7 value"><%= @promotion.description %></div>
+        </div>
+      </div>
+    </div>
+  <!--/row-->
+
+  </div>
+</div>

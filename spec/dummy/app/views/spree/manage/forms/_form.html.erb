@@ -1,0 +1,143 @@
+<% if Spree::Form::FORM_TYPES.count > 1 %>
+  <div class='row'>
+    <div class='col-xs-12'>
+      <div class='form-group'>
+        <%= f.label :form_type, Spree.t('form.form_type.label'), class: 'control-label' %>
+        <%= f.select :form_type,
+          options_for_select(
+            Spree::Form::FORM_TYPES.map{|type| [Spree.t("forms.form_types.#{type}"), type]},
+            selected: f.object.try(:form_type)
+          ), {include_blank: false}, class: 'form-control' %>
+      </div>
+    </div>
+  </div>
+<% else %>
+  <%= f.hidden_field :form_type, value: Spree::Form::FORM_TYPES.first %>
+<% end %>
+<div class='row'>
+  <div class='col-sm-8'>
+    <div class='row'>
+      <div class='col-sm-6'>
+        <div class='form-group'>
+          <%= f.label :name, raw("#{Spree.t('form.name.label')}
+                      <i class='fa fa-info-circle tooltips'
+                      data-original-title='#{Spree.t('form.name.helper')}'
+                      data-container='body'></i>"),
+                      class: 'control-label' %>
+          <%= f.text_field :name, class: 'form-control' %>
+        </div>
+      </div>
+      <div class='col-sm-6'>
+        <div class='form-group'>
+          <%= f.label :title, raw("#{Spree.t('form.title.label')}
+                      <i class='fa fa-info-circle tooltips'
+                      data-original-title='#{Spree.t('form.title.helper')}'
+                      data-container='body'></i>"), class: 'control-label' %>
+          <%= f.text_field :title, class: 'form-control' %>
+        </div>
+      </div>
+      <div class='col-sm-12'>
+        <div class='form-group'>
+          <%= f.label :instructions, Spree.t('form.instructions.label'), class: 'control-label' %>
+          <%= f.text_area :instructions, class: 'form-control' %>
+        </div>
+      </div>
+      <div class='col-sm-12'>
+        <div class='form-group'>
+          <%= f.label :success_message, Spree.t('form.success_message.label'), class: 'control-label' %>
+          <%= f.text_area :success_message, class: 'form-control' %>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class='col-sm-4'>
+    <div class='row'>
+      <div class='col-xs-12'>
+        <div class='form-group'>
+          <%= f.label :link_to_text, raw("#{Spree.t('form.link_to_text.label')}
+                      <i class='fa fa-info-circle tooltips'
+                      data-original-title='#{Spree.t('form.link_to_text.helper')}'
+                      data-container='body'></i>"),class: 'control-label' %>
+          <%= f.text_field :link_to_text, class: 'form-control' %>
+        </div>
+      </div>
+      <div class='col-xs-12'>
+        <div class='form-group'>
+          <%= f.label :submit_text, Spree.t('form.submit_text.label'),class: 'control-label' %>
+          <%= f.text_field :submit_text, class: 'form-control' %>
+        </div>
+      </div>
+    </div>
+    <div class='row'>
+      <div class='col-xs-6'>
+        <div class='form-group'>
+          <%= f.label :num_columns, Spree.t('form.num_columns.label'), class: 'control-label' %><br>
+          <%= f.select :num_columns, options_for_select([[1,1],[2,2],[3,3]], selected: f.object.try(:num_columns)),
+            {include_blank: false}, class: 'form-control' %>
+        </div>
+      </div>
+      <div class='col-xs-6'>
+        <div class='form-group'>
+          <%= f.label :active, Spree.t('form.active.label'), class: 'control-label' %><br>
+          <%= f.check_box :active, data: {size: 'mini'}, class: 'make-switch' %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<h4 class='form-section'>Form Fields</h4>
+<div class='row'>
+  <%= f.fields_for :fields do |builder| %>
+    <%= render partial: 'field_fields', locals: {f: builder} %>
+  <% end %>
+  <div class='col-xs-12'>
+    <%= link_to_add_association raw("<i class='fa fa-plus'></i> #{Spree.t(:add_field)}"), f, :fields, class: "btn green-jungle"  %>
+  </div>
+</div>
+
+<script type='text/javascript'>
+  var validateFormFields = function(e){
+    var validLabels = true;
+    var validColumnSpans = true;
+    var valid = true;
+    var columnLimit = parseInt($('#form_num_columns').val());
+
+    $('.field-label').each(function(){
+      if($(this).val() === ''){
+        $(this).closest('div').addClass('has-error');
+        validLabels = false;
+      }else{
+        $(this).closest('div').removeClass('has-error');
+      }
+    });
+
+    $('.field-num-columns').each(function(){
+      if(parseInt($(this).val()) > columnLimit){
+        $(this).closest('div').addClass('has-error');
+        validColumnSpans = false;
+      }else{
+        $(this).closest('div').removeClass('has-error');
+      }
+    });
+
+    if( !(validLabels && validColumnSpans) ){
+      e.preventDefault();
+      valid = false;
+      var errorMsg = '';
+      if(!validLabels){
+        errorMsg = "Field labels cannot be blank.\n";
+      }
+      if(!validColumnSpans){
+        errorMsg += 'Column span cannot exceed the number of columns in the form.'
+      }
+      alert(errorMsg);
+    }
+
+    return valid;
+  }
+  $(document).on('submit', '#custom_form_form', function(e){
+    if(validateFormFields(e)){
+      preventSecondSubmit($(e.currentTarget), e);
+    }
+  });
+</script>

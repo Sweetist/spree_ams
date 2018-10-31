@@ -1,0 +1,12 @@
+<% # Clients of this partial must supply the following variables:
+   # comments
+   # user
+%>
+
+<% comments.each do |comment| %>
+  <% next unless comment.can_be_read_by?(current_spree_user) %>
+
+  <%= render :partial => 'commontator/comments/show',
+             :locals => { :comment => comment,
+                          :user => user } %>
+<% end %>

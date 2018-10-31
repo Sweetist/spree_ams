@@ -1,0 +1,115 @@
+<div data-hook="admin_company_form_fields">
+  <div class="panel panel-default" data-hook="company">
+    <div class="panel-heading">
+      <h1 class="panel-title">
+        <%#= Spree.t(:general_settings) %>
+        <%= "Account Information" %>
+      </h1>
+    </div>
+
+    <div class="panel-body">
+      <div class="col-md-6">
+        <div data-hook="name" class="form-group">
+          <%= f.label :name, Spree.t(:name) %>
+          <%= f.text_field :name, class: 'form-control' %>
+        </div>
+        <div data-hook="email" class="form-group">
+          <%= f.label :email, Spree.t(:email) %>
+          <%= f.text_field :email, class: 'form-control' %>
+        </div>
+        <div data-hook="rate" class="form-group">
+          <%= f.label :order_cutoff_time, "Order Cutoff Time" %>
+          <%= f.text_field :order_cutoff_time, class: 'form-control', placeholder: 'Ex. 5PM' %>
+        </div>
+        <div data-hook="time-zone" class="form-group">
+          <%= f.label :time_zone, "Time Zone" %>
+          <%= f.time_zone_select :time_zone, ActiveSupport::TimeZone.us_zones, {include_blank: true}, {class: 'form-control'} %>
+        </div>
+
+        <div data-hook="custom_domain" class="form-group">
+          <%= f.label :custom_domain, Spree.t(:custom_domain) %>
+          <%= f.text_field :custom_domain, class: 'form-control' %>
+        </div>
+        <div data-hook="use_price_lists" class='form-group'>
+          <%= f.label :use_price_lists %>
+          <%= f.check_box :use_price_lists, class: 'form-control' %>
+        </div>
+        <div data-hook="set_visibility_by_price_list" class='form-group'>
+          <%= f.label :set_visibility_by_price_list %>
+          <%= f.check_box :set_visibility_by_price_list, class: 'form-control' %>
+        </div>
+        <div data-hook="only_price_list_pricing" class='form-group'>
+          <%= f.label :only_price_list_pricing %>
+          <%= f.check_box :only_price_list_pricing, class: 'form-control' %>
+        </div>
+        <div data-hook="use_variant_text_options" class='form-group'>
+          <%= f.label :use_variant_text_options %>
+          <%= f.check_box :use_variant_text_options, class: 'form-control' %>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div data-hook="zone" class="form-group">
+          <%= f.label :slug, "Slug" %>
+          <%#= f.collection_select(:zone_id, @available_zones, :id, :name, {}, {:class => 'select2'}) %>
+          <%= f.text_field :slug, :class => 'form-control' %>
+        </div>
+        <div data-hook="allow-variants" class='form-group'>
+          <%= f.label :allow_variants %>
+          <%= f.check_box :allow_variants, class: 'form-control' %>
+        </div>
+        <div data-hook="member" class='form-group'>
+          <%= f.label :member %>
+          <%= f.check_box :member, class: 'form-control' %>
+        </div>
+        <div data-hook='subscription' class='form-group'>
+          <%= f.label :subscription, 'Sweet Subscription' %>
+          <%= f.select :subscription, Spree::Subscription::Subscriptions.keys.map{ |subscription| [subscription.titleize, subscription]}, {}, {class: 'form-control'} %>
+        </div>
+        <div data-hook='currency' class='form-group'>
+          <%= f.label :currency, "Currency" %>
+          <%= f.select :currency, ::Money::Currency.map {|c| ["#{c.name} (#{c.iso_code})", c.iso_code]}, {}, {class: 'form-control'} %>
+        </div>
+        <div data-hook="hide-empty-orders" class='form-group'>
+          <%= f.label :hide_empty_orders %>
+          <%= f.check_box :hide_empty_orders, class: 'form-control' %>
+        </div>
+        <% if @company.persisted? %>
+          <div data-hook="reset_mailers" class="form-group">
+            <%= link_to "Reset all mailers", admin_company_reset_email_templates_path(@company) %>
+          </div>
+          <div data-hook="setup_mailers" class="form-group">
+            <%= link_to "Set up new mailers", admin_company_setup_email_templates_path(@company) %>
+          </div>
+          <div data-hook='load_sample_data' class='form-group'>
+            <%= link_to 'Load Default Data', load_default_data_admin_company_path(@company),
+              class: 'btn btn-default', method: :post %>
+          </div>
+          <div data-hook='load_sample_data' class='form-group'>
+            <%= link_to 'Load Sample Data', load_sample_data_admin_company_path(@company),
+              class: 'btn btn-default', method: :post %>
+          </div>
+          <div data-hook='reset_inventory' class='form-group'>
+            <%= link_to 'Reset Inventory', reset_inventory_admin_company_path(@company),
+              class: 'btn btn-danger', method: :post, data: {confirm: 'Are you sure???'} %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div data-hook="admin_company_form_fields">
+    <div class="panel panel-default" data-hook="company">
+      <div class="panel-heading">
+        <h1 class="panel-title">
+          <%= "Billing Address Information" %>
+        </h1>
+      </div>
+      <div class='panel-body' id='bill-address-container'>
+        <%= f.fields_for :bill_address, @bill_address do |ba_form| %>
+          <%= render partial: 'address_form', locals: { f: ba_form, type: 'billing' } %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

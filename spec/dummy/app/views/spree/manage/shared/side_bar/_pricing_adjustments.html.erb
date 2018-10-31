@@ -1,0 +1,36 @@
+<% if current_spree_user.can_read?('promotions') %>
+  <li class="nav-item <%= "active open" if current_controller?(['promotions', 'promotion_categories', 'price_lists']) %>">
+    <a href="#" class="nav-link nav-toggle">
+      <i class="fa fa-tags"></i>
+      <span class="title">Pricing Adjustments</span>
+      <span class="arrow <%= "open" if current_controller?(['promotions', 'promotion_categories', 'price_lists']) %>"></span>
+    </a>
+    <ul class="sub-menu">
+      <li class="nav-item <%= "active" if current_controller?(['promotions']) %>">
+        <%= link_to manage_promotions_path, class: "nav-link" do %>
+          <span class="title">Pricing Adjustments</span>
+        <% end %>
+      </li>
+      <% if current_company.try(:use_price_lists) %>
+        <li class="nav-item <%= "active" if current_controller?(['price_lists']) %>">
+          <%= link_to manage_price_lists_path, class: "nav-link" do %>
+            <span class="title">Price Lists</span>
+          <% end %>
+        </li>
+      <% end %>
+      <li class="nav-item <%= "active" if current_controller?(['promotion_categories']) %>">
+        <%= link_to manage_promotion_categories_path, class: "nav-link" do %>
+          <span class="title">Categories</span>
+        <% end %>
+      </li>
+    </ul>
+  </li>
+<% else %>
+  <li class="nav-item">
+    <a href="void:javascript();" class="nav-item">
+      <i class="fa fa-tags"></i>
+      <span class="title">Pricing Adjustments</span>
+      <i class="fa fa-lock"></i>
+    </a>
+  </li>
+<% end %>

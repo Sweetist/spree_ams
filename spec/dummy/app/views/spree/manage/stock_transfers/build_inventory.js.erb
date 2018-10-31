@@ -1,0 +1,5 @@
+<% if flash[:errors] %>
+  $('#build-assembly-errors').html("<%= j render(partial: 'spree/shared/errors.html.erb') %>");
+<% else %>
+  $('#build-assembly-errors').empty();
+<% end %>

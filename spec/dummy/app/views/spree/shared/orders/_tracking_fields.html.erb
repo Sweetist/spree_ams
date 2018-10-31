@@ -1,0 +1,23 @@
+<% @order.shipments.each_with_index do |shipment, idx| %>
+  <div class="col-md-5 name"> Tracking Number: </div>
+  <div class="col-md-7 value">
+    <% if order_can_add_products? && current_spree_user.company_id == @order.vendor_id %>
+      <input type="hidden" value="<%=shipment.id %>"
+        name="order[shipments_attributes][<%= idx %>][id]"
+        id="order_shipmentes_attributes_<%= idx %>_id" />
+      <div class='tracking-number'>
+        <%= link_to 'void:javascript();',
+          data: {'shipment-id' => shipment.id}, class: 'edit-tracking' do %>
+          <%= shipment.tracking %>
+          <i class='fa fa-pencil'></i>
+        <% end %>
+      </div>
+      <input type='text' value="<%= shipment.tracking %>"
+        name='order[shipments_attributes][<%= idx %>][tracking]'
+        id="order_shipmentes_attributes_<%= idx %>_tracking"
+        class='form-control tracking-input hidden' disabled data-shipment-id='<%= shipment.id %>' />
+    <% else %>
+      <%= shipment.tracking %>
+    <% end %>
+  </div>
+<% end %>

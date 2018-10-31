@@ -1,0 +1,16 @@
+<% if @line_item %>
+  $('#line-items-table').append("<%= escape_javascript(render(:partial => 'new_line_item.html.erb', locals: {item_form_idx: params[:item_form_idx], variant: @variant, avv: @avv})) %>");
+  $('#new-line-item-qty').val('');
+  $("#new-line-item-select").select2('val', '');
+
+  $('#subtotals-row').replaceWith("<%= escape_javascript(render(partial: 'subtotal_row.html.erb', locals: {order_total: @order_total})) %>");
+
+<% end %>
+$('#alert').html("<%= escape_javascript(render(partial: 'spree/shared/errors.html.erb')) %>");
+
+$("#new-line-item-select").select2('enable', true);
+$('#new-line-item-qty').prop('disabled', false);
+$('#add-new-line-item-button').attr('disabled',false);
+$("#new-line-item-select").select2('open').select2('close');
+
+resizeTextArea();

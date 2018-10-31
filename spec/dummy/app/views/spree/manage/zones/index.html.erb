@@ -1,0 +1,62 @@
+<%= content_for :head_title do %>
+  Zones
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <span>Zones</span>
+    </li>
+  </ul>
+  <div class="page-toolbar">
+    <% if current_spree_user.can_write?('shipping_methods', 'settings') %>
+      <%= link_to new_manage_zone_path, class: "btn green pull-right" do %>
+        <i class="fa fa-plus"></i>&nbsp;New Zone
+      <% end %>
+    <% end %>
+  </div>
+<% end %>
+
+
+<table class="table table-striped table-hover" id='basic-table-no-buttons'>
+  <thead>
+    <tr>
+      <th class='delete-column no-sort'></th>
+      <th>Name</th>
+      <th>Description</th>
+      <th>Type</th>
+      <th>Default Tax</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% if current_spree_user.can_write?('shipping_methods', 'settings') %>
+      <% @zones.each do |zone| %>
+        <% url = edit_manage_zone_path(zone) %>
+        <tr id="zone_<%= zone.id %>">
+          <td class="delete-column"><%= link_to raw("<i class='fa fa-times'></i>"), manage_zone_path(zone),
+                data: {:confirm => "Are you sure you want to delete this zone?"},
+                :method => :delete, remote: true, class: 'btn btn-xs red delete-row-btn' %>
+          </td>
+          <td><%= link_to zone.name, url %></td>
+          <td><%= link_to zone.description.to_s, url %></td>
+          <td><%= link_to zone.kind.to_s.capitalize, url %></td>
+          <td><%= link_to zone.default_tax ? Spree.t(:say_yes) : Spree.t(:say_no), url %></td>
+        </tr>
+      <% end %>
+    <% else %>
+      <% @zones.each do |zone| %>
+        <tr id="zone_<%= zone.id %>">
+          <td class="delete-column"></td>
+          <td><%= zone.name %></td>
+          <td><%= zone.description.to_s %></td>
+          <td><%= zone.kind.to_s.capitalize %></td>
+          <td><%= zone.default_tax ? Spree.t(:say_yes) : Spree.t(:say_no) %></td>
+        </tr>
+      <% end %>
+    <% end %>
+  </tbody>
+</table>

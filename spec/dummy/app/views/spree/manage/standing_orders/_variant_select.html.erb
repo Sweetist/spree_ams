@@ -1,0 +1,3 @@
+<td colspan="5" class='form-group'>
+  <%= collection_select :variant, 'line_item_variant_id', @variants, :id, :full_context, {include_blank: true}, {class: 'form-control select2 new-item-required', id: 'new-line-item-select'} %>
+</td>

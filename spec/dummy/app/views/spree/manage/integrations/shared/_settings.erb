@@ -1,0 +1,63 @@
+<% if item.try(:limit_shipping_methods?) %>
+  <div class="row">
+    <div class="col-md-3 name"><%= I18n.t('integrations.shipping.limit_shipping_method_by.label') %>:</div>
+    <div class="col-md-9 value">
+      <%= I18n.t("#{item.limit_shipping_method_by.present? ? item.limit_shipping_method_by : 'all' }",
+        scope: [:integrations, :shipping, :limit_shipping_method_by] ) %>
+    </div>
+  </div>
+  <br>
+  <% unless item.sync_all_shipping_methods? %>
+    <div class="row">
+      <div class="col-md-3 name"><%= I18n.t('integrations.shipping.shipping_methods') %>:</div>
+      <div class="col-md-9 value">
+        <%= item.shipping_methods_for_view %>
+      </div>
+    </div>
+    <br>
+  <% end %>
+<% end %>
+<% if item.try(:limit_payment_methods?) %>
+  <div class="row">
+    <div class="col-md-3 name"><%= I18n.t('integrations.payment.limit_payment_method_by.label') %>:</div>
+    <div class="col-md-9 value">
+      <%= I18n.t("#{item.limit_payment_method_by.present? ? item.limit_payment_method_by : 'all' }",
+        scope: [:integrations, :payment, :limit_payment_method_by] ) %>
+    </div>
+  </div>
+  <br>
+  <% unless item.sync_all_payment_methods? %>
+    <div class="row">
+      <div class="col-md-3 name"><%= I18n.t('integrations.payment.payment_methods') %>:</div>
+      <div class="col-md-9 value">
+        <%= item.payment_methods_for_view %>
+      </div>
+    </div>
+    <br>
+  <% end %>
+<% end %>
+<% if item.sales_channel? %>
+  <div class="row">
+    <div class='col-sm-3 name'> <%= I18n.t('integrations.sync_to_other_integrations') %></div>
+    <div class='col-sm-9 value'>
+      <% %w[accounting shipping].each do |type| %>
+        <% integrations_text = item.send("#{type}_siblings").map(&:default_name).join(', ') %>
+        <% if integrations_text.present? %>
+          <%= "#{type.titleize}:" %>
+          <%= integrations_text %>
+          <br>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+  <br>
+<% else %>
+  <div class="row">
+    <div class="col-md-3 name"><%= t('sales_channel') %>:</div>
+    <div class="col-md-9 value">
+      <%= item.sales_channel_for_view %>
+    </div>
+  </div>
+  <br>
+<% end %>
+<!-- keep sales channel at the end to be next to other related partials -->

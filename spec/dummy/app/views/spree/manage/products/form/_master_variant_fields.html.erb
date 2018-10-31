@@ -1,0 +1,88 @@
+<% has_variants = @product.has_variants? %>
+<% has_option_types = @product.option_types.present? %>
+<% show_components_section = f.object.can_have_parts? && @vendor.subscription_includes?('assemblies') && !has_variants %>
+
+<div class='row'>
+  <div class='col-sm-6'>
+    <div class="form-group">
+      <%= f.label :sku, class: "control-label" do %>
+        <%= Spree.t(:sku) %> <span class='required'>*</span>
+      <% end %>
+      <%= f.text_field :sku, class: "form-control" %>
+    </div>
+  </div>
+  <div class='col-sm-6'>
+    <div class="form-group price-input-with-label">
+      <%= f.label :price, class: "control-label" do %>
+        <%= Spree.t(:price) %> <span class='required'>*</span>
+      <% end %>
+      <label class="currency-label"><%= currency_symbol(@vendor.currency) %></label>
+      <%= f.text_field :price, class: "form-control price-field" %>
+    </div>
+  </div>
+  <div class='col-sm-6'>
+    <div class="form-group">
+      <%= f.label "Pack/Size", class: "control-label" %>
+      <%= f.text_field :pack_size, class: "form-control" %>
+    </div>
+  </div>
+  <div class='col-sm-6'>
+    <div class="form-group">
+      <%= f.label "Unit Count", class: "control-label" %>
+      <%= f.text_field :pack_size_qty, class: "form-control" %>
+    </div>
+  </div>
+  <div class='col-sm-3 col-xs-6'>
+    <div class="form-group">
+      <%= f.label :width, class: "control-label" %>
+      <%= f.text_field :width, class: "form-control" %>
+    </div>
+  </div>
+  <div class='col-sm-3 col-xs-6'>
+    <div class="form-group">
+      <%= f.label :height, class: "control-label" %>
+      <%= f.text_field :height, class: "form-control" %>
+    </div>
+  </div>
+  <div class='col-sm-3 col-xs-6'>
+    <div class="form-group">
+      <%= f.label :depth, class: "control-label" %>
+      <%= f.text_field :depth, class: "form-control" %>
+    </div>
+  </div>
+  <div class='col-sm-3 col-xs-6'>
+    <div class="form-group">
+      <%= f.label :dimension_units, 'Dimensional Units', class: "control-label" %>
+      <%= f.select :dimension_units, Sweet::Application.config.x.dimension_units, {include_blank: true}, {class: 'form-control'} %>
+    </div>
+  </div>
+  <div class='col-sm-3 col-xs-6'>
+    <div class="form-group">
+      <%= f.label :weight, class: "control-label" %>
+      <%= f.text_field :weight, class: "form-control" %>
+    </div>
+  </div>
+  <div class='col-sm-3 col-xs-6'>
+    <div class="form-group">
+      <%= f.label "Weight Units", class: "control-label" %>
+      <%= f.select :weight_units, Sweet::Application.config.x.weight_units, {include_blank: true}, {class: 'form-control'} %>
+    </div>
+  </div>
+  <% if @vendor.track_line_item_class? %>
+    <div class='col-sm-6'>
+      <div class="form-group">
+        <%= f.label 'Class', class: "control-label" %>
+        <%= f.collection_select :txn_class_id, @vendor.transaction_classes, :id, :fully_qualified_name, {include_blank: true}, class: "form-control" %>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+
+
+
+
+
+<script type="text/javascript">
+
+</script>

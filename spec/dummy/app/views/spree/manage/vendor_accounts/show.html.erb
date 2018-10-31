@@ -1,0 +1,165 @@
+<%= content_for :head_title do %>
+  Vendors
+<% end %>
+
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Vendor Accounts", manage_vendor_accounts_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+     <span><%= @account.fully_qualified_name %></span>
+    </li>
+  </ul>
+  <div class="page-toolbar">
+    <div class="btn-group pull-right">
+      <%= link_to new_manage_purchase_order_path, class: 'btn green-jungle margin-right-10' do%>
+        <i class= "fa fa-plus"></i>&nbsp;New Purchase Order
+      <% end %>
+      <% if current_spree_user.can_write?('vendors', 'purchase_orders') %>
+        <%= link_to new_manage_vendor_account_path, class: "btn green margin-right-10" do %>
+          <i class= "fa fa-plus"></i>&nbsp;New Vendor
+        <% end %>
+      <% end %>
+      <!-- <button type="button" class="btn green dropdown-toggle" data-toggle="dropdown"> Actions
+        <i class="fa fa-angle-down"></i>
+      </button>
+      <ul class="dropdown-menu pull-right" role="menu">
+        <li>
+          <%#= link_to 'Back', manage_vendor_accounts_path %>
+        </li>
+      </ul> -->
+    </div>
+  </div>
+<% end %>
+
+<!-- BEGIN CONTENT -->
+<div class="profile-content">
+  <div class = "row">
+    <div class= "portlet light">
+      <div class="portlet-title tabbable-line">
+        <div class="caption caption-md">
+          <i class="icon-globe theme-font hide"></i>
+          <span class="caption-subject font-blue-madison bold uppercase"><%= @account.fully_qualified_name %>&nbsp;&nbsp;</span>
+          <% if current_spree_user.can_write?('vendors', 'purchase_orders') %>
+            <%= link_to edit_manage_vendor_vendor_account_path(@account.vendor, @account), class: "btn btn-primary" do %>
+              <i class='fa fa-pencil'></i> Edit
+            <% end %>
+          <% end %>
+        </div>
+        <div class="btn-group hidden-md hidden-lg pull-left" style = "width:100%">
+          <button type="button" class="btn green dropdown-toggle dropdown-btn-text" data-toggle="dropdown" style = "width:100%">
+            <label>Overview</label>&nbsp;
+            <i class="fa fa-angle-down"></i>
+          </button>
+          <ul class="dropdown-menu pull-left" style="width:100%" role="menu">
+            <li class="tab-link">
+              <a href="#overview_tab" data-toggle="tab" aria-expanded="true" >Overview</a>
+            </li>
+            <li class="tab-link">
+              <a href="#shipping_tab" data-toggle="tab" aria-expanded="true">Address</a>
+            </li>
+            <!-- <li class="tab-link">
+              <a href ="#contacts_tab" data-toggle="tab" aria-expanded="true">Contacts</a>
+            </li> -->
+          </ul>
+        </div>
+        <!-- START TABS-->
+        <ul class="nav nav-tabs hidden-xs hidden-sm">
+          <li class="long-tabs-link active <%= 'active' if params[:users].blank? && params[:shipping].blank? %>">
+            <a href="#overview_tab" data-toggle="tab" aria-expanded="<%= params[:promotion].blank? %>">Overview</a>
+          </li>
+          <li class="long-tabs-link  <%= 'active' if params[:users].blank? && params[:shipping].present? %>">
+            <a href="#shipping_tab" data-toggle="tab" aria-expanded="<%= params[:promotion].blank? %>">Address</a>
+          </li>
+          <!-- <li class="long-tabs-link <%#= 'active' if !params[:users].blank? %>">
+            <a href="#contacts_tab" data-toggle="tab" aria-expanded="<%#= !params[:users].blank? %>">Contacts</a>
+          </li> -->
+        </ul>
+        <!-- END TABS -->
+      </div>
+
+      <div class="portlet-body">
+        <div class="tab-content">
+          <!-- BEGIN OVERVIEW -->
+          <div class="tab-pane <%= 'active' if params[:users].blank? && params[:shipping].blank? %>" id="overview_tab">
+            <div class ="row">
+              <div class = "col-md-12">
+                <div class="form-body">
+                  <%= render partial: "account_overview"%>
+                </div>
+              </div>
+            </div>
+            <hr>
+            <!-- BEGIN CHARTS -->
+            <div class="row portlet-row">
+              <div class="col-md-6">
+                <div id="sales-history-chart" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+              </div>
+              <div class="col-md-6">
+                <div class="chart chart-tabbed" style="min-height:400px;fbordered">
+                  <div class="chart-block">
+                    <div id="revenue-product-chart" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- END CHARTS -->
+            <div class="row portlet-row">
+              <%= render partial: "recent_orders_table"%>
+            </div>
+          </div>
+          <!-- END OVERVIEW -->
+
+          <!-- BEGIN DELIVERY TAB -->
+          <div class="tab-pane <%= 'active' if params[:users].blank? && params[:shipping].present? %>" id="shipping_tab">
+            <%= form_for @account, url: manage_vendor_vendor_account_path, html: {class:"horizontal-form", id:'account-form'} do |f| %>
+              <div class="form-body">
+              </div>
+              <%= render partial: "spree/shared/addresses/addresses" %>
+              <hr>
+            <% end %>
+          </div>
+          <!-- END DELIVERY TAB -->
+
+          <!-- BEGIN CONTACTS -->
+          <!-- <div class="tab-pane <%= 'active' if !params[:users].blank? %>" id="users_tab"> -->
+            <%#= render partial: "users_table", locals: {edit: true} %>
+          <!-- </div> -->
+          <!-- <div class="tab-pane <%#= 'active' if !params[:contacts].blank? %>" id="contacts_tab">
+            <%#= render partial: "contacts_table", locals: {edit: true} %>
+          </div> -->
+          <!-- END CONTACTS -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- END CONTENT -->
+
+<!-- BEGIN CONTACT MODAL -->
+<%#= render partial: "new_contact_modal" %>
+<!-- END CONTACT MODAL -->
+
+<hr>
+<%= commontator_thread(@account) %>
+
+<script type='text/javascript'>
+  $(document).on('ready', function(){
+
+    $('#sales-history-chart').highcharts(<%= raw @sales_history_chart_data.to_json %>);
+      $('#revenue-product-chart').highcharts(<%= raw @revenue_chart_data.to_json %>);
+
+
+    $('#deactivate-account-btn').click(function(){
+      $(this).addClass('hidden');
+      $('#account-activity').removeClass('hidden');
+    });
+
+  });
+</script>

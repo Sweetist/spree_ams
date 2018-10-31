@@ -1,0 +1,44 @@
+<tr id='variant_<%= @variant.id %>' class='variant-transfer-row'>
+  <td><%= @variant.full_display_name %></td>
+	<% if @variant.should_track_lots? %>
+    <td>
+      <% destination_opts = @variant.lots.unarchived.order(expires_at: :desc, created_at: :desc).map do |lot|
+        [raw(lot.display_with_expiray), lot.id, { 'data-lot-qty' => lot.count_at_stock_item(@destination_stock.id), 'data-variant-id' => @variant.id }]
+      end %>
+      <% destination_opts << ['Unassigned', '', { 'data-lot-qty' => @destination_stock.unassigned_inventory_count, 'data-variant-id' => @variant.id }] %>
+      <%= select_tag "lots[[variant_lot_destinations][#{@variant.id}]]",
+        options_for_select(destination_opts, selected: @variant.lots.order("created_at DESC").first.try(:id)),
+        class: 'form-control destination-lot' %>
+    </td>
+    <td data-id='<%= @variant.id %>' class='variant_destination_qty'>
+      <% destination_qty = @variant.lots.unarchived.order("created_at DESC").first.try(:count_at_stock_item, @destination_stock.id) %>
+      <%= destination_qty || @destination_stock.unassigned_inventory_count %>
+    </td>
+  <%else%>
+    <% if @vendor.lot_tracking %>
+      <td>N/A</td>
+    <% end %>
+    <td data-id='<%= @variant.id %>' class='variant_destination_qty'><%= @destination_stock.count_on_hand %></td>
+  <% end %>
+
+  <td>
+    <input type='number' step='any' name='stock_transfer[variants][<%=@variant.id%>]'
+      value='0' data-id='<%= @variant.id %>' class='form-control variant_transfer_qty'>
+  </td>
+  <% if @variant.should_track_lots? && @variant.lots.unarchived.any? %>
+    <td>
+      <input type='number' step='any' value='<%= @variant.lots.order("created_at DESC").first.count_at_stock_item(@destination_stock.id) %>'
+        data-id='<%= @variant.id %>' class='form-control variant_destination_after'>
+    </td>
+  <% else %>
+    <td>
+      <input type='number' step='any' value='<%= @destination_stock.count_on_hand %>'
+        data-id='<%= @variant.id %>' class='form-control variant_destination_after'>
+    </td>
+  <% end %>
+  <td>
+    <a class='btn red close-button', data-id='<%= @variant.id %>'>
+      <i class='fa fa-times' aria-hidden='true'></i>
+    </a>
+  </td>
+</tr>

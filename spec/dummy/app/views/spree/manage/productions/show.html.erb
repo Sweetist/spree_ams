@@ -1,0 +1,93 @@
+<%= content_for :head_title do %>
+  Reports
+<% end %>
+
+<%= content_for :page_title do %>
+  Production Report
+<% end %>
+<%= content_for :page_bar do %>
+  <ul class="page-breadcrumb">
+    <li>
+      <%= link_to "Home", manage_path %>
+      <i class="fa fa-circle"></i>
+    </li>
+    <li>
+      <%= link_to "Production Report", manage_production_path %>
+    </li>
+  </ul>
+  <div class="page-toolbar">
+    <div class="btn-group pull-right">
+
+    </div>
+  </div>
+<% end %>
+
+<h4><%= pluralize(@orders.count, 'order') %> in production requirements</h4>
+<form id="production-filter" style='border: 1px solid rgb(231, 236, 241); padding: 10px;'>
+  <div class='col-md-4'>
+    <%= render partial: 'spree/manage/reports/shared/search/order_status' %>
+  </div>
+  <div class='col-md-8'>
+    <div class='row'>
+      <div class='col-md-12'>
+        <%= render partial: 'spree/manage/reports/shared/search/customer_accounts' %>
+      </div>
+    </div>
+    <div class='row'>
+      <div class="col-md-6">
+        <%= render partial: 'spree/manage/reports/shared/search/date_range' %>
+      </div>
+      <div class='col-md-6'>
+        <div class='form-actions pull-right margin-top-25'>
+          <button class="btn btn-primary">Update Report</button>
+          <%= link_to "Reset", manage_production_path, class: "btn btn-default" %>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class='clearfix'></div>
+</form>
+<div class="clearfix"></div>
+
+<div class="table-scrollable margin-top-10">
+  <div class="btn-group pull-right margin-bottom-5">
+    <%= link_to download_xlsx_manage_production_path(
+      start_date: @dates[:start],
+      end_date: @dates[:end],
+      order_states: params[:order_states],
+      account_ids: params[:account_ids]
+      ), class: 'btn green pull-right tooltips',
+      'data-original-title'=>'Includes ALL products in your catalog, even those without production needs.',
+      'data-container'=>'body' do %>
+      <i class='fa fa-file-excel-o'></i> Excel (All Products)
+    <% end %>
+  </div>
+  <table class="table table-hover table-striped" id="production" data-title='Production Report <%= display_vendor_date_format(@dates[:start], @vendor.date_format) %> - <%= display_vendor_date_format(@dates[:end], @vendor.date_format) %>'>
+    <thead>
+      <%#= search_form_for [:manage, @search], class: "form" do |f| %>
+      <tr>
+        <th>Product</th>
+        <th>Sku</th>
+        <th>Pack/Size</th>
+        <th>Unit Count</th>
+        <th>Qty</th>
+        <th>Total Unit Qty</th>
+        <th>Total Weight</th>
+      </tr>
+
+    </thead>
+    <tbody class="product-production-row">
+      <% @variants.each do |variant| %>
+          <tr>
+            <td><%= variant.full_display_name %></td>
+            <td><%= variant.sku %></td>
+            <td><%= variant.pack_size %></td>
+            <td><%= variant.pack_size_qty %></td>
+            <td><%= variant.quantity %></td>
+            <td><%= variant.pack_size_qty ? variant.pack_size_qty * variant.quantity.to_f : '' %></td>
+            <td><%= "#{variant.quantity.to_f * variant.weight.to_f} #{variant.weight_units}" if variant.weight.to_f > 0%></td>
+          </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

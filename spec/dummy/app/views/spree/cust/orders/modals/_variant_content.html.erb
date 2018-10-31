@@ -1,0 +1,35 @@
+<div class="modal-content">
+  <div class="modal-header">
+    <button type="button" class="close modal-close" data-dismiss="modal"></button>
+    <h4 class="modal-title"><%= variant.flat_or_nested_name %></h4>
+  </div>
+  <% if line_items.present? %>
+    <%= render partial: 'spree/cust/orders/modals/edit_line', locals: {avv: avv, variant: variant, order: order, line_items: line_items} %>
+  <% else %>
+    <%= render partial: 'spree/cust/orders/modals/add_new', locals: {avv: avv, variant: variant, order: order} %>
+  <% end %>
+  <script type='text/javascript'>
+    var assignHiddenQty = function($el){
+      $('#item-quantity[data-line-item-id="' + $el.data('line-item-id') + '"]').val($el.val());
+    }
+    $(document).ready(function(){
+      $("#add-line-note").off('click').click(function(){
+        $("#line-note-text").show();
+        $("#add-line-note").hide();
+      });
+      $('#enter-other-qty').click(function(e){
+        e.preventDefault();
+        $('.product-qty').each(function(){
+          var qty = $('select.product-qty[data-line-item-id="' + $(this).data('line-item-id') + '"]').val()
+          $(this).toggleClass('hidden');
+          $(this).toggleClass('active');
+          $('input.product-qty[data-line-item-id="' + $(this).data('line-item-id') + '"]').val(qty);
+        })
+        $(this).hide();
+      });
+      $('.product-qty').change(function(){
+        assignHiddenQty($(this));
+      });
+    });
+  </script>
+</div>

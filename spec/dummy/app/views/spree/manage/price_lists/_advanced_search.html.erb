@@ -1,0 +1,62 @@
+<div class="portlet box blue-hoki" id="search">
+  <div class="portlet-title">
+    <div class="col-xs-12 col-sm-6 col-lg-4">
+      <%= f.text_field :name_cont, class: 'form-control', id:'general-search', placeholder: 'Search name' %>
+      <div class="visible-xs-block" style="min-height:10px;">
+      </div>
+    </div>
+    <div class="col-xs-8 col-sm-4" id="basic-search-buttons">
+      <button type="submit" class="btn green"><i class="fa fa-search" aria-hidden="true"></i> Search</button>
+      <%= link_to manage_price_lists_path, class: "btn default" do %>
+        <i class='fa fa-times'></i> Reset
+      <% end %>
+    </div>
+    <div class="tools">
+      <a href="javascript:;" id='toggle-advanced-search'>Advanced <i class="fa fa-angle-down"></i></a>
+    </div>
+  </div>
+  <div class="portlet-body form hidden" id='advanced-search-form'>
+    <div class="form-body">
+      <div class='row'>
+        <div class='col-md-4'>
+          <div class='form-group'>
+            <%= f.label :name_cont, 'Price List Name' %>
+            <%= f.text_field :name_cont, class: 'form-control' %>
+          </div>
+        </div>
+        <div class='col-md-4'>
+          <div class='form-group' data-open="<%= !params[:price_list_accounts_account_id_eq].blank? %>">
+            <label class="control-label">Applies to customer:</label>
+            <%= f.collection_select :price_list_accounts_account_id_eq, current_company.customer_accounts.active,
+              :id, :fully_qualified_name, {include_blank: true}, class: 'form-control select2 select2-allow-clear' %>
+          </div>
+        </div>
+        <div class='col-md-4'>
+          <div class='form-group' data-open="<%= !params[:price_list_variants_variant_id_eq].blank? %>">
+            <label class="control-label">Applies to product:</label>
+            <%= f.collection_select :price_list_variants_variant_id_eq, current_company.variants_for_sale,
+              :id, :fully_qualified_name, {include_blank: true}, class: 'form-control select2 select2-allow-clear' %>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="form-actions">
+      <div class="row">
+        <div class="col-md-12">
+          <div class='btn-set pull-right'>
+            <button type="submit" class="btn green"><i class="fa fa-search" aria-hidden="true"></i> Search</button>
+            <%= link_to manage_price_lists_path, class: "btn default" do %>
+              <i class='fa fa-times'></i> Reset
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type='text/javascript'>
+  $('#general-search').keyup(function(){
+    $('#q_name_cont').val(this.value);
+  });
+</script>

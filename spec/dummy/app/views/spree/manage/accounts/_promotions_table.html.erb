@@ -1,0 +1,37 @@
+<h4 class='form-section'>Pricing Adjustments</h4>
+<div class="table-scrollable margin-bottom-30">
+  <table class="table table-striped table-hover" id="sample_1">
+    <thead>
+      <tr>
+        <th>
+          Name
+        </th>
+        <th>
+          Category
+        </th>
+        <th>
+          Customer Account
+        </th>
+        <th>
+          Product
+        </th>
+        <th>
+          Price Shown
+        </th>
+        <th>
+          Action Type
+        </th>
+        <th>
+          Active
+        </th>
+      </tr>
+    </thead>
+    <%= render partial: 'promotions_list' %>
+  </table>
+</div>
+
+<script type='text/javascript'>
+  $('#general-search').keyup(function(){
+    $('#q_name_cont').val(this.value);
+  });
+</script>
