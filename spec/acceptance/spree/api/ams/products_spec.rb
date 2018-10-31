@@ -1,6 +1,3 @@
-require 'spec_helper'
-require 'rspec_api_documentation/dsl'
-
 resource 'Products' do
   # Seed Product
   let!(:product)          { create(:product) }

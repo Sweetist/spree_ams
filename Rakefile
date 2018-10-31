@@ -1,9 +1,12 @@
 require 'bundler'
-# Bundler::GemHelper.install_tasks
+Bundler::GemHelper.install_tasks
 
 require 'rspec/core/rake_task'
 require 'spree/testing_support/extension_rake'
 require './sweet_ext'
+
+require 'rspec_api_documentation'
+load 'tasks/docs.rake'
 
 RSpec::Core::RakeTask.new
 

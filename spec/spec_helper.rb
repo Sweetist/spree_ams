@@ -24,7 +24,7 @@ require 'factory_girl'
 
 # For Generating Docs
 require 'rspec_api_documentation'
-
+require 'rspec_api_documentation/dsl'
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
 Dir[File.join(File.dirname(__FILE__), 'support/**/*.rb')].each { |f| require f }
