@@ -17,12 +17,14 @@ module Spree
           headers['Surrogate-Control'] = "max-age=#{15.minutes}"
           respond_with(@customers)
 =end
-          @customers = Spree::Customer.all
-          respond_with(@customers)
+          # @customers = Spree::Customer.all
+          @search = current_vendor.customer_accounts.ransack(params[:q])
+          @accounts = @search.result.includes(:payment_terms, :orders, :contacts, :shipping_addresses, :customer).page(params[:page])
+          respond_with(@accounts)
         end
 
         def show
-          @customer = Spree::Customer.find(params[:id])
+          @customer = current_vendor.customer_accounts.find(params[:id])
           respond_with(@customer)
         end
 

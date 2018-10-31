@@ -5,7 +5,13 @@ Spree::Core::Engine.routes.draw do
 
       resources :products
       resources :line_items
-      resources :orders
+      resources :orders do
+        member do
+          put :cancel
+          # put :empty
+          # put :apply_coupon_code
+        end
+      end
       resources :taxonomies
       resources :taxons
       resources :countries, :only => [:index, :show]
@@ -16,13 +22,12 @@ Spree::Core::Engine.routes.draw do
           put :next
         end
       end
-
+      resources :customers
       resources :users do
         collection do
           post 'token'
         end
       end
-
     end
   end
 end

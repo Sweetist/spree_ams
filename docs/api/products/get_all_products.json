@@ -1,0 +1,63 @@
+{
+  "resource": "Products",
+  "resource_explanation": null,
+  "http_method": "GET",
+  "route": "http://test.host/api/ams/products",
+  "description": "Get all products",
+  "explanation": null,
+  "parameters": [
+    {
+      "required": true,
+      "name": "token",
+      "description": "Authentication Token"
+    },
+    {
+      "name": "q",
+      "description": "Ransack query parameter"
+    }
+  ],
+  "response_fields": [
+
+  ],
+  "requests": [
+    {
+      "request_method": "GET",
+      "request_path": "http://test.host/api/ams/products?token=217160e8f52998f6f792cf6a10554ef62d7e38f7fbb31475",
+      "request_body": null,
+      "request_headers": {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        "Host": "test.host",
+        "Cookie": ""
+      },
+      "request_query_parameters": {
+        "token": "217160e8f52998f6f792cf6a10554ef62d7e38f7fbb31475"
+      },
+      "request_content_type": "application/json",
+      "response_status": 200,
+      "response_status_text": "OK",
+      "response_body": "{\n  \"product_properties\": [\n\n  ],\n  \"images\": [\n\n  ],\n  \"variants\": [\n    {\n      \"id\": 12,\n      \"name\": \"Product #10 - 6048\",\n      \"sku\": \"SKU-11\",\n      \"price\": \"19.99\",\n      \"weight\": \"0\",\n      \"height\": null,\n      \"width\": null,\n      \"depth\": null,\n      \"is_master\": true,\n      \"cost_price\": \"17\",\n      \"slug\": \"product-10-6048\",\n      \"description\": \"Fugiat vel et est fugit explicabo rem ut nobis. Cupiditate velit magnam sit doloribus ipsa tempora optio. Omnis animi cum quisquam perferendis nesciunt.\",\n      \"track_inventory\": true,\n      \"display_price\": \"$19.99\",\n      \"options_text\": \"\",\n      \"can_supply\": true,\n      \"image_ids\": [\n\n      ]\n    }\n  ],\n  \"products\": [\n    {\n      \"id\": 11,\n      \"name\": \"Product #10 - 6048\",\n      \"description\": \"Fugiat vel et est fugit explicabo rem ut nobis. Cupiditate velit magnam sit doloribus ipsa tempora optio. Omnis animi cum quisquam perferendis nesciunt.\",\n      \"price\": \"19.99\",\n      \"display_price\": \"$19.99\",\n      \"slug\": \"product-10-6048\",\n      \"product_property_ids\": [\n\n      ],\n      \"image_ids\": [\n\n      ],\n      \"variants_including_master_ids\": [\n        12\n      ]\n    }\n  ],\n  \"meta\": {\n    \"total_pages\": 1\n  }\n}",
+      "response_headers": {
+        "X-Frame-Options": "SAMEORIGIN",
+        "X-XSS-Protection": "1; mode=block",
+        "X-Content-Type-Options": "nosniff",
+        "Access-Control-Allow-Origin": "http://localhost:4200",
+        "Access-Control-Allow-Methods": "POST, GET, PUT, DELETE, OPTIONS",
+        "Access-Control-Allow-Headers": "Origin, Content-Type, Accept, Authorization, Token, X-Spree-Token, X-Spree-Order-Token, X-Spree-Order-Id",
+        "Access-Control-Max-Age": "1728000",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Wed, 31 Oct 2018 15:07:44 GMT",
+        "Surrogate-Control": "max-age=900",
+        "Cache-Control": "max-age=900, public",
+        "Vary": "Accept-Encoding, Origin",
+        "ETag": "W/\"95dee0757b71ebe32e994eca023e75f4\"",
+        "Set-Cookie": "guest_token=IkFCdVZJWGdLa29qbUlpZjVxOEtoU2ci--f2b76b2dd187cc2160d33b1276241b07b5f6f354; path=/; expires=Sun, 31 Oct 2038 15:07:44 -0000",
+        "X-Request-Id": "13f60802-aa75-4bfa-9f6d-20a95522ad15",
+        "X-Runtime": "0.054334",
+        "Content-Length": "889"
+      },
+      "response_content_type": "application/json; charset=utf-8",
+      "curl": null
+    }
+  ]
+}

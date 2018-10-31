@@ -62,6 +62,7 @@ module Spree
         set_up_shipping_category
 
         options = { variants_attrs: variants_params, options_attrs: option_types_params }
+        options[:vendor_id] = current_vendor.id
         @product = Spree::Core::Importer::Product.new(nil, product_params, options).create
 
         if @product.persisted?

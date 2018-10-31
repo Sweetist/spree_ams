@@ -1,0 +1,61 @@
+{
+  "resource": "Customers",
+  "resource_explanation": null,
+  "http_method": "GET",
+  "route": "http://test.host/api/ams/customers",
+  "description": "Get all customers",
+  "explanation": null,
+  "parameters": [
+    {
+      "required": true,
+      "name": "token",
+      "description": "Authentication Token"
+    },
+    {
+      "name": "q",
+      "description": "Ransack query parameter"
+    }
+  ],
+  "response_fields": [
+
+  ],
+  "requests": [
+    {
+      "request_method": "GET",
+      "request_path": "http://test.host/api/ams/customers?token=4e87003c8544313ed303ed9fbf8ea878c4af0b295ff9a14b",
+      "request_body": null,
+      "request_headers": {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        "Host": "test.host",
+        "Cookie": ""
+      },
+      "request_query_parameters": {
+        "token": "4e87003c8544313ed303ed9fbf8ea878c4af0b295ff9a14b"
+      },
+      "request_content_type": "application/json",
+      "response_status": 200,
+      "response_status_text": "OK",
+      "response_body": "{\n  \"customers\": [\n    {\n      \"id\": 1,\n      \"fully_qualified_name\": \"Rosenbaum, Bogan and Schaefer\",\n      \"email\": null\n    }\n  ],\n  \"meta\": {\n    \"total_pages\": 1\n  }\n}",
+      "response_headers": {
+        "X-Frame-Options": "SAMEORIGIN",
+        "X-XSS-Protection": "1; mode=block",
+        "X-Content-Type-Options": "nosniff",
+        "Access-Control-Allow-Origin": "http://localhost:4200",
+        "Access-Control-Allow-Methods": "POST, GET, PUT, DELETE, OPTIONS",
+        "Access-Control-Allow-Headers": "Origin, Content-Type, Accept, Authorization, Token, X-Spree-Token, X-Spree-Order-Token, X-Spree-Order-Id",
+        "Access-Control-Max-Age": "1728000",
+        "Content-Type": "application/json; charset=utf-8",
+        "Vary": "Accept-Encoding, Origin",
+        "ETag": "W/\"00fca82c16a05fdfd4b41b1c2093bc3a\"",
+        "Cache-Control": "max-age=0, private, must-revalidate",
+        "Set-Cookie": "guest_token=IlFoUzNLeFNWR0YyeWpsWERuamZPT1Ei--e34ee6c91732a34c13eb2611fad1258381ccd617; path=/; expires=Sun, 31 Oct 2038 15:07:35 -0000",
+        "X-Request-Id": "e459e4c5-eb3f-4a65-998a-d3b7218e22d1",
+        "X-Runtime": "0.668680",
+        "Content-Length": "117"
+      },
+      "response_content_type": "application/json; charset=utf-8",
+      "curl": null
+    }
+  ]
+}

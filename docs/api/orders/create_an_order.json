@@ -1,0 +1,105 @@
+{
+  "resource": "Orders",
+  "resource_explanation": null,
+  "http_method": "POST",
+  "route": "http://test.host/api/ams/orders",
+  "description": "Create an order",
+  "explanation": null,
+  "parameters": [
+    {
+      "required": true,
+      "name": "token",
+      "description": "Authentication Token"
+    },
+    {
+      "scope": "order",
+      "required": true,
+      "name": "account_id",
+      "description": "Order account"
+    },
+    {
+      "scope": "order",
+      "required": true,
+      "name": "due_date",
+      "description": "Order due date"
+    },
+    {
+      "scope": "order",
+      "required": true,
+      "name": "delivery_date",
+      "description": "Order delivery date"
+    },
+    {
+      "scope": "order",
+      "name": "shipping_address_id",
+      "description": "Order shipping address"
+    },
+    {
+      "scope": "order",
+      "name": "billing_address_id",
+      "description": "Order billing address"
+    },
+    {
+      "type": "array",
+      "scope": "order",
+      "required": true,
+      "name": "line_items",
+      "description": "Order line items"
+    },
+    {
+      "scope": "line_items",
+      "type": "integer",
+      "required": true,
+      "name": "variant_id",
+      "description": "Line items variant"
+    },
+    {
+      "scope": "line_items",
+      "type": "integer",
+      "required": true,
+      "name": "quantity",
+      "description": "Line items quantity"
+    }
+  ],
+  "response_fields": [
+
+  ],
+  "requests": [
+    {
+      "request_method": "POST",
+      "request_path": "http://test.host/api/ams/orders",
+      "request_body": "{\"token\":\"b978fff481b2f25872393b9cc62ae5a750cf0a1c37698c0c\",\"order\":{\"account_id\":7,\"due_date\":\"2018-10-31\",\"delivery_date\":\"2018-10-31\",\"line_items\":[{\"variant_id\":\"7\",\"quantity\":\"5\"}]}}",
+      "request_headers": {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        "Host": "test.host",
+        "Cookie": ""
+      },
+      "request_query_parameters": {
+      },
+      "request_content_type": "application/json",
+      "response_status": 201,
+      "response_status_text": "Created",
+      "response_body": "{\n  \"payments\": [\n\n  ],\n  \"promotions\": [\n\n  ],\n  \"shipments\": [\n    {\n      \"id\": 6,\n      \"tracking\": null,\n      \"number\": \"H95692315956\",\n      \"cost\": 0.0,\n      \"shipped_at\": null,\n      \"state\": \"pending\",\n      \"selected_shipping_rate_id\": null,\n      \"stock_location_id\": 9,\n      \"line_item_ids\": [\n        6\n      ]\n    }\n  ],\n  \"stock_locations\": [\n    {\n      \"id\": 9,\n      \"name\": \"Warehouse #9 - 4780\"\n    }\n  ],\n  \"line_items\": [\n    {\n      \"id\": 6,\n      \"name\": \"Product #6 - 887\",\n      \"quantity\": 5.0,\n      \"price\": 19.99,\n      \"weight_in_ounces\": 1962.88,\n      \"variant_id\": 7\n    }\n  ],\n  \"variants\": [\n    {\n      \"id\": 7,\n      \"name\": \"Product #6 - 887\",\n      \"sku\": \"SKU-6\",\n      \"price\": \"19.99\",\n      \"weight\": \"122.68\",\n      \"height\": \"35.95\",\n      \"width\": \"99.97\",\n      \"depth\": \"108.21\",\n      \"is_master\": false,\n      \"cost_price\": \"17\",\n      \"slug\": \"product-6-887\",\n      \"description\": \"Ea et itaque asperiores nesciunt. Dolorum ea accusamus fugit eveniet debitis dolorem. Tenetur vitae deserunt exercitationem non. Est praesentium fugit suscipit at quam ut.\\nNon rerum ut dicta sed aut consequatur recusandae illum. Asperiores numquam fugiat temporibus at quia. Et veniam at nesciunt molestiae.\",\n      \"track_inventory\": true,\n      \"display_price\": \"$19.99\",\n      \"options_text\": \"Foo Size 1: Size-1\",\n      \"can_supply\": true,\n      \"image_ids\": [\n\n      ]\n    }\n  ],\n  \"images\": [\n\n  ],\n  \"shipping_addresses\": [\n\n  ],\n  \"billing_addresses\": [\n\n  ],\n  \"accounts\": [\n    {\n      \"id\": 7,\n      \"fully_qualified_name\": \"Schulist Inc\",\n      \"email\": null\n    }\n  ],\n  \"order\": {\n    \"id\": \"R11-R722894070\",\n    \"status\": \"cart\",\n    \"channel\": \"sweet\",\n    \"email\": \"vivienne@hegmanngorczany.com\",\n    \"currency\": \"USD\",\n    \"placed_on\": \"\",\n    \"updated_at\": \"2018-10-31T15:07:42Z\",\n    \"totals\": {\n      \"item\": 99.95,\n      \"adjustment\": 0.0,\n      \"tax\": 0.0,\n      \"shipping\": 0.0,\n      \"payment\": 0.0,\n      \"order\": 99.95\n    },\n    \"weight_in_oz\": 1962.88,\n    \"adjustments\": [\n      {\n        \"name\": \"discount\",\n        \"value\": 0.0\n      },\n      {\n        \"name\": \"tax\",\n        \"value\": 0.0\n      },\n      {\n        \"name\": \"shipping\",\n        \"value\": 0.0\n      }\n    ],\n    \"guest_token\": \"j6UpUMmPKtEB2Sr_WYaPuw\",\n    \"shipping_instructions\": null,\n    \"delivery_date\": \"10/31/2018\",\n    \"vendor_id\": 11,\n    \"display_number\": \"R722894070\",\n    \"payment_ids\": [\n\n    ],\n    \"promotion_ids\": [\n\n    ],\n    \"shipment_ids\": [\n      6\n    ],\n    \"line_item_ids\": [\n      6\n    ],\n    \"shipping_address_id\": null,\n    \"billing_address_id\": null,\n    \"account_id\": 7\n  },\n  \"meta\": {\n  }\n}",
+      "response_headers": {
+        "X-Frame-Options": "SAMEORIGIN",
+        "X-XSS-Protection": "1; mode=block",
+        "X-Content-Type-Options": "nosniff",
+        "Access-Control-Allow-Origin": "http://localhost:4200",
+        "Access-Control-Allow-Methods": "POST, GET, PUT, DELETE, OPTIONS",
+        "Access-Control-Allow-Headers": "Origin, Content-Type, Accept, Authorization, Token, X-Spree-Token, X-Spree-Order-Token, X-Spree-Order-Id",
+        "Access-Control-Max-Age": "1728000",
+        "Content-Type": "application/json; charset=utf-8",
+        "Vary": "Accept-Encoding, Origin",
+        "ETag": "W/\"2c0862c162017f23d077bddf5b7959c1\"",
+        "Cache-Control": "max-age=0, private, must-revalidate",
+        "Set-Cookie": "guest_token=IlZVSlE4VXFaemRQV296cmFPbkIzQWci--73863e1e3644e5c3669676781147b86514019a46; path=/; expires=Sun, 31 Oct 2038 15:07:41 -0000",
+        "X-Request-Id": "897a3962-6db5-43c5-b4c7-0753462428c2",
+        "X-Runtime": "0.259013",
+        "Content-Length": "1866"
+      },
+      "response_content_type": "application/json; charset=utf-8",
+      "curl": null
+    }
+  ]
+}

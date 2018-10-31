@@ -1,0 +1,80 @@
+{
+  "resource": "Products",
+  "resource_explanation": null,
+  "http_method": "POST",
+  "route": "http://test.host/api/ams/products",
+  "description": "Create product",
+  "explanation": null,
+  "parameters": [
+    {
+      "required": true,
+      "name": "token",
+      "description": "Authentication Token"
+    },
+    {
+      "scope": "product",
+      "required": true,
+      "name": "name",
+      "description": "Product name"
+    },
+    {
+      "scope": "product",
+      "required": true,
+      "name": "price",
+      "description": "Product price"
+    },
+    {
+      "scope": "product",
+      "required": true,
+      "name": "sku",
+      "description": "Product sku"
+    },
+    {
+      "scope": "product",
+      "required": true,
+      "name": "shipping_category_id",
+      "description": "Product shipping category"
+    }
+  ],
+  "response_fields": [
+
+  ],
+  "requests": [
+    {
+      "request_method": "POST",
+      "request_path": "http://test.host/api/ams/products",
+      "request_body": "{\"token\":\"a788adaa33049354602461a84724c998fc972040bc377331\",\"product\":{\"name\":\"test name\",\"price\":20,\"sku\":\"sku\",\"shipping_category_id\":1}}",
+      "request_headers": {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        "Host": "test.host",
+        "Cookie": ""
+      },
+      "request_query_parameters": {
+      },
+      "request_content_type": "application/json",
+      "response_status": 201,
+      "response_status_text": "Created",
+      "response_body": "{\n  \"product_properties\": [\n\n  ],\n  \"images\": [\n\n  ],\n  \"variants\": [\n    {\n      \"id\": 11,\n      \"name\": \"test name\",\n      \"sku\": \"sku\",\n      \"price\": \"20\",\n      \"weight\": \"0\",\n      \"height\": null,\n      \"width\": null,\n      \"depth\": null,\n      \"is_master\": true,\n      \"cost_price\": \"0\",\n      \"slug\": \"test-name\",\n      \"description\": null,\n      \"track_inventory\": false,\n      \"display_price\": \"$20\",\n      \"options_text\": \"\",\n      \"can_supply\": true,\n      \"image_ids\": [\n\n      ]\n    }\n  ],\n  \"product\": {\n    \"id\": 10,\n    \"name\": \"test name\",\n    \"description\": null,\n    \"price\": \"20\",\n    \"display_price\": \"$20\",\n    \"slug\": \"test-name\",\n    \"product_property_ids\": [\n\n    ],\n    \"image_ids\": [\n\n    ],\n    \"variants_including_master_ids\": [\n      11\n    ]\n  },\n  \"meta\": {\n  }\n}",
+      "response_headers": {
+        "X-Frame-Options": "SAMEORIGIN",
+        "X-XSS-Protection": "1; mode=block",
+        "X-Content-Type-Options": "nosniff",
+        "Access-Control-Allow-Origin": "http://localhost:4200",
+        "Access-Control-Allow-Methods": "POST, GET, PUT, DELETE, OPTIONS",
+        "Access-Control-Allow-Headers": "Origin, Content-Type, Accept, Authorization, Token, X-Spree-Token, X-Spree-Order-Token, X-Spree-Order-Id",
+        "Access-Control-Max-Age": "1728000",
+        "Content-Type": "application/json; charset=utf-8",
+        "Vary": "Accept-Encoding, Origin",
+        "ETag": "W/\"1681f505f12775c6ba45e3d9442e7081\"",
+        "Cache-Control": "max-age=0, private, must-revalidate",
+        "Set-Cookie": "guest_token=Inp2cEFRa0h4R0VSN2Vqa2x1YlpHOGci--d5ef62ef7f390d1548304dbe44c22422b4ee6512; path=/; expires=Sun, 31 Oct 2038 15:07:43 -0000",
+        "X-Request-Id": "7472ba8c-81f8-4142-8334-248ec9528bde",
+        "X-Runtime": "0.141000",
+        "Content-Length": "526"
+      },
+      "response_content_type": "application/json; charset=utf-8",
+      "curl": null
+    }
+  ]
+}

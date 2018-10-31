@@ -1,0 +1,53 @@
+{
+  "resource": "Products",
+  "resource_explanation": null,
+  "http_method": "DELETE",
+  "route": "http://test.host/api/ams/products/:id",
+  "description": "Delete product",
+  "explanation": null,
+  "parameters": [
+    {
+      "required": true,
+      "name": "token",
+      "description": "Authentication Token"
+    }
+  ],
+  "response_fields": [
+
+  ],
+  "requests": [
+    {
+      "request_method": "DELETE",
+      "request_path": "http://test.host/api/ams/products/7",
+      "request_body": "{\"token\":\"5b045bec0874841af491a93652913d57b358389f1341a001\"}",
+      "request_headers": {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        "Host": "test.host",
+        "Cookie": ""
+      },
+      "request_query_parameters": {
+      },
+      "request_content_type": "application/json",
+      "response_status": 204,
+      "response_status_text": "No Content",
+      "response_body": null,
+      "response_headers": {
+        "X-Frame-Options": "SAMEORIGIN",
+        "X-XSS-Protection": "1; mode=block",
+        "X-Content-Type-Options": "nosniff",
+        "Access-Control-Allow-Origin": "http://localhost:4200",
+        "Access-Control-Allow-Methods": "POST, GET, PUT, DELETE, OPTIONS",
+        "Access-Control-Allow-Headers": "Origin, Content-Type, Accept, Authorization, Token, X-Spree-Token, X-Spree-Order-Token, X-Spree-Order-Id",
+        "Access-Control-Max-Age": "1728000",
+        "Cache-Control": "no-cache",
+        "Set-Cookie": "guest_token=Ikt1T29KYTJYUHl2ektlSE05RWQ0ZGci--3db8e8ff02d425904d33a7f96047a8ab679b436c; path=/; expires=Sun, 31 Oct 2038 15:07:42 -0000",
+        "X-Request-Id": "d00c8ae6-ef94-44c1-bb78-ffbd90518651",
+        "X-Runtime": "0.353378",
+        "Vary": "Origin"
+      },
+      "response_content_type": null,
+      "curl": null
+    }
+  ]
+}

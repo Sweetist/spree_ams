@@ -1,15 +1,104 @@
 {
   "resources": [
     {
+      "name": "Customers",
+      "explanation": null,
+      "examples": [
+        {
+          "description": "Get all customers",
+          "link": "customers/get_all_customers.json",
+          "groups": "all",
+          "route": "http://test.host/api/ams/customers",
+          "method": "get"
+        },
+        {
+          "description": "Getting a specific customer",
+          "link": "customers/getting_a_specific_customer.json",
+          "groups": "all",
+          "route": "http://test.host/api/ams/customers/:id",
+          "method": "get"
+        }
+      ]
+    },
+    {
+      "name": "Orders",
+      "explanation": null,
+      "examples": [
+        {
+          "description": "Cancel Order",
+          "link": "orders/cancel_order.json",
+          "groups": "all",
+          "route": "http://test.host/api/ams/orders/:id/cancel",
+          "method": "put"
+        },
+        {
+          "description": "Create an order",
+          "link": "orders/create_an_order.json",
+          "groups": "all",
+          "route": "http://test.host/api/ams/orders",
+          "method": "post"
+        },
+        {
+          "description": "Get all orders",
+          "link": "orders/get_all_orders.json",
+          "groups": "all",
+          "route": "http://test.host/api/ams/orders",
+          "method": "get"
+        },
+        {
+          "description": "Getting a specific order",
+          "link": "orders/getting_a_specific_order.json",
+          "groups": "all",
+          "route": "http://test.host/api/ams/orders/:id",
+          "method": "get"
+        },
+        {
+          "description": "Update order",
+          "link": "orders/update_order.json",
+          "groups": "all",
+          "route": "http://test.host/api/ams/orders/:id",
+          "method": "put"
+        }
+      ]
+    },
+    {
       "name": "Products",
       "explanation": null,
       "examples": [
         {
-          "description": "index",
-          "link": "products/index.json",
+          "description": "Create product",
+          "link": "products/create_product.json",
+          "groups": "all",
+          "route": "http://test.host/api/ams/products",
+          "method": "post"
+        },
+        {
+          "description": "Delete product",
+          "link": "products/delete_product.json",
+          "groups": "all",
+          "route": "http://test.host/api/ams/products/:id",
+          "method": "delete"
+        },
+        {
+          "description": "Get all products",
+          "link": "products/get_all_products.json",
           "groups": "all",
           "route": "http://test.host/api/ams/products",
           "method": "get"
+        },
+        {
+          "description": "Getting a specific product",
+          "link": "products/getting_a_specific_product.json",
+          "groups": "all",
+          "route": "http://test.host/api/ams/products/:id",
+          "method": "get"
+        },
+        {
+          "description": "Update product",
+          "link": "products/update_product.json",
+          "groups": "all",
+          "route": "http://test.host/api/ams/products/:id",
+          "method": "put"
         }
       ]
     }

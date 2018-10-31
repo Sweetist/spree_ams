@@ -1,0 +1,57 @@
+{
+  "resource": "Orders",
+  "resource_explanation": null,
+  "http_method": "GET",
+  "route": "http://test.host/api/ams/orders/:id",
+  "description": "Getting a specific order",
+  "explanation": null,
+  "parameters": [
+    {
+      "required": true,
+      "name": "token",
+      "description": "Authentication Token"
+    }
+  ],
+  "response_fields": [
+
+  ],
+  "requests": [
+    {
+      "request_method": "GET",
+      "request_path": "http://test.host/api/ams/orders/2?token=975e19cd7af911cfb691599855cd4dc91d0dac7b30205648",
+      "request_body": null,
+      "request_headers": {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        "Host": "test.host",
+        "Cookie": ""
+      },
+      "request_query_parameters": {
+        "token": "975e19cd7af911cfb691599855cd4dc91d0dac7b30205648"
+      },
+      "request_content_type": "application/json",
+      "response_status": 200,
+      "response_status_text": "OK",
+      "response_body": "{\n  \"payments\": [\n\n  ],\n  \"promotions\": [\n\n  ],\n  \"shipments\": [\n    {\n      \"id\": 2,\n      \"tracking\": \"U10000\",\n      \"number\": \"H05299380549\",\n      \"cost\": 100.0,\n      \"shipped_at\": null,\n      \"state\": \"pending\",\n      \"selected_shipping_rate_id\": 2,\n      \"stock_location_id\": 4,\n      \"line_item_ids\": [\n        2\n      ]\n    }\n  ],\n  \"stock_locations\": [\n    {\n      \"id\": 4,\n      \"name\": \"Warehouse #4 - 6517\"\n    }\n  ],\n  \"line_items\": [\n    {\n      \"id\": 2,\n      \"name\": \"Product #2 - 6575\",\n      \"quantity\": 1.0,\n      \"price\": 10.0,\n      \"weight_in_ounces\": 0.0,\n      \"variant_id\": 2\n    }\n  ],\n  \"variants\": [\n    {\n      \"id\": 2,\n      \"name\": \"Product #2 - 6575\",\n      \"sku\": \"SKU-2\",\n      \"price\": \"19.99\",\n      \"weight\": \"0\",\n      \"height\": null,\n      \"width\": null,\n      \"depth\": null,\n      \"is_master\": true,\n      \"cost_price\": \"17\",\n      \"slug\": \"product-2-6575\",\n      \"description\": \"Quae est est ut modi soluta ut aut. At id eos est et quia aliquam. Voluptatibus exercitationem veritatis molestias eveniet voluptatem.\\nTotam recusandae quia aut quaerat saepe ut sint cupiditate. Architecto laboriosam dolor quaerat esse dicta repellendus. Quidem explicabo id unde perferendis iure aliquid voluptatem expedita.\",\n      \"track_inventory\": true,\n      \"display_price\": \"$19.99\",\n      \"options_text\": \"\",\n      \"can_supply\": true,\n      \"image_ids\": [\n\n      ]\n    }\n  ],\n  \"images\": [\n\n  ],\n  \"shipping_addresses\": [\n    {\n      \"id\": 10,\n      \"firstname\": \"John\",\n      \"lastname\": \"Doe\",\n      \"address1\": \"10 Lovely Street\",\n      \"address2\": \"Northwest\",\n      \"city\": \"Herndon\",\n      \"zipcode\": \"35005\",\n      \"phone\": \"555-555-0199\",\n      \"state_name\": null,\n      \"alternative_phone\": \"555-555-0199\",\n      \"company\": \"Company\",\n      \"state_id\": 12,\n      \"country_id\": 4\n    }\n  ],\n  \"states\": [\n    {\n      \"id\": 12,\n      \"name\": \"Alabama\",\n      \"abbr\": \"AL\",\n      \"country_id\": 4\n    },\n    {\n      \"id\": 9,\n      \"name\": \"Alabama\",\n      \"abbr\": \"AL\",\n      \"country_id\": 4\n    },\n    {\n      \"id\": 10,\n      \"name\": \"Alabama\",\n      \"abbr\": \"AL\",\n      \"country_id\": 4\n    },\n    {\n      \"id\": 11,\n      \"name\": \"Alabama\",\n      \"abbr\": \"AL\",\n      \"country_id\": 4\n    },\n    {\n      \"id\": 13,\n      \"name\": \"Alabama\",\n      \"abbr\": \"AL\",\n      \"country_id\": 4\n    },\n    {\n      \"id\": 14,\n      \"name\": \"Alabama\",\n      \"abbr\": \"AL\",\n      \"country_id\": 4\n    }\n  ],\n  \"countries\": [\n    {\n      \"id\": 4,\n      \"iso_name\": \"UNITED STATES\",\n      \"iso\": \"US\",\n      \"iso3\": \"USA\",\n      \"name\": \"United States\",\n      \"numcode\": 840,\n      \"states_required\": false,\n      \"state_ids\": [\n        9,\n        10,\n        11,\n        12,\n        13,\n        14\n      ]\n    }\n  ],\n  \"billing_addresses\": [\n    {\n      \"id\": 9,\n      \"firstname\": \"John\",\n      \"lastname\": \"Doe\",\n      \"address1\": \"10 Lovely Street\",\n      \"address2\": \"Northwest\",\n      \"city\": \"Herndon\",\n      \"zipcode\": \"35005\",\n      \"phone\": \"555-555-0199\",\n      \"state_name\": null,\n      \"alternative_phone\": \"555-555-0199\",\n      \"company\": \"Company\",\n      \"state_id\": 11,\n      \"country_id\": 4\n    }\n  ],\n  \"accounts\": [\n    {\n      \"id\": 4,\n      \"fully_qualified_name\": \"Reinger LLC\",\n      \"email\": null\n    }\n  ],\n  \"order\": {\n    \"id\": \"R5-R194154548\",\n    \"status\": \"cart\",\n    \"channel\": \"sweet\",\n    \"email\": \"dortha@zulauf.ca\",\n    \"currency\": \"USD\",\n    \"placed_on\": \"\",\n    \"updated_at\": \"2018-10-31T15:07:38Z\",\n    \"totals\": {\n      \"item\": 10.0,\n      \"adjustment\": 0.0,\n      \"tax\": 0.0,\n      \"shipping\": 100.0,\n      \"payment\": 0.0,\n      \"order\": 110.0\n    },\n    \"weight_in_oz\": 0.0,\n    \"adjustments\": [\n      {\n        \"name\": \"discount\",\n        \"value\": 0.0\n      },\n      {\n        \"name\": \"tax\",\n        \"value\": 0.0\n      },\n      {\n        \"name\": \"shipping\",\n        \"value\": 100.0\n      }\n    ],\n    \"guest_token\": \"dAd2IIOZTjc0p-h5HhMbIw\",\n    \"shipping_instructions\": null,\n    \"delivery_date\": \"10/31/2018\",\n    \"vendor_id\": 5,\n    \"display_number\": \"R194154548\",\n    \"payment_ids\": [\n\n    ],\n    \"promotion_ids\": [\n\n    ],\n    \"shipment_ids\": [\n      2\n    ],\n    \"line_item_ids\": [\n      2\n    ],\n    \"shipping_address_id\": 10,\n    \"billing_address_id\": 9,\n    \"account_id\": 4\n  },\n  \"meta\": {\n  }\n}",
+      "response_headers": {
+        "X-Frame-Options": "SAMEORIGIN",
+        "X-XSS-Protection": "1; mode=block",
+        "X-Content-Type-Options": "nosniff",
+        "Access-Control-Allow-Origin": "http://localhost:4200",
+        "Access-Control-Allow-Methods": "POST, GET, PUT, DELETE, OPTIONS",
+        "Access-Control-Allow-Headers": "Origin, Content-Type, Accept, Authorization, Token, X-Spree-Token, X-Spree-Order-Token, X-Spree-Order-Id",
+        "Access-Control-Max-Age": "1728000",
+        "Content-Type": "application/json; charset=utf-8",
+        "Vary": "Accept-Encoding, Origin",
+        "ETag": "W/\"4777efff7c781a1c22287750855bf050\"",
+        "Cache-Control": "max-age=0, private, must-revalidate",
+        "Set-Cookie": "guest_token=InBtLVJnSVBsbmtEd2V4SzRBdG9Qanci--1d94d06ec58943f9f85d09a5752db719f52dd83a; path=/; expires=Sun, 31 Oct 2038 15:07:38 -0000",
+        "X-Request-Id": "b7a93b87-7229-49ea-a9cf-911633f044e3",
+        "X-Runtime": "0.074547",
+        "Content-Length": "2845"
+      },
+      "response_content_type": "application/json; charset=utf-8",
+      "curl": null
+    }
+  ]
+}

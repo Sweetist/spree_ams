@@ -1,0 +1,61 @@
+{
+  "resource": "Orders",
+  "resource_explanation": null,
+  "http_method": "GET",
+  "route": "http://test.host/api/ams/orders",
+  "description": "Get all orders",
+  "explanation": null,
+  "parameters": [
+    {
+      "required": true,
+      "name": "token",
+      "description": "Authentication Token"
+    },
+    {
+      "name": "q",
+      "description": "Query parameter"
+    }
+  ],
+  "response_fields": [
+
+  ],
+  "requests": [
+    {
+      "request_method": "GET",
+      "request_path": "http://test.host/api/ams/orders?token=74e174ace15171cfd293fc4e14c4b7f5b02697d8287f3eca",
+      "request_body": null,
+      "request_headers": {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        "Host": "test.host",
+        "Cookie": ""
+      },
+      "request_query_parameters": {
+        "token": "74e174ace15171cfd293fc4e14c4b7f5b02697d8287f3eca"
+      },
+      "request_content_type": "application/json",
+      "response_status": 200,
+      "response_status_text": "OK",
+      "response_body": "{\n  \"payments\": [\n\n  ],\n  \"promotions\": [\n\n  ],\n  \"shipments\": [\n    {\n      \"id\": 1,\n      \"tracking\": \"U10000\",\n      \"number\": \"H98313122008\",\n      \"cost\": 100.0,\n      \"shipped_at\": null,\n      \"state\": \"pending\",\n      \"selected_shipping_rate_id\": 1,\n      \"stock_location_id\": 2,\n      \"line_item_ids\": [\n        1\n      ]\n    }\n  ],\n  \"stock_locations\": [\n    {\n      \"id\": 2,\n      \"name\": \"Warehouse #2 - 8344\"\n    }\n  ],\n  \"line_items\": [\n    {\n      \"id\": 1,\n      \"name\": \"Product #1 - 317\",\n      \"quantity\": 1.0,\n      \"price\": 10.0,\n      \"weight_in_ounces\": 0.0,\n      \"variant_id\": 1\n    }\n  ],\n  \"variants\": [\n    {\n      \"id\": 1,\n      \"name\": \"Product #1 - 317\",\n      \"sku\": \"SKU-1\",\n      \"price\": \"19.99\",\n      \"weight\": \"0\",\n      \"height\": null,\n      \"width\": null,\n      \"depth\": null,\n      \"is_master\": true,\n      \"cost_price\": \"17\",\n      \"slug\": \"product-1-317\",\n      \"description\": \"Nihil animi sint qui ut facilis tempore inventore omnis. Qui veritatis dolores quisquam sit doloribus tempore qui. Natus consectetur sed praesentium omnis soluta eligendi ut dolorem. Nulla veritatis expedita repudiandae aliquam quis. Id doloribus voluptas vel quaerat.\\nFacilis et voluptatum error fugiat cum. Eaque sit perferendis ut voluptatem dolorem excepturi sunt. Nemo voluptatem cupiditate ex consequuntur ut optio. Et et magnam eos quis dolorum occaecati. Deleniti et quia illo et.\\nExpedita assumenda esse molestiae exercitationem voluptas vitae. Nobis eligendi quia doloribus ut enim accusantium explicabo optio. Error doloremque est necessitatibus minima sint tenetur aspernatur. Aspernatur aliquid vel quam error illo et velit. Id nobis voluptatem dolor ut unde doloremque provident qui.\\nOfficia aut reprehenderit beatae quia qui sint quas et. Voluptates omnis totam id ipsam similique rerum. Doloribus nam eos et sunt commodi magni. Id molestias aut nobis qui deserunt sed. Ipsam explicabo praesentium libero nemo.\",\n      \"track_inventory\": true,\n      \"display_price\": \"$19.99\",\n      \"options_text\": \"\",\n      \"can_supply\": true,\n      \"image_ids\": [\n\n      ]\n    }\n  ],\n  \"images\": [\n\n  ],\n  \"shipping_addresses\": [\n    {\n      \"id\": 6,\n      \"firstname\": \"John\",\n      \"lastname\": \"Doe\",\n      \"address1\": \"10 Lovely Street\",\n      \"address2\": \"Northwest\",\n      \"city\": \"Herndon\",\n      \"zipcode\": \"35005\",\n      \"phone\": \"555-555-0199\",\n      \"state_name\": null,\n      \"alternative_phone\": \"555-555-0199\",\n      \"company\": \"Company\",\n      \"state_id\": 6,\n      \"country_id\": 3\n    }\n  ],\n  \"states\": [\n    {\n      \"id\": 6,\n      \"name\": \"Alabama\",\n      \"abbr\": \"AL\",\n      \"country_id\": 3\n    },\n    {\n      \"id\": 3,\n      \"name\": \"Alabama\",\n      \"abbr\": \"AL\",\n      \"country_id\": 3\n    },\n    {\n      \"id\": 4,\n      \"name\": \"Alabama\",\n      \"abbr\": \"AL\",\n      \"country_id\": 3\n    },\n    {\n      \"id\": 5,\n      \"name\": \"Alabama\",\n      \"abbr\": \"AL\",\n      \"country_id\": 3\n    },\n    {\n      \"id\": 7,\n      \"name\": \"Alabama\",\n      \"abbr\": \"AL\",\n      \"country_id\": 3\n    },\n    {\n      \"id\": 8,\n      \"name\": \"Alabama\",\n      \"abbr\": \"AL\",\n      \"country_id\": 3\n    }\n  ],\n  \"countries\": [\n    {\n      \"id\": 3,\n      \"iso_name\": \"UNITED STATES\",\n      \"iso\": \"US\",\n      \"iso3\": \"USA\",\n      \"name\": \"United States\",\n      \"numcode\": 840,\n      \"states_required\": false,\n      \"state_ids\": [\n        3,\n        4,\n        5,\n        6,\n        7,\n        8\n      ]\n    }\n  ],\n  \"billing_addresses\": [\n    {\n      \"id\": 5,\n      \"firstname\": \"John\",\n      \"lastname\": \"Doe\",\n      \"address1\": \"10 Lovely Street\",\n      \"address2\": \"Northwest\",\n      \"city\": \"Herndon\",\n      \"zipcode\": \"35005\",\n      \"phone\": \"555-555-0199\",\n      \"state_name\": null,\n      \"alternative_phone\": \"555-555-0199\",\n      \"company\": \"Company\",\n      \"state_id\": 5,\n      \"country_id\": 3\n    }\n  ],\n  \"accounts\": [\n    {\n      \"id\": 3,\n      \"fully_qualified_name\": \"Williamson and Sons\",\n      \"email\": null\n    }\n  ],\n  \"orders\": [\n    {\n      \"id\": \"R3-R030112559\",\n      \"status\": \"cart\",\n      \"channel\": \"sweet\",\n      \"email\": \"cindy.ohara@mertzlebsack.com\",\n      \"currency\": \"USD\",\n      \"placed_on\": \"\",\n      \"updated_at\": \"2018-10-31T15:07:37Z\",\n      \"totals\": {\n        \"item\": 10.0,\n        \"adjustment\": 0.0,\n        \"tax\": 0.0,\n        \"shipping\": 100.0,\n        \"payment\": 0.0,\n        \"order\": 110.0\n      },\n      \"weight_in_oz\": 0.0,\n      \"adjustments\": [\n        {\n          \"name\": \"discount\",\n          \"value\": 0.0\n        },\n        {\n          \"name\": \"tax\",\n          \"value\": 0.0\n        },\n        {\n          \"name\": \"shipping\",\n          \"value\": 100.0\n        }\n      ],\n      \"guest_token\": \"XkabhbD_ZrErgbK_gZKSEg\",\n      \"shipping_instructions\": null,\n      \"delivery_date\": \"10/31/2018\",\n      \"vendor_id\": 3,\n      \"display_number\": \"R030112559\",\n      \"payment_ids\": [\n\n      ],\n      \"promotion_ids\": [\n\n      ],\n      \"shipment_ids\": [\n        1\n      ],\n      \"line_item_ids\": [\n        1\n      ],\n      \"shipping_address_id\": 6,\n      \"billing_address_id\": 5,\n      \"account_id\": 3\n    }\n  ],\n  \"meta\": {\n    \"total_pages\": 1\n  }\n}",
+      "response_headers": {
+        "X-Frame-Options": "SAMEORIGIN",
+        "X-XSS-Protection": "1; mode=block",
+        "X-Content-Type-Options": "nosniff",
+        "Access-Control-Allow-Origin": "http://localhost:4200",
+        "Access-Control-Allow-Methods": "POST, GET, PUT, DELETE, OPTIONS",
+        "Access-Control-Allow-Headers": "Origin, Content-Type, Accept, Authorization, Token, X-Spree-Token, X-Spree-Order-Token, X-Spree-Order-Id",
+        "Access-Control-Max-Age": "1728000",
+        "Content-Type": "application/json; charset=utf-8",
+        "Vary": "Accept-Encoding, Origin",
+        "ETag": "W/\"68f20721236f5eab844e4e1eedf479e6\"",
+        "Cache-Control": "max-age=0, private, must-revalidate",
+        "Set-Cookie": "guest_token=IktuendiWUxvRFgwTDZUcWw5Z2IyVWci--4d9d737d26ab8363c7cea579b56a8b2918ce63a6; path=/; expires=Sun, 31 Oct 2038 15:07:37 -0000",
+        "X-Request-Id": "dd7b524c-1c86-41cf-9581-1614560878c7",
+        "X-Runtime": "0.208879",
+        "Content-Length": "3568"
+      },
+      "response_content_type": "application/json; charset=utf-8",
+      "curl": null
+    }
+  ]
+}

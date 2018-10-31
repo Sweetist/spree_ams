@@ -87,11 +87,15 @@ RSpec.configure do |config|
   end
 
   config.fail_fast = ENV['FAIL_FAST'] || false
+end
 
-  # Configure Docs
-  RspecApiDocumentation.configure do |config|
-    config.api_name = "SG API"
-    config.format   = :json
-    config.docs_dir = Spree::Api::Ams::Engine.root.join "docs/api", ""
-  end
+# Configure Docs
+RspecApiDocumentation.configure do |config|
+  config.api_name = 'SWEET Sales API'
+  config.format   = :json
+  config.docs_dir = Spree::Api::Ams::Engine.root.join 'docs/api', ''
+end
+
+def url
+  'http://test.host/api/ams/'
 end

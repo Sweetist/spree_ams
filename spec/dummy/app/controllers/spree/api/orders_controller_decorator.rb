@@ -20,6 +20,7 @@ Spree::Api::OrdersController.class_eval do
       order_params
     end
 
+    import_params['vendor_id'] = current_vendor.id
     @order = Spree::Core::Importer::Order.import(order_user, import_params)
     respond_with(@order, default_template: :show, status: 201)
   end

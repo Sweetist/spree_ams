@@ -1,0 +1,62 @@
+{
+  "resource": "Orders",
+  "resource_explanation": null,
+  "http_method": "PUT",
+  "route": "http://test.host/api/ams/orders/:id",
+  "description": "Update order",
+  "explanation": null,
+  "parameters": [
+    {
+      "required": true,
+      "name": "token",
+      "description": "Authentication Token"
+    },
+    {
+      "scope": "order",
+      "type": "string",
+      "name": "email",
+      "description": "Order email"
+    }
+  ],
+  "response_fields": [
+
+  ],
+  "requests": [
+    {
+      "request_method": "PUT",
+      "request_path": "http://test.host/api/ams/orders/4",
+      "request_body": "{\"token\":\"4de9a03cd6d636bf059efeda3bed3eb2f5097d6c96db3442\",\"order\":{\"email\":\"test@example.com\"}}",
+      "request_headers": {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        "Host": "test.host",
+        "Cookie": ""
+      },
+      "request_query_parameters": {
+      },
+      "request_content_type": "application/json",
+      "response_status": 200,
+      "response_status_text": "OK",
+      "response_body": "{\n  \"payments\": [\n\n  ],\n  \"promotions\": [\n\n  ],\n  \"shipments\": [\n    {\n      \"id\": 4,\n      \"tracking\": \"U10000\",\n      \"number\": \"H45223477139\",\n      \"cost\": 100.0,\n      \"shipped_at\": null,\n      \"state\": \"pending\",\n      \"selected_shipping_rate_id\": 5,\n      \"stock_location_id\": 8,\n      \"line_item_ids\": [\n        4\n      ]\n    }\n  ],\n  \"stock_locations\": [\n    {\n      \"id\": 8,\n      \"name\": \"Warehouse #8 - 5621\"\n    }\n  ],\n  \"line_items\": [\n    {\n      \"id\": 4,\n      \"name\": \"Product #4 - 2330\",\n      \"quantity\": 1.0,\n      \"price\": 10.0,\n      \"weight_in_ounces\": 0.0,\n      \"variant_id\": 4\n    }\n  ],\n  \"variants\": [\n    {\n      \"id\": 4,\n      \"name\": \"Product #4 - 2330\",\n      \"sku\": \"SKU-4\",\n      \"price\": \"19.99\",\n      \"weight\": \"0\",\n      \"height\": null,\n      \"width\": null,\n      \"depth\": null,\n      \"is_master\": true,\n      \"cost_price\": \"17\",\n      \"slug\": \"product-4-2330\",\n      \"description\": \"Fugit incidunt sit velit reprehenderit quia officiis. Est incidunt quo omnis quis tempore blanditiis. Molestiae fuga incidunt est ut.\",\n      \"track_inventory\": true,\n      \"display_price\": \"$19.99\",\n      \"options_text\": \"\",\n      \"can_supply\": true,\n      \"image_ids\": [\n\n      ]\n    }\n  ],\n  \"images\": [\n\n  ],\n  \"shipping_addresses\": [\n    {\n      \"id\": 18,\n      \"firstname\": \"John\",\n      \"lastname\": \"Doe\",\n      \"address1\": \"10 Lovely Street\",\n      \"address2\": \"Northwest\",\n      \"city\": \"Herndon\",\n      \"zipcode\": \"35005\",\n      \"phone\": \"555-555-0199\",\n      \"state_name\": null,\n      \"alternative_phone\": \"555-555-0199\",\n      \"company\": \"Company\",\n      \"state_id\": 24,\n      \"country_id\": 6\n    }\n  ],\n  \"states\": [\n    {\n      \"id\": 24,\n      \"name\": \"Alabama\",\n      \"abbr\": \"AL\",\n      \"country_id\": 6\n    },\n    {\n      \"id\": 21,\n      \"name\": \"Alabama\",\n      \"abbr\": \"AL\",\n      \"country_id\": 6\n    },\n    {\n      \"id\": 22,\n      \"name\": \"Alabama\",\n      \"abbr\": \"AL\",\n      \"country_id\": 6\n    },\n    {\n      \"id\": 23,\n      \"name\": \"Alabama\",\n      \"abbr\": \"AL\",\n      \"country_id\": 6\n    },\n    {\n      \"id\": 25,\n      \"name\": \"Alabama\",\n      \"abbr\": \"AL\",\n      \"country_id\": 6\n    },\n    {\n      \"id\": 26,\n      \"name\": \"Alabama\",\n      \"abbr\": \"AL\",\n      \"country_id\": 6\n    }\n  ],\n  \"countries\": [\n    {\n      \"id\": 6,\n      \"iso_name\": \"UNITED STATES\",\n      \"iso\": \"US\",\n      \"iso3\": \"USA\",\n      \"name\": \"United States\",\n      \"numcode\": 840,\n      \"states_required\": false,\n      \"state_ids\": [\n        21,\n        22,\n        23,\n        24,\n        25,\n        26\n      ]\n    }\n  ],\n  \"billing_addresses\": [\n    {\n      \"id\": 17,\n      \"firstname\": \"John\",\n      \"lastname\": \"Doe\",\n      \"address1\": \"10 Lovely Street\",\n      \"address2\": \"Northwest\",\n      \"city\": \"Herndon\",\n      \"zipcode\": \"35005\",\n      \"phone\": \"555-555-0199\",\n      \"state_name\": null,\n      \"alternative_phone\": \"555-555-0199\",\n      \"company\": \"Company\",\n      \"state_id\": 23,\n      \"country_id\": 6\n    }\n  ],\n  \"accounts\": [\n    {\n      \"id\": 6,\n      \"fully_qualified_name\": \"Lueilwitz LLC\",\n      \"email\": null\n    }\n  ],\n  \"order\": {\n    \"id\": \"R9-R765113594\",\n    \"status\": \"cart\",\n    \"channel\": \"sweet\",\n    \"email\": \"test@example.com\",\n    \"currency\": \"USD\",\n    \"placed_on\": \"\",\n    \"updated_at\": \"2018-10-31T15:07:40Z\",\n    \"totals\": {\n      \"item\": 10.0,\n      \"adjustment\": 0.0,\n      \"tax\": 0.0,\n      \"shipping\": 100.0,\n      \"payment\": 0.0,\n      \"order\": 110.0\n    },\n    \"weight_in_oz\": 0.0,\n    \"adjustments\": [\n      {\n        \"name\": \"discount\",\n        \"value\": 0.0\n      },\n      {\n        \"name\": \"tax\",\n        \"value\": 0.0\n      },\n      {\n        \"name\": \"shipping\",\n        \"value\": 100.0\n      }\n    ],\n    \"guest_token\": \"cQXblGxLrfMF5DPhIJdnUg\",\n    \"shipping_instructions\": null,\n    \"delivery_date\": \"10/31/2018\",\n    \"vendor_id\": 9,\n    \"display_number\": \"R765113594\",\n    \"payment_ids\": [\n\n    ],\n    \"promotion_ids\": [\n\n    ],\n    \"shipment_ids\": [\n      4\n    ],\n    \"line_item_ids\": [\n      4\n    ],\n    \"shipping_address_id\": 18,\n    \"billing_address_id\": 17,\n    \"account_id\": 6\n  },\n  \"meta\": {\n  }\n}",
+      "response_headers": {
+        "X-Frame-Options": "SAMEORIGIN",
+        "X-XSS-Protection": "1; mode=block",
+        "X-Content-Type-Options": "nosniff",
+        "Access-Control-Allow-Origin": "http://localhost:4200",
+        "Access-Control-Allow-Methods": "POST, GET, PUT, DELETE, OPTIONS",
+        "Access-Control-Allow-Headers": "Origin, Content-Type, Accept, Authorization, Token, X-Spree-Token, X-Spree-Order-Token, X-Spree-Order-Id",
+        "Access-Control-Max-Age": "1728000",
+        "Content-Type": "application/json; charset=utf-8",
+        "Vary": "Accept-Encoding, Origin",
+        "ETag": "W/\"069b8ab4ad7088a92952f25bfdc53bc3\"",
+        "Cache-Control": "max-age=0, private, must-revalidate",
+        "Set-Cookie": "guest_token=ImJvZlVjcHZkM3pZWThUMmFrLUViNkEi--f56904f2ba106442dc83ef78c16850dbcc7f4d9d; path=/; expires=Sun, 31 Oct 2038 15:07:40 -0000",
+        "X-Request-Id": "3dcfa883-531e-4312-93ed-6945bb1c79e6",
+        "X-Runtime": "0.114305",
+        "Content-Length": "2658"
+      },
+      "response_content_type": "application/json; charset=utf-8",
+      "curl": null
+    }
+  ]
+}

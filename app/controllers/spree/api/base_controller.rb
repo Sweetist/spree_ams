@@ -17,7 +17,7 @@ module Spree
       before_action :authenticate_user
       before_action :load_user_roles
 
-      rescue_from Exception, with: :error_during_processing
+      # rescue_from Exception, with: :error_during_processing
       rescue_from ActiveRecord::RecordNotFound, with: :not_found
       rescue_from CanCan::AccessDenied, with: :unauthorized
       rescue_from Spree::Core::GatewayError, with: :gateway_error
@@ -69,6 +69,7 @@ module Spree
             render "spree/api/errors/invalid_api_key", :status => 401 and return
           else
             # anonymous users are not authorized
+            # @current_api_user = Spree.user_class.new
             render "spree/api/errors/must_specify_api_key", :status => 401 and return
           end
         end
@@ -92,8 +93,9 @@ module Spree
 
         error_notifier.call(exception, self) if error_notifier
 
-        render text: { exception: exception.message }.to_json,
-          status: 422 and return
+        render text: { exception: exception.message,
+                       backtrace: exception.backtrace }.to_json,
+               status: 422 && return
       end
 
       def gateway_error(exception)
@@ -131,6 +133,20 @@ module Spree
         product_scope.friendly.find(id.to_s)
       rescue ActiveRecord::RecordNotFound
         product_scope.find(id)
+      end
+
+      def current_vendor
+        return @vendor if @vendor
+        return nil if current_api_user.nil? || !current_api_user.has_spree_role?('vendor')
+
+        @vendor = current_api_user.company
+      end
+
+      def current_company
+        return @company if @company
+        return nil if current_api_user.nil? || !current_api_user.has_spree_role?('vendor')
+
+        @company = current_api_user.company
       end
 
       def find_account(id)
