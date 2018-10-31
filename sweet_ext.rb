@@ -21,7 +21,7 @@ def copy_direcories(from, to)
 end
 
 def copy_files
-  files = ['Gemfile']
+  files = ['Gemfile', 'config.ru']
   files.each do |file|
     FileUtils.cp(sweet_path + '/' + file, dummy_path)
   end
