@@ -31,12 +31,9 @@
     {
       "request_method": "POST",
       "request_path": "http://test.host/api/ams/customers",
-      "request_body": "{\"token\":\"0e0d028b04ddf99994c778519f4408b85d09d0babcb746fc\",\"customer\":{\"email\":\"email@test.com\",\"name\":\"customer name\"}}",
+      "request_body": "{\"token\":\"7ec7c36d36963da13ac75daa2dba3257a9b84d1779c4f478\",\"customer\":{\"email\":\"email@test.com\",\"name\":\"customer name\"}}",
       "request_headers": {
-        "Accept": "application/json",
-        "Content-Type": "application/json",
-        "Host": "test.host",
-        "Cookie": ""
+        "Content-Type": "application/json"
       },
       "request_query_parameters": {
       },
@@ -45,21 +42,7 @@
       "response_status_text": "Created",
       "response_body": "{\n  \"account\": {\n    \"id\": 4,\n    \"fully_qualified_name\": \"customer name\",\n    \"email\": \"email@test.com\"\n  },\n  \"meta\": {\n  }\n}",
       "response_headers": {
-        "X-Frame-Options": "SAMEORIGIN",
-        "X-XSS-Protection": "1; mode=block",
-        "X-Content-Type-Options": "nosniff",
-        "Access-Control-Allow-Origin": "http://localhost:4200",
-        "Access-Control-Allow-Methods": "POST, GET, PUT, DELETE, OPTIONS",
-        "Access-Control-Allow-Headers": "Origin, Content-Type, Accept, Authorization, Token, X-Spree-Token, X-Spree-Order-Token, X-Spree-Order-Id",
-        "Access-Control-Max-Age": "1728000",
-        "Content-Type": "application/json; charset=utf-8",
-        "Vary": "Accept-Encoding, Origin",
-        "ETag": "W/\"1edbef5ee6605e2290569d1d929b2f69\"",
-        "Cache-Control": "max-age=0, private, must-revalidate",
-        "Set-Cookie": "guest_token=Il81RUJuNGlmSndCSFhwaTFEdzcyNnci--af106c5dc0d016e340360edcabc042a180fb8db8; path=/; expires=Fri, 05 Nov 2038 13:37:34 -0000",
-        "X-Request-Id": "a36ee13a-0ec4-43ba-b1e9-8f1fb1ae3918",
-        "X-Runtime": "0.048374",
-        "Content-Length": "94"
+        "Content-Type": "application/json; charset=utf-8"
       },
       "response_content_type": "application/json; charset=utf-8",
       "curl": null

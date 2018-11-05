@@ -43,12 +43,9 @@
     {
       "request_method": "POST",
       "request_path": "http://test.host/api/ams/products",
-      "request_body": "{\"token\":\"1f536a61f0bb7dda64441efe178e8231dd7ba57f3a32929a\",\"product\":{\"name\":\"test name\",\"price\":20,\"sku\":\"sku\",\"shipping_category_id\":1}}",
+      "request_body": "{\"token\":\"008e6d0e5cad752dc8dfbf1b71b7549142bba367becc5330\",\"product\":{\"name\":\"test name\",\"price\":20,\"sku\":\"sku\",\"shipping_category_id\":1}}",
       "request_headers": {
-        "Accept": "application/json",
-        "Content-Type": "application/json",
-        "Host": "test.host",
-        "Cookie": ""
+        "Content-Type": "application/json"
       },
       "request_query_parameters": {
       },
@@ -57,21 +54,7 @@
       "response_status_text": "Created",
       "response_body": "{\n  \"product_properties\": [\n\n  ],\n  \"images\": [\n\n  ],\n  \"variants\": [\n    {\n      \"id\": 11,\n      \"name\": \"test name\",\n      \"sku\": \"sku\",\n      \"price\": \"20\",\n      \"weight\": \"0\",\n      \"height\": null,\n      \"width\": null,\n      \"depth\": null,\n      \"is_master\": true,\n      \"cost_price\": \"0\",\n      \"slug\": \"test-name\",\n      \"description\": null,\n      \"track_inventory\": false,\n      \"display_price\": \"$20\",\n      \"options_text\": \"\",\n      \"can_supply\": true,\n      \"image_ids\": [\n\n      ]\n    }\n  ],\n  \"product\": {\n    \"id\": 10,\n    \"name\": \"test name\",\n    \"description\": null,\n    \"price\": \"20\",\n    \"display_price\": \"$20\",\n    \"slug\": \"test-name\",\n    \"product_property_ids\": [\n\n    ],\n    \"image_ids\": [\n\n    ],\n    \"variants_including_master_ids\": [\n      11\n    ]\n  },\n  \"meta\": {\n  }\n}",
       "response_headers": {
-        "X-Frame-Options": "SAMEORIGIN",
-        "X-XSS-Protection": "1; mode=block",
-        "X-Content-Type-Options": "nosniff",
-        "Access-Control-Allow-Origin": "http://localhost:4200",
-        "Access-Control-Allow-Methods": "POST, GET, PUT, DELETE, OPTIONS",
-        "Access-Control-Allow-Headers": "Origin, Content-Type, Accept, Authorization, Token, X-Spree-Token, X-Spree-Order-Token, X-Spree-Order-Id",
-        "Access-Control-Max-Age": "1728000",
-        "Content-Type": "application/json; charset=utf-8",
-        "Vary": "Accept-Encoding, Origin",
-        "ETag": "W/\"1681f505f12775c6ba45e3d9442e7081\"",
-        "Cache-Control": "max-age=0, private, must-revalidate",
-        "Set-Cookie": "guest_token=ImxhWUNNZzhkVklmXzlTZFlPRGtrVXci--e3455d515d2f3e6f1501e78a25282234078befae; path=/; expires=Fri, 05 Nov 2038 13:37:43 -0000",
-        "X-Request-Id": "f8c9aaad-91e2-4e28-a6a3-c2296ef2bc59",
-        "X-Runtime": "0.149234",
-        "Content-Length": "526"
+        "Content-Type": "application/json; charset=utf-8"
       },
       "response_content_type": "application/json; charset=utf-8",
       "curl": null

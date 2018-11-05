@@ -18,40 +18,20 @@
   "requests": [
     {
       "request_method": "GET",
-      "request_path": "http://test.host/api/ams/products/12?token=52293b7eb0d8c9fe5e36075294671ba76f0921e688194112",
+      "request_path": "http://test.host/api/ams/products/13?token=6f20336ad5792d40229391dbe8dd73f24522931f9cd055d7",
       "request_body": null,
       "request_headers": {
-        "Accept": "application/json",
-        "Content-Type": "application/json",
-        "Host": "test.host",
-        "Cookie": ""
+        "Content-Type": "application/json"
       },
       "request_query_parameters": {
-        "token": "52293b7eb0d8c9fe5e36075294671ba76f0921e688194112"
+        "token": "6f20336ad5792d40229391dbe8dd73f24522931f9cd055d7"
       },
       "request_content_type": "application/json",
       "response_status": 200,
       "response_status_text": "OK",
-      "response_body": "{\n  \"product_properties\": [\n\n  ],\n  \"images\": [\n\n  ],\n  \"variants\": [\n    {\n      \"id\": 13,\n      \"name\": \"Product #11 - 7106\",\n      \"sku\": \"SKU-12\",\n      \"price\": \"19.99\",\n      \"weight\": \"0\",\n      \"height\": null,\n      \"width\": null,\n      \"depth\": null,\n      \"is_master\": true,\n      \"cost_price\": \"17\",\n      \"slug\": \"product-11-7106\",\n      \"description\": \"Error ut voluptatibus corrupti inventore illum est est. Numquam rerum dicta ex iste et corporis. Labore nobis eos reiciendis ipsam et.\\nAutem cupiditate magni nam maxime accusantium quos et architecto. Omnis aut quo fugit dolor. Numquam assumenda est ducimus sapiente voluptate.\",\n      \"track_inventory\": true,\n      \"display_price\": \"$19.99\",\n      \"options_text\": \"\",\n      \"can_supply\": true,\n      \"image_ids\": [\n\n      ]\n    }\n  ],\n  \"product\": {\n    \"id\": 12,\n    \"name\": \"Product #11 - 7106\",\n    \"description\": \"Error ut voluptatibus corrupti inventore illum est est. Numquam rerum dicta ex iste et corporis. Labore nobis eos reiciendis ipsam et.\\nAutem cupiditate magni nam maxime accusantium quos et architecto. Omnis aut quo fugit dolor. Numquam assumenda est ducimus sapiente voluptate.\",\n    \"price\": \"19.99\",\n    \"display_price\": \"$19.99\",\n    \"slug\": \"product-11-7106\",\n    \"product_property_ids\": [\n\n    ],\n    \"image_ids\": [\n\n    ],\n    \"variants_including_master_ids\": [\n      13\n    ]\n  },\n  \"meta\": {\n  }\n}",
+      "response_body": "{\n  \"product_properties\": [\n\n  ],\n  \"images\": [\n\n  ],\n  \"variants\": [\n    {\n      \"id\": 14,\n      \"name\": \"Sweet Product\",\n      \"sku\": \"SKU-13\",\n      \"price\": \"19.99\",\n      \"weight\": \"0\",\n      \"height\": null,\n      \"width\": null,\n      \"depth\": null,\n      \"is_master\": true,\n      \"cost_price\": \"17\",\n      \"slug\": \"sweet-product\",\n      \"description\": \"Enim sed a maiores dicta laboriosam. Est eaque animi hic laborum. Aliquid et voluptatum molestiae explicabo.\\nOmnis pariatur odit dolores debitis. Et error culpa enim nobis aut a. Dignissimos illum distinctio ab perferendis voluptatem impedit facere. Aut inventore consequuntur eaque ut repellat explicabo laborum voluptatum.\\nSint id odit labore itaque. Omnis vel distinctio et quia molestiae et. Non deleniti dolor impedit incidunt. Et aspernatur quas esse saepe facilis. Ex labore debitis et deleniti omnis.\\nFugiat laudantium maiores voluptate adipisci. Assumenda sed ea consectetur quos maiores laudantium at asperiores. Aut ab natus officia autem eum consequatur soluta delectus.\",\n      \"track_inventory\": true,\n      \"display_price\": \"$19.99\",\n      \"options_text\": \"\",\n      \"can_supply\": true,\n      \"image_ids\": [\n\n      ]\n    }\n  ],\n  \"product\": {\n    \"id\": 13,\n    \"name\": \"Sweet Product\",\n    \"description\": \"Enim sed a maiores dicta laboriosam. Est eaque animi hic laborum. Aliquid et voluptatum molestiae explicabo.\\nOmnis pariatur odit dolores debitis. Et error culpa enim nobis aut a. Dignissimos illum distinctio ab perferendis voluptatem impedit facere. Aut inventore consequuntur eaque ut repellat explicabo laborum voluptatum.\\nSint id odit labore itaque. Omnis vel distinctio et quia molestiae et. Non deleniti dolor impedit incidunt. Et aspernatur quas esse saepe facilis. Ex labore debitis et deleniti omnis.\\nFugiat laudantium maiores voluptate adipisci. Assumenda sed ea consectetur quos maiores laudantium at asperiores. Aut ab natus officia autem eum consequatur soluta delectus.\",\n    \"price\": \"19.99\",\n    \"display_price\": \"$19.99\",\n    \"slug\": \"sweet-product\",\n    \"product_property_ids\": [\n\n    ],\n    \"image_ids\": [\n\n    ],\n    \"variants_including_master_ids\": [\n      14\n    ]\n  },\n  \"meta\": {\n  }\n}",
       "response_headers": {
-        "X-Frame-Options": "SAMEORIGIN",
-        "X-XSS-Protection": "1; mode=block",
-        "X-Content-Type-Options": "nosniff",
-        "Access-Control-Allow-Origin": "http://localhost:4200",
-        "Access-Control-Allow-Methods": "POST, GET, PUT, DELETE, OPTIONS",
-        "Access-Control-Allow-Headers": "Origin, Content-Type, Accept, Authorization, Token, X-Spree-Token, X-Spree-Order-Token, X-Spree-Order-Id",
-        "Access-Control-Max-Age": "1728000",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 05 Nov 2018 13:37:44 GMT",
-        "Surrogate-Control": "max-age=900",
-        "Surrogate-Key": "product_id=1",
-        "Cache-Control": "max-age=900, public",
-        "Vary": "Accept-Encoding, Origin",
-        "ETag": "W/\"1b7fcae6bd77a194fbf276e8fc41cc70\"",
-        "Set-Cookie": "guest_token=Im1sME5SbEdWSTZSZGxVYlRVMEZJR2ci--2bf72a6170c7af0283d4c940ad1f96c5c2928095; path=/; expires=Fri, 05 Nov 2038 13:37:44 -0000",
-        "X-Request-Id": "38962339-e2cc-47d2-8329-cdd456ba144d",
-        "X-Runtime": "0.045078",
-        "Content-Length": "1123"
+        "Content-Type": "application/json; charset=utf-8"
       },
       "response_content_type": "application/json; charset=utf-8",
       "curl": null

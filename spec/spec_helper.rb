@@ -94,6 +94,9 @@ RspecApiDocumentation.configure do |config|
   config.api_name = 'SWEET Sales API'
   config.format   = :json
   config.docs_dir = Spree::Api::Ams::Engine.root.join 'docs/api', ''
+  config.request_headers_to_include = ['Content-Type']
+  config.response_headers_to_include = ['Content-Type']
+  config.keep_source_order = true
 end
 
 def url

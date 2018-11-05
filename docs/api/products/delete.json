@@ -19,12 +19,9 @@
     {
       "request_method": "DELETE",
       "request_path": "http://test.host/api/ams/products/7",
-      "request_body": "{\"token\":\"c9a059108d7033c4ec062e7c32fe5ebf2e93d9ab7c387c44\"}",
+      "request_body": "{\"token\":\"d9686e253b101f33b37b77399f9570a986ac24c6b66c183f\"}",
       "request_headers": {
-        "Accept": "application/json",
-        "Content-Type": "application/json",
-        "Host": "test.host",
-        "Cookie": ""
+        "Content-Type": "application/json"
       },
       "request_query_parameters": {
       },
@@ -33,18 +30,6 @@
       "response_status_text": "No Content",
       "response_body": null,
       "response_headers": {
-        "X-Frame-Options": "SAMEORIGIN",
-        "X-XSS-Protection": "1; mode=block",
-        "X-Content-Type-Options": "nosniff",
-        "Access-Control-Allow-Origin": "http://localhost:4200",
-        "Access-Control-Allow-Methods": "POST, GET, PUT, DELETE, OPTIONS",
-        "Access-Control-Allow-Headers": "Origin, Content-Type, Accept, Authorization, Token, X-Spree-Token, X-Spree-Order-Token, X-Spree-Order-Id",
-        "Access-Control-Max-Age": "1728000",
-        "Cache-Control": "no-cache",
-        "Set-Cookie": "guest_token=IlFiMUtEc25RX2hxS0VRc2p2WWp0ZGci--947144f9fb667bcc0970ae982bda9ac52ac57e80; path=/; expires=Fri, 05 Nov 2038 13:37:42 -0000",
-        "X-Request-Id": "c004f42a-1dea-487b-89a4-d1ca41abfe71",
-        "X-Runtime": "0.407975",
-        "Vary": "Origin"
       },
       "response_content_type": null,
       "curl": null

@@ -1,0 +1,40 @@
+{
+  "resource": "Products",
+  "resource_explanation": null,
+  "http_method": "GET",
+  "route": "http://test.host/api/ams/products",
+  "description": "Index",
+  "explanation": null,
+  "parameters": [
+    {
+      "required": true,
+      "name": "token",
+      "description": "Authentication Token"
+    }
+  ],
+  "response_fields": [
+
+  ],
+  "requests": [
+    {
+      "request_method": "GET",
+      "request_path": "http://test.host/api/ams/products?token=e35cb9f5da8a374816ed657184c8a8f06fed3b7d2ff92ebb",
+      "request_body": null,
+      "request_headers": {
+        "Content-Type": "application/json"
+      },
+      "request_query_parameters": {
+        "token": "e35cb9f5da8a374816ed657184c8a8f06fed3b7d2ff92ebb"
+      },
+      "request_content_type": "application/json",
+      "response_status": 200,
+      "response_status_text": "OK",
+      "response_body": "{\n  \"product_properties\": [\n\n  ],\n  \"images\": [\n\n  ],\n  \"variants\": [\n    {\n      \"id\": 12,\n      \"name\": \"Sweet Product\",\n      \"sku\": \"SKU-11\",\n      \"price\": \"19.99\",\n      \"weight\": \"0\",\n      \"height\": null,\n      \"width\": null,\n      \"depth\": null,\n      \"is_master\": true,\n      \"cost_price\": \"17\",\n      \"slug\": \"sweet-product\",\n      \"description\": \"Architecto magnam dolorum ut fugit aut aliquid odit. Praesentium unde nesciunt quos repellendus eligendi veritatis et. Suscipit qui dolor illum odio. Omnis quia quasi delectus laboriosam quia voluptatem.\",\n      \"track_inventory\": true,\n      \"display_price\": \"$19.99\",\n      \"options_text\": \"\",\n      \"can_supply\": true,\n      \"image_ids\": [\n\n      ]\n    }\n  ],\n  \"products\": [\n    {\n      \"id\": 11,\n      \"name\": \"Sweet Product\",\n      \"description\": \"Architecto magnam dolorum ut fugit aut aliquid odit. Praesentium unde nesciunt quos repellendus eligendi veritatis et. Suscipit qui dolor illum odio. Omnis quia quasi delectus laboriosam quia voluptatem.\",\n      \"price\": \"19.99\",\n      \"display_price\": \"$19.99\",\n      \"slug\": \"sweet-product\",\n      \"product_property_ids\": [\n\n      ],\n      \"image_ids\": [\n\n      ],\n      \"variants_including_master_ids\": [\n        12\n      ]\n    }\n  ],\n  \"meta\": {\n    \"total_pages\": 1\n  }\n}",
+      "response_headers": {
+        "Content-Type": "application/json; charset=utf-8"
+      },
+      "response_content_type": "application/json; charset=utf-8",
+      "curl": null
+    }
+  ]
+}

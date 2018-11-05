@@ -13,7 +13,11 @@ resource 'Products' do
 
   let(:token) { user.spree_api_key }
   let!(:vendor) { user.company }
-  let!(:product) { create(:product, vendor: vendor) }
+  let!(:product) { create(:product, vendor: vendor, name: 'Sweet Product') }
+
+  before do
+    header 'X-Token', token
+  end
 
   delete url + 'products/:id' do
     let(:id) { product.id }
@@ -59,11 +63,19 @@ resource 'Products' do
   end
 
   get url + 'products' do
-    parameter :q, 'Ransack query parameter'
-
-    example_request 'Get products' do
-      explanation 'The searching API is provided through the Ransack gem which Sweet depends on. The name_cont here is called a predicate, and you can learn more about them by reading about Predicates on the Ransack wiki.'
-      expect(response_status).to equal(200)
+    context 'index' do
+      example_request 'Index' do
+        expect(response_status).to equal(200)
+      end
+    end
+    context 'search' do
+      parameter :q, 'Ransack query parameter'
+      parameter :name_cont, 'Ransack predicator', scope: :q
+      let(:name_cont) { product.name }
+      explanation 'The searching API is provided through the Ransack gem which Sweet depends on. The name_cont here is called a predicate, and you can learn more about them by reading about Predicates on the Ransack (wiki)[https://github.com/activerecord-hackery/ransack/wiki/Basic-Searching].'
+      example_request 'Search' do
+        expect(response_status).to equal(200)
+      end
     end
   end
 

@@ -121,12 +121,12 @@ module Spree
       end
 
       def api_key
-        request.headers["X-Spree-Token"] || params[:token]
+        request.headers['X-Token'] || params[:token]
       end
       helper_method :api_key
 
       def order_token
-        request.headers["X-Spree-Order-Token"] || params[:order_token]
+        request.headers['X-Order-Token'] || params[:order_token]
       end
 
       def find_product(id)

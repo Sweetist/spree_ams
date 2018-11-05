@@ -22,37 +22,20 @@
   "requests": [
     {
       "request_method": "GET",
-      "request_path": "http://test.host/api/ams/customers?token=cb2017c8492d5b59812065728f674402ea23d30b97c90206",
+      "request_path": "http://test.host/api/ams/customers?token=3f82d648c2be9f2b4cfe0c883431607f012d01e21f284c61",
       "request_body": null,
       "request_headers": {
-        "Accept": "application/json",
-        "Content-Type": "application/json",
-        "Host": "test.host",
-        "Cookie": ""
+        "Content-Type": "application/json"
       },
       "request_query_parameters": {
-        "token": "cb2017c8492d5b59812065728f674402ea23d30b97c90206"
+        "token": "3f82d648c2be9f2b4cfe0c883431607f012d01e21f284c61"
       },
       "request_content_type": "application/json",
       "response_status": 200,
       "response_status_text": "OK",
-      "response_body": "{\n  \"customers\": [\n    {\n      \"id\": 1,\n      \"fully_qualified_name\": \"Hamill Group\",\n      \"email\": null\n    }\n  ],\n  \"meta\": {\n    \"total_pages\": 1\n  }\n}",
+      "response_body": "{\n  \"customers\": [\n    {\n      \"id\": 1,\n      \"fully_qualified_name\": \"Dach-Emard\",\n      \"email\": null\n    }\n  ],\n  \"meta\": {\n    \"total_pages\": 1\n  }\n}",
       "response_headers": {
-        "X-Frame-Options": "SAMEORIGIN",
-        "X-XSS-Protection": "1; mode=block",
-        "X-Content-Type-Options": "nosniff",
-        "Access-Control-Allow-Origin": "http://localhost:4200",
-        "Access-Control-Allow-Methods": "POST, GET, PUT, DELETE, OPTIONS",
-        "Access-Control-Allow-Headers": "Origin, Content-Type, Accept, Authorization, Token, X-Spree-Token, X-Spree-Order-Token, X-Spree-Order-Id",
-        "Access-Control-Max-Age": "1728000",
-        "Content-Type": "application/json; charset=utf-8",
-        "Vary": "Accept-Encoding, Origin",
-        "ETag": "W/\"93e68847ef1843f036df2dee13ec6898\"",
-        "Cache-Control": "max-age=0, private, must-revalidate",
-        "Set-Cookie": "guest_token=IlYxOGV0cHVCRU1nd0pSeVZMYWpCbVEi--538e9666aadfa9ce6bbf9746c1ddde0ee881bbcb; path=/; expires=Fri, 05 Nov 2038 13:37:33 -0000",
-        "X-Request-Id": "9b0c25a7-020c-44b4-926a-32700a0f658b",
-        "X-Runtime": "0.667500",
-        "Content-Length": "100"
+        "Content-Type": "application/json; charset=utf-8"
       },
       "response_content_type": "application/json; charset=utf-8",
       "curl": null

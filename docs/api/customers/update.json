@@ -24,35 +24,18 @@
     {
       "request_method": "PATCH",
       "request_path": "http://test.host/api/ams/customers/5",
-      "request_body": "{\"token\":\"711b9176c6c470a7b2c454136e97fb0bc362fbfcd6327e8b\",\"customer\":{\"email\":\"new_email@test.com\"}}",
+      "request_body": "{\"token\":\"d8121f4969084242a3b49c0ff34c5ff66b5ef62b128627d9\",\"customer\":{\"email\":\"new_email@test.com\"}}",
       "request_headers": {
-        "Accept": "application/json",
-        "Content-Type": "application/json",
-        "Host": "test.host",
-        "Cookie": ""
+        "Content-Type": "application/json"
       },
       "request_query_parameters": {
       },
       "request_content_type": "application/json",
       "response_status": 200,
       "response_status_text": "OK",
-      "response_body": "{\n  \"account\": {\n    \"id\": 5,\n    \"fully_qualified_name\": \"Bednar Inc\",\n    \"email\": \"new_email@test.com\"\n  },\n  \"meta\": {\n  }\n}",
+      "response_body": "{\n  \"account\": {\n    \"id\": 5,\n    \"fully_qualified_name\": \"Brekke Group\",\n    \"email\": \"new_email@test.com\"\n  },\n  \"meta\": {\n  }\n}",
       "response_headers": {
-        "X-Frame-Options": "SAMEORIGIN",
-        "X-XSS-Protection": "1; mode=block",
-        "X-Content-Type-Options": "nosniff",
-        "Access-Control-Allow-Origin": "http://localhost:4200",
-        "Access-Control-Allow-Methods": "POST, GET, PUT, DELETE, OPTIONS",
-        "Access-Control-Allow-Headers": "Origin, Content-Type, Accept, Authorization, Token, X-Spree-Token, X-Spree-Order-Token, X-Spree-Order-Id",
-        "Access-Control-Max-Age": "1728000",
-        "Content-Type": "application/json; charset=utf-8",
-        "Vary": "Accept-Encoding, Origin",
-        "ETag": "W/\"50345ae60e339329cedbde587a0fb412\"",
-        "Cache-Control": "max-age=0, private, must-revalidate",
-        "Set-Cookie": "guest_token=IjFDYnlwMGZaTGg0ZVdfdGcxVkQtOXci--5b1f745aed4130f7324b6d7b4bea71088f1ae3c4; path=/; expires=Fri, 05 Nov 2038 13:37:34 -0000",
-        "X-Request-Id": "eeb61081-de1d-4d52-8603-99ede8f4b750",
-        "X-Runtime": "0.048603",
-        "Content-Length": "95"
+        "Content-Type": "application/json; charset=utf-8"
       },
       "response_content_type": "application/json; charset=utf-8",
       "curl": null

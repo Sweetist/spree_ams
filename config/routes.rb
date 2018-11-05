@@ -4,6 +4,7 @@ Spree::Core::Engine.routes.draw do
       match '*path' => 'cors#preflight_check', via: [:options]
 
       resources :products
+      resources :variants
       resources :line_items
       resources :orders do
         member do
