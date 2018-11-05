@@ -17,7 +17,6 @@ jobs:
           SWEET_INTEGRATOR_SHIPPING_EASY_KEY: 'token'
           SWEET_INTEGRATOR_SHIPPING_EASY_TOKEN: 'token'
           SWEET_INTEGRATOR_SHIPPING_EASY_ENDPOINT: 'http://fakeurl.com'
-          SWEET_INTEGRATOR_CONNECTION_ENPOINT: http://fakehost.com
           TZ: "/usr/share/zoneinfo/Etc/UTC"
       - image: circleci/postgres:9.4.12-alpine
         environment:
