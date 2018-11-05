@@ -1,0 +1,62 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/sweet_ams
+    docker:
+      - image: circleci/ruby:2.4.4-node-browsers-legacy
+        environment:
+          RAILS_ENV: test
+          SWEET_INTEGRATOR_CONNECTION_TOKEN: 'token'
+          SWEET_INTEGRATOR_CONNECTION_ENPOINT: 'http://fakeurl.com'
+          CANGAROO_ENDPOINT: 'http://fakeurl.com'
+          CANGAROO_SECRET_TOKEN: 'token'
+          CANGAROO_SECRET_KEY: 'token'
+          SWEET_INTEGRATOR_SHOPIFY_KEY: 'token'
+          SWEET_INTEGRATOR_SHOPIFY_TOKEN: 'token'
+          SWEET_INTEGRATOR_SHOPIFY_ENDPOINT: 'http://fakeurl.com'
+          SWEET_INTEGRATOR_SHIPPING_EASY_KEY: 'token'
+          SWEET_INTEGRATOR_SHIPPING_EASY_TOKEN: 'token'
+          SWEET_INTEGRATOR_SHIPPING_EASY_ENDPOINT: 'http://fakeurl.com'
+          SWEET_INTEGRATOR_CONNECTION_ENPOINT: http://fakehost.com
+          TZ: "/usr/share/zoneinfo/Etc/UTC"
+      - image: circleci/postgres:9.4.12-alpine
+        environment:
+          POSTGRES_USER: ubuntu
+          POSTGRES_DB: circle_ruby_test
+          POSTGRES_PASSWORD: ""
+          TZ: "/usr/share/zoneinfo/Etc/UTC"
+    steps:
+      - checkout
+
+      # Restore bundle cache
+      - type: cache-restore
+        key: rails-get-sweet{{ checksum "Gemfile.lock" }}
+
+
+      # Bundle install dependencies
+      # - run: git submodule sync
+      # - run: git submodule update --init
+      # - run: bundle install --path vendor/bundle
+
+      # Store bundle cache
+      - type: cache-save
+        key: rails-get-sweet{{ checksum "Gemfile.lock" }}
+        paths:
+          - vendor/bundle
+
+      # Database setup
+      - run: cd '~/sweet_ams/spec/dummy'
+      - run: mv config/database.yml.circleci config/database.yml
+      - run: bundle exec rake db:create
+      - run: bundle exec rake db:migrate
+      - run: bundle exec rake db:second_base:migrate
+      - run: bundle exec rake assets:precompile RAILS_ENV=test
+
+      # Run rspec
+      - type: shell
+        command: |
+          bundle exec rspec
+
+      # Save artifacts
+      - type: store_test_results
+        path: /tmp/test-results
