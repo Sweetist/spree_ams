@@ -44,7 +44,7 @@ jobs:
           - vendor/bundle
 
       # Database setup
-      - run: cd '~/sweet_ams/spec/dummy'
+      - run: cd 'spec/dummy'
       - run: mv config/database.yml.circleci config/database.yml
       - run: bundle exec rake db:create
       - run: bundle exec rake db:migrate
