@@ -3,7 +3,7 @@
   "resource_explanation": null,
   "http_method": "DELETE",
   "route": "http://test.host/api/ams/products/:id",
-  "description": "Delete product",
+  "description": "Delete",
   "explanation": null,
   "parameters": [
     {
@@ -19,7 +19,7 @@
     {
       "request_method": "DELETE",
       "request_path": "http://test.host/api/ams/products/7",
-      "request_body": "{\"token\":\"5b045bec0874841af491a93652913d57b358389f1341a001\"}",
+      "request_body": "{\"token\":\"c9a059108d7033c4ec062e7c32fe5ebf2e93d9ab7c387c44\"}",
       "request_headers": {
         "Accept": "application/json",
         "Content-Type": "application/json",
@@ -41,9 +41,9 @@
         "Access-Control-Allow-Headers": "Origin, Content-Type, Accept, Authorization, Token, X-Spree-Token, X-Spree-Order-Token, X-Spree-Order-Id",
         "Access-Control-Max-Age": "1728000",
         "Cache-Control": "no-cache",
-        "Set-Cookie": "guest_token=Ikt1T29KYTJYUHl2ektlSE05RWQ0ZGci--3db8e8ff02d425904d33a7f96047a8ab679b436c; path=/; expires=Sun, 31 Oct 2038 15:07:42 -0000",
-        "X-Request-Id": "d00c8ae6-ef94-44c1-bb78-ffbd90518651",
-        "X-Runtime": "0.353378",
+        "Set-Cookie": "guest_token=IlFiMUtEc25RX2hxS0VRc2p2WWp0ZGci--947144f9fb667bcc0970ae982bda9ac52ac57e80; path=/; expires=Fri, 05 Nov 2038 13:37:42 -0000",
+        "X-Request-Id": "c004f42a-1dea-487b-89a4-d1ca41abfe71",
+        "X-Runtime": "0.407975",
         "Vary": "Origin"
       },
       "response_content_type": null,

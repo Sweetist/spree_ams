@@ -1,5 +1,4 @@
 resource 'Products' do
-  # Seed Product
   header 'Accept', 'application/json'
   header 'Content-Type', 'application/json'
   parameter :token, 'Authentication Token', required: true
@@ -19,12 +18,12 @@ resource 'Products' do
   delete url + 'products/:id' do
     let(:id) { product.id }
     let(:raw_post) { params.to_json }
-    example_request 'Delete product' do
+    example_request 'Delete' do
       expect(response_status).to equal(204)
     end
   end
 
-  put url + 'products/:id' do
+  patch url + 'products/:id' do
     with_options scope: :product do
       parameter :name
       parameter :price
@@ -35,7 +34,7 @@ resource 'Products' do
     let(:name) { 'test name updated' }
 
     let(:raw_post) { params.to_json }
-    example_request 'Update product' do
+    example_request 'Update' do
       expect(response_status).to equal(200)
     end
   end
@@ -54,7 +53,7 @@ resource 'Products' do
     let(:shipping_category_id) { 1 }
 
     let(:raw_post) { params.to_json }
-    example_request 'Create product' do
+    example_request 'Create' do
       expect(response_status).to equal(201)
     end
   end
@@ -62,7 +61,8 @@ resource 'Products' do
   get url + 'products' do
     parameter :q, 'Ransack query parameter'
 
-    example_request 'Get all products' do
+    example_request 'Get products' do
+      explanation 'The searching API is provided through the Ransack gem which Sweet depends on. The name_cont here is called a predicate, and you can learn more about them by reading about Predicates on the Ransack wiki.'
       expect(response_status).to equal(200)
     end
   end

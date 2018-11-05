@@ -50,12 +50,12 @@ resource 'Orders' do
     before do
       order.next
     end
-    example_request 'Cancel Order' do
+    example_request 'Cancel' do
       expect(status).to eq(200)
     end
   end
 
-  put url + 'orders/:id' do
+  patch url + 'orders/:id' do
     with_options scope: :order do
       parameter :email, type: :string
     end
@@ -63,7 +63,7 @@ resource 'Orders' do
     let(:email) { 'test@example.com' }
 
     let(:raw_post) { params.to_json }
-    example_request 'Update order' do
+    example_request 'Update' do
       expect(status).to eq(200)
     end
   end
@@ -93,8 +93,7 @@ resource 'Orders' do
 
     let(:raw_post) { params.to_json }
 
-    example 'Create an order' do
-      # binding.pry
+    example 'Create' do
       do_request
       expect(status).to eq(201)
     end

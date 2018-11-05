@@ -31,4 +31,36 @@ resource 'Customers' do
     end
   end
 
+  post url + 'customers' do
+    with_options scope: :customer do
+      parameter :email, required: true
+      parameter :name, required: true
+    end
+    let(:email) { 'email@test.com' }
+    let(:name) { 'customer name' }
+    let(:raw_post) { params.to_json }
+    example_request 'Create' do
+      expect(status).to eq(201)
+    end
+  end
+
+  patch url + 'customers/:id' do
+    let(:id) { customer.id }
+    with_options scope: :customer do
+      parameter :email
+    end
+    let(:email) { 'new_email@test.com' }
+    let(:raw_post) { params.to_json }
+    example_request 'Update' do
+      expect(status).to eq(200)
+    end
+  end
+
+  delete url + 'customers/:id' do
+    let(:id) { customer.id }
+    let(:raw_post) { params.to_json }
+    example_request 'Delete' do
+      expect(status).to eq(204)
+    end
+  end
 end

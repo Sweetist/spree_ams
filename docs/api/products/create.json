@@ -3,7 +3,7 @@
   "resource_explanation": null,
   "http_method": "POST",
   "route": "http://test.host/api/ams/products",
-  "description": "Create product",
+  "description": "Create",
   "explanation": null,
   "parameters": [
     {
@@ -43,7 +43,7 @@
     {
       "request_method": "POST",
       "request_path": "http://test.host/api/ams/products",
-      "request_body": "{\"token\":\"a788adaa33049354602461a84724c998fc972040bc377331\",\"product\":{\"name\":\"test name\",\"price\":20,\"sku\":\"sku\",\"shipping_category_id\":1}}",
+      "request_body": "{\"token\":\"1f536a61f0bb7dda64441efe178e8231dd7ba57f3a32929a\",\"product\":{\"name\":\"test name\",\"price\":20,\"sku\":\"sku\",\"shipping_category_id\":1}}",
       "request_headers": {
         "Accept": "application/json",
         "Content-Type": "application/json",
@@ -68,9 +68,9 @@
         "Vary": "Accept-Encoding, Origin",
         "ETag": "W/\"1681f505f12775c6ba45e3d9442e7081\"",
         "Cache-Control": "max-age=0, private, must-revalidate",
-        "Set-Cookie": "guest_token=Inp2cEFRa0h4R0VSN2Vqa2x1YlpHOGci--d5ef62ef7f390d1548304dbe44c22422b4ee6512; path=/; expires=Sun, 31 Oct 2038 15:07:43 -0000",
-        "X-Request-Id": "7472ba8c-81f8-4142-8334-248ec9528bde",
-        "X-Runtime": "0.141000",
+        "Set-Cookie": "guest_token=ImxhWUNNZzhkVklmXzlTZFlPRGtrVXci--e3455d515d2f3e6f1501e78a25282234078befae; path=/; expires=Fri, 05 Nov 2038 13:37:43 -0000",
+        "X-Request-Id": "f8c9aaad-91e2-4e28-a6a3-c2296ef2bc59",
+        "X-Runtime": "0.149234",
         "Content-Length": "526"
       },
       "response_content_type": "application/json; charset=utf-8",

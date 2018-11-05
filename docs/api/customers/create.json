@@ -1,15 +1,27 @@
 {
   "resource": "Customers",
   "resource_explanation": null,
-  "http_method": "GET",
-  "route": "http://test.host/api/ams/customers/:id",
-  "description": "Getting a specific customer",
+  "http_method": "POST",
+  "route": "http://test.host/api/ams/customers",
+  "description": "Create",
   "explanation": null,
   "parameters": [
     {
       "required": true,
       "name": "token",
       "description": "Authentication Token"
+    },
+    {
+      "scope": "customer",
+      "required": true,
+      "name": "email",
+      "description": "Customer email"
+    },
+    {
+      "scope": "customer",
+      "required": true,
+      "name": "name",
+      "description": "Customer name"
     }
   ],
   "response_fields": [
@@ -17,9 +29,9 @@
   ],
   "requests": [
     {
-      "request_method": "GET",
-      "request_path": "http://test.host/api/ams/customers/2?token=f77a61aebcd895a9e59c661f93a98c41d0c8689159a756a8",
-      "request_body": null,
+      "request_method": "POST",
+      "request_path": "http://test.host/api/ams/customers",
+      "request_body": "{\"token\":\"0e0d028b04ddf99994c778519f4408b85d09d0babcb746fc\",\"customer\":{\"email\":\"email@test.com\",\"name\":\"customer name\"}}",
       "request_headers": {
         "Accept": "application/json",
         "Content-Type": "application/json",
@@ -27,12 +39,11 @@
         "Cookie": ""
       },
       "request_query_parameters": {
-        "token": "f77a61aebcd895a9e59c661f93a98c41d0c8689159a756a8"
       },
       "request_content_type": "application/json",
-      "response_status": 200,
-      "response_status_text": "OK",
-      "response_body": "{\n  \"account\": {\n    \"id\": 2,\n    \"fully_qualified_name\": \"Thiel LLC\",\n    \"email\": null\n  },\n  \"meta\": {\n  }\n}",
+      "response_status": 201,
+      "response_status_text": "Created",
+      "response_body": "{\n  \"account\": {\n    \"id\": 4,\n    \"fully_qualified_name\": \"customer name\",\n    \"email\": \"email@test.com\"\n  },\n  \"meta\": {\n  }\n}",
       "response_headers": {
         "X-Frame-Options": "SAMEORIGIN",
         "X-XSS-Protection": "1; mode=block",
@@ -43,12 +54,12 @@
         "Access-Control-Max-Age": "1728000",
         "Content-Type": "application/json; charset=utf-8",
         "Vary": "Accept-Encoding, Origin",
-        "ETag": "W/\"89687ac5a17d4f4baca6434e9876e391\"",
+        "ETag": "W/\"1edbef5ee6605e2290569d1d929b2f69\"",
         "Cache-Control": "max-age=0, private, must-revalidate",
-        "Set-Cookie": "guest_token=IlpCVXVVdmY4QWlGd0hGWjdXam4tZ2ci--d1cde06d0e12009e2fa5b9e0bfd796007abb54ec; path=/; expires=Fri, 05 Nov 2038 13:37:34 -0000",
-        "X-Request-Id": "6c6057c0-21d0-46fe-bfac-649c4a989e22",
-        "X-Runtime": "0.011002",
-        "Content-Length": "78"
+        "Set-Cookie": "guest_token=Il81RUJuNGlmSndCSFhwaTFEdzcyNnci--af106c5dc0d016e340360edcabc042a180fb8db8; path=/; expires=Fri, 05 Nov 2038 13:37:34 -0000",
+        "X-Request-Id": "a36ee13a-0ec4-43ba-b1e9-8f1fb1ae3918",
+        "X-Runtime": "0.048374",
+        "Content-Length": "94"
       },
       "response_content_type": "application/json; charset=utf-8",
       "curl": null

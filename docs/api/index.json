@@ -5,6 +5,20 @@
       "explanation": null,
       "examples": [
         {
+          "description": "Create",
+          "link": "customers/create.json",
+          "groups": "all",
+          "route": "http://test.host/api/ams/customers",
+          "method": "post"
+        },
+        {
+          "description": "Delete",
+          "link": "customers/delete.json",
+          "groups": "all",
+          "route": "http://test.host/api/ams/customers/:id",
+          "method": "delete"
+        },
+        {
           "description": "Get all customers",
           "link": "customers/get_all_customers.json",
           "groups": "all",
@@ -17,6 +31,13 @@
           "groups": "all",
           "route": "http://test.host/api/ams/customers/:id",
           "method": "get"
+        },
+        {
+          "description": "Update",
+          "link": "customers/update.json",
+          "groups": "all",
+          "route": "http://test.host/api/ams/customers/:id",
+          "method": "patch"
         }
       ]
     },
@@ -25,15 +46,15 @@
       "explanation": null,
       "examples": [
         {
-          "description": "Cancel Order",
-          "link": "orders/cancel_order.json",
+          "description": "Cancel",
+          "link": "orders/cancel.json",
           "groups": "all",
           "route": "http://test.host/api/ams/orders/:id/cancel",
           "method": "put"
         },
         {
-          "description": "Create an order",
-          "link": "orders/create_an_order.json",
+          "description": "Create",
+          "link": "orders/create.json",
           "groups": "all",
           "route": "http://test.host/api/ams/orders",
           "method": "post"
@@ -53,11 +74,11 @@
           "method": "get"
         },
         {
-          "description": "Update order",
-          "link": "orders/update_order.json",
+          "description": "Update",
+          "link": "orders/update.json",
           "groups": "all",
           "route": "http://test.host/api/ams/orders/:id",
-          "method": "put"
+          "method": "patch"
         }
       ]
     },
@@ -66,22 +87,22 @@
       "explanation": null,
       "examples": [
         {
-          "description": "Create product",
-          "link": "products/create_product.json",
+          "description": "Create",
+          "link": "products/create.json",
           "groups": "all",
           "route": "http://test.host/api/ams/products",
           "method": "post"
         },
         {
-          "description": "Delete product",
-          "link": "products/delete_product.json",
+          "description": "Delete",
+          "link": "products/delete.json",
           "groups": "all",
           "route": "http://test.host/api/ams/products/:id",
           "method": "delete"
         },
         {
-          "description": "Get all products",
-          "link": "products/get_all_products.json",
+          "description": "Get products",
+          "link": "products/get_products.json",
           "groups": "all",
           "route": "http://test.host/api/ams/products",
           "method": "get"
@@ -94,11 +115,11 @@
           "method": "get"
         },
         {
-          "description": "Update product",
-          "link": "products/update_product.json",
+          "description": "Update",
+          "link": "products/update.json",
           "groups": "all",
           "route": "http://test.host/api/ams/products/:id",
-          "method": "put"
+          "method": "patch"
         }
       ]
     }

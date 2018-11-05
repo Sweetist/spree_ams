@@ -1,0 +1,76 @@
+{
+  "resource": "Products",
+  "resource_explanation": null,
+  "http_method": "PATCH",
+  "route": "http://test.host/api/ams/products/:id",
+  "description": "Update",
+  "explanation": null,
+  "parameters": [
+    {
+      "required": true,
+      "name": "token",
+      "description": "Authentication Token"
+    },
+    {
+      "scope": "product",
+      "name": "name",
+      "description": "Product name"
+    },
+    {
+      "scope": "product",
+      "name": "price",
+      "description": "Product price"
+    },
+    {
+      "scope": "product",
+      "name": "sku",
+      "description": "Product sku"
+    },
+    {
+      "scope": "product",
+      "name": "shipping_category_id",
+      "description": "Product shipping category"
+    }
+  ],
+  "response_fields": [
+
+  ],
+  "requests": [
+    {
+      "request_method": "PATCH",
+      "request_path": "http://test.host/api/ams/products/8",
+      "request_body": "{\"token\":\"55080a93cd4ef3224d0818f0fc321710eed148c943bf87d7\",\"product\":{\"name\":\"test name updated\"}}",
+      "request_headers": {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        "Host": "test.host",
+        "Cookie": ""
+      },
+      "request_query_parameters": {
+      },
+      "request_content_type": "application/json",
+      "response_status": 200,
+      "response_status_text": "OK",
+      "response_body": "{\n  \"product_properties\": [\n\n  ],\n  \"images\": [\n\n  ],\n  \"variants\": [\n    {\n      \"id\": 9,\n      \"name\": \"test name updated\",\n      \"sku\": \"SKU-9\",\n      \"price\": \"19.99\",\n      \"weight\": \"0\",\n      \"height\": null,\n      \"width\": null,\n      \"depth\": null,\n      \"is_master\": true,\n      \"cost_price\": \"17\",\n      \"slug\": \"product-8-1169\",\n      \"description\": \"Provident rerum dolores architecto tempora est. Sit ut aliquid hic est aspernatur. Aut aut omnis et eveniet iusto rerum qui. Dicta et dolores voluptatem illo qui expedita optio alias.\\nHic quia id dolorem ipsam tempora. Similique doloremque dignissimos et ut. Quas deleniti eum ab quaerat aliquam et. Aut provident odit perferendis dolor natus nostrum ullam rerum.\\nNeque laudantium rerum magni qui. Velit voluptatibus non quod voluptas commodi soluta. Eaque est eveniet sed quae sit ut earum.\",\n      \"track_inventory\": true,\n      \"display_price\": \"$19.99\",\n      \"options_text\": \"\",\n      \"can_supply\": true,\n      \"image_ids\": [\n\n      ]\n    }\n  ],\n  \"product\": {\n    \"id\": 8,\n    \"name\": \"test name updated\",\n    \"description\": \"Provident rerum dolores architecto tempora est. Sit ut aliquid hic est aspernatur. Aut aut omnis et eveniet iusto rerum qui. Dicta et dolores voluptatem illo qui expedita optio alias.\\nHic quia id dolorem ipsam tempora. Similique doloremque dignissimos et ut. Quas deleniti eum ab quaerat aliquam et. Aut provident odit perferendis dolor natus nostrum ullam rerum.\\nNeque laudantium rerum magni qui. Velit voluptatibus non quod voluptas commodi soluta. Eaque est eveniet sed quae sit ut earum.\",\n    \"price\": \"19.99\",\n    \"display_price\": \"$19.99\",\n    \"slug\": \"product-8-1169\",\n    \"product_property_ids\": [\n\n    ],\n    \"image_ids\": [\n\n    ],\n    \"variants_including_master_ids\": [\n      9\n    ]\n  },\n  \"meta\": {\n  }\n}",
+      "response_headers": {
+        "X-Frame-Options": "SAMEORIGIN",
+        "X-XSS-Protection": "1; mode=block",
+        "X-Content-Type-Options": "nosniff",
+        "Access-Control-Allow-Origin": "http://localhost:4200",
+        "Access-Control-Allow-Methods": "POST, GET, PUT, DELETE, OPTIONS",
+        "Access-Control-Allow-Headers": "Origin, Content-Type, Accept, Authorization, Token, X-Spree-Token, X-Spree-Order-Token, X-Spree-Order-Id",
+        "Access-Control-Max-Age": "1728000",
+        "Content-Type": "application/json; charset=utf-8",
+        "Vary": "Accept-Encoding, Origin",
+        "ETag": "W/\"78d6a22b8eef4ba0b6eaa83115345798\"",
+        "Cache-Control": "max-age=0, private, must-revalidate",
+        "Set-Cookie": "guest_token=IktiaFdHcEhpMEV2TUhvSUUwQ1B6Q1Ei--5cca7f61954bfdbc67997a2325b8c1876408e4af; path=/; expires=Fri, 05 Nov 2038 13:37:43 -0000",
+        "X-Request-Id": "d277ddae-8b13-4c9b-8f4e-4e4c6c2c99dc",
+        "X-Runtime": "0.099719",
+        "Content-Length": "1545"
+      },
+      "response_content_type": "application/json; charset=utf-8",
+      "curl": null
+    }
+  ]
+}

@@ -1,15 +1,20 @@
 {
   "resource": "Customers",
   "resource_explanation": null,
-  "http_method": "GET",
+  "http_method": "PATCH",
   "route": "http://test.host/api/ams/customers/:id",
-  "description": "Getting a specific customer",
+  "description": "Update",
   "explanation": null,
   "parameters": [
     {
       "required": true,
       "name": "token",
       "description": "Authentication Token"
+    },
+    {
+      "scope": "customer",
+      "name": "email",
+      "description": "Customer email"
     }
   ],
   "response_fields": [
@@ -17,9 +22,9 @@
   ],
   "requests": [
     {
-      "request_method": "GET",
-      "request_path": "http://test.host/api/ams/customers/2?token=f77a61aebcd895a9e59c661f93a98c41d0c8689159a756a8",
-      "request_body": null,
+      "request_method": "PATCH",
+      "request_path": "http://test.host/api/ams/customers/5",
+      "request_body": "{\"token\":\"711b9176c6c470a7b2c454136e97fb0bc362fbfcd6327e8b\",\"customer\":{\"email\":\"new_email@test.com\"}}",
       "request_headers": {
         "Accept": "application/json",
         "Content-Type": "application/json",
@@ -27,12 +32,11 @@
         "Cookie": ""
       },
       "request_query_parameters": {
-        "token": "f77a61aebcd895a9e59c661f93a98c41d0c8689159a756a8"
       },
       "request_content_type": "application/json",
       "response_status": 200,
       "response_status_text": "OK",
-      "response_body": "{\n  \"account\": {\n    \"id\": 2,\n    \"fully_qualified_name\": \"Thiel LLC\",\n    \"email\": null\n  },\n  \"meta\": {\n  }\n}",
+      "response_body": "{\n  \"account\": {\n    \"id\": 5,\n    \"fully_qualified_name\": \"Bednar Inc\",\n    \"email\": \"new_email@test.com\"\n  },\n  \"meta\": {\n  }\n}",
       "response_headers": {
         "X-Frame-Options": "SAMEORIGIN",
         "X-XSS-Protection": "1; mode=block",
@@ -43,12 +47,12 @@
         "Access-Control-Max-Age": "1728000",
         "Content-Type": "application/json; charset=utf-8",
         "Vary": "Accept-Encoding, Origin",
-        "ETag": "W/\"89687ac5a17d4f4baca6434e9876e391\"",
+        "ETag": "W/\"50345ae60e339329cedbde587a0fb412\"",
         "Cache-Control": "max-age=0, private, must-revalidate",
-        "Set-Cookie": "guest_token=IlpCVXVVdmY4QWlGd0hGWjdXam4tZ2ci--d1cde06d0e12009e2fa5b9e0bfd796007abb54ec; path=/; expires=Fri, 05 Nov 2038 13:37:34 -0000",
-        "X-Request-Id": "6c6057c0-21d0-46fe-bfac-649c4a989e22",
-        "X-Runtime": "0.011002",
-        "Content-Length": "78"
+        "Set-Cookie": "guest_token=IjFDYnlwMGZaTGg0ZVdfdGcxVkQtOXci--5b1f745aed4130f7324b6d7b4bea71088f1ae3c4; path=/; expires=Fri, 05 Nov 2038 13:37:34 -0000",
+        "X-Request-Id": "eeb61081-de1d-4d52-8603-99ede8f4b750",
+        "X-Runtime": "0.048603",
+        "Content-Length": "95"
       },
       "response_content_type": "application/json; charset=utf-8",
       "curl": null

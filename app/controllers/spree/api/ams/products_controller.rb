@@ -9,6 +9,22 @@ module Spree
           puts 'stub authorize!'
         end
 
+        def create
+          authorize! :create, Spree::Product
+          params[:product][:available_on] ||= Time.now
+          set_up_shipping_category
+
+          options = { variants_attrs: variants_params, options_attrs: option_types_params }
+          options[:vendor_id] = current_vendor.id
+          @product = Spree::Core::Importer::Product.new(nil, product_params, options).create
+
+          if @product.persisted?
+            respond_with(@product, :status => 201, :default_template => :show)
+          else
+            invalid_resource!(@product)
+          end
+        end
+
         def product_scope
           scope = super
           if params[:taxon_id]
