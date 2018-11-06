@@ -28,28 +28,28 @@ jobs:
       - checkout
 
       # Restore bundle cache
-      # - type: cache-restore
-      #   key: rails-get-sweet{{ checksum "Gemfile.lock" }}
+      - type: cache-restore
+        key: rails-get-sweet{{ checksum "Gemfile.lock" }}
 
 
       # Bundle install dependencies
       # - run: git submodule sync
       # - run: git submodule update --init
-      # - run: bundle install --path vendor/bundle
+      - run: bundle install --path vendor/bundle
 
       # Store bundle cache
-      # - type: cache-save
-      #   key: rails-get-sweet{{ checksum "Gemfile.lock" }}
-      #   paths:
-      #     - vendor/bundle
+      - type: cache-save
+        key: rails-get-sweet{{ checksum "Gemfile.lock" }}
+        paths:
+          - vendor/bundle
 
       # Database setup
-      - run: cd 'spec/dummy'
-      - run: mv config/database.yml.circleci config/database.yml
-      - run: bundle exec rake db:create
-      - run: bundle exec rake db:migrate
-      - run: bundle exec rake db:second_base:migrate
-      - run: bundle exec rake assets:precompile RAILS_ENV=test
+
+      - run: mv spec/dummy/config/database.yml.circleci spec/dummy/config/database.yml
+      - run: cd 'spec/dummy' && bundle exec rake db:create
+      - run: cd 'spec/dummy' && bundle exec rake db:migrate
+      - run: cd 'spec/dummy' && bundle exec rake db:second_base:migrate
+      - run: cd 'spec/dummy' && bundle exec rake assets:precompile RAILS_ENV=test
 
       # Run rspec
       - type: shell
