@@ -8,6 +8,7 @@ namespace :sweet do
     nice_puts 'Copy from SWEET source'
     copy_direcories(sweet_path, dummy_path)
     copy_files
+    remove_gem_from_gemfile('spree_ams')
   end
 end
 
@@ -21,9 +22,21 @@ def copy_direcories(from, to)
 end
 
 def copy_files
-  files = ['Gemfile', 'config.ru']
+  files = ['Gemfile', 'Gemfile.lock', 'config.ru', 'Rakefile']
   files.each do |file|
     FileUtils.cp(sweet_path + '/' + file, dummy_path)
+  end
+end
+
+def remove_gem_from_gemfile(gem_name)
+  file_lines = ''
+
+  IO.readlines(dummy_path + '/Gemfile').each do |line|
+    file_lines += line unless line.start_with? "gem '#{gem_name}'"
+  end
+
+  File.open(dummy_path + '/Gemfile', 'w') do |file|
+    file.puts file_lines
   end
 end
 

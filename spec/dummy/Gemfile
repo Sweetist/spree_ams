@@ -38,7 +38,7 @@ gem 'newrelic_rpm'
 
 gem 'secondbase', github: 'misteral/secondbase'
 gem 'activerecord4-redshift-adapter', '~> 0.2.0'
-
+gem 'money', '~> 6.13.0'
 gem 'paper_trail'
 
 # Use Capistrano for deployment
@@ -53,7 +53,7 @@ gem 'commontator', github: 'sweetist/commontator', branch: 'fix_threads'
 # gem 'commontator', path: '/data/commontator'
 # For heroku
 gem 'rails_12factor', group: :production
-gem 'pg'
+gem 'pg', '~> 0.18.3'
 gem 'sidekiq'
 gem 'sidekiq-client-cli'
 gem 'sidekiq-limit_fetch'
@@ -129,7 +129,6 @@ gem 'spree_product_assembly', github: 'Sweetist/spree-product-assembly', branch:
 gem 'spree_static_content', github: 'Sweetist/spree_static_content', branch: '3-0-stable-getsweet'
 
 # gem 'spree_ams', github: 'Sweetist/spree_ams', branch: '3-0-alpha'
-# gem 'spree_ams', path: '../spree_ams'
 
 gem 'stripe'
 
