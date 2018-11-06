@@ -13,7 +13,7 @@ module Spree
         def set_access_control_headers
           headers['Access-Control-Allow-Origin'] = Ams.configuration.cors_whitelist
           headers['Access-Control-Allow-Methods'] = 'POST, GET, PUT, DELETE, OPTIONS'
-          headers['Access-Control-Allow-Headers'] = 'Origin, Content-Type, Accept, Authorization, Token, X-Spree-Token, X-Spree-Order-Token, X-Spree-Order-Id'
+          headers['Access-Control-Allow-Headers'] = 'Origin, Content-Type, Accept, Authorization, Token, X-Token, X-Order-Token, X-Order-Id'
           headers['Access-Control-Max-Age'] = "1728000"
         end
 
@@ -21,15 +21,14 @@ module Spree
         # current api user loaded.
         def load_user
           super
-          @current_api_user = Spree.user_class.new if @current_api_user.nil?
+          # @current_api_user = Spree.user_class.new if @current_api_user.nil?
         end
 
         # Allow the current order to be be
         # loaded from the request's header.
         def order_id
-          params[:order_id] || params[:checkout_id] || params[:order_number] || request.headers['X-Spree-Order-Id']
+          params[:order_id] || params[:checkout_id] || params[:order_number] || request.headers['X-Order-Id']
         end
-
       end
     end
   end

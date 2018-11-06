@@ -47,10 +47,6 @@ module Spree
           end
         end
 
-        def authorize!(*_args)
-          puts 'stub authorize!'
-        end
-
         private
 
         def customer

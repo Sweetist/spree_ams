@@ -15,6 +15,12 @@ resource 'Customers' do
   let!(:vendor) { user.company }
   let!(:customer) { create(:account, vendor: vendor) }
 
+  before do
+    header 'X-Token', token
+    allow_any_instance_of(Spree::Api::Ams::CustomersController)
+      .to receive(:authorize!)
+  end
+
   get url + 'customers' do
     parameter :q, 'Ransack query parameter'
 

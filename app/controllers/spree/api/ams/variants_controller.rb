@@ -5,10 +5,6 @@ module Spree
         include Serializable
         include Requestable
 
-        def authorize!(*_args)
-          puts 'stub authorize!'
-        end
-
         def create
           authorize! :create, Spree::Variant
           params[:product][:available_on] ||= Time.now

@@ -1,6 +1,7 @@
 resource 'Orders' do
   header 'Accept', 'application/json'
   header 'Content-Type', 'application/json'
+  parameter :token, 'Authentication Token', required: true
 
   let!(:user) do
     user = create(:vendor_user)
@@ -15,18 +16,14 @@ resource 'Orders' do
   let!(:customer_user) { create(:customer_user, company: customer) }
   let!(:account) { create(:account, customer: customer, vendor: vendor) }
   let!(:order) { create(:order_with_line_items, vendor: user.company, account: account)}
-  # let(:orde2) { create(:order_with_line_items, vendor: user.company, account: account)}
 
-
-  parameter :token, 'Authentication Token', required: true
   let(:token) { user.spree_api_key }
-  # authentication :apiKey, :token, description: 'Private key for API access'
-  # header 'X-Spree-Token', token
 
-  # before do
-  #   binding.pry
-  #   allow(Spree::Api::Ams::OrdersController).to receive(:authorize!)
-  # end
+  before do
+    header 'X-Token', token
+    allow_any_instance_of(Spree::Api::Ams::OrdersController)
+      .to receive(:authorize!)
+  end
 
   get url + 'orders' do
     parameter :q, 'Query parameter'

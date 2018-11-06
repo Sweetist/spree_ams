@@ -17,6 +17,8 @@ resource 'Products' do
 
   before do
     header 'X-Token', token
+    allow_any_instance_of(Spree::Api::Ams::ProductsController)
+      .to receive(:authorize!)
   end
 
   delete url + 'products/:id' do

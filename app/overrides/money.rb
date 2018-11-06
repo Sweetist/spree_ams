@@ -1,3 +1,5 @@
+Money.locale_backend = :i18n
+
 Money::Formatter.class_eval do
   def format_decimal_part(value)
     return nil if currency.decimal_places == 0 && !Money.infinite_precision

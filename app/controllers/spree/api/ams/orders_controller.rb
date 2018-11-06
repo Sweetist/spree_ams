@@ -27,10 +27,6 @@ module Spree
           @order = Spree::Core::Importer::Order.import(order_user, import_params)
           respond_with(@order, default_template: :show, status: 201)
         end
-
-        def authorize!(*_args)
-          puts 'stub authorize!'
-        end
       end
     end
   end
