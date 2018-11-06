@@ -27,7 +27,6 @@ require 'rspec_api_documentation'
 require 'rspec_api_documentation/dsl'
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
-Dir[File.join(File.dirname(__FILE__), 'support/**/*.rb')].each { |f| require f }
 
 
 # Requires factories defined in spree_core
@@ -39,6 +38,8 @@ require 'spree/testing_support/url_helpers'
 Dir["#{File.dirname(__FILE__)}/dummy/spec/factories/**"].each do |f|
   require f
 end
+
+Dir[File.join(File.dirname(__FILE__), 'support/**/*.rb')].each { |f| require f }
 
 RSpec.configure do |config|
   config.include FactoryGirl::Syntax::Methods

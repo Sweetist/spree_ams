@@ -17,7 +17,7 @@ module Spree
       before_action :authenticate_user
       before_action :load_user_roles
 
-      # rescue_from Exception, with: :error_during_processing
+      rescue_from Exception, with: :error_during_processing
       rescue_from ActiveRecord::RecordNotFound, with: :not_found
       rescue_from CanCan::AccessDenied, with: :unauthorized
       rescue_from Spree::Core::GatewayError, with: :gateway_error
@@ -44,17 +44,17 @@ module Spree
 
       def content_type
         case params[:format]
-        when "json"
-          "application/json; charset=utf-8"
-        when "xml"
-          "text/xml; charset=utf-8"
+        when 'json'
+          'application/json; charset=utf-8'
+        when 'xml'
+          'text/xml; charset=utf-8'
         end
       end
 
       private
 
       def set_content_type
-        headers["Content-Type"] = content_type
+        headers['Content-Type'] = content_type
       end
 
       def load_user
@@ -62,29 +62,29 @@ module Spree
       end
 
       def authenticate_user
-        unless @current_api_user
-          if requires_authentication? && api_key.blank? && order_token.blank?
-            render "spree/api/errors/must_specify_api_key", :status => 401 and return
-          elsif order_token.blank? && (requires_authentication? || api_key.present?)
-            render "spree/api/errors/invalid_api_key", :status => 401 and return
-          else
-            # anonymous users are not authorized
-            # @current_api_user = Spree.user_class.new
-            render "spree/api/errors/must_specify_api_key", :status => 401 and return
-          end
-        end
+        return if @current_api_user
+
+        return invalid_api_key if order_token.blank? && api_key.present?
+
+        no_api_key
       end
 
       def load_user_roles
-        @current_user_roles = if @current_api_user
-          @current_api_user.spree_roles.pluck(:name)
-        else
-          []
-        end
+        return @current_user_roles = [] unless @current_api_user
+
+        @current_user_roles = @current_api_user.spree_roles.pluck(:name)
+      end
+
+      def invalid_api_key
+        (render 'spree/api/errors/invalid_api_key', status: 401) && return
+      end
+
+      def no_api_key
+        (render 'spree/api/errors/must_specify_api_key', status: 401) && return
       end
 
       def unauthorized
-        render "spree/api/errors/unauthorized", status: 401 and return
+        (render 'spree/api/errors/unauthorized', status: 401) && return
       end
 
       def error_during_processing(exception)
@@ -108,7 +108,7 @@ module Spree
       end
 
       def not_found
-        render "spree/api/errors/not_found", status: 404 and return
+        (render 'spree/api/errors/not_found', status: 404) && return
       end
 
       def current_ability
@@ -117,7 +117,7 @@ module Spree
 
       def invalid_resource!(resource)
         @resource = resource
-        render "spree/api/errors/invalid_resource", :status => 422
+        render 'spree/api/errors/invalid_resource', status: 422
       end
 
       def api_key
