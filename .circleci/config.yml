@@ -46,7 +46,7 @@ jobs:
       # Database setup
 
       - run: mv spec/dummy/config/database.yml.circleci spec/dummy/config/database.yml
-      - run: cd 'spec/dummy' && bundle install --path vendor/bundle && bundle exec rake db:create db:migrate
+      - run: cd 'spec/dummy' && bundle install --path ../../vendor/bundle && bundle exec rake db:create db:migrate
       - run: bundle install --path vendor/bundle
       # - run: cd 'spec/dummy' && bundle exec rake db:migrate
       # - run: cd 'spec/dummy' && bundle exec rake db:second_base:migrate
